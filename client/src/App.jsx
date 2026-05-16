@@ -17,7 +17,6 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [artifact, setArtifact] = useState(null);
   const [adminData, setAdminData] = useState({ users: [], pendingTeachers: [], stats: {} });
 
   const features = [
@@ -82,7 +81,7 @@ function App() {
         if (formData.password !== formData.passwordConfirm) return alert("Les mots de passe ne correspondent pas.");
         setAuthStep('role');
       }
-    } catch (e) { alert("Erreur d'authentification : " + e.message); } finally { setIsLoading(false); }
+    } catch (e) { alert("Erreur : " + e.message); } finally { setIsLoading(false); }
   }
 
   const handleSignupFinal = async () => {
@@ -121,15 +120,13 @@ function App() {
   if (!user) {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F4EF', fontFamily: "'Inter', sans-serif", color: '#1A1A1A', display: 'flex', flexDirection: 'column' }}>
-        {/* HEADER */}
-        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.2rem 3rem', background: '#F5F4EF', borderBottom: '1px solid rgba(0,0,0,0.06)', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
+        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.2rem 3rem', background: '#F5F4EF', borderBottom: '1px solid rgba(0,0,0,0.06)', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => setAuthStep('landing')}>
             <img src="/logo.png" alt="LAURA" style={{ height: '44px' }} />
           </div>
           <button onClick={() => { setAuthStep('identity'); setIsLogin(true); }} style={{ background: '#1A1A1A', color: 'white', border: 'none', padding: '0.7rem 1.6rem', borderRadius: '0.6rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem' }}>Se connecter</button>
         </header>
 
-        {/* MAIN CONTENT */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10rem 2rem 6rem' }}>
           {authStep === 'landing' && (
             <div style={{ textAlign: 'center', maxWidth: '1000px' }}>
@@ -137,7 +134,7 @@ function App() {
               <p style={{ fontSize: '1.35rem', color: '#555', lineHeight: 1.6, marginBottom: '5rem', maxWidth: '650px', margin: '0 auto 5rem' }}>L'IA souveraine conçue pour le programme scolaire camerounais.</p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.8rem', width: '100%' }}>
                 {features.map((f, i) => (
-                  <div key={i} style={{ background: 'white', border: '1px solid #E5E5E0', borderRadius: '1.4rem', padding: '1.8rem', display: 'flex', alignItems: 'center', gap: '18px', fontSize: '1.1rem', color: '#333', cursor: 'pointer', transition: '0.3s', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                  <div key={i} style={{ background: 'white', border: '1px solid #E5E5E0', borderRadius: '1.4rem', padding: '1.8rem', display: 'flex', alignItems: 'center', gap: '18px', fontSize: '1.1rem', color: '#333', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
                     <span style={{ fontSize: '2.5rem' }}>{f.icon}</span>
                     <span style={{ fontWeight: 600 }}>{f.label}</span>
                   </div>
@@ -147,44 +144,40 @@ function App() {
           )}
 
           {(authStep === 'identity' || authStep === 'role' || authStep === 'details') && (
-            <div style={{ background: 'white', padding: '3.5rem', borderRadius: '2.5rem', width: '100%', maxWidth: '480px', boxShadow: '0 30px 80px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.05)' }}>
+            <div style={{ background: 'white', padding: '3.5rem', borderRadius: '2.5rem', width: '100%', maxWidth: '480px', boxShadow: '0 30px 80px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.05)', position: 'relative', zIndex: 10 }}>
               {authStep === 'identity' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                   <h2 style={{ textAlign: 'center', marginBottom: '0.8rem', fontSize: '2rem', fontWeight: 800 }}>{isLogin ? 'Bon retour !' : 'Créer votre compte'}</h2>
                   
                   {!isLogin && (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                      <input key="nom" type="text" placeholder="Nom" style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', width: '100%', boxSizing: 'border-box', fontSize: '1rem' }} value={formData.nom} onChange={(e) => setFormData({...formData, nom: e.target.value})} />
-                      <input key="prenom" type="text" placeholder="Prénom" style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', width: '100%', boxSizing: 'border-box', fontSize: '1rem' }} value={formData.prenom} onChange={(e) => setFormData({...formData, prenom: e.target.value})} />
+                      <input type="text" placeholder="Nom" style={{ padding: '1rem', borderRadius: '0.8rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none' }} value={formData.nom} onChange={(e) => setFormData({...formData, nom: e.target.value})} />
+                      <input type="text" placeholder="Prénom" style={{ padding: '1rem', borderRadius: '0.8rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none' }} value={formData.prenom} onChange={(e) => setFormData({...formData, prenom: e.target.value})} />
                     </div>
                   )}
 
-                  <input key="email" type="email" name="email" placeholder="E-mail" style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem' }} value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
+                  <input type="email" placeholder="E-mail" style={{ padding: '1rem', borderRadius: '0.8rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none' }} value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
                   
                   <input 
-                    key={isLogin ? "pass-login" : "pass-signup"}
                     type="password" 
-                    name="password"
                     placeholder="Mot de passe" 
-                    style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem', width: '100%', boxSizing: 'border-box' }} 
+                    style={{ padding: '1rem', borderRadius: '0.8rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', width: '100%', boxSizing: 'border-box' }} 
                     value={formData.password} 
                     onChange={(e) => setFormData({...formData, password: e.target.value})} 
                   />
                   
                   {!isLogin && (
                     <input 
-                      key="pass-confirm"
                       type="password" 
-                      name="passwordConfirm"
                       placeholder="Confirmer le mot de passe" 
-                      style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem', width: '100%', boxSizing: 'border-box' }} 
+                      style={{ padding: '1rem', borderRadius: '0.8rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', width: '100%', boxSizing: 'border-box' }} 
                       value={formData.passwordConfirm} 
                       onChange={(e) => setFormData({...formData, passwordConfirm: e.target.value})} 
                     />
                   )}
 
                   <button onClick={handleAuthAction} disabled={isLoading} style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#1A1A1A', color: 'white', fontWeight: 700, cursor: 'pointer', fontSize: '1.1rem', marginTop: '0.5rem' }}>
-                    {isLoading ? 'Vérification...' : isLogin ? 'Se connecter' : 'Continuer'}
+                    {isLoading ? 'Attente...' : isLogin ? 'Se connecter' : 'Continuer'}
                   </button>
 
                   <p style={{ textAlign: 'center', fontSize: '0.95rem', color: '#6E6E6B' }}>
@@ -219,22 +212,21 @@ function App() {
                   <h2 style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '2rem', fontWeight: 800 }}>Derniers détails</h2>
                   {formData.role === 'student' && (
                     <>
-                      <select onChange={(e) => setFormData({...formData, level: e.target.value})} style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem' }}>
+                      <select onChange={(e) => setFormData({...formData, level: e.target.value})} style={{ padding: '1rem', borderRadius: '0.8rem', background: '#F9F9F8', border: '1px solid #E5E5E2' }}>
                         <option value="">Classe</option><option value="Tle">Terminale</option><option value="1ère">Première</option><option value="3ème">Troisième</option>
                       </select>
-                      <select onChange={(e) => setFormData({...formData, series: e.target.value})} style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem' }}>
+                      <select onChange={(e) => setFormData({...formData, series: e.target.value})} style={{ padding: '1rem', borderRadius: '0.8rem', background: '#F9F9F8', border: '1px solid #E5E5E2' }}>
                         <option value="">Série</option><option value="C">C</option><option value="D">D</option><option value="A4">A4</option><option value="SES">SES</option>
                       </select>
                     </>
                   )}
-                  <button onClick={handleSignupFinal} style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#1A1A1A', color: 'white', fontWeight: 700, cursor: 'pointer', fontSize: '1.1rem' }}>Finaliser mon profil</button>
+                  <button onClick={handleSignupFinal} style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#1A1A1A', color: 'white', fontWeight: 700, cursor: 'pointer' }}>Finaliser mon profil</button>
                 </div>
               )}
             </div>
           )}
         </div>
 
-        {/* FOOTER */}
         <footer style={{ background: '#1A1A1A', color: '#94A3B8', padding: '6rem 3rem 4rem', fontSize: '0.95rem' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
             <img src="/logo.png" alt="LAURA" style={{ height: '44px', marginBottom: '2rem', filter: 'brightness(0) invert(1)' }} />
@@ -245,17 +237,6 @@ function App() {
     );
   }
 
-  if (user.status === 'pending') {
-    return (
-      <div style={{ minHeight: '100vh', background: '#F5F4EF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem' }}>
-        <h2 style={{ marginBottom: '1.5rem', fontSize: '2rem', fontWeight: 700 }}>Dossier en cours d'examen</h2>
-        <p style={{ color: '#6E6E6B', maxWidth: '450px', lineHeight: '1.6' }}>Votre profil de Tuteur est en attente de validation.</p>
-        <button onClick={handleLogout} style={{ marginTop: '2rem', background: '#1A1A1A', color: 'white', padding: '0.8rem 2rem', borderRadius: '0.8rem', border: 'none', cursor: 'pointer' }}>Retour</button>
-      </div>
-    );
-  }
-
-  // --- INTERFACE APPRENANT ---
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F9F9F8', color: '#1D1D1D' }}>
       <aside style={{ width: isSidebarCollapsed ? '0' : '300px', background: '#F0F0EE', borderRight: '1px solid #E5E5E2', display: 'flex', flexDirection: 'column', transition: '0.3s', overflow: 'hidden' }}>
@@ -263,8 +244,8 @@ function App() {
           <img src="/logo.png" alt="Logo" style={{ height: '40px', marginBottom: '3rem', cursor: 'pointer' }} onClick={() => setMessages([])} />
         </div>
         <div style={{ padding: '1.8rem', borderTop: '1px solid #E5E5E2', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }} onClick={handleLogout}>
-          <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: '#00D4AA', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1.2rem' }}>{user.prenom[0]}</div>
-          <div style={{ flex: 1, overflow: 'hidden' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: '#00D4AA', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700 }}>{user.prenom[0]}</div>
+          <div style={{ flex: 1 }}>
             <div style={{ fontSize: '1rem', fontWeight: 700 }}>{user.prenom} {user.nom}</div>
             <div style={{ fontSize: '0.8rem', color: '#6E6E6B' }}>{user.level} · {user.series || user.filiere}</div>
           </div>
@@ -289,7 +270,7 @@ function App() {
         <div style={{ width: '100%', maxWidth: '900px', background: 'white', borderRadius: '1.8rem', border: '1px solid #E5E5E2', padding: '1.4rem', boxShadow: '0 12px 45px rgba(0,0,0,0.04)', position: messages.length === 0 ? 'relative' : 'fixed', bottom: messages.length === 0 ? 'auto' : '3rem' }}>
           <textarea rows="2" placeholder="Pose ta question..." style={{ width: '100%', border: 'none', outline: 'none', fontSize: '1.2rem', resize: 'none' }} value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()} />
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.2rem' }}>
-            <button onClick={handleSend} style={{ background: '#1D1D1D', color: 'white', border: 'none', padding: '0.8rem 1.8rem', borderRadius: '0.9rem', fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}>Envoyer</button>
+            <button onClick={handleSend} style={{ background: '#1D1D1D', color: 'white', border: 'none', padding: '0.8rem 1.8rem', borderRadius: '0.9rem', fontWeight: 600 }}>Envoyer</button>
           </div>
         </div>
       </main>
