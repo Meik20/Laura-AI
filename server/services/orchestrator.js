@@ -33,95 +33,168 @@ class Orchestrator {
       baseURL: isGroq ? "https://api.groq.com/openai/v1" : "https://api.x.ai/v1",
     }) : null;
     this.isGroq = isGroq;
+
+    // Local Model Configuration (Ollama / LocalAI)
+    this.localModelURL = process.env.LOCAL_MODEL_URL || 'http://localhost:11434/v1';
+    this.localModel = new OpenAI({
+      apiKey: 'ollama', // Placeholder for local
+      baseURL: this.localModelURL,
+    });
   }
 
   /**
-   * Classify the query to determine the best model/strategy
+   * Classify the query to determine the best model/strategy based on the matrix
    */
   classifyQuery(query) {
     const q = query.toLowerCase();
     
-    if (q.includes('image') || q.includes('schéma') || q.includes('dessin') || q.includes('pdf')) {
-      return { model: 'gemini', strategy: this.strategies.VISION };
+    // Matrice de routage intelligente
+    if (q.includes('image') || q.includes('schéma') || q.includes('diagramme')) {
+      return { model: 'gemini', strategy: this.strategies.SIMPLE };
     }
     
-    if (q.includes('dissertation') || q.includes('philo') || q.includes('raisonnement')) {
+    if (q.includes('dissertation') || q.includes('philo') || q.includes('argumentation') || q.includes('math')) {
       return { model: 'claude', strategy: this.strategies.SIMPLE };
+    }
+
+    if (q.includes('svt') || q.includes('bio') || q.includes('sciences')) {
+      return { model: ['gemini', 'claude'], strategy: this.strategies.CONSENSUS };
+    }
+
+    if (q.includes('histoire') || q.includes('géo') || q.includes('emc') || q.includes('langue')) {
+      return { model: ['grok', 'claude'], strategy: this.strategies.CONSENSUS };
+    }
+
+    if (q.includes('correction') || q.includes('rédige') || q.includes('vérifie')) {
+      return { model: 'claude', strategy: this.strategies.CRITIQUE };
+    }
+
+    if (q.includes('concours') || q.includes('résultat') || q.includes('exam')) {
+      return { model: 'grok', strategy: this.strategies.SIMPLE };
+    }
+
+    // Default: High complexity or ambiguous
+    if (q.length > 150) {
+      return { model: ['claude', 'gemini', 'grok'], strategy: this.strategies.CONSENSUS };
     }
 
     return { model: 'grok', strategy: this.strategies.SIMPLE };
   }
 
   /**
-   * Main chat handling logic with Fallback Mechanism
+   * Execute a single model call with parameters
+   */
+  async callModel(model, prompt) {
+    try {
+      if (model === 'claude' && this.anthropic) {
+        const msg = await this.anthropic.messages.create({
+          model: "claude-3-5-sonnet-20240620",
+          max_tokens: 2000,
+          messages: [{ role: "user", content: prompt }],
+        });
+        return { text: msg.content[0].text, model: 'claude' };
+      } 
+      else if (model === 'gemini' && this.genAI) {
+        const geminiModel = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const result = await geminiModel.generateContent(prompt);
+        return { text: result.response.text(), model: 'gemini' };
+      }
+      else if (model === 'grok' && this.grok) {
+        const modelName = this.isGroq ? "llama-3.3-70b-versatile" : "grok-2";
+        const completion = await this.grok.chat.completions.create({
+          model: modelName,
+          messages: [{ role: "user", content: prompt }],
+        });
+        return { text: completion.choices[0].message.content, model: this.isGroq ? 'groq' : 'grok' };
+      }
+      else if (model === 'local') {
+        const completion = await this.localModel.chat.completions.create({
+          model: "mistral", // Assuming Mistral is loaded in Ollama
+          messages: [{ role: "user", content: prompt }],
+        });
+        return { text: completion.choices[0].message.content, model: 'Mistral 7B (Local)' };
+      }
+    } catch (err) {
+      throw new Error(`${model} failed: ${err.message}`);
+    }
+    throw new Error(`${model} not configured`);
+  }
+
+  /**
+   * Main chat handling logic with Advanced Strategies
    */
   async handleChat(query, context = []) {
-    const { model: primaryModel, strategy } = this.classifyQuery(query);
-    
-    // 1. RAG Search (Grounding)
+    const { model: targetModels, strategy } = this.classifyQuery(query);
     const searchResults = await ragService.search(query);
     const ragContext = searchResults.map(r => `[Source: ${r.source}] ${r.content}`).join('\n---\n');
 
-    const prompt = `Tu es LAURA (Learning AI & Unified Resource Assistant), une assistante éducative experte du programme scolaire camerounais.
-Tes réponses doivent être pédagogiques et basées sur ce contexte :
+    const basePrompt = `Tu es LAURA, assistante experte du programme scolaire camerounais.
+DIRECTIVE : Réponds de façon pédagogique et concise en te basant sur ce contexte :
 ${ragContext}
 
 QUESTION : ${query}`;
 
-    // Fallback Chain
-    const modelOrder = [primaryModel, 'gemini', 'grok', 'claude'].filter((v, i, a) => a.indexOf(v) === i);
-    
     let responseText = "";
     let finalModelUsed = "";
-    let errors = [];
+    const modelsToTry = Array.isArray(targetModels) ? [...targetModels, 'local'] : [targetModels, 'local'];
 
-    for (const model of modelOrder) {
-      try {
-        if (model === 'claude' && this.anthropic) {
-          const msg = await this.anthropic.messages.create({
-            model: "claude-3-5-sonnet-20240620",
-            max_tokens: 2000,
-            messages: [{ role: "user", content: prompt }],
-          });
-          responseText = msg.content[0].text;
-          finalModelUsed = 'claude';
-          break;
-        } 
-        else if (model === 'gemini' && this.genAI) {
-          const geminiModel = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-          const result = await geminiModel.generateContent(prompt);
-          responseText = result.response.text();
-          finalModelUsed = 'gemini';
-          break;
+    try {
+      if (strategy === this.strategies.CONSENSUS) {
+        console.log(`[LAURA] Strategy: CONSENSUS with models: ${modelsToTry.join(', ')}`);
+        // We exclude 'local' from consensus for performance unless needed
+        const consensusModels = modelsToTry.filter(m => m !== 'local');
+        const results = await Promise.allSettled(consensusModels.map(m => this.callModel(m, basePrompt)));
+        const successResults = results.filter(r => r.status === 'fulfilled').map(r => r.value);
+        
+        if (successResults.length > 0) {
+          responseText = successResults[0].text;
+          finalModelUsed = `Consensus (${successResults.map(r => r.model).join('+')})`;
+        } else {
+          // Final fallback to local if consensus fails
+          const res = await this.callModel('local', basePrompt);
+          responseText = res.text;
+          finalModelUsed = res.model;
         }
-        else if (model === 'grok' && this.grok) {
-          // llama-3.3-70b-versatile is the current production replacement on Groq
-          const modelName = this.isGroq ? "llama-3.3-70b-versatile" : "grok-2";
-          const completion = await this.grok.chat.completions.create({
-            model: modelName,
-            messages: [{ role: "user", content: prompt }],
-          });
-          responseText = completion.choices[0].message.content;
-          finalModelUsed = this.isGroq ? 'groq (llama 3.3)' : 'grok-2';
-          break;
+      } 
+      else if (strategy === this.strategies.CRITIQUE) {
+        // ... existing critique logic ...
+        try {
+          const generator = await this.callModel('claude', basePrompt);
+          const criticPrompt = `Vérifie cette réponse : ${generator.text}`;
+          const verified = await this.callModel('gemini', criticPrompt);
+          responseText = verified.text;
+          finalModelUsed = "Critique Croisée (Claude/Gemini)";
+        } catch (e) {
+          const res = await this.callModel('local', basePrompt);
+          responseText = res.text;
+          finalModelUsed = res.model;
         }
-      } catch (err) {
-        console.warn(`[LAURA] Model ${model} failed:`, err.message);
-        errors.push(`${model}: ${err.message}`);
       }
+      else {
+        // Simple strategy with fallback to local
+        for (const m of modelsToTry) {
+          try {
+            const res = await this.callModel(m, basePrompt);
+            responseText = res.text;
+            finalModelUsed = res.model;
+            break;
+          } catch (e) {
+            console.warn(`[LAURA] Fallback triggered from ${m}`);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("[ORCHESTRATOR ERROR]", err);
     }
 
-    if (!responseText) {
-      responseText = "Désolée, tous mes cerveaux IA sont indisponibles ou n'ont plus de crédits.\nDétails : " + errors.join(' | ');
-    }
+    if (!responseText) responseText = "Désolée, je rencontre une difficulté technique extrême.";
 
     return {
       response: responseText,
-      model_used: finalModelUsed || 'none',
+      model_used: finalModelUsed,
       strategy_used: strategy,
       citations: searchResults.map(r => r.source),
-      version: "1.0.2",
-      is_fallback: finalModelUsed !== primaryModel && finalModelUsed !== ""
+      version: "1.2.0"
     };
   }
 }

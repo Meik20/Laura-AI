@@ -8,6 +8,15 @@ LAURA est une plateforme d'intelligence artificielle éducative conçue spécifi
 - **Inclusion Numérique** : Interface PWA légère et fallback SMS/USSD pour les zones à faible connectivité.
 - **Souveraineté** : Utilisation de modèles locaux (Mistral) pour garantir la confidentialité et réduire les coûts.
 
+## 📥 Ingestion de Données
+Pour alimenter LAURA avec les annales et programmes officiels :
+1. Dépose tes fichiers PDF dans le dossier `data/corpus/`.
+2. Exécute la commande suivante depuis la racine :
+   ```bash
+   node scripts/ingest.js
+   ```
+3. Le fichier `data/knowledge.json` sera automatiquement mis à jour avec les nouveaux fragments.
+
 ## 🛠 Stack Technique
 - **Backend** : Node.js, Express, Railway.
 - **Frontend** : React, Vite, PWA.
