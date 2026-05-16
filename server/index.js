@@ -8,16 +8,31 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const orchestrator = require('./services/orchestrator');
+const ussdService = require('./services/ussd');
 
 // Middleware
 app.use(helmet());
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // Routes Placeholder
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'healthy', project: 'LAURA', version: '1.0.0' });
+  res.json({ status: 'healthy', project: 'LAURA', version: '1.2.0' });
+});
+
+// USSD Gateway Route (Africa's Talking / Maviance Standard)
+app.post('/api/ussd', async (req, res) => {
+  const { phoneNumber, text, sessionId } = req.body;
+  
+  try {
+    const response = await ussdService.handleRequest(phoneNumber, text, sessionId);
+    res.send(response);
+  } catch (error) {
+    console.error('USSD error:', error);
+    res.send("END Erreur technique. Réessayez.");
+  }
 });
 
 // AI Orchestration Route
