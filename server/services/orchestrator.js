@@ -4,6 +4,9 @@
  */
 
 const ragService = require('./rag');
+const { Anthropic } = require('@anthropic-ai/sdk');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const OpenAI = require('openai');
 
 class Orchestrator {
   constructor() {
@@ -12,6 +15,14 @@ class Orchestrator {
       CONSENSUS: 'consensus',
       VISION: 'vision'
     };
+
+    // Initialize SDKs
+    this.anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }) : null;
+    this.genAI = process.env.GOOGLE_AI_API_KEY ? new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY) : null;
+    this.grok = process.env.GROK_API_KEY ? new OpenAI({
+      apiKey: process.env.GROK_API_KEY,
+      baseURL: "https://api.x.ai/v1",
+    }) : null;
   }
 
   /**
@@ -41,15 +52,53 @@ class Orchestrator {
   async handleChat(query, context = []) {
     const { model, strategy } = this.classifyQuery(query);
     
-    // 1. RAG Search
+    // 1. RAG Search (Grounding)
     const searchResults = await ragService.search(query);
-    const ragContext = searchResults.map(r => r.content).join('\n---\n');
+    const ragContext = searchResults.map(r => `[Source: ${r.source}] ${r.content}`).join('\n---\n');
 
-    console.log(`[LAURA] Routing to ${model} with strategy ${strategy}`);
+    const prompt = `Tu es LAURA (Learning AI & Unified Resource Assistant), une assistante éducative experte du programme scolaire camerounais (MINESEC/GCE Board).
+Tes réponses doivent être pédagogiques, claires et basées EXCLUSIVEMENT sur les documents officiels fournis ci-dessous.
+Si la réponse n'est pas dans le contexte, dis-le poliment et propose d'aider sur un autre sujet.
 
-    // 2. Mock response with RAG Grounding
+DOCUMENTS OFFICIELS :
+${ragContext}
+
+QUESTION DE L'ÉLÈVE :
+${query}`;
+
+    let responseText = "";
+
+    try {
+      if (model === 'claude' && this.anthropic) {
+        const msg = await this.anthropic.messages.create({
+          model: "claude-3-5-sonnet-20240620",
+          max_tokens: 2000,
+          messages: [{ role: "user", content: prompt }],
+        });
+        responseText = msg.content[0].text;
+      } 
+      else if (model === 'gemini' && this.genAI) {
+        const geminiModel = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const result = await geminiModel.generateContent(prompt);
+        responseText = result.response.text();
+      }
+      else if (model === 'grok' && this.grok) {
+        const completion = await this.grok.chat.completions.create({
+          model: "grok-beta", // or the specific xAI model
+          messages: [{ role: "user", content: prompt }],
+        });
+        responseText = completion.choices[0].message.content;
+      }
+      else {
+        responseText = "[Mode Simulation] Désolé, le modèle " + model + " n'est pas encore configuré avec une clé API valide.";
+      }
+    } catch (err) {
+      console.error(`Error with ${model}:`, err);
+      responseText = "Désolée, j'ai eu une erreur en contactant mon cerveau IA (" + model + ").";
+    }
+
     return {
-      response: `[Simulation ${model}] En me basant sur les documents officiels : "${ragContext.substring(0, 50)}...", voici ma réponse.`,
+      response: responseText,
       model_used: model,
       strategy_used: strategy,
       citations: searchResults.map(r => r.source)

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "intro_philo",
+    "content": "La philosophie au Cameroun commence en classe de Terminale. Elle vise à développer l'esprit critique et la réflexion autonome sur les grands problèmes de l'existence.",
+    "source": "Programme Officiel Philosophie MINESEC 2024"
+  },
+  {
+    "id": "math_suites",
+    "content": "Une suite numérique est une fonction dont l'ensemble de départ est l'ensemble des entiers naturels N. En Terminale D, on étudie particulièrement les suites arithmétiques et géométriques.",
+    "source": "Manuel de Mathématiques Terminale D - Collection Inter-Africaine"
+  },
+  {
+    "id": "hist_indep",
+    "content": "Le Cameroun a accédé à l'indépendance le 1er janvier 1960 pour la partie sous tutelle française, et le 1er octobre 1961 pour la partie sous tutelle britannique, formant la République Fédérale du Cameroun.",
+    "source": "Histoire du Cameroun - Manuel de 3ème"
+  }
+]
