@@ -21,14 +21,18 @@ class Orchestrator {
     const googleKey = (process.env.GOOGLE_AI_API_KEY || '').trim();
     const grokKey = (process.env.GROK_API_KEY || '').trim();
 
-    console.log(`[LAURA Service] Initializing with keys: Anthropic=${!!anthropicKey}, Gemini=${!!googleKey}, Grok=${!!grokKey}`);
+    console.log(`[LAURA Service] Initializing with keys: Anthropic=${!!anthropicKey}, Gemini=${!!googleKey}, Grok/Groq=${!!grokKey}`);
 
     this.anthropic = anthropicKey ? new Anthropic({ apiKey: anthropicKey }) : null;
     this.genAI = googleKey ? new GoogleGenerativeAI(googleKey) : null;
+    
+    // Auto-detect if it's xAI (Grok) or Groq (LPU)
+    const isGroq = grokKey.startsWith('gsk_');
     this.grok = grokKey ? new OpenAI({
       apiKey: grokKey,
-      baseURL: "https://api.x.ai/v1",
+      baseURL: isGroq ? "https://api.groq.com/openai/v1" : "https://api.x.ai/v1",
     }) : null;
+    this.isGroq = isGroq;
   }
 
   /**
@@ -45,11 +49,7 @@ class Orchestrator {
       return { model: 'claude', strategy: this.strategies.SIMPLE };
     }
 
-    if (q.includes('concours') || q.includes('actu') || q.includes('minesec')) {
-      return { model: 'grok', strategy: this.strategies.SIMPLE };
-    }
-
-    return { model: 'claude', strategy: this.strategies.SIMPLE };
+    return { model: 'grok', strategy: this.strategies.SIMPLE };
   }
 
   /**
@@ -62,17 +62,14 @@ class Orchestrator {
     const searchResults = await ragService.search(query);
     const ragContext = searchResults.map(r => `[Source: ${r.source}] ${r.content}`).join('\n---\n');
 
-    const prompt = `Tu es LAURA (Learning AI & Unified Resource Assistant), une assistante éducative experte du programme scolaire camerounais (MINESEC/GCE Board).
-Tes réponses doivent être pédagogiques, claires et basées EXCLUSIVEMENT sur les documents officiels fournis ci-dessous.
-
-DOCUMENTS OFFICIELS :
+    const prompt = `Tu es LAURA (Learning AI & Unified Resource Assistant), une assistante éducative experte du programme scolaire camerounais.
+Tes réponses doivent être pédagogiques et basées sur ce contexte :
 ${ragContext}
 
-QUESTION DE L'ÉLÈVE :
-${query}`;
+QUESTION : ${query}`;
 
-    // Define the sequence of models to try (Fallback Chain)
-    const modelOrder = [primaryModel, 'claude', 'gemini', 'grok'].filter((v, i, a) => a.indexOf(v) === i);
+    // Fallback Chain
+    const modelOrder = [primaryModel, 'gemini', 'grok', 'claude'].filter((v, i, a) => a.indexOf(v) === i);
     
     let responseText = "";
     let finalModelUsed = "";
@@ -80,8 +77,6 @@ ${query}`;
 
     for (const model of modelOrder) {
       try {
-        console.log(`[LAURA] Attempting with model: ${model}`);
-        
         if (model === 'claude' && this.anthropic) {
           const msg = await this.anthropic.messages.create({
             model: "claude-3-5-sonnet-20240620",
@@ -93,7 +88,6 @@ ${query}`;
           break;
         } 
         else if (model === 'gemini' && this.genAI) {
-          // Standard model name for Gemini 1.5 Flash
           const geminiModel = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
           const result = await geminiModel.generateContent(prompt);
           responseText = result.response.text();
@@ -101,13 +95,13 @@ ${query}`;
           break;
         }
         else if (model === 'grok' && this.grok) {
-          // Using grok-2 which is the current stable production model
+          const modelName = this.isGroq ? "llama-3.1-70b-versatile" : "grok-2";
           const completion = await this.grok.chat.completions.create({
-            model: "grok-2",
+            model: modelName,
             messages: [{ role: "user", content: prompt }],
           });
           responseText = completion.choices[0].message.content;
-          finalModelUsed = 'grok';
+          finalModelUsed = this.isGroq ? 'groq (llama 3.1)' : 'grok-2';
           break;
         }
       } catch (err) {
