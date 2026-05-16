@@ -53,10 +53,10 @@ class Orchestrator {
   }
 
   /**
-   * Main chat handling logic
+   * Main chat handling logic with Fallback Mechanism
    */
   async handleChat(query, context = []) {
-    const { model, strategy } = this.classifyQuery(query);
+    const { model: primaryModel, strategy } = this.classifyQuery(query);
     
     // 1. RAG Search (Grounding)
     const searchResults = await ragService.search(query);
@@ -64,7 +64,6 @@ class Orchestrator {
 
     const prompt = `Tu es LAURA (Learning AI & Unified Resource Assistant), une assistante éducative experte du programme scolaire camerounais (MINESEC/GCE Board).
 Tes réponses doivent être pédagogiques, claires et basées EXCLUSIVEMENT sur les documents officiels fournis ci-dessous.
-Si la réponse n'est pas dans le contexte, dis-le poliment et propose d'aider sur un autre sujet.
 
 DOCUMENTS OFFICIELS :
 ${ragContext}
@@ -72,42 +71,62 @@ ${ragContext}
 QUESTION DE L'ÉLÈVE :
 ${query}`;
 
+    // Define the sequence of models to try (Fallback Chain)
+    const modelOrder = [primaryModel, 'claude', 'gemini', 'grok'].filter((v, i, a) => a.indexOf(v) === i);
+    
     let responseText = "";
+    let finalModelUsed = "";
+    let errors = [];
 
-    try {
-      if (model === 'claude' && this.anthropic) {
-        const msg = await this.anthropic.messages.create({
-          model: "claude-3-5-sonnet-20240620",
-          max_tokens: 2000,
-          messages: [{ role: "user", content: prompt }],
-        });
-        responseText = msg.content[0].text;
-      } 
-      else if (model === 'gemini' && this.genAI) {
-        const geminiModel = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const result = await geminiModel.generateContent(prompt);
-        responseText = result.response.text();
+    for (const model of modelOrder) {
+      try {
+        console.log(`[LAURA] Attempting with model: ${model}`);
+        
+        if (model === 'claude' && this.anthropic) {
+          const msg = await this.anthropic.messages.create({
+            model: "claude-3-5-sonnet-20240620",
+            max_tokens: 2000,
+            messages: [{ role: "user", content: prompt }],
+          });
+          responseText = msg.content[0].text;
+          finalModelUsed = 'claude';
+          break;
+        } 
+        else if (model === 'gemini' && this.genAI) {
+          // Standard model name for Gemini 1.5 Flash
+          const geminiModel = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+          const result = await geminiModel.generateContent(prompt);
+          responseText = result.response.text();
+          finalModelUsed = 'gemini';
+          break;
+        }
+        else if (model === 'grok' && this.grok) {
+          // Using grok-2 which is the current stable production model
+          const completion = await this.grok.chat.completions.create({
+            model: "grok-2",
+            messages: [{ role: "user", content: prompt }],
+          });
+          responseText = completion.choices[0].message.content;
+          finalModelUsed = 'grok';
+          break;
+        }
+      } catch (err) {
+        console.warn(`[LAURA] Model ${model} failed:`, err.message);
+        errors.push(`${model}: ${err.message}`);
       }
-      else if (model === 'grok' && this.grok) {
-        const completion = await this.grok.chat.completions.create({
-          model: "grok-beta", // or the specific xAI model
-          messages: [{ role: "user", content: prompt }],
-        });
-        responseText = completion.choices[0].message.content;
-      }
-      else {
-        responseText = "[Mode Simulation] Désolé, le modèle " + model + " n'est pas encore configuré avec une clé API valide.";
-      }
-    } catch (err) {
-      console.error(`Error with ${model}:`, err);
-      responseText = "Désolée, j'ai eu une erreur en contactant mon cerveau IA (" + model + ").";
+    }
+
+    if (!responseText) {
+      responseText = "Désolée, tous mes cerveaux IA sont indisponibles ou n'ont plus de crédits.\nDétails : " + errors.join(' | ');
     }
 
     return {
       response: responseText,
-      model_used: model,
+      model_used: finalModelUsed || 'none',
       strategy_used: strategy,
-      citations: searchResults.map(r => r.source)
+      citations: searchResults.map(r => r.source),
+      version: "1.0.2",
+      is_fallback: finalModelUsed !== primaryModel && finalModelUsed !== ""
     };
   }
 }
