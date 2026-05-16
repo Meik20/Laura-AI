@@ -4,6 +4,7 @@
  */
 
 const ragService = require('./rag');
+const cacheService = require('./cache');
 const { Anthropic } = require('@anthropic-ai/sdk');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const OpenAI = require('openai');
@@ -123,16 +124,32 @@ class Orchestrator {
   /**
    * Main chat handling logic with Advanced Strategies
    */
-  async handleChat(query, context = []) {
+  async handleChat(query, context = [], mode = 'revision') {
+    // 0. Cache Check
+    try {
+      const cacheKey = `${mode}:${query.toLowerCase()}`;
+      const cached = await cacheService.get(cacheKey);
+      if (cached) return JSON.parse(cached);
+    } catch (e) {}
+
     const { model: targetModels, strategy } = this.classifyQuery(query);
     const searchResults = await ragService.search(query);
     const ragContext = searchResults.map(r => `[Source: ${r.source}] ${r.content}`).join('\n---\n');
 
-    const basePrompt = `Tu es LAURA, assistante experte du programme scolaire camerounais.
+    let basePrompt = "";
+    if (mode === 'devoir') {
+      basePrompt = `Tu es LAURA en mode COWORK (Collaboration Devoir).
+OBJECTIF : Aide l'élève à structurer son devoir, à résoudre l'exercice étape par étape sans donner la réponse brute immédiatement.
+CONSIGNE : Sois très structuré. Utilise des listes, des schémas textuels ou des démonstrations claires.
+CONTEXTE OFFICIEL :
+${ragContext}
+REQUÊTE DE L'ÉLÈVE : ${query}`;
+    } else {
+      basePrompt = `Tu es LAURA, assistante experte du programme scolaire camerounais.
 DIRECTIVE : Réponds de façon pédagogique et concise en te basant sur ce contexte :
 ${ragContext}
-
 QUESTION : ${query}`;
+    }
 
     let responseText = "";
     let finalModelUsed = "";
@@ -141,7 +158,6 @@ QUESTION : ${query}`;
     try {
       if (strategy === this.strategies.CONSENSUS) {
         console.log(`[LAURA] Strategy: CONSENSUS with models: ${modelsToTry.join(', ')}`);
-        // We exclude 'local' from consensus for performance unless needed
         const consensusModels = modelsToTry.filter(m => m !== 'local');
         const results = await Promise.allSettled(consensusModels.map(m => this.callModel(m, basePrompt)));
         const successResults = results.filter(r => r.status === 'fulfilled').map(r => r.value);
@@ -150,17 +166,15 @@ QUESTION : ${query}`;
           responseText = successResults[0].text;
           finalModelUsed = `Consensus (${successResults.map(r => r.model).join('+')})`;
         } else {
-          // Final fallback to local if consensus fails
           const res = await this.callModel('local', basePrompt);
           responseText = res.text;
           finalModelUsed = res.model;
         }
       } 
       else if (strategy === this.strategies.CRITIQUE) {
-        // ... existing critique logic ...
         try {
           const generator = await this.callModel('claude', basePrompt);
-          const criticPrompt = `Vérifie cette réponse : ${generator.text}`;
+          const criticPrompt = `Vérifie cette réponse par rapport aux sources : ${generator.text}`;
           const verified = await this.callModel('gemini', criticPrompt);
           responseText = verified.text;
           finalModelUsed = "Critique Croisée (Claude/Gemini)";
@@ -171,7 +185,6 @@ QUESTION : ${query}`;
         }
       }
       else {
-        // Simple strategy with fallback to local
         for (const m of modelsToTry) {
           try {
             const res = await this.callModel(m, basePrompt);
@@ -189,13 +202,20 @@ QUESTION : ${query}`;
 
     if (!responseText) responseText = "Désolée, je rencontre une difficulté technique extrême.";
 
-    return {
+    const result = {
       response: responseText,
       model_used: finalModelUsed,
       strategy_used: strategy,
       citations: searchResults.map(r => r.source),
-      version: "1.2.0"
+      version: "1.3.0"
     };
+
+    // Store in Cache (1 hour)
+    try {
+      await cacheService.set(query.toLowerCase(), JSON.stringify(result));
+    } catch (e) {}
+
+    return result;
   }
 }
 
