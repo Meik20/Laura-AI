@@ -95,39 +95,165 @@ function App() {
 
   // --- VIEWS ---
 
+  // Features chips data
+  const features = [
+    { icon: '📝', label: 'Réviser une leçon' },
+    { icon: '🧮', label: 'Résoudre un exercice' },
+    { icon: '📚', label: 'Préparer un examen' },
+    { icon: '✍️', label: 'Rédiger une dissertation' },
+    { icon: '🔬', label: 'Comprendre un concept' },
+    { icon: '📊', label: 'Analyser des données' },
+  ];
+
   if (!user && authStep !== 'pending') {
     return (
-      <div style={{ minHeight: '100vh', background: '#080C14', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter, sans-serif', padding: '2rem' }}>
-        <img src="/logo.png" alt="Logo" style={{ height: '64px', marginBottom: '2.5rem' }} />
-        <div style={{ background: '#0F1520', padding: '2.5rem', borderRadius: '1.5rem', width: '100%', maxWidth: '450px', border: '1px solid rgba(255,255,255,0.05)' }}>
-          {authStep === 'identity' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <input type="text" placeholder="Nom" style={{ padding: '1rem', borderRadius: '0.8rem', background: '#1A2236', border: '1px solid #334155', color: 'white' }} value={formData.nom} onChange={(e) => setFormData({...formData, nom: e.target.value})} />
-              <input type="text" placeholder="Prénom" style={{ padding: '1rem', borderRadius: '0.8rem', background: '#1A2236', border: '1px solid #334155', color: 'white' }} value={formData.prenom} onChange={(e) => setFormData({...formData, prenom: e.target.value})} />
-              <input type="email" placeholder="Email" style={{ padding: '1rem', borderRadius: '0.8rem', background: '#1A2236', border: '1px solid #334155', color: 'white' }} value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
-              <input type="password" placeholder="Mots de passe" style={{ padding: '1rem', borderRadius: '0.8rem', background: '#1A2236', border: '1px solid #334155', color: 'white' }} value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} />
-              <button onClick={() => setAuthStep('role')} style={{ padding: '1rem', borderRadius: '0.8rem', background: 'white', color: 'black', fontWeight: 700 }}>Continuer</button>
+      <div style={{ minHeight: '100vh', background: '#F5F4EF', fontFamily: "'Inter', sans-serif", color: '#1A1A1A' }}>
+
+        {/* HEADER */}
+        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.2rem 3rem', background: '#F5F4EF', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img src="/logo.png" alt="LAURA" style={{ height: '32px' }} />
+          </div>
+          <nav style={{ display: 'flex', gap: '2rem', fontSize: '0.9rem', color: '#444' }}>
+            <span style={{ cursor: 'pointer' }}>À propos</span>
+            <span style={{ cursor: 'pointer' }}>Fonctionnalités</span>
+            <span style={{ cursor: 'pointer' }}>Pour les établissements</span>
+          </nav>
+          <button style={{ background: '#1A1A1A', color: 'white', border: 'none', padding: '0.6rem 1.4rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}>Commencer gratuitement</button>
+        </header>
+
+        {/* HERO + FORM SECTION */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 65px)', padding: '4rem 3rem', gap: '5rem', maxWidth: '1200px', margin: '0 auto' }}>
+
+          {/* LEFT : HERO */}
+          <div style={{ flex: 1, maxWidth: '520px' }}>
+            <h1 style={{ fontSize: '3.8rem', fontWeight: 700, lineHeight: 1.15, marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
+              Apprends plus vite,<br />
+              <span style={{ color: '#00A37A' }}>réussis mieux.</span>
+            </h1>
+            <p style={{ fontSize: '1.15rem', color: '#555', lineHeight: 1.7, marginBottom: '2.5rem' }}>
+              LAURA est l'assistante IA conçue pour le programme scolaire et universitaire camerounais. Révise tes cours, prépare tes examens et maîtrise tes matières avec une IA qui connaît le MINESEC.
+            </p>
+
+            {/* FEATURE CHIPS */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.8rem' }}>
+              {features.map((f, i) => (
+                <div key={i} style={{ background: 'white', border: '1px solid #E5E5E0', borderRadius: '0.8rem', padding: '0.8rem 1rem', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: '#333', cursor: 'pointer', transition: '0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                  <span>{f.icon}</span>
+                  <span>{f.label}</span>
+                </div>
+              ))}
             </div>
-          )}
-          {authStep === 'role' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <button onClick={() => { setFormData({...formData, role: 'student'}); setAuthStep('details'); }} style={{ padding: '1.5rem', borderRadius: '1rem', background: '#1A2236', border: '1px solid #7C6FFF', color: 'white', textAlign: 'left' }}><strong>Élève</strong></button>
-              <button onClick={() => { setFormData({...formData, role: 'university'}); setAuthStep('details'); }} style={{ padding: '1.5rem', borderRadius: '1rem', background: '#1A2236', border: '1px solid #00D4AA', color: 'white', textAlign: 'left' }}><strong>Étudiant</strong></button>
-              <button onClick={() => { setFormData({...formData, role: 'teacher'}); setAuthStep('details'); }} style={{ padding: '1.5rem', borderRadius: '1rem', background: '#1A2236', border: '1px solid #F59E0B', color: 'white', textAlign: 'left' }}><strong>Tuteur</strong></button>
-            </div>
-          )}
-          {authStep === 'details' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <button onClick={handleSignup} style={{ padding: '1rem', borderRadius: '0.8rem', background: 'white', color: 'black', fontWeight: 700 }}>Finaliser</button>
-            </div>
-          )}
+          </div>
+
+          {/* RIGHT : FORM CARD */}
+          <div style={{ width: '380px', background: 'white', borderRadius: '1.5rem', padding: '2.5rem', boxShadow: '0 4px 30px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)' }}>
+
+            {authStep === 'identity' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.5rem', textAlign: 'center' }}>Créer votre compte</h2>
+                <div style={{ display: 'flex', gap: '0.8rem' }}>
+                  <input type="text" placeholder="Nom" style={{ flex: 1, padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', outline: 'none' }} value={formData.nom} onChange={(e) => setFormData({...formData, nom: e.target.value})} />
+                  <input type="text" placeholder="Prénom" style={{ flex: 1, padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', outline: 'none' }} value={formData.prenom} onChange={(e) => setFormData({...formData, prenom: e.target.value})} />
+                </div>
+                <input type="email" placeholder="Votre adresse e-mail" style={{ padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', outline: 'none' }} value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
+                <input type="password" placeholder="Créer un mot de passe" style={{ padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', outline: 'none' }} value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} />
+                <button onClick={() => setAuthStep('role')} style={{ padding: '0.9rem', borderRadius: '0.7rem', background: '#1A1A1A', color: 'white', border: 'none', fontWeight: 700, cursor: 'pointer', fontSize: '1rem', marginTop: '0.5rem' }}>
+                  Continuer avec l'e-mail
+                </button>
+                <p style={{ textAlign: 'center', fontSize: '0.78rem', color: '#999', marginTop: '0.5rem' }}>
+                  En continuant, vous acceptez les <span style={{ textDecoration: 'underline', cursor: 'pointer' }}>Conditions d'utilisation</span> de LAURA.
+                </p>
+              </div>
+            )}
+
+            {authStep === 'role' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.5rem', textAlign: 'center' }}>Vous êtes...</h2>
+                <button onClick={() => { setFormData({...formData, role: 'student'}); setAuthStep('details'); }} style={{ padding: '1.2rem', borderRadius: '0.8rem', border: '1.5px solid #7C6FFF', color: '#1A1A1A', background: 'white', textAlign: 'left', cursor: 'pointer' }}>
+                  <div style={{ fontWeight: 700 }}>Élève (Secondaire)</div>
+                  <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '3px' }}>De la 6ème à la Terminale · MINESEC</div>
+                </button>
+                <button onClick={() => { setFormData({...formData, role: 'university'}); setAuthStep('details'); }} style={{ padding: '1.2rem', borderRadius: '0.8rem', border: '1.5px solid #00A37A', color: '#1A1A1A', background: 'white', textAlign: 'left', cursor: 'pointer' }}>
+                  <div style={{ fontWeight: 700 }}>Étudiant (Supérieur)</div>
+                  <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '3px' }}>LMD, BTS/HND, Grandes Écoles</div>
+                </button>
+                <button onClick={() => { setFormData({...formData, role: 'teacher'}); setAuthStep('details'); }} style={{ padding: '1.2rem', borderRadius: '0.8rem', border: '1.5px solid #F59E0B', color: '#1A1A1A', background: 'white', textAlign: 'left', cursor: 'pointer' }}>
+                  <div style={{ fontWeight: 700 }}>Tuteur / Expert</div>
+                  <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '3px' }}>PLEG, PCEG, Formateur, Professionnel</div>
+                </button>
+                <button onClick={() => setAuthStep('identity')} style={{ background: 'none', border: 'none', color: '#999', cursor: 'pointer', fontSize: '0.85rem', marginTop: '0.5rem' }}>← Retour</button>
+              </div>
+            )}
+
+            {authStep === 'details' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.5rem', textAlign: 'center' }}>Votre parcours</h2>
+
+                {formData.role === 'student' && (<>
+                  <select onChange={(e) => setFormData({...formData, level: e.target.value})} style={{ padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', color: '#1A1A1A' }}>
+                    <option value="">Classe</option>
+                    <option value="Tle">Terminale</option><option value="1ère">Première</option><option value="3ème">Troisième</option>
+                  </select>
+                  <select onChange={(e) => setFormData({...formData, exam: e.target.value})} style={{ padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', color: '#1A1A1A' }}>
+                    <option value="">Examen préparé</option>
+                    <option value="BACC">Baccalauréat</option><option value="PROBATOIRE">Probatoire</option><option value="BEPC">BEPC</option>
+                  </select>
+                  <select onChange={(e) => setFormData({...formData, series: e.target.value})} style={{ padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', color: '#1A1A1A' }}>
+                    <option value="">Série</option>
+                    <optgroup label="Scientifique"><option value="C">C — Maths/Physique</option><option value="D">D — SVT/Chimie</option></optgroup>
+                    <optgroup label="Littéraire"><option value="A1">A1</option><option value="A2">A2</option><option value="A3">A3</option><option value="A4">A4</option></optgroup>
+                    <optgroup label="Économique"><option value="SES">SES / ES</option></optgroup>
+                  </select>
+                </>)}
+
+                {formData.role === 'university' && (<>
+                  <select onChange={(e) => setFormData({...formData, level: e.target.value})} style={{ padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', color: '#1A1A1A' }}>
+                    <option value="">Niveau d'étude</option>
+                    <option value="BAC+2">BAC+2 / BTS / HND</option>
+                    <option value="L1">Licence 1</option><option value="L2">Licence 2</option><option value="L3">Licence 3</option>
+                    <option value="Master">Master</option><option value="Doctorat">Doctorat</option>
+                  </select>
+                  <select onChange={(e) => setFormData({...formData, domain: e.target.value})} style={{ padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', color: '#1A1A1A' }}>
+                    <option value="">Domaine</option>
+                    <option value="Sciences">Sciences & Tech</option><option value="Santé">Médecine / Santé</option>
+                    <option value="Droit">Droit / Sc. Po</option><option value="Eco">Économie / Gestion</option>
+                    <option value="Lettres">Lettres / Arts</option>
+                  </select>
+                  <input type="text" placeholder="Filière précise (ex: Génie Logiciel)" style={{ padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', outline: 'none' }} onChange={(e) => setFormData({...formData, filiere: e.target.value})} />
+                </>)}
+
+                {formData.role === 'teacher' && (<>
+                  <select onChange={(e) => setFormData({...formData, grade: e.target.value})} style={{ padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', color: '#1A1A1A' }}>
+                    <option value="">Grade / Titre</option>
+                    <option value="PLEG">PLEG</option><option value="PCEG">PCEG</option>
+                    <option value="PENI">PENI</option><option value="Expert">Expert / Professionnel</option>
+                  </select>
+                  <input type="text" placeholder="Discipline (ex: Mathématiques)" style={{ padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', outline: 'none' }} onChange={(e) => setFormData({...formData, discipline: e.target.value})} />
+                  <input type="text" placeholder="Établissement (Lycée, Université...)" style={{ padding: '0.9rem', borderRadius: '0.7rem', border: '1px solid #E5E5E0', fontSize: '0.95rem', outline: 'none' }} onChange={(e) => setFormData({...formData, school: e.target.value})} />
+                </>)}
+
+                <button onClick={handleSignup} disabled={isLoading} style={{ padding: '0.9rem', borderRadius: '0.7rem', background: '#1A1A1A', color: 'white', border: 'none', fontWeight: 700, cursor: 'pointer', fontSize: '1rem', marginTop: '0.5rem' }}>
+                  {isLoading ? 'Création en cours...' : 'Rejoindre LAURA'}
+                </button>
+                <button onClick={() => setAuthStep('role')} style={{ background: 'none', border: 'none', color: '#999', cursor: 'pointer', fontSize: '0.85rem' }}>← Modifier le rôle</button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
   }
 
   if (authStep === 'pending') {
-    return <div style={{ minHeight: '100vh', background: '#080C14', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><h2>Dossier Tuteur en attente...</h2></div>
+    return (
+      <div style={{ minHeight: '100vh', background: '#F5F4EF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem' }}>
+        <img src="/logo.png" alt="LAURA" style={{ height: '56px', marginBottom: '2rem' }} />
+        <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '1rem' }}>Dossier en cours d'examen</h2>
+        <p style={{ color: '#666', maxWidth: '420px', lineHeight: 1.7 }}>Merci {formData.prenom}. Votre profil de Tuteur est soumis à validation administrative. Vous serez notifié par e-mail dès l'activation de votre accès.</p>
+        <button onClick={() => { setAuthStep('identity'); signOut(auth); }} style={{ marginTop: '2.5rem', background: '#1A1A1A', color: 'white', border: 'none', padding: '0.8rem 2rem', borderRadius: '0.8rem', cursor: 'pointer', fontWeight: 600 }}>Retour à l'accueil</button>
+      </div>
+    );
   }
 
   // --- DASHBOARD ADMIN (DIEU) ---
