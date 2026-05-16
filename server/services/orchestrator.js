@@ -95,13 +95,14 @@ QUESTION : ${query}`;
           break;
         }
         else if (model === 'grok' && this.grok) {
-          const modelName = this.isGroq ? "llama-3.1-70b-versatile" : "grok-2";
+          // llama-3.3-70b-versatile is the current production replacement on Groq
+          const modelName = this.isGroq ? "llama-3.3-70b-versatile" : "grok-2";
           const completion = await this.grok.chat.completions.create({
             model: modelName,
             messages: [{ role: "user", content: prompt }],
           });
           responseText = completion.choices[0].message.content;
-          finalModelUsed = this.isGroq ? 'groq (llama 3.1)' : 'grok-2';
+          finalModelUsed = this.isGroq ? 'groq (llama 3.3)' : 'grok-2';
           break;
         }
       } catch (err) {
