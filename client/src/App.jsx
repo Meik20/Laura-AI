@@ -11,7 +11,7 @@ import { doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, se
 function App() {
   const [user, setUser] = useState(null); 
   const [authStep, setAuthStep] = useState('landing'); 
-  const [isLogin, setIsLogin] = useState(true); // Toggle Login/Signup
+  const [isLogin, setIsLogin] = useState(true); 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [formData, setFormData] = useState({ nom: '', prenom: '', email: '', password: '', passwordConfirm: '', role: '', level: '', exam: '', series: '', filiere: '', domain: '', discipline: '', grade: '', school: '' });
   const [messages, setMessages] = useState([]);
@@ -73,20 +73,19 @@ function App() {
   }, [user]);
 
   const handleAuthAction = async () => {
+    if (!formData.email || !formData.password) return alert("Veuillez remplir tous les champs.");
     setIsLoading(true);
     try {
       if (isLogin) {
-        // LOGIN
         await signInWithEmailAndPassword(auth, formData.email, formData.password);
       } else {
-        // SIGNUP PROCEED TO ROLE
+        if (formData.password !== formData.passwordConfirm) return alert("Les mots de passe ne correspondent pas.");
         setAuthStep('role');
       }
-    } catch (e) { alert(e.message); } finally { setIsLoading(false); }
+    } catch (e) { alert("Erreur d'authentification : " + e.message); } finally { setIsLoading(false); }
   }
 
   const handleSignupFinal = async () => {
-    if (formData.password !== formData.passwordConfirm) return alert("Les mots de passe ne correspondent pas.");
     setIsLoading(true);
     try {
       const res = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
@@ -127,11 +126,6 @@ function App() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => setAuthStep('landing')}>
             <img src="/logo.png" alt="LAURA" style={{ height: '44px' }} />
           </div>
-          <nav style={{ display: 'flex', gap: '2rem', fontSize: '0.95rem', color: '#444', fontWeight: 500 }}>
-            <span style={{ cursor: 'pointer' }}>À propos</span>
-            <span style={{ cursor: 'pointer' }}>Fonctionnalités</span>
-            <span style={{ cursor: 'pointer' }}>Établissements</span>
-          </nav>
           <button onClick={() => { setAuthStep('identity'); setIsLogin(true); }} style={{ background: '#1A1A1A', color: 'white', border: 'none', padding: '0.7rem 1.6rem', borderRadius: '0.6rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem' }}>Se connecter</button>
         </header>
 
@@ -140,7 +134,7 @@ function App() {
           {authStep === 'landing' && (
             <div style={{ textAlign: 'center', maxWidth: '1000px' }}>
               <h1 style={{ fontSize: '4.8rem', fontWeight: 800, lineHeight: 1.1, marginBottom: '1.8rem', letterSpacing: '-0.03em' }}>Apprends plus vite,<br /><span style={{ color: '#00A37A' }}>réussis mieux.</span></h1>
-              <p style={{ fontSize: '1.35rem', color: '#555', lineHeight: 1.6, marginBottom: '5rem', maxWidth: '650px', margin: '0 auto 5rem' }}>L'IA souveraine conçue pour le programme scolaire camerounais. Révise, pratique et excelle avec LAURA.</p>
+              <p style={{ fontSize: '1.35rem', color: '#555', lineHeight: 1.6, marginBottom: '5rem', maxWidth: '650px', margin: '0 auto 5rem' }}>L'IA souveraine conçue pour le programme scolaire camerounais.</p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.8rem', width: '100%' }}>
                 {features.map((f, i) => (
                   <div key={i} style={{ background: 'white', border: '1px solid #E5E5E0', borderRadius: '1.4rem', padding: '1.8rem', display: 'flex', alignItems: 'center', gap: '18px', fontSize: '1.1rem', color: '#333', cursor: 'pointer', transition: '0.3s', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
@@ -160,25 +154,42 @@ function App() {
                   
                   {!isLogin && (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                      <input type="text" placeholder="Nom" style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', width: '100%', boxSizing: 'border-box', fontSize: '1rem' }} value={formData.nom} onChange={(e) => setFormData({...formData, nom: e.target.value})} />
-                      <input type="text" placeholder="Prénom" style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', width: '100%', boxSizing: 'border-box', fontSize: '1rem' }} value={formData.prenom} onChange={(e) => setFormData({...formData, prenom: e.target.value})} />
+                      <input key="nom" type="text" placeholder="Nom" style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', width: '100%', boxSizing: 'border-box', fontSize: '1rem' }} value={formData.nom} onChange={(e) => setFormData({...formData, nom: e.target.value})} />
+                      <input key="prenom" type="text" placeholder="Prénom" style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', width: '100%', boxSizing: 'border-box', fontSize: '1rem' }} value={formData.prenom} onChange={(e) => setFormData({...formData, prenom: e.target.value})} />
                     </div>
                   )}
 
-                  <input type="email" placeholder="E-mail professionnel ou scolaire" style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem' }} value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
-                  <input type="password" placeholder="Mot de passe" style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem' }} value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} />
+                  <input key="email" type="email" name="email" placeholder="E-mail" style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem' }} value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
+                  
+                  <input 
+                    key={isLogin ? "pass-login" : "pass-signup"}
+                    type="password" 
+                    name="password"
+                    placeholder="Mot de passe" 
+                    style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem', width: '100%', boxSizing: 'border-box' }} 
+                    value={formData.password} 
+                    onChange={(e) => setFormData({...formData, password: e.target.value})} 
+                  />
                   
                   {!isLogin && (
-                    <input type="password" placeholder="Confirmer le mot de passe" style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem' }} value={formData.passwordConfirm} onChange={(e) => setFormData({...formData, passwordConfirm: e.target.value})} />
+                    <input 
+                      key="pass-confirm"
+                      type="password" 
+                      name="passwordConfirm"
+                      placeholder="Confirmer le mot de passe" 
+                      style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem', width: '100%', boxSizing: 'border-box' }} 
+                      value={formData.passwordConfirm} 
+                      onChange={(e) => setFormData({...formData, passwordConfirm: e.target.value})} 
+                    />
                   )}
 
                   <button onClick={handleAuthAction} disabled={isLoading} style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#1A1A1A', color: 'white', fontWeight: 700, cursor: 'pointer', fontSize: '1.1rem', marginTop: '0.5rem' }}>
-                    {isLoading ? 'Action en cours...' : isLogin ? 'Se connecter' : 'Continuer'}
+                    {isLoading ? 'Vérification...' : isLogin ? 'Se connecter' : 'Continuer'}
                   </button>
 
                   <p style={{ textAlign: 'center', fontSize: '0.95rem', color: '#6E6E6B' }}>
-                    {isLogin ? "Nouveau sur LAURA ?" : "Vous avez déjà un compte ?"} 
-                    <span onClick={() => setIsLogin(!isLogin)} style={{ color: '#00A37A', fontWeight: 700, cursor: 'pointer', marginLeft: '8px' }}>
+                    {isLogin ? "Nouveau sur LAURA ?" : "Déjà un compte ?"} 
+                    <span onClick={() => { setIsLogin(!isLogin); setFormData({...formData, password: '', passwordConfirm: ''}); }} style={{ color: '#00A37A', fontWeight: 700, cursor: 'pointer', marginLeft: '8px' }}>
                       {isLogin ? "S'inscrire" : "Se connecter"}
                     </span>
                   </p>
@@ -211,15 +222,12 @@ function App() {
                       <select onChange={(e) => setFormData({...formData, level: e.target.value})} style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem' }}>
                         <option value="">Classe</option><option value="Tle">Terminale</option><option value="1ère">Première</option><option value="3ème">Troisième</option>
                       </select>
-                      <select onChange={(e) => setFormData({...formData, exam: e.target.value})} style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem' }}>
-                        <option value="">Examen</option><option value="BACC">BACC</option><option value="PROBATOIRE">PROBATOIRE</option><option value="BEPC">BEPC</option>
-                      </select>
                       <select onChange={(e) => setFormData({...formData, series: e.target.value})} style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#F9F9F8', border: '1px solid #E5E5E2', outline: 'none', fontSize: '1rem' }}>
                         <option value="">Série</option><option value="C">C</option><option value="D">D</option><option value="A4">A4</option><option value="SES">SES</option>
                       </select>
                     </>
                   )}
-                  <button onClick={handleSignupFinal} style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#1A1A1A', color: 'white', fontWeight: 700, cursor: 'pointer', fontSize: '1.1rem' }}>{isLoading ? 'Création...' : 'Finaliser mon profil'}</button>
+                  <button onClick={handleSignupFinal} style={{ padding: '1.1rem', borderRadius: '0.9rem', background: '#1A1A1A', color: 'white', fontWeight: 700, cursor: 'pointer', fontSize: '1.1rem' }}>Finaliser mon profil</button>
                 </div>
               )}
             </div>
@@ -228,37 +236,8 @@ function App() {
 
         {/* FOOTER */}
         <footer style={{ background: '#1A1A1A', color: '#94A3B8', padding: '6rem 3rem 4rem', fontSize: '0.95rem' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '4rem', marginBottom: '5rem' }}>
-            <div>
-              <img src="/logo.png" alt="LAURA" style={{ height: '44px', marginBottom: '2rem', filter: 'brightness(0) invert(1)' }} />
-              <p style={{ lineHeight: 1.7 }}>L'intelligence artificielle dédiée à la réussite académique au Cameroun.</p>
-            </div>
-            <div>
-              <h4 style={{ color: 'white', marginBottom: '1.8rem', fontSize: '1.1rem' }}>Produit</h4>
-              <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <li style={{ cursor: 'pointer' }}>Fonctionnalités</li>
-                <li style={{ cursor: 'pointer' }}>Tuteurs Experts</li>
-                <li style={{ cursor: 'pointer' }}>Tarification</li>
-              </ul>
-            </div>
-            <div>
-              <h4 style={{ color: 'white', marginBottom: '1.8rem', fontSize: '1.1rem' }}>Ressources</h4>
-              <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <li style={{ cursor: 'pointer' }}>Centre d'aide</li>
-                <li style={{ cursor: 'pointer' }}>Blog Éducatif</li>
-                <li style={{ cursor: 'pointer' }}>Annales MINESEC</li>
-              </ul>
-            </div>
-            <div>
-              <h4 style={{ color: 'white', marginBottom: '1.8rem', fontSize: '1.1rem' }}>Légal</h4>
-              <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <li style={{ cursor: 'pointer' }}>Confidentialité</li>
-                <li style={{ cursor: 'pointer' }}>Conditions</li>
-                <li style={{ cursor: 'pointer' }}>Contact</li>
-              </ul>
-            </div>
-          </div>
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2.5rem', textAlign: 'center', color: '#6E6E6B' }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+            <img src="/logo.png" alt="LAURA" style={{ height: '44px', marginBottom: '2rem', filter: 'brightness(0) invert(1)' }} />
             <p>LAURA AI © 2026 — Fabriqué au Cameroun 🇨🇲</p>
           </div>
         </footer>
@@ -270,45 +249,8 @@ function App() {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F4EF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem' }}>
         <h2 style={{ marginBottom: '1.5rem', fontSize: '2rem', fontWeight: 700 }}>Dossier en cours d'examen</h2>
-        <p style={{ color: '#6E6E6B', maxWidth: '450px', lineHeight: '1.6' }}>Merci {user.prenom}. Votre profil de Tuteur est en attente de validation par l'administration.</p>
-        <button onClick={handleLogout} style={{ marginTop: '2rem', background: '#1A1A1A', color: 'white', padding: '0.8rem 2rem', borderRadius: '0.8rem', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Retour</button>
-      </div>
-    );
-  }
-
-  // --- DASHBOARD ADMIN ---
-  if (user.role === 'admin') {
-    return (
-      <div style={{ minHeight: '100vh', background: '#080C14', color: 'white', display: 'flex' }}>
-        <aside style={{ width: '280px', background: '#0F1520', borderRight: '1px solid rgba(255,255,255,0.05)', padding: '2rem' }}>
-          <img src="/logo.png" alt="Logo" style={{ height: '36px', marginBottom: '3rem' }} />
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <button style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', padding: '1rem', borderRadius: '0.5rem', textAlign: 'left' }}>🌍 Vue d'ensemble</button>
-            <button onClick={handleLogout} style={{ marginTop: 'auto', color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}>Déconnexion</button>
-          </nav>
-        </aside>
-        <main style={{ flex: 1, padding: '3rem' }}>
-          <h1 style={{ marginBottom: '2rem' }}>Dashboard Admin</h1>
-          <div style={{ display: 'flex', gap: '2rem', marginBottom: '3rem' }}>
-            <div style={{ flex: 1, background: '#0F1520', padding: '1.5rem', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <div style={{ color: '#94A3B8' }}>Utilisateurs</div>
-              <div style={{ fontSize: '2rem', fontWeight: 700 }}>{adminData.stats.total || 0}</div>
-            </div>
-            <div style={{ flex: 1, background: '#0F1520', padding: '1.5rem', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <div style={{ color: '#F59E0B' }}>Attente Tuteurs</div>
-              <div style={{ fontSize: '2rem', fontWeight: 700 }}>{adminData.pendingTeachers.length}</div>
-            </div>
-          </div>
-          <div style={{ background: '#0F1520', borderRadius: '1rem', padding: '1.5rem' }}>
-            <h2 style={{ marginBottom: '1.5rem' }}>Tuteurs en attente</h2>
-            {adminData.pendingTeachers.map(t => (
-              <div key={t.id} style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>{t.prenom} {t.nom} ({t.discipline})</div>
-                <button onClick={() => approveTeacher(t.id)} style={{ background: '#00D4AA', color: 'black', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 700, cursor: 'pointer' }}>Approuver</button>
-              </div>
-            ))}
-          </div>
-        </main>
+        <p style={{ color: '#6E6E6B', maxWidth: '450px', lineHeight: '1.6' }}>Votre profil de Tuteur est en attente de validation.</p>
+        <button onClick={handleLogout} style={{ marginTop: '2rem', background: '#1A1A1A', color: 'white', padding: '0.8rem 2rem', borderRadius: '0.8rem', border: 'none', cursor: 'pointer' }}>Retour</button>
       </div>
     );
   }
@@ -332,7 +274,7 @@ function App() {
         {messages.length === 0 ? (
           <div style={{ textAlign: 'center' }}>
             <h1 style={{ fontSize: '4rem', fontWeight: 600 }}>Bonjour, {user.prenom}.</h1>
-            <p style={{ color: '#6E6E6B', fontSize: '1.3rem', marginTop: '1rem' }}>Comment puis-je t'aider à réviser aujourd'hui ?</p>
+            <p style={{ color: '#6E6E6B', fontSize: '1.3rem', marginTop: '1rem' }}>Comment puis-je t'aider aujourd'hui ?</p>
           </div>
         ) : (
           <div style={{ width: '100%', maxWidth: '850px', display: 'flex', flexDirection: 'column', gap: '3rem', paddingBottom: '12rem' }}>
