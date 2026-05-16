@@ -52,7 +52,7 @@ function App() {
         }}>
           PROJECT LAURA v1.0
         </div>
-        <h1 className="gradient-text" style={{ fontSize: '3.5rem', fontWeight: 900 }}>L.A.U.R.A</h1>
+        <h1 className="gradient-text" style={{ fontSize: '3.5rem', fontWeight: 900 }}>LAURA</h1>
         <p style={{ color: 'var(--text-dim)', marginTop: '0.5rem' }}>Ton Assistant Éducatif Intelligent & Officiel</p>
       </header>
 

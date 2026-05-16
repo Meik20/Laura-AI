@@ -17,10 +17,16 @@ class Orchestrator {
     };
 
     // Initialize SDKs
-    this.anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }) : null;
-    this.genAI = process.env.GOOGLE_AI_API_KEY ? new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY) : null;
-    this.grok = process.env.GROK_API_KEY ? new OpenAI({
-      apiKey: process.env.GROK_API_KEY,
+    const anthropicKey = (process.env.ANTHROPIC_API_KEY || '').trim();
+    const googleKey = (process.env.GOOGLE_AI_API_KEY || '').trim();
+    const grokKey = (process.env.GROK_API_KEY || '').trim();
+
+    console.log(`[LAURA Service] Initializing with keys: Anthropic=${!!anthropicKey}, Gemini=${!!googleKey}, Grok=${!!grokKey}`);
+
+    this.anthropic = anthropicKey ? new Anthropic({ apiKey: anthropicKey }) : null;
+    this.genAI = googleKey ? new GoogleGenerativeAI(googleKey) : null;
+    this.grok = grokKey ? new OpenAI({
+      apiKey: grokKey,
       baseURL: "https://api.x.ai/v1",
     }) : null;
   }
