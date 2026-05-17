@@ -24,7 +24,7 @@ export default function PublicLayout() {
         <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'center' }}>
           <img src="/logo.png" alt="LAURA" style={{ height: '32px', filter: 'brightness(0) invert(1)' }} />
         </div>
-        <p style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>L'intelligence artificielle éducative africaine</p>
+        <p style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>Learning AI & Unified Resource Assistant</p>
         <p style={{ fontSize: '0.85rem', color: '#666' }}>© 2026 LAURA — Tous droits réservés</p>
       </footer>
     </div>
