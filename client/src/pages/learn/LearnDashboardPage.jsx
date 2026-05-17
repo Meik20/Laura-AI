@@ -26,9 +26,9 @@ export default function LearnDashboardPage() {
 
   // Logique dynamique des matières et recommandations selon la série/filière
   let matieres = [
-    { mat: 'Mathématiques', val: 68, color: '#7C6FFF' },
-    { mat: 'Physique-Chimie', val: 40, color: '#F59E0B' },
-    { mat: 'SVT', val: 55, color: '#00D4AA' }
+    { mat: 'Mathématiques', val: 0, color: '#7C6FFF' },
+    { mat: 'Physique-Chimie', val: 0, color: '#F59E0B' },
+    { mat: 'SVT', val: 0, color: '#00D4AA' }
   ];
   let recos = [
     { icon: '📐', text: 'Réviser les Suites numériques' },
@@ -38,9 +38,9 @@ export default function LearnDashboardPage() {
 
   if (user.serie && user.serie.startsWith('A')) {
     matieres = [
-      { mat: 'Philosophie', val: 68, color: '#7C6FFF' },
-      { mat: 'Français / Littérature', val: 40, color: '#F59E0B' },
-      { mat: 'Histoire-Géo', val: 55, color: '#00D4AA' }
+      { mat: 'Philosophie', val: 0, color: '#7C6FFF' },
+      { mat: 'Français / Littérature', val: 0, color: '#F59E0B' },
+      { mat: 'Histoire-Géo', val: 0, color: '#00D4AA' }
     ];
     recos = [
       { icon: '📚', text: 'Réviser les figures de style' },
@@ -49,9 +49,9 @@ export default function LearnDashboardPage() {
     ];
   } else if (user.serie === 'SES' || user.filiere?.toLowerCase().includes('gestion')) {
     matieres = [
-      { mat: 'Économie', val: 68, color: '#7C6FFF' },
-      { mat: 'Mathématiques', val: 40, color: '#F59E0B' },
-      { mat: 'Histoire-Géo', val: 55, color: '#00D4AA' }
+      { mat: 'Économie', val: 0, color: '#7C6FFF' },
+      { mat: 'Mathématiques', val: 0, color: '#F59E0B' },
+      { mat: 'Histoire-Géo', val: 0, color: '#00D4AA' }
     ];
     recos = [
       { icon: '📊', text: 'Réviser la Croissance économique' },
@@ -61,9 +61,9 @@ export default function LearnDashboardPage() {
   } else if (user.filiere && !user.serie) {
     // Étudiant supérieur générique
     matieres = [
-      { mat: 'Matière Principale 1', val: 68, color: '#7C6FFF' },
-      { mat: 'Matière Principale 2', val: 40, color: '#F59E0B' },
-      { mat: 'Matière Optionnelle', val: 55, color: '#00D4AA' }
+      { mat: 'Matière Principale 1', val: 0, color: '#7C6FFF' },
+      { mat: 'Matière Principale 2', val: 0, color: '#F59E0B' },
+      { mat: 'Matière Optionnelle', val: 0, color: '#00D4AA' }
     ];
     recos = [
       { icon: '📖', text: 'Relire le cours chapitre 1' },
