@@ -15,11 +15,13 @@ import LearnChatPage from '../pages/learn/LearnChatPage';
 import LearnRevisionPage from '../pages/learn/LearnRevisionPage';
 import LearnExamsPage from '../pages/learn/LearnExamsPage';
 import LearnResourcesPage from '../pages/learn/LearnResourcesPage';
+import LearnProgressPage from '../pages/learn/LearnProgressPage';
 
 // Tutor Pages
 import TutorDashboardPage from '../pages/tutor/TutorDashboardPage';
 import BecomeTutorPage from '../pages/public/BecomeTutorPage';
 import TutorApplyPage from '../pages/public/TutorApplyPage';
+import HowItWorksPage from '../pages/public/HowItWorksPage';
 import TutorStatusPage from '../pages/tutor/TutorStatusPage';
 
 // Admin Pages
@@ -33,6 +35,7 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'signup', element: <SignupPage /> },
+      { path: 'how-it-works', element: <HowItWorksPage /> },
       { path: 'become-tutor', element: <BecomeTutorPage /> },
       { path: 'tutor/apply', element: <TutorApplyPage /> },
       { path: 'tutor/status', element: <TutorStatusPage /> },
@@ -49,6 +52,7 @@ export const router = createBrowserRouter([
       { path: 'revision', element: <LearnRevisionPage /> },
       { path: 'exams', element: <LearnExamsPage /> },
       { path: 'resources', element: <LearnResourcesPage /> },
+      { path: 'progress', element: <LearnProgressPage /> },
       // Add other learn routes here
     ],
   },
