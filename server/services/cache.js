@@ -3,11 +3,13 @@ const redis = require('redis');
 class CacheService {
   constructor() {
     this.client = redis.createClient({
-      url: process.env.REDIS_URL || 'redis://localhost:6379'
+      url: process.env.REDIS_URL || 'redis://localhost:6379',
+      socket: {
+        reconnectStrategy: false
+      }
     });
     
     this.client.on('error', (err) => {
-      // Éviter le spam dans les logs si la connexion est refusée
       if (err.code === 'ECONNREFUSED') {
         console.warn('⚠️ Redis non connecté (ECONNREFUSED). Le cache sera désactivé.');
       } else {
