@@ -5,6 +5,7 @@ import { collection, getDocs } from 'firebase/firestore';
 export default function AdminUsersPage() {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [filter, setFilter] = useState('Tous');
 
   useEffect(() => {
     async function fetchUsers() {
@@ -44,7 +45,19 @@ export default function AdminUsersPage() {
 
       <div style={{ display: 'flex', gap: '1rem' }}>
         {['Tous', 'Élèves', 'Étudiants', 'Tuteurs', 'Suspendus'].map((f, i) => (
-          <button key={i} style={{ background: i === 0 ? '#3B82F6' : 'rgba(255,255,255,0.05)', color: i === 0 ? 'white' : '#94A3B8', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '2rem', fontWeight: 600, cursor: 'pointer' }}>
+          <button 
+            key={i} 
+            onClick={() => setFilter(f)}
+            style={{ 
+              background: filter === f ? '#3B82F6' : 'rgba(255,255,255,0.05)', 
+              color: filter === f ? 'white' : '#94A3B8', 
+              border: 'none', 
+              padding: '0.6rem 1.2rem', 
+              borderRadius: '2rem', 
+              fontWeight: 600, 
+              cursor: 'pointer' 
+            }}
+          >
             {f}
           </button>
         ))}
@@ -67,8 +80,17 @@ export default function AdminUsersPage() {
             ) : users.length === 0 ? (
               <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Aucun utilisateur trouvé.</td></tr>
             ) : (
-              users.map((usr, i) => (
-                <tr key={usr.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              users
+                .filter(u => {
+                  if (filter === 'Tous') return true;
+                  if (filter === 'Élèves') return u.role === 'Élève';
+                  if (filter === 'Étudiants') return u.role === 'Étudiant';
+                  if (filter === 'Tuteurs') return u.role === 'Tuteur' || u.isTutor;
+                  if (filter === 'Suspendus') return u.statut === 'suspendu';
+                  return true;
+                })
+                .map((usr, i) => (
+                  <tr key={usr.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                   <td style={{ padding: '1.5rem', fontWeight: 700, color: 'white' }}>{usr.nom}</td>
                   <td style={{ padding: '1.5rem' }}>
                     <span style={{ color: '#E2E8F0', fontWeight: 600 }}>{usr.role}</span>

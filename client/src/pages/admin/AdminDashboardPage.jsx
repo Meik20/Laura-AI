@@ -9,19 +9,20 @@ export default function AdminDashboardPage() {
     { label: 'Étudiants', value: '...', icon: '🎓', color: '#8B5CF6' },
     { label: 'Tuteurs (Total)', value: '...', icon: '👨‍🏫', color: '#10B981' },
     { label: 'Contributeurs', value: '...', icon: '⭐', color: '#F59E0B' }
-  ]);
+  const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
     async function fetchStats() {
       try {
         const querySnapshot = await getDocs(collection(db, 'users'));
-        let eleves = 0, etudiants = 0, tuteurs = 0;
+        let eleves = 0, etudiants = 0, tuteurs = 0, pendingTutors = 0;
         
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           if (data.roleLabel === 'Élève') eleves++;
           if (data.roleLabel === 'Étudiant') etudiants++;
           if (data.isTutor) tuteurs++;
+          if (data.isTutorPending) pendingTutors++;
         });
 
         setStats([
@@ -30,18 +31,32 @@ export default function AdminDashboardPage() {
           { label: 'Tuteurs (Total)', value: tuteurs.toString(), icon: '👨‍🏫', color: '#10B981' },
           { label: 'Contributeurs', value: '0', icon: '⭐', color: '#F59E0B' }
         ]);
+
+        const dynamicAlerts = [];
+        if (pendingTutors > 0) {
+          dynamicAlerts.push({ type: 'warning', msg: `${pendingTutors} candidature(s) tuteur(s) en attente de révision.`, link: '/admin/tutor-applications' });
+        }
+        
+        // On vérifie s'il y a des ressources en brouillon/soumises
+        try {
+          const resSnap = await getDocs(collection(db, 'resources'));
+          let pendingRes = 0;
+          resSnap.forEach(doc => { if (doc.data().statut === 'brouillon' || doc.data().statut === 'en_attente') pendingRes++; });
+          if (pendingRes > 0) {
+            dynamicAlerts.push({ type: 'info', msg: `${pendingRes} nouvelle(s) soumission(s) de ressources à valider.`, link: '/admin/resources' });
+          }
+        } catch (e) {
+          console.error(e);
+        }
+
+        setAlerts(dynamicAlerts);
+
       } catch (err) {
         console.error("Erreur fetch stats:", err);
       }
     }
     fetchStats();
   }, []);
-
-  const alerts = [
-    { type: 'warning', msg: '12 candidatures tuteurs en attente de révision.', link: '/admin/tutor-applications' },
-    { type: 'info', msg: '5 nouvelles soumissions de ressources à valider.', link: '/admin/submissions' },
-    { type: 'error', msg: 'Pic de requêtes détecté sur le Chat Apprenant.', link: '/admin/audit' }
-  ];
 
   const cardStyle = { background: '#0F1520', padding: '2rem', borderRadius: '1.5rem', border: '1px solid rgba(255,255,255,0.05)' };
 
@@ -89,12 +104,16 @@ export default function AdminDashboardPage() {
           <div style={cardStyle}>
             <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700 }}>Centre d'action</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {alerts.map((a, i) => (
-                <div key={i} style={{ padding: '1rem', borderRadius: '1rem', background: 'rgba(255,255,255,0.03)', borderLeft: `4px solid ${a.type === 'warning' ? '#F59E0B' : a.type === 'error' ? '#DC2626' : '#3B82F6'}`, display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                  <span style={{ color: '#CBD5E1', fontSize: '0.95rem', lineHeight: 1.5 }}>{a.msg}</span>
-                  <Link to={a.link} style={{ color: 'white', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none', alignSelf: 'flex-start' }}>Traiter →</Link>
-                </div>
-              ))}
+              {alerts.length === 0 ? (
+                <div style={{ color: '#94A3B8', fontSize: '0.95rem' }}>Aucune action requise pour le moment.</div>
+              ) : (
+                alerts.map((a, i) => (
+                  <div key={i} style={{ padding: '1rem', borderRadius: '1rem', background: 'rgba(255,255,255,0.03)', borderLeft: `4px solid ${a.type === 'warning' ? '#F59E0B' : a.type === 'error' ? '#DC2626' : '#3B82F6'}`, display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    <span style={{ color: '#CBD5E1', fontSize: '0.95rem', lineHeight: 1.5 }}>{a.msg}</span>
+                    <Link to={a.link} style={{ color: 'white', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none', alignSelf: 'flex-start' }}>Traiter →</Link>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

@@ -33,6 +33,7 @@ import AdminTutorApplicationsPage from '../pages/admin/AdminTutorApplicationsPag
 import AdminResourcesPage from '../pages/admin/AdminResourcesPage';
 import AdminAccessRulesPage from '../pages/admin/AdminAccessRulesPage';
 import AdminAuditPage from '../pages/admin/AdminAuditPage';
+import AdminSettingsPage from '../pages/admin/AdminSettingsPage';
 
 export const router = createBrowserRouter([
   {
@@ -85,6 +86,7 @@ export const router = createBrowserRouter([
       { path: 'resources', element: <AdminResourcesPage /> },
       { path: 'access-rules', element: <AdminAccessRulesPage /> },
       { path: 'audit', element: <AdminAuditPage /> },
+      { path: 'settings', element: <AdminSettingsPage /> },
       // Add other admin routes here
     ],
   },
