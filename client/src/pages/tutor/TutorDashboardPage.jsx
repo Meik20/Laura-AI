@@ -5,9 +5,11 @@ import { db } from '../../firebase';
 import { collection, getDocs, doc, updateDoc, setDoc } from 'firebase/firestore';
 
 export default function TutorDashboardPage() {
-  const { userProfile } = useAuth();
+  const { currentUser, userProfile } = useAuth();
   const [submissionCounts, setSubmissionCounts] = useState({ brouillons: 0, enRevue: 0, valides: 0 });
   const [adminMessages, setAdminMessages] = useState([]);
+
+  const uid = currentUser?.uid || userProfile?.uid;
 
   const tutorData = {
     nom: userProfile?.nom || userProfile?.prenom || 'Tuteur',
@@ -17,14 +19,14 @@ export default function TutorDashboardPage() {
 
   useEffect(() => {
     async function fetchTutorData() {
-      if (!userProfile?.uid) return;
+      if (!uid) return;
       try {
         // Fetch submissions
         const resSnap = await getDocs(collection(db, 'resources'));
         let b = 0, r = 0, v = 0;
         resSnap.forEach(docItem => {
           const data = docItem.data();
-          if (data.auteurId === userProfile.uid) {
+          if (data.auteurId === uid) {
             if (data.statut === 'brouillon') b++;
             else if (data.statut === 'en_attente' || data.statut === 'en_revue') r++;
             else if (data.statut === 'publie' || data.statut === 'valide') v++;
@@ -33,7 +35,7 @@ export default function TutorDashboardPage() {
         setSubmissionCounts({ brouillons: b, enRevue: r, valides: v });
 
         // Fetch admin messages
-        const msgSnap = await getDocs(collection(db, 'users', userProfile.uid, 'messages'));
+        const msgSnap = await getDocs(collection(db, 'users', uid, 'messages'));
         const msgs = msgSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         setAdminMessages(msgs.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)));
       } catch (err) {
@@ -41,12 +43,12 @@ export default function TutorDashboardPage() {
       }
     }
     fetchTutorData();
-  }, [userProfile?.uid]);
+  }, [uid]);
 
   const handleRequestContributor = async () => {
-    if (!userProfile?.uid) return;
+    if (!uid) return;
     try {
-      await setDoc(doc(db, 'users', userProfile.uid), { statut: 'En attente de contribution' }, { merge: true });
+      await setDoc(doc(db, 'users', uid), { statut: 'En attente de contribution' }, { merge: true });
       alert("Votre demande a été envoyée à l'administration.");
     } catch (err) {
       console.error("Erreur demande contributeur:", err);

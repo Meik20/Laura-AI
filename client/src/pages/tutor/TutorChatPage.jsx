@@ -8,8 +8,10 @@ export default function TutorChatPage() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { userProfile } = useAuth();
+  const { currentUser, userProfile } = useAuth();
   
+  const uid = currentUser?.uid || userProfile?.uid;
+
   const profileContext = {
     prenom: userProfile?.prenom || userProfile?.nom || 'Tuteur',
     discipline: userProfile?.discipline || userProfile?.filiere || 'Général',
@@ -29,9 +31,9 @@ export default function TutorChatPage() {
 
   useEffect(() => {
     async function loadHistory() {
-      if (!userProfile?.uid) return;
+      if (!uid) return;
       try {
-        const chatRef = doc(db, 'chats', userProfile.uid);
+        const chatRef = doc(db, 'chats', uid);
         const welcomeMsg = {
           role: 'laura',
           text: `Bonjour Professeur ${profileContext.prenom}. Je suis configurée pour vous assister dans la création de matériel pédagogique en ${profileContext.discipline}. Que souhaitez-vous préparer aujourd'hui ?`,
@@ -58,7 +60,7 @@ export default function TutorChatPage() {
       }
     }
     loadHistory();
-  }, [userProfile?.uid]);
+  }, [uid]);
 
   const handleSend = async (textToSend) => {
     const userText = textToSend || input.trim();
@@ -69,8 +71,8 @@ export default function TutorChatPage() {
     setMessages(prev => [...prev, userMsgObj]);
     setIsLoading(true);
 
-    if (userProfile?.uid) {
-      const chatRef = doc(db, 'chats', userProfile.uid);
+    if (uid) {
+      const chatRef = doc(db, 'chats', uid);
       setDoc(chatRef, { messages: arrayUnion(userMsgObj) }, { merge: true }).catch(console.error);
     }
 
@@ -89,8 +91,8 @@ export default function TutorChatPage() {
       
       setMessages(prev => [...prev, lauraMsgObj]);
 
-      if (userProfile?.uid) {
-        const chatRef = doc(db, 'chats', userProfile.uid);
+      if (uid) {
+        const chatRef = doc(db, 'chats', uid);
         setDoc(chatRef, { messages: arrayUnion(lauraMsgObj) }, { merge: true }).catch(console.error);
       }
 
@@ -99,8 +101,8 @@ export default function TutorChatPage() {
       const errorMsgObj = { role: 'laura', text: "⚠️ Oups ! Je n'arrive pas à joindre le serveur pour le moment. Vérifiez votre connexion internet ou réessayez dans quelques instants.", timestamp: new Date().toISOString() };
       setMessages(prev => [...prev, errorMsgObj]);
       
-      if (userProfile?.uid) {
-        const chatRef = doc(db, 'chats', userProfile.uid);
+      if (uid) {
+        const chatRef = doc(db, 'chats', uid);
         setDoc(chatRef, { messages: arrayUnion(errorMsgObj) }, { merge: true }).catch(console.error);
       }
     } finally {
@@ -114,7 +116,7 @@ export default function TutorChatPage() {
       alert("Aucun contenu généré par LAURA à convertir.");
       return;
     }
-    if (!userProfile?.uid) {
+    if (!uid) {
       alert("Utilisateur non identifié.");
       return;
     }
@@ -125,10 +127,10 @@ export default function TutorChatPage() {
         type: 'Support',
         statut: 'brouillon',
         contenu: lastLauraMsg.text,
-        auteurId: userProfile.uid,
-        auteur: userProfile.nom || userProfile.prenom || 'Tuteur',
+        auteurId: uid,
+        auteur: userProfile?.nom || userProfile?.prenom || 'Tuteur',
         matiere: profileContext.discipline,
-        niveau: userProfile.niveau || 'Général',
+        niveau: userProfile?.niveau || 'Général',
         createdAt: new Date().toISOString()
       };
       await addDoc(collection(db, 'resources'), newRes);
@@ -158,8 +160,8 @@ export default function TutorChatPage() {
               timestamp: new Date().toISOString()
             };
             setMessages([welcomeMsg]);
-            if (userProfile?.uid) {
-              await setDoc(doc(db, 'chats', userProfile.uid), { messages: [welcomeMsg] });
+            if (uid) {
+              await setDoc(doc(db, 'chats', uid), { messages: [welcomeMsg] });
             }
           }} 
           style={{ padding: '0.8rem 1.5rem', background: '#00A37A', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'background 0.2s' }}

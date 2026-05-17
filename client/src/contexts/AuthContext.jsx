@@ -44,7 +44,7 @@ export function AuthProvider({ children }) {
       const docRef = doc(db, 'users', user.uid);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setUserProfile(docSnap.data());
+        setUserProfile({ ...docSnap.data(), uid: user.uid });
       }
     } catch (error) {
       console.error("Erreur lors de la récupération du profil au login:", error);
@@ -66,7 +66,7 @@ export function AuthProvider({ children }) {
         const docRef = doc(db, 'users', user.uid);
         unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
           if (docSnap.exists()) {
-            setUserProfile(docSnap.data());
+            setUserProfile({ ...docSnap.data(), uid: user.uid });
           } else {
             setUserProfile(null);
           }

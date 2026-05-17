@@ -4,12 +4,14 @@ import { db } from '../../firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 
 export default function TutorProfilePage() {
-  const { userProfile } = useAuth();
+  const { currentUser, userProfile } = useAuth();
   const [formData, setFormData] = useState({
     prenom: '', nom: '', email: '', discipline: '', etablissement: '', experience: '', diplome: ''
   });
   const [isSaving, setIsSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+
+  const uid = currentUser?.uid || userProfile?.uid;
 
   useEffect(() => {
     if (userProfile) {
@@ -29,11 +31,11 @@ export default function TutorProfilePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userProfile?.uid) return;
+    if (!uid) return;
     setIsSaving(true);
     setSuccessMsg('');
     try {
-      await updateDoc(doc(db, 'users', userProfile.uid), formData);
+      await updateDoc(doc(db, 'users', uid), formData);
       setSuccessMsg("Profil tuteur mis à jour avec succès !");
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err) {

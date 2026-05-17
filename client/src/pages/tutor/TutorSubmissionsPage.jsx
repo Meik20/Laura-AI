@@ -4,16 +4,18 @@ import { db } from '../../firebase';
 import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 export default function TutorSubmissionsPage() {
-  const { userProfile } = useAuth();
+  const { currentUser, userProfile } = useAuth();
   const [submissions, setSubmissions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState('Toutes');
+
+  const uid = currentUser?.uid || userProfile?.uid;
 
   const isContributor = userProfile?.statut === 'Contributeur' || userProfile?.roleLabel === 'Tuteur' || userProfile?.isTutor;
 
   useEffect(() => {
     async function fetchSubmissions() {
-      if (!userProfile?.uid) {
+      if (!uid) {
         setIsLoading(false);
         return;
       }
@@ -22,7 +24,7 @@ export default function TutorSubmissionsPage() {
         const list = [];
         snap.forEach(d => {
           const data = d.data();
-          if (data.auteurId === userProfile.uid) {
+          if (data.auteurId === uid) {
             list.push({ id: d.id, ...data });
           }
         });
@@ -34,7 +36,7 @@ export default function TutorSubmissionsPage() {
       }
     }
     fetchSubmissions();
-  }, [userProfile?.uid]);
+  }, [uid]);
 
   const getStatusStyle = (statut) => {
     switch (statut) {

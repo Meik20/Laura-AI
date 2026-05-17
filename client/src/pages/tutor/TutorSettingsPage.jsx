@@ -4,7 +4,7 @@ import { db } from '../../firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 
 export default function TutorSettingsPage() {
-  const { userProfile } = useAuth();
+  const { currentUser, userProfile } = useAuth();
   const [settings, setSettings] = useState({
     notifications: true,
     theme: 'clair',
@@ -12,6 +12,8 @@ export default function TutorSettingsPage() {
   });
   const [isSaving, setIsSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+
+  const uid = currentUser?.uid || userProfile?.uid;
 
   useEffect(() => {
     if (userProfile?.preferences) {
@@ -26,11 +28,11 @@ export default function TutorSettingsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userProfile?.uid) return;
+    if (!uid) return;
     setIsSaving(true);
     setSuccessMsg('');
     try {
-      await updateDoc(doc(db, 'users', userProfile.uid), { preferences: settings });
+      await updateDoc(doc(db, 'users', uid), { preferences: settings });
       setSuccessMsg("Paramètres tuteur enregistrés avec succès !");
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err) {

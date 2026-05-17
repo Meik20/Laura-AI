@@ -6,16 +6,18 @@ import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 
 export default function TutorHistoryPage() {
   const navigate = useNavigate();
-  const { userProfile } = useAuth();
+  const { currentUser, userProfile } = useAuth();
   const [historyItems, setHistoryItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const uid = currentUser?.uid || userProfile?.uid;
+
   useEffect(() => {
     async function fetchHistory() {
-      if (!userProfile?.uid) return;
+      if (!uid) return;
       try {
         // Fetch chat messages
-        const chatSnap = await getDoc(doc(db, 'chats', userProfile.uid));
+        const chatSnap = await getDoc(doc(db, 'chats', uid));
         let chatMsgs = [];
         if (chatSnap.exists() && chatSnap.data().messages) {
           const allMsgs = chatSnap.data().messages;
@@ -37,7 +39,7 @@ export default function TutorHistoryPage() {
         let subMsgs = [];
         resSnap.forEach(d => {
           const data = d.data();
-          if (data.auteurId === userProfile.uid) {
+          if (data.auteurId === uid) {
             subMsgs.push({
               id: d.id,
               typeDoc: 'submission',
@@ -57,7 +59,7 @@ export default function TutorHistoryPage() {
       }
     }
     fetchHistory();
-  }, [userProfile?.uid]);
+  }, [uid]);
 
   const cardStyle = { background: 'white', padding: '2rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2' };
 
