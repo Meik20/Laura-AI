@@ -1,7 +1,20 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 export default function TutorLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout, userProfile } = useContext(AuthContext);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (err) {
+      console.error("Erreur de déconnexion :", err);
+    }
+  };
 
   const links = [
     { path: '/tutor/dashboard', label: 'Tableau de bord', icon: '📊' },
@@ -53,9 +66,9 @@ export default function TutorLayout() {
         {/* BOTTOM ACTION */}
         <div style={{ padding: '1.5rem' }}>
           <div style={{ background: '#E0F2FE', border: '1px solid #BAE6FD', padding: '1rem', borderRadius: '0.75rem', fontSize: '0.85rem', color: '#0369A1', marginBottom: '1rem' }}>
-            <strong>Statut:</strong> Contributeur ✅
+            <strong>Statut:</strong> {userProfile?.roleLabel || 'Contributeur'} ✅
           </div>
-          <button style={{ width: '100%', padding: '0.8rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+          <button onClick={handleLogout} style={{ width: '100%', padding: '0.8rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
             <span>🚪</span> Déconnexion
           </button>
         </div>
