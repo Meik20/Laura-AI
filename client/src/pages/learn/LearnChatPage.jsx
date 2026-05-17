@@ -166,10 +166,10 @@ export default function LearnChatPage() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100%', gap: '2rem' }}>
+    <div className="chat-layout-wrapper">
       
       {/* ZONE CENTRALE : CHAT */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'white', borderRadius: '1.2rem', border: '1px solid #E5E5E2', overflow: 'hidden' }}>
+      <div className="chat-main-area">
         
         {/* En-tête du Chat */}
         <div style={{ padding: '1.5rem', borderBottom: '1px solid #E5E5E2', background: '#FAFAFA', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -299,7 +299,7 @@ export default function LearnChatPage() {
       </div>
 
       {/* ZONE LATÉRALE : CONTEXTE */}
-      <div style={{ width: '280px', display: 'flex', flexDirection: 'column', gap: '1.5rem', flexShrink: 0 }}>
+      <div className="chat-sidebar">
         
         {/* Contexte Profil */}
         <div style={{ background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2' }}>

@@ -159,7 +159,7 @@ export default function TutorChatPage() {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       
       {/* HEADER */}
-      <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="chat-page-header">
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Chat Pédagogique</h1>
           <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1rem' }}>
@@ -186,10 +186,10 @@ export default function TutorChatPage() {
         </button>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', gap: '2rem', height: 'calc(100vh - 200px)' }}>
+      <div className="chat-layout-wrapper">
         
         {/* CHAT AREA */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'white', borderRadius: '1.5rem', border: '1px solid #E5E5E2', overflow: 'hidden' }}>
+        <div className="chat-main-area">
           
           {/* Messages */}
           <div style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -278,7 +278,7 @@ export default function TutorChatPage() {
         </div>
 
         {/* SIDEBAR SUGGESTIONS */}
-        <div style={{ width: '300px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div className="chat-sidebar">
           
           <div style={{ background: '#1A1A1A', padding: '1.5rem', borderRadius: '1.5rem', color: 'white' }}>
             <h3 style={{ fontSize: '1.1rem', margin: '0 0 1rem 0', fontWeight: 700 }}>Suggestions rapides</h3>
