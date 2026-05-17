@@ -19,6 +19,8 @@ import LearnProgressPage from '../pages/learn/LearnProgressPage';
 
 // Tutor Pages
 import TutorDashboardPage from '../pages/tutor/TutorDashboardPage';
+import TutorChatPage from '../pages/tutor/TutorChatPage';
+import TutorSubmissionsPage from '../pages/tutor/TutorSubmissionsPage';
 import BecomeTutorPage from '../pages/public/BecomeTutorPage';
 import TutorApplyPage from '../pages/public/TutorApplyPage';
 import HowItWorksPage from '../pages/public/HowItWorksPage';
@@ -62,6 +64,8 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <TutorDashboardPage /> },
+      { path: 'chat', element: <TutorChatPage /> },
+      { path: 'submissions', element: <TutorSubmissionsPage /> },
       // Add other tutor routes here
     ],
   },
