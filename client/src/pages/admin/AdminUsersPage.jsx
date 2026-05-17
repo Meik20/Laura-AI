@@ -1,9 +1,36 @@
+import { useState, useEffect } from 'react';
+import { db } from '../../firebase';
+import { collection, getDocs } from 'firebase/firestore';
+
 export default function AdminUsersPage() {
-  const users = [
-    { id: 'USR-01', nom: 'Amina B.', role: 'Élève', detail: 'Terminale D', statut: 'actif', date: '01/05/2026' },
-    { id: 'USR-02', nom: 'Paul K.', role: 'Étudiant', detail: 'L2 Informatique', statut: 'actif', date: '02/05/2026' },
-    { id: 'USR-03', nom: 'Marc D.', role: 'Tuteur', detail: 'Contributeur', statut: 'suspendu', date: '10/04/2026' },
-  ];
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'users'));
+        const usersList = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          usersList.push({
+            id: doc.id,
+            nom: `${data.prenom || ''} ${data.nom || ''}`.trim() || 'Sans nom',
+            role: data.roleLabel || 'Apprenant',
+            detail: data.niveau || data.filiere || 'N/A',
+            statut: data.isTutorPending ? 'en attente' : 'actif',
+            date: data.createdAt ? new Date(data.createdAt).toLocaleDateString('fr-FR') : 'N/A'
+          });
+        });
+        setUsers(usersList);
+      } catch (err) {
+        console.error("Erreur de récupération des utilisateurs :", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchUsers();
+  }, []);
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
@@ -35,24 +62,30 @@ export default function AdminUsersPage() {
             </tr>
           </thead>
           <tbody>
-            {users.map((usr, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <td style={{ padding: '1.5rem', fontWeight: 700, color: 'white' }}>{usr.nom}</td>
-                <td style={{ padding: '1.5rem' }}>
-                  <span style={{ color: '#E2E8F0', fontWeight: 600 }}>{usr.role}</span>
-                  <span style={{ color: '#64748B', display: 'block', fontSize: '0.85rem' }}>{usr.detail}</span>
-                </td>
-                <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{usr.date}</td>
-                <td style={{ padding: '1.5rem' }}>
-                  <span style={{ background: usr.statut === 'actif' ? '#10B98120' : '#EF444420', color: usr.statut === 'actif' ? '#10B981' : '#EF4444', padding: '0.3rem 0.8rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700 }}>
-                    {usr.statut.toUpperCase()}
-                  </span>
-                </td>
-                <td style={{ padding: '1.5rem', textAlign: 'right' }}>
-                  <button style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>Gérer</button>
-                </td>
-              </tr>
-            ))}
+            {isLoading ? (
+              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Chargement des utilisateurs...</td></tr>
+            ) : users.length === 0 ? (
+              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Aucun utilisateur trouvé.</td></tr>
+            ) : (
+              users.map((usr, i) => (
+                <tr key={usr.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <td style={{ padding: '1.5rem', fontWeight: 700, color: 'white' }}>{usr.nom}</td>
+                  <td style={{ padding: '1.5rem' }}>
+                    <span style={{ color: '#E2E8F0', fontWeight: 600 }}>{usr.role}</span>
+                    <span style={{ color: '#64748B', display: 'block', fontSize: '0.85rem' }}>{usr.detail}</span>
+                  </td>
+                  <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{usr.date}</td>
+                  <td style={{ padding: '1.5rem' }}>
+                    <span style={{ background: usr.statut === 'actif' ? '#10B98120' : '#EF444420', color: usr.statut === 'actif' ? '#10B981' : '#EF4444', padding: '0.3rem 0.8rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700 }}>
+                      {usr.statut.toUpperCase()}
+                    </span>
+                  </td>
+                  <td style={{ padding: '1.5rem', textAlign: 'right' }}>
+                    <button style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>Gérer</button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

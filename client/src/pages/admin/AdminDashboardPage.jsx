@@ -1,12 +1,41 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { db } from '../../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function AdminDashboardPage() {
-  const stats = [
-    { label: 'Élèves', value: '4 205', icon: '🎒', color: '#3B82F6' },
-    { label: 'Étudiants', value: '1 832', icon: '🎓', color: '#8B5CF6' },
-    { label: 'Tuteurs (Total)', value: '145', icon: '👨‍🏫', color: '#10B981' },
-    { label: 'Contributeurs', value: '38', icon: '⭐', color: '#F59E0B' }
-  ];
+  const [stats, setStats] = useState([
+    { label: 'Élèves', value: '...', icon: '🎒', color: '#3B82F6' },
+    { label: 'Étudiants', value: '...', icon: '🎓', color: '#8B5CF6' },
+    { label: 'Tuteurs (Total)', value: '...', icon: '👨‍🏫', color: '#10B981' },
+    { label: 'Contributeurs', value: '...', icon: '⭐', color: '#F59E0B' }
+  ]);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'users'));
+        let eleves = 0, etudiants = 0, tuteurs = 0;
+        
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.roleLabel === 'Élève') eleves++;
+          if (data.roleLabel === 'Étudiant') etudiants++;
+          if (data.isTutor) tuteurs++;
+        });
+
+        setStats([
+          { label: 'Élèves', value: eleves.toString(), icon: '🎒', color: '#3B82F6' },
+          { label: 'Étudiants', value: etudiants.toString(), icon: '🎓', color: '#8B5CF6' },
+          { label: 'Tuteurs (Total)', value: tuteurs.toString(), icon: '👨‍🏫', color: '#10B981' },
+          { label: 'Contributeurs', value: '0', icon: '⭐', color: '#F59E0B' }
+        ]);
+      } catch (err) {
+        console.error("Erreur fetch stats:", err);
+      }
+    }
+    fetchStats();
+  }, []);
 
   const alerts = [
     { type: 'warning', msg: '12 candidatures tuteurs en attente de révision.', link: '/admin/tutor-applications' },
