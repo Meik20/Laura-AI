@@ -78,7 +78,6 @@ class RAGService {
       console.error('[LAURA RAG] Erreur lors de l\'ajout à ChromaDB :', err);
     }
   }
-}
 
   /**
    * Ingest a new document into the vector store
