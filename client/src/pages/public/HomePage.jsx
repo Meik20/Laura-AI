@@ -62,7 +62,7 @@ export default function HomePage() {
       {/* POUR QUI ? */}
       <section style={{ padding: '6rem 2rem', background: 'white', textAlign: 'center' }}>
         <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '0.75rem', color: '#1A1A1A' }}>Pour qui est LAURA ?</h2>
-        <p style={{ color: '#6E6E6B', fontSize: '1.1rem', marginBottom: '3rem' }}>Un outil pensé pour chaque étape du parcours scolaire africain.</p>
+        <p style={{ color: '#6E6E6B', fontSize: '1.1rem', marginBottom: '3rem' }}>Un outil pensé pour chaque étape du parcours scolaire des jeunes camerounais.</p>
         <div style={{ maxWidth: '900px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
 
           <div style={{ ...featureCard, background: '#F9F9F8' }}>

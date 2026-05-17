@@ -27,9 +27,16 @@ export default function LearnChatPage() {
       if (!userProfile?.uid) return;
       try {
         const chatRef = doc(db, 'chats', userProfile.uid);
-        const chatSnap = await getDoc(chatRef);
-        if (chatSnap.exists()) {
-          setMessages(chatSnap.data().messages || []);
+        if (searchParams.get('new') === 'true') {
+          await setDoc(chatRef, { messages: [] });
+          setMessages([]);
+          searchParams.delete('new');
+          setSearchParams(searchParams);
+        } else {
+          const chatSnap = await getDoc(chatRef);
+          if (chatSnap.exists()) {
+            setMessages(chatSnap.data().messages || []);
+          }
         }
       } catch (e) {
         console.error("Erreur de chargement de l'historique :", e);
@@ -38,7 +45,7 @@ export default function LearnChatPage() {
       }
     }
     loadHistory();
-  }, [userProfile?.uid]);
+  }, [userProfile?.uid, searchParams]);
 
   useEffect(() => {
     if (isInitializing) return;
@@ -165,9 +172,24 @@ export default function LearnChatPage() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'white', borderRadius: '1.2rem', border: '1px solid #E5E5E2', overflow: 'hidden' }}>
         
         {/* En-tête du Chat */}
-        <div style={{ padding: '1.5rem', borderBottom: '1px solid #E5E5E2', background: '#FAFAFA' }}>
-          <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>Préparation {profileContext.examen}</h2>
-          <span style={{ color: '#6E6E6B', fontSize: '0.9rem' }}>Chat Contextuel LAURA</span>
+        <div style={{ padding: '1.5rem', borderBottom: '1px solid #E5E5E2', background: '#FAFAFA', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>Préparation {profileContext.examen}</h2>
+            <span style={{ color: '#6E6E6B', fontSize: '0.9rem' }}>Chat Contextuel LAURA</span>
+          </div>
+          <button 
+            onClick={async () => {
+              setMessages([]);
+              if (userProfile?.uid) {
+                await setDoc(doc(db, 'chats', userProfile.uid), { messages: [] });
+              }
+            }} 
+            style={{ padding: '0.6rem 1.2rem', background: '#00D4AA', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', transition: 'background 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.background = '#00B894'} 
+            onMouseLeave={e => e.currentTarget.style.background = '#00D4AA'}
+          >
+            <span>+</span> Nouvelle conversation
+          </button>
         </div>
 
         {/* Liste des Messages */}

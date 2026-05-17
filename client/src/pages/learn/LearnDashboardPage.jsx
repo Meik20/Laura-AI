@@ -133,7 +133,7 @@ export default function LearnDashboardPage() {
             Vous êtes en <strong style={{ color: '#1A1A1A' }}>{user.niveau}</strong> · Examen préparé : <strong style={{ color: '#1A1A1A' }}>{user.examen}</strong>
           </p>
         </div>
-        <button onClick={() => navigate('/learn/chat')} style={{ padding: '0.8rem 1.5rem', background: '#00D4AA', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#00B894'} onMouseLeave={e => e.currentTarget.style.background = '#00D4AA'}>
+        <button onClick={() => navigate('/learn/chat?new=true')} style={{ padding: '0.8rem 1.5rem', background: '#00D4AA', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#00B894'} onMouseLeave={e => e.currentTarget.style.background = '#00D4AA'}>
           <span>+</span> Nouvelle conversation
         </button>
       </div>

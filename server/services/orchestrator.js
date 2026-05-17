@@ -20,7 +20,7 @@ class Orchestrator {
     // Initialize SDKs
     const anthropicKey = (process.env.ANTHROPIC_API_KEY || '').trim();
     const googleKey = (process.env.GOOGLE_AI_API_KEY || '').trim();
-    const groqKey = (process.env.GROQ_API_KEY || '').trim();
+    const groqKey = (process.env.GROQ_API_KEY || process.env.GROK_API_KEY || '').trim();
 
     console.log(`[LAURA Service] Initializing with keys: Anthropic=${!!anthropicKey}, Gemini=${!!googleKey}, Groq=${!!groqKey}`);
 
@@ -219,7 +219,7 @@ QUESTION DE L'ÉLÈVE : ${query}`;
             finalModelUsed = res.model;
             break;
           } catch (e) {
-            console.warn(`[LAURA] Fallback triggered from ${m}`);
+            console.warn(`[LAURA] Fallback triggered from ${m}:`, e.message);
           }
         }
       }
