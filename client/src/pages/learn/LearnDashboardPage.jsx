@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import LearningGoalModal from '../../components/dashboard/LearningGoalModal';
 import { useAuth } from '../../hooks/useAuth';
+import { db } from '../../firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 
 export default function LearnDashboardPage() {
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
@@ -76,6 +78,20 @@ export default function LearnDashboardPage() {
       period: `du ${newGoal.dateDebut} au ${newGoal.dateFin}`,
       progress: 0
     });
+  };
+
+  const handleEditProfile = async () => {
+    const newSerie = prompt("Veuillez renseigner ou modifier votre série (ex: A4, C, D, SES) :");
+    if (newSerie && userProfile?.uid) {
+      try {
+        await updateDoc(doc(db, 'users', userProfile.uid), { serie: newSerie.toUpperCase() });
+        alert("Profil mis à jour ! La page va se recharger.");
+        window.location.reload();
+      } catch (err) {
+        console.error(err);
+        alert("Erreur lors de la mise à jour du profil.");
+      }
+    }
   };
 
   const cardStyle = { background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', color: '#1A1A1A' };
@@ -182,7 +198,7 @@ export default function LearnDashboardPage() {
                 <span style={{ color: '#6E6E6B' }}>Examen préparé</span><span style={{ fontWeight: 600 }}>{user.examen}</span>
               </div>
             </div>
-            <button style={{ width: '100%', marginTop: '1.5rem', padding: '0.8rem', background: 'transparent', border: '1px solid #E5E5E2', borderRadius: '0.6rem', fontWeight: 600, cursor: 'pointer' }}>
+            <button onClick={handleEditProfile} style={{ width: '100%', marginTop: '1.5rem', padding: '0.8rem', background: 'transparent', border: '1px solid #E5E5E2', borderRadius: '0.6rem', fontWeight: 600, cursor: 'pointer' }}>
               Modifier mon profil
             </button>
           </div>
