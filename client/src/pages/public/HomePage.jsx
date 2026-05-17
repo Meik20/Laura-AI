@@ -40,7 +40,7 @@ export default function HomePage() {
             L'intelligence artificielle éducative qui <span style={{ color: '#00D4AA' }}>accompagne vos apprentissages</span>
           </h1>
           <p style={{ fontSize: '1.2rem', color: '#4A4A47', marginBottom: '3rem', lineHeight: 1.6 }}>
-            LAURA AI est votre tuteur personnel sur-mesure. Des révisions ciblées, des examens préparés avec précision et des explications toujours claires.
+            LAURA est votre tuteur personnel sur-mesure. Des révisions ciblées, des examens préparés avec précision et des explications toujours claires.
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
@@ -61,7 +61,7 @@ export default function HomePage() {
 
       {/* POUR QUI ? */}
       <section style={{ padding: '6rem 2rem', background: 'white', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '0.75rem', color: '#1A1A1A' }}>Pour qui est LAURA AI ?</h2>
+        <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '0.75rem', color: '#1A1A1A' }}>Pour qui est LAURA ?</h2>
         <p style={{ color: '#6E6E6B', fontSize: '1.1rem', marginBottom: '3rem' }}>Un outil pensé pour chaque étape du parcours scolaire africain.</p>
         <div style={{ maxWidth: '900px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
 
@@ -119,7 +119,7 @@ export default function HomePage() {
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '1.5rem', color: '#003D30' }}>Vous êtes enseignant ?</h2>
           <p style={{ fontSize: '1.15rem', color: '#005242', marginBottom: '2.5rem', fontWeight: 600, lineHeight: 1.6 }}>
-            Rejoignez la communauté LAURA AI. Partagez votre expertise, proposez vos ressources et aidez des milliers d'élèves à réussir.
+            Rejoignez la communauté LAURA. Partagez votre expertise, proposez vos ressources et aidez des milliers d'élèves à réussir.
           </p>
           <Link
             to="/become-tutor"

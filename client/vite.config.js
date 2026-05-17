@@ -18,7 +18,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon.png', 'logo.png'],
       manifest: {
-        name: 'LAURA AI — Assistant Éducatif',
+        name: 'LAURA — Assistant Éducatif',
         short_name: 'LAURA',
         description: 'Intelligence Artificielle pour le programme scolaire camerounais',
         theme_color: '#080C14',

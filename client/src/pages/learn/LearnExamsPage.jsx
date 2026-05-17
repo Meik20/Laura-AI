@@ -63,7 +63,7 @@ export default function LearnExamsPage() {
           <h2 style={{ fontSize: '1.5rem', margin: '0 0 1.5rem 0', fontWeight: 800 }}>Préparation Guidée</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <button style={{ width: '100%', padding: '1.2rem', textAlign: 'left', background: '#E0F2FE', color: '#0369A1', border: 'none', borderRadius: '0.75rem', fontWeight: 700, fontSize: '1.05rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>🤖</span> Demander un plan de préparation à LAURA AI
+              <span style={{ fontSize: '1.5rem' }}>🤖</span> Demander un plan de préparation à LAURA
             </button>
             <button style={{ width: '100%', padding: '1.2rem', textAlign: 'left', background: '#F5F4EF', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.75rem', fontWeight: 700, fontSize: '1.05rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <span style={{ fontSize: '1.5rem' }}>🔍</span> Réviser les sujets qui tombent souvent

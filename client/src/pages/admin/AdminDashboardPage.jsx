@@ -24,7 +24,7 @@ export default function AdminDashboardPage() {
         <div>
           <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Tableau de bord</h1>
           <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>
-            Vue globale de l'activité sur LAURA AI.
+            Vue globale de l'activité sur LAURA.
           </p>
         </div>
       </div>

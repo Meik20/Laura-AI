@@ -42,7 +42,7 @@ export default function TutorSubmissionsPage() {
         <div>
           <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Vos Soumissions</h1>
           <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
-            Gérez le contenu que vous proposez à la communauté LAURA AI.
+            Gérez le contenu que vous proposez à la communauté LAURA.
           </p>
         </div>
         <button style={{ padding: '0.8rem 1.5rem', background: '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

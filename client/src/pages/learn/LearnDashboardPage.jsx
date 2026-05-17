@@ -142,7 +142,7 @@ export default function LearnDashboardPage() {
           <div style={cardStyle}>
             <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Actions rapides</h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-              {['Parler à LAURA AI', 'Réviser un chapitre', 'Lancer un quiz', 'Préparer mon examen', 'Voir mes ressources'].map((action, i) => (
+              {['Parler à LAURA', 'Réviser un chapitre', 'Lancer un quiz', 'Préparer mon examen', 'Voir mes ressources'].map((action, i) => (
                 <button key={i} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.8rem 1.2rem', borderRadius: '0.75rem', fontWeight: 600, color: '#1A1A1A', cursor: 'pointer', flex: '1 1 calc(33% - 1rem)', textAlign: 'center' }}>
                   {action}
                 </button>

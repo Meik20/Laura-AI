@@ -1,4 +1,4 @@
-# LAURA AI — Learning AI & Unified Resource Assistant
+# LAURA — Learning AI & Unified Resource Assistant
 
 LAURA est une plateforme d'intelligence artificielle éducative conçue spécifiquement pour le contexte camerounais. Elle combine la puissance des derniers modèles de langage (Claude, Gemini, Grok) avec un moteur de recherche sémantique (RAG) ancré sur les programmes officiels du MINESEC et du GCE Board.
 

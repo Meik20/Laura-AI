@@ -1,5 +1,5 @@
 /**
- * LAURA AI Orchestrator
+ * LAURA Orchestrator
  * Handles routing between models (Claude, Gemini, Grok, Mistral)
  */
 

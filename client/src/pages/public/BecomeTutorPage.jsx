@@ -4,9 +4,9 @@ export default function BecomeTutorPage() {
   return (
     <div style={{ maxWidth: '800px', margin: '4rem auto', padding: '0 2rem' }}>
       <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem' }}>Devenez tuteur sur LAURA AI</h1>
+        <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem' }}>Devenez tuteur sur LAURA</h1>
         <p style={{ fontSize: '1.2rem', color: '#6E6E6B', lineHeight: 1.6 }}>
-          Rejoignez LAURA AI en tant que tuteur après étude de votre profil, validation de vos compétences et activation par l’administration.
+          Rejoignez LAURA en tant que tuteur après étude de votre profil, validation de vos compétences et activation par l’administration.
         </p>
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '2rem' }}>
           <Link to="/tutor/apply" style={{ background: '#1A1A1A', color: 'white', padding: '1rem 2rem', borderRadius: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
@@ -36,7 +36,7 @@ export default function BecomeTutorPage() {
             <h4 style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#1A1A1A' }}>Tuteur Validé</h4>
             <ul style={{ paddingLeft: '1.5rem', color: '#6E6E6B', gap: '0.5rem', display: 'flex', flexDirection: 'column' }}>
               <li>Accès à l'espace tuteur</li>
-              <li>Usage pédagogique avancé de LAURA AI</li>
+              <li>Usage pédagogique avancé de LAURA</li>
             </ul>
           </div>
           <div>

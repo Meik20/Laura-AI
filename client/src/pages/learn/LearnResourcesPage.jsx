@@ -79,7 +79,7 @@ export default function LearnResourcesPage() {
             {/* Actions sur la ressource */}
             <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid #F0F0EE', paddingTop: '1rem' }}>
               <button style={{ flex: 1, padding: '0.6rem', background: '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem' }}>Ouvrir</button>
-              <button style={{ flex: 1, padding: '0.6rem', background: '#F5F4EF', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem' }}>LAURA AI</button>
+              <button style={{ flex: 1, padding: '0.6rem', background: '#F5F4EF', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem' }}>LAURA</button>
               <button style={{ padding: '0.6rem', background: '#F5F4EF', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.5rem', cursor: 'pointer' }}>🔖</button>
             </div>
 

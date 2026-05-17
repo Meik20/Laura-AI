@@ -93,7 +93,7 @@ export default function LearnChatPage() {
         {/* En-tête du Chat */}
         <div style={{ padding: '1.5rem', borderBottom: '1px solid #E5E5E2', background: '#FAFAFA' }}>
           <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>Préparation {profileContext.examen}</h2>
-          <span style={{ color: '#6E6E6B', fontSize: '0.9rem' }}>Chat Contextuel LAURA AI</span>
+          <span style={{ color: '#6E6E6B', fontSize: '0.9rem' }}>Chat Contextuel LAURA</span>
         </div>
 
         {/* Liste des Messages */}
@@ -110,7 +110,7 @@ export default function LearnChatPage() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#1A1A1A' }}>
-                    {m.role === 'user' ? 'Vous' : 'LAURA AI'}
+                    {m.role === 'user' ? 'Vous' : 'LAURA'}
                   </div>
                   <div style={{ fontSize: '1.05rem', lineHeight: 1.7, color: '#333', whiteSpace: 'pre-wrap' }}>
                     {m.text}

@@ -17,7 +17,7 @@ export default function LearnRevisionPage() {
       <div>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Révision Guidée</h1>
         <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
-          Configurez votre session de révision avec LAURA AI.
+          Configurez votre session de révision avec LAURA.
         </p>
       </div>
 
@@ -72,10 +72,10 @@ export default function LearnRevisionPage() {
           <div style={{ background: '#1A1A1A', color: 'white', padding: '2rem', borderRadius: '1.5rem' }}>
             <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.2rem', fontWeight: 700 }}>Besoin d'aide ?</h3>
             <p style={{ color: '#94A3B8', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '1.5rem' }}>
-              Vous ne savez pas par quoi commencer ? Demandez à LAURA AI de créer un programme de révision sur mesure.
+              Vous ne savez pas par quoi commencer ? Demandez à LAURA de créer un programme de révision sur mesure.
             </p>
             <button style={{ width: '100%', padding: '0.8rem', background: 'white', color: '#1A1A1A', border: 'none', borderRadius: '0.5rem', fontWeight: 700, cursor: 'pointer' }}>
-              Demander à LAURA AI
+              Demander à LAURA
             </button>
           </div>
 

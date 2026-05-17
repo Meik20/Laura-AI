@@ -48,7 +48,7 @@ export default function TutorChatPage() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#1A1A1A' }}>
-                    {m.role === 'user' ? 'Vous' : 'LAURA AI Pédagogie'}
+                    {m.role === 'user' ? 'Vous' : 'LAURA Pédagogie'}
                   </div>
                   <div style={{ fontSize: '1.05rem', lineHeight: 1.7, color: '#333', whiteSpace: 'pre-wrap' }}>
                     {m.text}

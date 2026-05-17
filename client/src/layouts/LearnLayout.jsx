@@ -5,7 +5,7 @@ export default function LearnLayout() {
 
   const links = [
     { path: '/learn/dashboard', label: 'Tableau de bord', icon: '📊' },
-    { path: '/learn/chat', label: 'Chat LAURA AI', icon: '💬' },
+    { path: '/learn/chat', label: 'Chat LAURA', icon: '💬' },
     { path: '/learn/revision', label: 'Révision', icon: '📝' },
     { path: '/learn/exams', label: 'Examens', icon: '🎓' },
     { path: '/learn/resources', label: 'Ressources', icon: '📚' },
@@ -23,7 +23,7 @@ export default function LearnLayout() {
         
         {/* LOGO */}
         <div style={{ padding: '2rem 1.5rem' }}>
-          <img src="/logo.png" alt="LAURA AI" style={{ height: '36px' }} />
+          <img src="/logo.png" alt="LAURA" style={{ height: '36px' }} />
         </div>
 
         {/* NAVIGATION */}

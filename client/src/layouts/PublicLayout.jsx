@@ -6,7 +6,7 @@ export default function PublicLayout() {
       
       <header style={{ padding: '1.2rem 3rem', background: '#F5F4EF', borderBottom: '1px solid rgba(0,0,0,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-          <img src="/logo.png" alt="LAURA AI" style={{ height: '36px' }} />
+          <img src="/logo.png" alt="LAURA" style={{ height: '36px' }} />
         </Link>
         <nav style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <Link to="/how-it-works" style={{ color: '#4A4A47', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem' }}>Comment ça marche</Link>
@@ -22,10 +22,10 @@ export default function PublicLayout() {
 
       <footer style={{ background: '#1A1A1A', color: '#A3A3A3', padding: '3rem 2rem', textAlign: 'center' }}>
         <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'center' }}>
-          <img src="/logo.png" alt="LAURA AI" style={{ height: '32px', filter: 'brightness(0) invert(1)' }} />
+          <img src="/logo.png" alt="LAURA" style={{ height: '32px', filter: 'brightness(0) invert(1)' }} />
         </div>
         <p style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>L'intelligence artificielle éducative africaine</p>
-        <p style={{ fontSize: '0.85rem', color: '#666' }}>© 2026 LAURA AI — Tous droits réservés</p>
+        <p style={{ fontSize: '0.85rem', color: '#666' }}>© 2026 LAURA — Tous droits réservés</p>
       </footer>
     </div>
   );
