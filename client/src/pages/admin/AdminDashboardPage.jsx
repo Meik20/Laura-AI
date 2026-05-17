@@ -9,6 +9,7 @@ export default function AdminDashboardPage() {
     { label: 'Étudiants', value: '...', icon: '🎓', color: '#8B5CF6' },
     { label: 'Tuteurs (Total)', value: '...', icon: '👨‍🏫', color: '#10B981' },
     { label: 'Contributeurs', value: '...', icon: '⭐', color: '#F59E0B' }
+  ]);
   const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
