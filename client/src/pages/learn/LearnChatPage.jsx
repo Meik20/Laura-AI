@@ -102,7 +102,8 @@ export default function LearnChatPage() {
     }
 
     try {
-      const response = await fetch('/api/chat', {
+      const API_BASE = import.meta.env.VITE_BACKEND_URL || '';
+      const response = await fetch(`${API_BASE}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: fullUserText, mode: 'simple', userContext: profileContext })
