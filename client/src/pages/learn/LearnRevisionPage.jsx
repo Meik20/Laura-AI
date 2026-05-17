@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { collection, getDocs, addDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, getDoc } from 'firebase/firestore';
 
 export default function LearnRevisionPage() {
   const navigate = useNavigate();
@@ -11,10 +11,33 @@ export default function LearnRevisionPage() {
     matiere: '', chapitre: '', type: 'Resume', duree: '30'
   });
   const [recentSessions, setRecentSessions] = useState([]);
+  const [matieresList, setMatieresList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    async function fetchSessions() {
+    async function fetchInitialData() {
+      // Fetch matieres from adminSettings
+      try {
+        const docRef = doc(db, 'adminSettings', 'global');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().matieres) {
+          setMatieresList(docSnap.data().matieres);
+        } else {
+          setMatieresList([
+            { id: 'm1', nom: 'Mathématiques', niveau: 'Lycée', serie: 'Toutes' },
+            { id: 'm2', nom: 'Physique-Chimie', niveau: 'Lycée', serie: 'C, D, TI' },
+            { id: 'm3', nom: 'SVT', niveau: 'Lycée', serie: 'C, D' },
+            { id: 'm4', nom: 'Philosophie', niveau: 'Lycée', serie: 'Toutes' },
+            { id: 'm5', nom: 'Français', niveau: 'Lycée', serie: 'Toutes' },
+            { id: 'm6', nom: 'Histoire-Géo', niveau: 'Lycée', serie: 'A, C, D' },
+            { id: 'm7', nom: 'Économie', niveau: 'Lycée', serie: 'SES' }
+          ]);
+        }
+      } catch (err) {
+        console.error("Erreur chargement matières:", err);
+      }
+
+      // Fetch recent sessions
       if (!userProfile?.uid) return;
       try {
         const sessionsSnap = await getDocs(collection(db, 'users', userProfile.uid, 'sessions'));
@@ -24,7 +47,7 @@ export default function LearnRevisionPage() {
         console.error("Erreur de récupération des sessions de révision :", err);
       }
     }
-    fetchSessions();
+    fetchInitialData();
   }, [userProfile?.uid]);
 
   const handleChange = (e) => setSessionConfig({ ...sessionConfig, [e.target.name]: e.target.value });
@@ -68,7 +91,7 @@ export default function LearnRevisionPage() {
       <div>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Révision Guidée</h1>
         <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
-          Configurez votre session de révision avec LAURA.
+          Configurez votre session de révision avec LAURA selon le programme officiel.
         </p>
       </div>
 
@@ -81,16 +104,14 @@ export default function LearnRevisionPage() {
           <form onSubmit={handleStartSession} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
               <div>
-                <label style={labelStyle}>Matière *</label>
+                <label style={labelStyle}>Matière (Programme Officiel) *</label>
                 <select name="matiere" required value={sessionConfig.matiere} onChange={handleChange} style={inputStyle}>
                   <option value="">Sélectionner</option>
-                  <option value="Mathématiques">Mathématiques</option>
-                  <option value="Physique-Chimie">Physique-Chimie</option>
-                  <option value="SVT">SVT</option>
-                  <option value="Philosophie">Philosophie</option>
-                  <option value="Français">Français</option>
-                  <option value="Histoire-Géo">Histoire-Géo</option>
-                  <option value="Économie">Économie</option>
+                  {matieresList.map(m => (
+                    <option key={m.id} value={m.nom}>
+                      {m.nom} ({m.niveau || 'Lycée'} - Série {m.serie || 'Toutes'})
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import LearningGoalModal from '../../components/dashboard/LearningGoalModal';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { doc, updateDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, updateDoc, collection, getDocs, getDoc } from 'firebase/firestore';
 
 export default function LearnDashboardPage() {
   const navigate = useNavigate();
@@ -15,8 +15,8 @@ export default function LearnDashboardPage() {
     progress: 0
   });
   const [recommandations, setRecommandations] = useState([]);
+  const [adminMatieres, setAdminMatieres] = useState([]);
 
-  // Utilisation sécurisée au cas où le profil met du temps à charger
   const user = {
     prenom: userProfile?.prenom || 'Apprenant',
     roleLabel: userProfile?.roleLabel || 'Élève',
@@ -33,7 +33,19 @@ export default function LearnDashboardPage() {
   }, [userProfile]);
 
   useEffect(() => {
-    async function fetchRecos() {
+    async function fetchInitialData() {
+      // Fetch Admin Matieres
+      try {
+        const docRef = doc(db, 'adminSettings', 'global');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().matieres) {
+          setAdminMatieres(docSnap.data().matieres);
+        }
+      } catch (err) {
+        console.error("Erreur admin matieres:", err);
+      }
+
+      // Fetch Recos
       try {
         const resSnap = await getDocs(collection(db, 'resources'));
         const allRes = resSnap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -46,41 +58,27 @@ export default function LearnDashboardPage() {
             url: r.url
           })));
         } else {
-          setRecommandations([]); // AUCUNE DONNÉE FACTICE
+          setRecommandations([]);
         }
       } catch (e) {
         console.error(e);
         setRecommandations([]);
       }
     }
-    fetchRecos();
+    fetchInitialData();
   }, [user.examen]);
 
-  let matieres = [
-    { mat: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 0, color: '#7C6FFF' },
-    { mat: 'Physique-Chimie', val: userProfile?.matieresProgress?.Physique || 0, color: '#F59E0B' },
-    { mat: 'SVT', val: userProfile?.matieresProgress?.SVT || 0, color: '#00D4AA' }
-  ];
-
-  if (user.serie && user.serie.startsWith('A')) {
-    matieres = [
-      { mat: 'Philosophie', val: userProfile?.matieresProgress?.Philosophie || 0, color: '#7C6FFF' },
-      { mat: 'Français / Littérature', val: userProfile?.matieresProgress?.Français || 0, color: '#F59E0B' },
-      { mat: 'Histoire-Géo', val: userProfile?.matieresProgress?.Histoire || 0, color: '#00D4AA' }
-    ];
-  } else if (user.serie === 'SES' || user.filiere?.toLowerCase().includes('gestion')) {
-    matieres = [
-      { mat: 'Économie', val: userProfile?.matieresProgress?.Économie || 0, color: '#7C6FFF' },
-      { mat: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 0, color: '#F59E0B' },
-      { mat: 'Histoire-Géo', val: userProfile?.matieresProgress?.Histoire || 0, color: '#00D4AA' }
-    ];
-  } else if (user.filiere && !user.serie) {
-    matieres = [
-      { mat: user.filiere, val: userProfile?.matieresProgress?.[user.filiere] || 0, color: '#7C6FFF' },
-      { mat: 'Méthodologie', val: userProfile?.matieresProgress?.Méthodologie || 0, color: '#F59E0B' },
-      { mat: 'Culture Générale', val: userProfile?.matieresProgress?.Culture || 0, color: '#00D4AA' }
-    ];
-  }
+  let matieres = adminMatieres.length > 0 
+    ? adminMatieres.map((m, i) => ({
+        mat: m.nom,
+        val: userProfile?.matieresProgress?.[m.nom] || 0,
+        color: i % 3 === 0 ? '#7C6FFF' : i % 3 === 1 ? '#F59E0B' : '#00D4AA'
+      }))
+    : [
+        { mat: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 0, color: '#7C6FFF' },
+        { mat: 'Physique-Chimie', val: userProfile?.matieresProgress?.Physique || 0, color: '#F59E0B' },
+        { mat: 'SVT', val: userProfile?.matieresProgress?.SVT || 0, color: '#00D4AA' }
+      ];
 
   const handleSaveGoal = async (newGoal) => {
     const goalObj = {
@@ -171,7 +169,7 @@ export default function LearnDashboardPage() {
 
           {/* PROGRESSION DÉTAILLÉE */}
           <div style={cardStyle}>
-            <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Ma progression par matière</h3>
+            <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Ma progression par matière (Programme Officiel)</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
               {matieres.map((m, i) => (
                 <div key={i}>

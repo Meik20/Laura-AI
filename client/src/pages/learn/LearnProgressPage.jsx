@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { collection, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import LearningGoalModal from '../../components/dashboard/LearningGoalModal';
 
 export default function LearnProgressPage() {
@@ -10,6 +10,7 @@ export default function LearnProgressPage() {
   const [currentGoals, setCurrentGoals] = useState([]);
   const [recentActivities, setRecentActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [adminMatieres, setAdminMatieres] = useState([]);
 
   useEffect(() => {
     if (userProfile?.goals) {
@@ -17,12 +18,24 @@ export default function LearnProgressPage() {
     } else if (userProfile?.currentGoal) {
       setCurrentGoals([userProfile.currentGoal]);
     } else {
-      setCurrentGoals([]); // AUCUNE DONNÉE FACTICE
+      setCurrentGoals([]);
     }
   }, [userProfile]);
 
   useEffect(() => {
-    async function fetchActivities() {
+    async function fetchInitialData() {
+      // Fetch Admin Matieres
+      try {
+        const docRef = doc(db, 'adminSettings', 'global');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().matieres) {
+          setAdminMatieres(docSnap.data().matieres);
+        }
+      } catch (err) {
+        console.error("Erreur admin matieres:", err);
+      }
+
+      // Fetch Activities
       if (!userProfile?.uid) {
         setIsLoading(false);
         return;
@@ -33,7 +46,7 @@ export default function LearnProgressPage() {
         if (docs.length > 0) {
           setRecentActivities(docs.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5));
         } else {
-          setRecentActivities([]); // AUCUNE DONNÉE FACTICE
+          setRecentActivities([]);
         }
       } catch (err) {
         console.error("Erreur de récupération des activités :", err);
@@ -42,15 +55,21 @@ export default function LearnProgressPage() {
         setIsLoading(false);
       }
     }
-    fetchActivities();
+    fetchInitialData();
   }, [userProfile?.uid]);
 
-  const subjectProgress = [
-    { matiere: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 0, color: '#7C6FFF' },
-    { matiere: 'SVT', val: userProfile?.matieresProgress?.SVT || 0, color: '#00D4AA' },
-    { matiere: 'Physique-Chimie', val: userProfile?.matieresProgress?.Physique || 0, color: '#F59E0B' },
-    { matiere: 'Philosophie / Français', val: userProfile?.matieresProgress?.Philosophie || 0, color: '#3B82F6' }
-  ];
+  const subjectProgress = adminMatieres.length > 0
+    ? adminMatieres.map((m, i) => ({
+        matiere: m.nom,
+        val: userProfile?.matieresProgress?.[m.nom] || 0,
+        color: i % 4 === 0 ? '#7C6FFF' : i % 4 === 1 ? '#00D4AA' : i % 4 === 2 ? '#F59E0B' : '#3B82F6'
+      }))
+    : [
+        { matiere: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 0, color: '#7C6FFF' },
+        { matiere: 'SVT', val: userProfile?.matieresProgress?.SVT || 0, color: '#00D4AA' },
+        { matiere: 'Physique-Chimie', val: userProfile?.matieresProgress?.Physique || 0, color: '#F59E0B' },
+        { matiere: 'Philosophie / Français', val: userProfile?.matieresProgress?.Philosophie || 0, color: '#3B82F6' }
+      ];
 
   const globalProgress = Math.round(subjectProgress.reduce((acc, curr) => acc + curr.val, 0) / subjectProgress.length) || 0;
 
@@ -93,7 +112,7 @@ export default function LearnProgressPage() {
         
         {/* PAR MATIÈRE */}
         <div style={cardStyle}>
-          <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.3rem', fontWeight: 800 }}>Progression par matière</h2>
+          <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.3rem', fontWeight: 800 }}>Progression par matière (Programme Officiel)</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {subjectProgress.map((m, i) => (
               <div key={i}>

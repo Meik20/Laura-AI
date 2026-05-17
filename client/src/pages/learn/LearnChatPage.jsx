@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { doc, getDoc, setDoc, arrayUnion } from 'firebase/firestore';
+import { doc, getDoc, setDoc, arrayUnion, collection, addDoc } from 'firebase/firestore';
 
 export default function LearnChatPage() {
   const [input, setInput] = useState('');
@@ -18,6 +18,7 @@ export default function LearnChatPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [attachedFile, setAttachedFile] = useState(null);
 
   useEffect(() => {
     async function loadHistory() {
@@ -37,12 +38,25 @@ export default function LearnChatPage() {
     loadHistory();
   }, [userProfile?.uid]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleFileAttachment = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAttachedFile({ name: file.name, type: file.type });
+    }
+  };
+
+  const handleSend = async (customText) => {
+    const textToSend = customText || input.trim();
+    if ((!textToSend && !attachedFile) || isLoading) return;
     
-    const userText = input.trim();
-    setInput('');
-    const userMsgObj = { role: 'user', text: userText, timestamp: new Date().toISOString() };
+    let fullUserText = textToSend;
+    if (attachedFile) {
+      fullUserText = `[📎 Fichier joint : ${attachedFile.name}] ${fullUserText}`;
+      setAttachedFile(null);
+    }
+
+    if (!customText) setInput('');
+    const userMsgObj = { role: 'user', text: fullUserText, timestamp: new Date().toISOString() };
     setMessages(prev => [...prev, userMsgObj]);
     setIsLoading(true);
 
@@ -55,7 +69,7 @@ export default function LearnChatPage() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userText, mode: 'simple', userContext: profileContext })
+        body: JSON.stringify({ message: fullUserText, mode: 'simple', userContext: profileContext })
       });
       
       const data = await response.json();
@@ -81,6 +95,29 @@ export default function LearnChatPage() {
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleActionPrompt = (promptPrefix) => {
+    setInput(promptPrefix);
+    const textarea = document.getElementById('chat-textarea');
+    if (textarea) textarea.focus();
+  };
+
+  const handleSaveMessage = async (textToSave) => {
+    if (!userProfile?.uid) {
+      alert("Veuillez vous connecter pour sauvegarder des explications.");
+      return;
+    }
+    try {
+      await addDoc(collection(db, 'users', userProfile.uid, 'savedNotes'), {
+        text: textToSave,
+        createdAt: new Date().toISOString()
+      });
+      alert("Explication sauvegardée avec succès dans vos notes !");
+    } catch (err) {
+      console.error("Erreur de sauvegarde:", err);
+      alert("Erreur lors de la sauvegarde.");
     }
   };
 
@@ -116,14 +153,14 @@ export default function LearnChatPage() {
                     {m.text}
                   </div>
                   
-                  {/* Actions sur la réponse de l'IA (Point 9.3) */}
+                  {/* Actions sur la réponse de l'IA */}
                   {m.role === 'laura' && (
                     <div style={{ display: 'flex', gap: '0.8rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-                      {['Simplifier', 'Approfondir', 'Générer quiz', 'Exercice similaire', 'Sauvegarder'].map(action => (
-                        <button key={action} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: '#444', cursor: 'pointer', fontWeight: 600 }}>
-                          {action}
-                        </button>
-                      ))}
+                      <button onClick={() => handleSend("Peux-tu réexpliquer cela de manière plus simple et imagée ?")} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: '#444', cursor: 'pointer', fontWeight: 600 }}>Simplifier</button>
+                      <button onClick={() => handleSend("Peux-tu approfondir cette explication avec des exemples concrets et avancés ?")} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: '#444', cursor: 'pointer', fontWeight: 600 }}>Approfondir</button>
+                      <button onClick={() => handleSend("Génère un petit quiz sur l'explication que tu viens de donner pour vérifier ma compréhension.")} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: '#444', cursor: 'pointer', fontWeight: 600 }}>Générer quiz</button>
+                      <button onClick={() => handleSend("Donne-moi un exercice d'application similaire pour m'entraîner.")} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: '#444', cursor: 'pointer', fontWeight: 600 }}>Exercice similaire</button>
+                      <button onClick={() => handleSaveMessage(m.text)} style={{ background: '#10B981', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: 'white', cursor: 'pointer', fontWeight: 700 }}>Sauvegarder</button>
                     </div>
                   )}
                 </div>
@@ -135,21 +172,29 @@ export default function LearnChatPage() {
         {/* Zone de Saisie */}
         <div style={{ padding: '1.5rem', borderTop: '1px solid #E5E5E2', background: '#FAFAFA' }}>
           
-          {/* Actions rapides de saisie (Point 9.3) */}
+          {attachedFile && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#E0F2FE', color: '#0369A1', padding: '0.5rem 1rem', borderRadius: '0.5rem', marginBottom: '1rem', fontSize: '0.9rem', fontWeight: 600 }}>
+              <span>📎 Fichier joint : {attachedFile.name}</span>
+              <button onClick={() => setAttachedFile(null)} style={{ background: 'transparent', border: 'none', color: '#0369A1', fontWeight: 700, cursor: 'pointer', marginLeft: 'auto' }}>✕</button>
+            </div>
+          )}
+
+          {/* Actions rapides de saisie */}
           <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-            <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#6E6E6B', fontWeight: 600, fontSize: '0.9rem' }}>
+            <label style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#6E6E6B', fontWeight: 600, fontSize: '0.9rem' }}>
               <span>📎</span> Joindre fichier
-            </button>
+              <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
+            </label>
             <div style={{ width: '1px', background: '#E5E5E2', margin: '0 0.5rem' }}></div>
-            {['Expliquer', 'Réviser', 'Corriger', 'Quiz'].map(action => (
-              <button key={action} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.3rem 0.8rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>
-                {action}
-              </button>
-            ))}
+            <button onClick={() => handleActionPrompt("Peux-tu m'expliquer en détail le concept suivant : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.4rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Expliquer</button>
+            <button onClick={() => handleActionPrompt("Je souhaite faire une session de révision complète sur : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.4rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Réviser</button>
+            <button onClick={() => handleActionPrompt("Voici mon exercice/devoir, peux-tu le corriger et m'expliquer mes erreurs : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.4rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Corriger</button>
+            <button onClick={() => handleActionPrompt("Génère un quiz de 5 questions avec corrigé sur : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.4rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Quiz</button>
           </div>
 
           <div style={{ position: 'relative' }}>
             <textarea 
+              id="chat-textarea"
               rows="3" 
               placeholder="Écrivez votre question ici..." 
               value={input}
@@ -163,7 +208,7 @@ export default function LearnChatPage() {
               style={{ width: '100%', padding: '1rem 4rem 1rem 1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', fontSize: '1.05rem', outline: 'none', resize: 'none', boxSizing: 'border-box', fontFamily: 'inherit' }}
             />
             <button 
-              onClick={handleSend}
+              onClick={() => handleSend()}
               disabled={isLoading}
               style={{ position: 'absolute', right: '1rem', bottom: '1rem', background: isLoading ? '#6E6E6B' : '#1A1A1A', color: 'white', border: 'none', width: '36px', height: '36px', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: isLoading ? 'not-allowed' : 'pointer' }}
             >
@@ -174,7 +219,7 @@ export default function LearnChatPage() {
 
       </div>
 
-      {/* ZONE LATÉRALE : CONTEXTE (Point 9.2) */}
+      {/* ZONE LATÉRALE : CONTEXTE */}
       <div style={{ width: '280px', display: 'flex', flexDirection: 'column', gap: '1.5rem', flexShrink: 0 }}>
         
         {/* Contexte Profil */}
@@ -200,9 +245,9 @@ export default function LearnChatPage() {
         <div style={{ background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2' }}>
           <h3 style={{ fontSize: '1rem', margin: '0 0 1rem 0', color: '#6E6E6B', textTransform: 'uppercase', letterSpacing: '1px' }}>Suggestions</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <button style={{ padding: '0.6rem 1rem', background: '#F5F4EF', border: '1px solid #E5E5E2', borderRadius: '0.5rem', textAlign: 'left', cursor: 'pointer', color: '#444' }}>Donne un quiz</button>
-            <button style={{ padding: '0.6rem 1rem', background: '#F5F4EF', border: '1px solid #E5E5E2', borderRadius: '0.5rem', textAlign: 'left', cursor: 'pointer', color: '#444' }}>Exercice type</button>
-            <button style={{ padding: '0.6rem 1rem', background: '#F5F4EF', border: '1px solid #E5E5E2', borderRadius: '0.5rem', textAlign: 'left', cursor: 'pointer', color: '#444' }}>Simplifie ce concept</button>
+            <button onClick={() => handleSend("Donne-moi un quiz rapide de 3 questions sur mon programme actuel.")} style={{ padding: '0.6rem 1rem', background: '#F5F4EF', border: '1px solid #E5E5E2', borderRadius: '0.5rem', textAlign: 'left', cursor: 'pointer', color: '#444', fontWeight: 600 }}>Donne un quiz</button>
+            <button onClick={() => handleSend("Donne-moi un exercice type d'examen avec son corrigé détaillé.")} style={{ padding: '0.6rem 1rem', background: '#F5F4EF', border: '1px solid #E5E5E2', borderRadius: '0.5rem', textAlign: 'left', cursor: 'pointer', color: '#444', fontWeight: 600 }}>Exercice type</button>
+            <button onClick={() => handleSend("Peux-tu simplifier les concepts clés de mon programme actuel ?")} style={{ padding: '0.6rem 1rem', background: '#F5F4EF', border: '1px solid #E5E5E2', borderRadius: '0.5rem', textAlign: 'left', cursor: 'pointer', color: '#444', fontWeight: 600 }}>Simplifie ce concept</button>
           </div>
         </div>
 

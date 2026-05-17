@@ -1,10 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { db } from '../../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function LearningGoalModal({ isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({
     title: '', matiere: '', type: 'Revision', 
     dateDebut: '', dateFin: '', cible: 'Chapitres', notes: ''
   });
+
+  const [matieresList, setMatieresList] = useState([]);
+
+  useEffect(() => {
+    async function fetchMatieres() {
+      try {
+        const docRef = doc(db, 'adminSettings', 'global');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().matieres) {
+          setMatieresList(docSnap.data().matieres);
+        } else {
+          setMatieresList([
+            { id: 'm1', nom: 'Mathématiques' },
+            { id: 'm2', nom: 'Physique-Chimie' },
+            { id: 'm3', nom: 'SVT' },
+            { id: 'm4', nom: 'Philosophie' },
+            { id: 'm5', nom: 'Français' },
+            { id: 'm6', nom: 'Histoire-Géo' },
+            { id: 'm7', nom: 'Économie' }
+          ]);
+        }
+      } catch (err) {
+        console.error("Erreur chargement matières:", err);
+      }
+    }
+    if (isOpen) {
+      fetchMatieres();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -38,7 +69,10 @@ export default function LearningGoalModal({ isOpen, onClose, onSave }) {
             <div>
               <label style={labelStyle}>Matière *</label>
               <select name="matiere" required value={formData.matiere} onChange={handleChange} style={inputStyle}>
-                <option value="">Sélectionner</option><option value="Mathematiques">Mathématiques</option><option value="Physique">Physique</option><option value="SVT">SVT</option><option value="Philosophie">Philosophie</option>
+                <option value="">Sélectionner</option>
+                {matieresList.map(m => (
+                  <option key={m.id} value={m.nom}>{m.nom}</option>
+                ))}
               </select>
             </div>
             <div>

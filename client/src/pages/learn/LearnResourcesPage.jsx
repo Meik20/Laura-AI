@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { collection, getDocs, doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 
 export default function LearnResourcesPage() {
   const navigate = useNavigate();
@@ -10,6 +10,7 @@ export default function LearnResourcesPage() {
   const [resources, setResources] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [bookmarks, setBookmarks] = useState([]);
+  const [matieresList, setMatieresList] = useState([]);
 
   const profileContext = {
     role: userProfile?.roleLabel || 'Élève',
@@ -29,11 +30,32 @@ export default function LearnResourcesPage() {
   }, [userProfile]);
 
   useEffect(() => {
-    async function fetchResources() {
+    async function fetchInitialData() {
+      // Fetch matieres from adminSettings
+      try {
+        const docRef = doc(db, 'adminSettings', 'global');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().matieres) {
+          setMatieresList(docSnap.data().matieres);
+        } else {
+          setMatieresList([
+            { id: 'm1', nom: 'Mathématiques' },
+            { id: 'm2', nom: 'Physique-Chimie' },
+            { id: 'm3', nom: 'SVT' },
+            { id: 'm4', nom: 'Philosophie' },
+            { id: 'm5', nom: 'Français' },
+            { id: 'm6', nom: 'Histoire-Géo' },
+            { id: 'm7', nom: 'Économie' }
+          ]);
+        }
+      } catch (err) {
+        console.error("Erreur chargement matières:", err);
+      }
+
+      // Fetch resources
       try {
         const snap = await getDocs(collection(db, 'resources'));
         const docs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        // Filtrer les ressources publiées
         setResources(docs.filter(r => r.statut === 'publie'));
       } catch (err) {
         console.error("Erreur de récupération des ressources :", err);
@@ -41,7 +63,7 @@ export default function LearnResourcesPage() {
         setIsLoading(false);
       }
     }
-    fetchResources();
+    fetchInitialData();
   }, []);
 
   const handleFilterChange = (e) => setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -65,7 +87,7 @@ export default function LearnResourcesPage() {
   };
 
   const filteredResources = resources.filter(res => {
-    const matchMatiere = !filters.matiere || res.cible?.toLowerCase().includes(filters.matiere.toLowerCase()) || res.titre?.toLowerCase().includes(filters.matiere.toLowerCase());
+    const matchMatiere = !filters.matiere || res.cible?.toLowerCase().includes(filters.matiere.toLowerCase()) || res.titre?.toLowerCase().includes(filters.matiere.toLowerCase()) || res.matiere?.toLowerCase().includes(filters.matiere.toLowerCase());
     const matchType = !filters.type || res.type === filters.type;
     const matchExamen = !filters.examen || res.cible?.toLowerCase().includes(filters.examen.toLowerCase()) || res.titre?.toLowerCase().includes(filters.examen.toLowerCase());
     const matchSearch = !filters.search || res.titre?.toLowerCase().includes(filters.search.toLowerCase()) || res.cible?.toLowerCase().includes(filters.search.toLowerCase());
@@ -94,12 +116,10 @@ export default function LearnResourcesPage() {
           style={{ padding: '0.8rem 1rem', borderRadius: '0.5rem', border: '1px solid #E5E5E2', background: '#F9F9F8', flex: '2 1 250px', outline: 'none' }} 
         />
         <select name="matiere" value={filters.matiere} onChange={handleFilterChange} style={{ padding: '0.8rem', borderRadius: '0.5rem', border: '1px solid #E5E5E2', background: '#F9F9F8', flex: '1 1 180px', outline: 'none' }}>
-          <option value="">Toutes les cibles / matières</option>
-          <option value="Math">Mathématiques</option>
-          <option value="Physique">Physique-Chimie</option>
-          <option value="SVT">SVT</option>
-          <option value="Philosophie">Philosophie</option>
-          <option value="Français">Français</option>
+          <option value="">Toutes les matières</option>
+          {matieresList.map(m => (
+            <option key={m.id} value={m.nom}>{m.nom}</option>
+          ))}
         </select>
         <select name="type" value={filters.type} onChange={handleFilterChange} style={{ padding: '0.8rem', borderRadius: '0.5rem', border: '1px solid #E5E5E2', background: '#F9F9F8', flex: '1 1 180px', outline: 'none' }}>
           <option value="">Tous les types</option>
@@ -140,7 +160,7 @@ export default function LearnResourcesPage() {
                     <h3 style={{ margin: '0 0 0.4rem 0', fontSize: '1.1rem', fontWeight: 700, color: '#1A1A1A', lineHeight: 1.3 }}>{res.titre || 'Sans titre'}</h3>
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', fontSize: '0.8rem' }}>
                       <span style={{ background: '#F5F4EF', color: '#6E6E6B', padding: '0.2rem 0.6rem', borderRadius: '1rem', fontWeight: 600 }}>{res.type || 'Général'}</span>
-                      <span style={{ background: '#E0F2FE', color: '#0369A1', padding: '0.2rem 0.6rem', borderRadius: '1rem', fontWeight: 600 }}>{res.cible || 'Général'}</span>
+                      <span style={{ background: '#E0F2FE', color: '#0369A1', padding: '0.2rem 0.6rem', borderRadius: '1rem', fontWeight: 600 }}>{res.cible || res.matiere || 'Général'}</span>
                     </div>
                   </div>
                 </div>

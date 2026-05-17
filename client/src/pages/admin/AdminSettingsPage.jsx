@@ -2,6 +2,17 @@ import { useState, useEffect } from 'react';
 import { db } from '../../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
+const defaultMatieres = [
+  { id: 'm1', nom: 'Mathématiques', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' },
+  { id: 'm2', nom: 'Physique-Chimie', niveau: 'Lycée', serie: 'C, D, TI', filiere: 'Général' },
+  { id: 'm3', nom: 'SVT', niveau: 'Lycée', serie: 'C, D', filiere: 'Général' },
+  { id: 'm4', nom: 'Philosophie', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' },
+  { id: 'm5', nom: 'Français', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' },
+  { id: 'm6', nom: 'Histoire-Géo', niveau: 'Lycée', serie: 'A, C, D', filiere: 'Général' },
+  { id: 'm7', nom: 'Économie', niveau: 'Lycée', serie: 'SES, B', filiere: 'Général' },
+  { id: 'm8', nom: 'Informatique', niveau: 'Lycée', serie: 'TI', filiere: 'Général' }
+];
+
 export default function AdminSettingsPage() {
   const [activeTab, setActiveTab] = useState('Général');
   const [isLoading, setIsLoading] = useState(true);
@@ -30,8 +41,13 @@ export default function AdminSettingsPage() {
 
     // Intégrations
     vectorDb: 'pinecone',
-    ragChunkSize: 1000
+    ragChunkSize: 1000,
+
+    // Curriculum / Programmes
+    matieres: defaultMatieres
   });
+
+  const [newMatiere, setNewMatiere] = useState({ nom: '', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' });
 
   useEffect(() => {
     async function fetchSettings() {
@@ -39,7 +55,12 @@ export default function AdminSettingsPage() {
         const docRef = doc(db, 'adminSettings', 'global');
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setSettings(prev => ({ ...prev, ...docSnap.data() }));
+          const data = docSnap.data();
+          setSettings(prev => ({ 
+            ...prev, 
+            ...data,
+            matieres: data.matieres && data.matieres.length > 0 ? data.matieres : defaultMatieres
+          }));
         }
       } catch (err) {
         console.error("Erreur de chargement des paramètres :", err);
@@ -77,7 +98,20 @@ export default function AdminSettingsPage() {
     setSettings(prev => ({ ...prev, maintenanceMode: !prev.maintenanceMode }));
   };
 
-  const tabs = ['Général', "Modèles d'IA (LLM)", 'Sécurité & Anti-Spam', 'Intégrations'];
+  const handleAddMatiere = (e) => {
+    e.preventDefault();
+    if (!newMatiere.nom.trim()) return;
+    const updated = [...(settings.matieres || defaultMatieres), { id: 'mat_' + Date.now(), ...newMatiere }];
+    setSettings(prev => ({ ...prev, matieres: updated }));
+    setNewMatiere({ nom: '', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' });
+  };
+
+  const handleDeleteMatiere = (id) => {
+    const updated = (settings.matieres || defaultMatieres).filter(m => m.id !== id);
+    setSettings(prev => ({ ...prev, matieres: updated }));
+  };
+
+  const tabs = ['Général', 'Programmes & Matières', "Modèles d'IA (LLM)", 'Sécurité & Anti-Spam', 'Intégrations'];
 
   const inputStyle = { width: '100%', padding: '0.8rem 1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'white', outline: 'none', boxSizing: 'border-box', marginTop: '0.4rem' };
   const labelStyle = { display: 'block', color: '#94A3B8', fontSize: '0.9rem', fontWeight: 600 };
@@ -87,7 +121,7 @@ export default function AdminSettingsPage() {
     <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
       <div>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Paramètres Système</h1>
-        <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>Configuration globale de l'intelligence artificielle et de la plateforme.</p>
+        <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>Configuration globale de l'intelligence artificielle, des programmes et de la plateforme.</p>
       </div>
       
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '2.5rem' }}>
@@ -144,7 +178,7 @@ export default function AdminSettingsPage() {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '0.8rem', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '1rem' }}>
                       <div>
                         <div style={{ fontWeight: 600, color: 'white' }}>Mode Maintenance</div>
-                        <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Désactiver l'accès à la plateforme pour les apprenants (maintenance en cours).</div>
+                        <div style={{ fontSize: '0.85rem', customColor: '#64748B' }}>Désactiver l'accès à la plateforme pour les apprenants (maintenance en cours).</div>
                       </div>
                       <button 
                         onClick={toggleMaintenance}
@@ -180,7 +214,73 @@ export default function AdminSettingsPage() {
                 </>
               )}
 
-              {/* TAB 2 : MODÈLES D'IA (LLM) */}
+              {/* TAB 2 : PROGRAMMES & MATIÈRES */}
+              {activeTab === 'Programmes & Matières' && (
+                <>
+                  <div style={sectionCardStyle}>
+                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 0.5rem 0', fontWeight: 700, color: 'white' }}>Gestion du Programme Local (Matières, Séries, Filières)</h2>
+                    <p style={{ color: '#94A3B8', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
+                      Définissez les matières officielles disponibles pour les apprenants selon leur niveau, série et filière.
+                    </p>
+
+                    {/* FORMULAIRE D'AJOUT */}
+                    <form onSubmit={handleAddMatiere} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '1rem', alignItems: 'end', background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '2rem' }}>
+                      <div>
+                        <label style={labelStyle}>Nom de la matière *</label>
+                        <input type="text" placeholder="ex: Mathématiques" value={newMatiere.nom} onChange={e => setNewMatiere({...newMatiere, nom: e.target.value})} style={inputStyle} required />
+                      </div>
+                      <div>
+                        <label style={labelStyle}>Niveau</label>
+                        <input type="text" placeholder="ex: Lycée" value={newMatiere.niveau} onChange={e => setNewMatiere({...newMatiere, niveau: e.target.value})} style={inputStyle} />
+                      </div>
+                      <div>
+                        <label style={labelStyle}>Série</label>
+                        <input type="text" placeholder="ex: C, D, TI, Toutes" value={newMatiere.serie} onChange={e => setNewMatiere({...newMatiere, serie: e.target.value})} style={inputStyle} />
+                      </div>
+                      <div>
+                        <label style={labelStyle}>Filière</label>
+                        <input type="text" placeholder="ex: Général" value={newMatiere.filiere} onChange={e => setNewMatiere({...newMatiere, filiere: e.target.value})} style={inputStyle} />
+                      </div>
+                      <button type="submit" style={{ padding: '0.8rem 1.5rem', background: '#10B981', color: 'white', border: 'none', borderRadius: '0.5rem', fontWeight: 700, cursor: 'pointer', height: '42px' }}>
+                        + Ajouter
+                      </button>
+                    </form>
+
+                    {/* TABLEAU DES MATIÈRES */}
+                    <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '0.8rem', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', color: 'white' }}>
+                        <thead style={{ background: 'rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.1)', fontSize: '0.9rem', color: '#94A3B8' }}>
+                          <tr>
+                            <th style={{ padding: '1rem 1.2rem' }}>Matière</th>
+                            <th style={{ padding: '1rem 1.2rem' }}>Niveau</th>
+                            <th style={{ padding: '1rem 1.2rem' }}>Série(s)</th>
+                            <th style={{ padding: '1rem 1.2rem' }}>Filière</th>
+                            <th style={{ padding: '1rem 1.2rem', textAlign: 'right' }}>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(settings.matieres || defaultMatieres).map(item => (
+                            <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                              <td style={{ padding: '1rem 1.2rem', fontWeight: 700 }}>{item.nom}</td>
+                              <td style={{ padding: '1rem 1.2rem', color: '#CBD5E1' }}>{item.niveau}</td>
+                              <td style={{ padding: '1rem 1.2rem', color: '#CBD5E1' }}>{item.serie}</td>
+                              <td style={{ padding: '1rem 1.2rem', color: '#CBD5E1' }}>{item.filiere}</td>
+                              <td style={{ padding: '1rem 1.2rem', textAlign: 'right' }}>
+                                <button onClick={() => handleDeleteMatiere(item.id)} style={{ background: '#EF444420', color: '#EF4444', border: '1px solid #EF444450', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>
+                                  Supprimer
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                  </div>
+                </>
+              )}
+
+              {/* TAB 3 : MODÈLES D'IA (LLM) */}
               {activeTab === "Modèles d'IA (LLM)" && (
                 <>
                   <div style={sectionCardStyle}>
@@ -267,7 +367,7 @@ export default function AdminSettingsPage() {
                 </>
               )}
 
-              {/* TAB 3 : SÉCURITÉ & ANTI-SPAM */}
+              {/* TAB 4 : SÉCURITÉ & ANTI-SPAM */}
               {activeTab === 'Sécurité & Anti-Spam' && (
                 <div style={sectionCardStyle}>
                   <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'white' }}>Pare-feu & Limitation de débit (Rate Limiting)</h2>
@@ -299,7 +399,7 @@ export default function AdminSettingsPage() {
                 </div>
               )}
 
-              {/* TAB 4 : INTÉGRATIONS */}
+              {/* TAB 5 : INTÉGRATIONS */}
               {activeTab === 'Intégrations' && (
                 <div style={sectionCardStyle}>
                   <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'white' }}>Bases de données & Services Tiers</h2>
