@@ -178,9 +178,9 @@ export default function LearnChatPage() {
           ) : (
             messages.map((m, i) => (
               <div key={i} style={{ display: 'flex', gap: '1.5rem' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0, background: m.role === 'user' ? '#00D4AA' : '#1A1A1A', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem', overflow: 'hidden' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0, background: m.role === 'user' ? '#00D4AA' : 'white', border: m.role === 'user' ? 'none' : '1px solid #E5E5E2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem', overflow: 'hidden', boxShadow: m.role === 'user' ? 'none' : '0 2px 4px rgba(0,0,0,0.05)' }}>
                   {m.role === 'user' ? 'A' : (
-                    <img src="/logo.png" alt="LAURA" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
+                    <img src="/icon.png" alt="LAURA" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
                   )}
                 </div>
                 <div style={{ flex: 1 }}>

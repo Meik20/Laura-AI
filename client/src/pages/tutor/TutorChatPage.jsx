@@ -150,9 +150,9 @@ export default function TutorChatPage() {
             ) : (
               messages.map((m, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1.5rem' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', flexShrink: 0, background: m.role === 'user' ? '#00A37A' : '#1A1A1A', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1.2rem', overflow: 'hidden' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', flexShrink: 0, background: m.role === 'user' ? '#00A37A' : 'white', border: m.role === 'user' ? 'none' : '1px solid #E5E5E2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1.2rem', overflow: 'hidden', boxShadow: m.role === 'user' ? 'none' : '0 2px 4px rgba(0,0,0,0.05)' }}>
                     {m.role === 'user' ? 'Vous' : (
-                      <img src="/logo.png" alt="LAURA" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                      <img src="/icon.png" alt="LAURA" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
                     )}
                   </div>
                   <div style={{ flex: 1 }}>
