@@ -11,8 +11,19 @@ const PORT = process.env.PORT || 5000;
 const orchestrator = require('./services/orchestrator');
 const ussdService = require('./services/ussd');
 
-// Middleware
-app.use(helmet());
+// Middleware - CSP configured for React SPA (Vite builds use inline scripts and modules)
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", "https://firebaseapp.com", "https://*.googleapis.com", "https://*.firebaseio.com"],
+    },
+  },
+}));
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
