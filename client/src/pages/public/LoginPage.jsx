@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+import { db } from '../../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -7,6 +10,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,27 +24,24 @@ export default function LoginPage() {
 
     setIsLoading(true);
     try {
-      // Simulation de connexion et gestion des données utilisateur
-      let savedUser = JSON.parse(localStorage.getItem('laura_user'));
-      if (!savedUser) {
-        savedUser = {
-          prenom: email.split('@')[0],
-          roleLabel: 'Élève',
-          niveau: 'Terminale D',
-          examen: 'BAC'
-        };
-        localStorage.setItem('laura_user', JSON.stringify(savedUser));
+      const userCred = await login(email, password);
+      
+      // On récupère le profil pour la redirection
+      const docRef = doc(db, 'users', userCred.user.uid);
+      const docSnap = await getDoc(docRef);
+      
+      let role = 'student';
+      if (docSnap.exists()) {
+        role = docSnap.data().role || 'student';
       }
-      await new Promise(resolve => setTimeout(resolve, 1000)); 
       
-      // Simulation de redirection basée sur le rôle
-      const simulatedRole = 'student'; // À remplacer par le vrai rôle depuis Firestore
-      
-      if (simulatedRole === 'student') navigate('/learn/dashboard');
-      else if (simulatedRole === 'teacher') navigate('/tutor/dashboard');
-      else if (simulatedRole === 'admin') navigate('/admin/dashboard');
+      if (role === 'student') navigate('/learn/dashboard');
+      else if (role === 'teacher') navigate('/tutor/dashboard');
+      else if (role === 'admin') navigate('/admin/dashboard');
+      else navigate('/learn/dashboard');
       
     } catch (err) {
+      console.error(err);
       setError('Identifiants invalides. Veuillez réessayer.');
     } finally {
       setIsLoading(false);

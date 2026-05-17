@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ export default function SignupPage() {
   });
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const { signup } = useAuth();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -38,21 +41,24 @@ export default function SignupPage() {
 
     setIsLoading(true);
     try {
-      // Sauvegarde locale pour personnaliser l'expérience immédiatement
-      localStorage.setItem('laura_user', JSON.stringify({
+      const profileData = {
         prenom: formData.prenom,
         nom: formData.nom,
-        email: formData.email,
+        role: 'student', // rôle technique
         roleLabel: profileType === 'eleve' ? 'Élève' : 'Étudiant',
         niveau: profileType === 'eleve' ? formData.classe : formData.niveauEtude,
         examen: profileType === 'eleve' ? formData.examenEleve : formData.examenEtudiant,
-      }));
+        filiere: profileType === 'etudiant' ? formData.filiere : null,
+        etablissement: profileType === 'eleve' ? formData.etablissementEleve : formData.etablissementEtudiant,
+        langue: profileType === 'eleve' ? formData.langueEleve : formData.langueEtudiant,
+      };
 
-      // TODO: Firebase Auth & Firestore Logic
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // Redirection après succès (Point 3.9)
+      await signup(formData.email, formData.password, profileData);
+      
+      // Redirection après succès
       navigate('/learn/dashboard');
     } catch (err) {
+      console.error(err);
       setError(err.message || 'Une erreur est survenue lors de l\'inscription.');
     } finally {
       setIsLoading(false);

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import LearningGoalModal from '../../components/dashboard/LearningGoalModal';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function LearnDashboardPage() {
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
@@ -9,13 +10,14 @@ export default function LearnDashboardPage() {
     progress: 45
   });
 
-  // Lecture des informations de l'utilisateur depuis le localStorage pour personnaliser l'affichage
-  const savedUser = JSON.parse(localStorage.getItem('laura_user')) || {};
+  const { userProfile } = useAuth();
+
+  // Utilisation sécurisée au cas où le profil met du temps à charger
   const user = {
-    prenom: savedUser.prenom || 'Amina',
-    roleLabel: savedUser.roleLabel || 'Élève',
-    niveau: savedUser.niveau || 'Terminale D',
-    examen: savedUser.examen || 'BAC'
+    prenom: userProfile?.prenom || 'Apprenant',
+    roleLabel: userProfile?.roleLabel || 'Élève',
+    niveau: userProfile?.niveau || 'Non défini',
+    examen: userProfile?.examen || 'Non défini'
   };
 
   const handleSaveGoal = (newGoal) => {
