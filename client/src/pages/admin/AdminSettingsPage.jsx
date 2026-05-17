@@ -189,18 +189,18 @@ export default function AdminSettingsPage() {
                       <div>
                         <label style={labelStyle}>Modèle principal (Chat Apprenant & Explications complexes)</label>
                         <select name="mainModel" value={settings.mainModel} onChange={handleChange} style={inputStyle}>
-                          <optgroup label="Google Gemini">
-                            <option value="gemini-1.5-pro">Google Gemini 1.5 Pro (Recommandé pour le raisonnement)</option>
-                            <option value="gemini-1.5-flash">Google Gemini 1.5 Flash (Rapide)</option>
+                          <optgroup label="Google Gemini" style={{ background: '#0F1520', color: 'white' }}>
+                            <option value="gemini-1.5-pro" style={{ background: '#0F1520', color: 'white' }}>Google Gemini 1.5 Pro (Recommandé pour le raisonnement)</option>
+                            <option value="gemini-1.5-flash" style={{ background: '#0F1520', color: 'white' }}>Google Gemini 1.5 Flash (Rapide)</option>
                           </optgroup>
-                          <optgroup label="Anthropic Claude">
-                            <option value="claude-3-5-sonnet">Anthropic Claude 3.5 Sonnet (Excellent en littérature/synthèse)</option>
-                            <option value="claude-3-opus">Anthropic Claude 3 Opus</option>
+                          <optgroup label="Anthropic Claude" style={{ background: '#0F1520', color: 'white' }}>
+                            <option value="claude-3-5-sonnet" style={{ background: '#0F1520', color: 'white' }}>Anthropic Claude 3.5 Sonnet (Excellent en littérature/synthèse)</option>
+                            <option value="claude-3-opus" style={{ background: '#0F1520', color: 'white' }}>Anthropic Claude 3 Opus</option>
                           </optgroup>
-                          <optgroup label="Groq (LPU) & Autres">
-                            <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
-                            <option value="groq-mixtral">Groq - Mixtral 8x7B</option>
-                            <option value="mistral-large">Mistral Large 2</option>
+                          <optgroup label="Groq (LPU) & Autres" style={{ background: '#0F1520', color: 'white' }}>
+                            <option value="groq-llama-3" style={{ background: '#0F1520', color: 'white' }}>Groq - Meta Llama 3.3 70B</option>
+                            <option value="groq-mixtral" style={{ background: '#0F1520', color: 'white' }}>Groq - Mixtral 8x7B</option>
+                            <option value="mistral-large" style={{ background: '#0F1520', color: 'white' }}>Mistral Large 2</option>
                           </optgroup>
                         </select>
                       </div>
@@ -208,16 +208,16 @@ export default function AdminSettingsPage() {
                       <div>
                         <label style={labelStyle}>Modèle secondaire (Correction de copies & Évaluation tuteur)</label>
                         <select name="secondaryModel" value={settings.secondaryModel} onChange={handleChange} style={inputStyle}>
-                          <optgroup label="Anthropic Claude">
-                            <option value="claude-3-5-sonnet">Anthropic Claude 3.5 Sonnet</option>
+                          <optgroup label="Anthropic Claude" style={{ background: '#0F1520', color: 'white' }}>
+                            <option value="claude-3-5-sonnet" style={{ background: '#0F1520', color: 'white' }}>Anthropic Claude 3.5 Sonnet</option>
                           </optgroup>
-                          <optgroup label="Google Gemini">
-                            <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
-                            <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
+                          <optgroup label="Google Gemini" style={{ background: '#0F1520', color: 'white' }}>
+                            <option value="gemini-1.5-pro" style={{ background: '#0F1520', color: 'white' }}>Google Gemini 1.5 Pro</option>
+                            <option value="gemini-1.5-flash" style={{ background: '#0F1520', color: 'white' }}>Google Gemini 1.5 Flash</option>
                           </optgroup>
-                          <optgroup label="Groq (LPU) & Autres">
-                            <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
-                            <option value="mistral-large">Mistral Large 2</option>
+                          <optgroup label="Groq (LPU) & Autres" style={{ background: '#0F1520', color: 'white' }}>
+                            <option value="groq-llama-3" style={{ background: '#0F1520', color: 'white' }}>Groq - Meta Llama 3.3 70B</option>
+                            <option value="mistral-large" style={{ background: '#0F1520', color: 'white' }}>Mistral Large 2</option>
                           </optgroup>
                         </select>
                       </div>
@@ -225,9 +225,9 @@ export default function AdminSettingsPage() {
                       <div>
                         <label style={labelStyle}>Modèle de secours (Fallback en cas de panne d'API)</label>
                         <select name="fallbackModel" value={settings.fallbackModel} onChange={handleChange} style={inputStyle}>
-                          <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
-                          <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
-                          <option value="ollama-local">Ollama Local (Mistral 7B - Auto-hébergé)</option>
+                          <option value="groq-llama-3" style={{ background: '#0F1520', color: 'white' }}>Groq - Meta Llama 3.3 70B</option>
+                          <option value="gemini-1.5-flash" style={{ background: '#0F1520', color: 'white' }}>Google Gemini 1.5 Flash</option>
+                          <option value="ollama-local" style={{ background: '#0F1520', color: 'white' }}>Ollama Local (Mistral 7B - Auto-hébergé)</option>
                         </select>
                       </div>
                     </div>
@@ -307,9 +307,9 @@ export default function AdminSettingsPage() {
                     <div>
                       <label style={labelStyle}>Base de données Vectorielle (RAG / Recherche sémantique)</label>
                       <select name="vectorDb" value={settings.vectorDb} onChange={handleChange} style={inputStyle}>
-                        <option value="pinecone">Pinecone Vector Database (Actif)</option>
-                        <option value="milvus">Milvus / Zilliz</option>
-                        <option value="qdrant">Qdrant Cloud</option>
+                        <option value="pinecone" style={{ background: '#0F1520', color: 'white' }}>Pinecone Vector Database (Actif)</option>
+                        <option value="milvus" style={{ background: '#0F1520', color: 'white' }}>Milvus / Zilliz</option>
+                        <option value="qdrant" style={{ background: '#0F1520', color: 'white' }}>Qdrant Cloud</option>
                       </select>
                     </div>
 

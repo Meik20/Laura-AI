@@ -144,8 +144,8 @@ export default function AdminAccessRulesPage() {
               <div>
                 <label style={{ display: 'block', color: '#94A3B8', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.4rem' }}>Statut</label>
                 <select value={formData.statut} onChange={e => setFormData({...formData, statut: e.target.value})} style={{ width: '100%', padding: '0.8rem 1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'white', outline: 'none', boxSizing: 'border-box' }}>
-                  <option value="actif">Actif</option>
-                  <option value="inactif">Inactif</option>
+                  <option value="actif" style={{ background: '#0F1520', color: 'white' }}>Actif</option>
+                  <option value="inactif" style={{ background: '#0F1520', color: 'white' }}>Inactif</option>
                 </select>
               </div>
 

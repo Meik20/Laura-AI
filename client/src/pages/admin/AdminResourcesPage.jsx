@@ -142,10 +142,11 @@ export default function AdminResourcesPage() {
                 <div>
                   <label style={{ display: 'block', color: '#94A3B8', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.4rem' }}>Type</label>
                   <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={{ width: '100%', padding: '0.8rem 1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'white', outline: 'none', boxSizing: 'border-box' }}>
-                    <option value="Annale">Annale</option>
-                    <option value="Fiche">Fiche de cours</option>
-                    <option value="Quiz">Quiz</option>
-                    <option value="Livre">Livre / PDF</option>
+                    <option value="Épreuve" style={{ background: '#0F1520', color: 'white' }}>Épreuve</option>
+                    <option value="Annale" style={{ background: '#0F1520', color: 'white' }}>Annale</option>
+                    <option value="Fiche" style={{ background: '#0F1520', color: 'white' }}>Fiche de cours</option>
+                    <option value="Quiz" style={{ background: '#0F1520', color: 'white' }}>Quiz</option>
+                    <option value="Livre" style={{ background: '#0F1520', color: 'white' }}>Livre / PDF</option>
                   </select>
                 </div>
                 <div>
@@ -157,8 +158,8 @@ export default function AdminResourcesPage() {
               <div>
                 <label style={{ display: 'block', color: '#94A3B8', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.4rem' }}>Statut</label>
                 <select value={formData.statut} onChange={e => setFormData({...formData, statut: e.target.value})} style={{ width: '100%', padding: '0.8rem 1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'white', outline: 'none', boxSizing: 'border-box' }}>
-                  <option value="publie">Publié</option>
-                  <option value="brouillon">Brouillon</option>
+                  <option value="publie" style={{ background: '#0F1520', color: 'white' }}>Publié</option>
+                  <option value="brouillon" style={{ background: '#0F1520', color: 'white' }}>Brouillon</option>
                 </select>
               </div>
 
