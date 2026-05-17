@@ -20,20 +20,18 @@ class Orchestrator {
     // Initialize SDKs
     const anthropicKey = (process.env.ANTHROPIC_API_KEY || '').trim();
     const googleKey = (process.env.GOOGLE_AI_API_KEY || '').trim();
-    const grokKey = (process.env.GROK_API_KEY || '').trim();
+    const groqKey = (process.env.GROQ_API_KEY || '').trim();
 
-    console.log(`[LAURA Service] Initializing with keys: Anthropic=${!!anthropicKey}, Gemini=${!!googleKey}, Grok/Groq=${!!grokKey}`);
+    console.log(`[LAURA Service] Initializing with keys: Anthropic=${!!anthropicKey}, Gemini=${!!googleKey}, Groq=${!!groqKey}`);
 
     this.anthropic = anthropicKey ? new Anthropic({ apiKey: anthropicKey }) : null;
     this.genAI = googleKey ? new GoogleGenerativeAI(googleKey) : null;
     
-    // Auto-detect if it's xAI (Grok) or Groq (LPU)
-    const isGroq = grokKey.startsWith('gsk_');
-    this.grok = grokKey ? new OpenAI({
-      apiKey: grokKey,
-      baseURL: isGroq ? "https://api.groq.com/openai/v1" : "https://api.x.ai/v1",
+    // Groq (LPU) Configuration
+    this.groq = groqKey ? new OpenAI({
+      apiKey: groqKey,
+      baseURL: "https://api.groq.com/openai/v1",
     }) : null;
-    this.isGroq = isGroq;
 
     // Local Model Configuration (Ollama / LocalAI)
     this.localModelURL = process.env.LOCAL_MODEL_URL || 'http://localhost:11434/v1';
@@ -63,7 +61,7 @@ class Orchestrator {
     }
 
     if (q.includes('histoire') || q.includes('géo') || q.includes('emc') || q.includes('langue')) {
-      return { model: ['grok', 'claude'], strategy: this.strategies.CONSENSUS };
+      return { model: ['groq', 'claude'], strategy: this.strategies.CONSENSUS };
     }
 
     if (q.includes('correction') || q.includes('rédige') || q.includes('vérifie')) {
@@ -71,15 +69,15 @@ class Orchestrator {
     }
 
     if (q.includes('concours') || q.includes('résultat') || q.includes('exam')) {
-      return { model: 'grok', strategy: this.strategies.SIMPLE };
+      return { model: 'groq', strategy: this.strategies.SIMPLE };
     }
 
     // Default: High complexity or ambiguous
     if (q.length > 150) {
-      return { model: ['claude', 'gemini', 'grok'], strategy: this.strategies.CONSENSUS };
+      return { model: ['claude', 'gemini', 'groq'], strategy: this.strategies.CONSENSUS };
     }
 
-    return { model: 'grok', strategy: this.strategies.SIMPLE };
+    return { model: 'groq', strategy: this.strategies.SIMPLE };
   }
 
   /**
@@ -100,13 +98,12 @@ class Orchestrator {
         const result = await geminiModel.generateContent(prompt);
         return { text: result.response.text(), model: 'gemini' };
       }
-      else if (model === 'grok' && this.grok) {
-        const modelName = this.isGroq ? "llama-3.3-70b-versatile" : "grok-2";
-        const completion = await this.grok.chat.completions.create({
-          model: modelName,
+      else if (model === 'groq' && this.groq) {
+        const completion = await this.groq.chat.completions.create({
+          model: "llama-3.3-70b-versatile",
           messages: [{ role: "user", content: prompt }],
         });
-        return { text: completion.choices[0].message.content, model: this.isGroq ? 'groq' : 'grok' };
+        return { text: completion.choices[0].message.content, model: 'groq' };
       }
       else if (model === 'local') {
         const completion = await this.localModel.chat.completions.create({

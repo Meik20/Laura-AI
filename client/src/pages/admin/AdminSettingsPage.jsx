@@ -19,7 +19,7 @@ export default function AdminSettingsPage() {
     // LLM
     mainModel: 'gemini-1.5-pro',
     secondaryModel: 'claude-3-5-sonnet',
-    fallbackModel: 'grok-2',
+    fallbackModel: 'groq-llama-3',
     temperature: 0.7,
     maxTokens: 2048,
 
@@ -197,10 +197,10 @@ export default function AdminSettingsPage() {
                             <option value="claude-3-5-sonnet">Anthropic Claude 3.5 Sonnet (Excellent en littérature/synthèse)</option>
                             <option value="claude-3-opus">Anthropic Claude 3 Opus</option>
                           </optgroup>
-                          <optgroup label="xAI Grok & Autres">
-                            <option value="grok-2">xAI Grok 2</option>
+                          <optgroup label="Groq (LPU) & Autres">
+                            <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
+                            <option value="groq-mixtral">Groq - Mixtral 8x7B</option>
                             <option value="mistral-large">Mistral Large 2</option>
-                            <option value="llama-3-70b">Meta Llama 3 70B (via Groq)</option>
                           </optgroup>
                         </select>
                       </div>
@@ -215,8 +215,8 @@ export default function AdminSettingsPage() {
                             <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
                             <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
                           </optgroup>
-                          <optgroup label="xAI Grok & Autres">
-                            <option value="grok-2">xAI Grok 2</option>
+                          <optgroup label="Groq (LPU) & Autres">
+                            <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
                             <option value="mistral-large">Mistral Large 2</option>
                           </optgroup>
                         </select>
@@ -225,7 +225,7 @@ export default function AdminSettingsPage() {
                       <div>
                         <label style={labelStyle}>Modèle de secours (Fallback en cas de panne d'API)</label>
                         <select name="fallbackModel" value={settings.fallbackModel} onChange={handleChange} style={inputStyle}>
-                          <option value="grok-2">xAI Grok 2</option>
+                          <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
                           <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
                           <option value="ollama-local">Ollama Local (Mistral 7B - Auto-hébergé)</option>
                         </select>
@@ -333,7 +333,7 @@ export default function AdminSettingsPage() {
                           <span style={{ color: '#10B981', fontWeight: 700 }}>✓ Connecté (Fichier .env)</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
-                          <span style={{ color: '#CBD5E1' }}>xAI Grok API</span>
+                          <span style={{ color: '#CBD5E1' }}>Groq API (LPU)</span>
                           <span style={{ color: '#10B981', fontWeight: 700 }}>✓ Connecté (Fichier .env)</span>
                         </div>
                       </div>
