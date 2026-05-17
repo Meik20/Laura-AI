@@ -173,23 +173,41 @@ export default function LearnChatPage() {
         <div style={{ padding: '1.5rem', borderTop: '1px solid #E5E5E2', background: '#FAFAFA' }}>
           
           {attachedFile && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#E0F2FE', color: '#0369A1', padding: '0.5rem 1rem', borderRadius: '0.5rem', marginBottom: '1rem', fontSize: '0.9rem', fontWeight: 600 }}>
-              <span>📎 Fichier joint : {attachedFile.name}</span>
-              <button onClick={() => setAttachedFile(null)} style={{ background: 'transparent', border: 'none', color: '#0369A1', fontWeight: 700, cursor: 'pointer', marginLeft: 'auto' }}>✕</button>
+            <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '1rem', borderRadius: '0.75rem', marginBottom: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#065F46', fontWeight: 700, fontSize: '0.95rem' }}>
+                  <span>📎 Fichier / Cours joint :</span>
+                  <span style={{ background: 'white', padding: '0.2rem 0.6rem', borderRadius: '0.4rem', border: '1px solid #D1FAE5' }}>{attachedFile.name}</span>
+                </div>
+                <button onClick={() => setAttachedFile(null)} style={{ background: 'transparent', border: 'none', color: '#065F46', fontWeight: 700, cursor: 'pointer', fontSize: '1.1rem' }}>✕</button>
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button 
+                  onClick={() => {
+                    const prompt = `[📎 Cours partagé : ${attachedFile.name}] J'ai partagé mon cours avec toi. Peux-tu analyser ce document et créer un quiz interactif complet (avec QCM et explications) pour tester mes connaissances sur ce cours ?`;
+                    setAttachedFile(null);
+                    handleSend(prompt);
+                  }}
+                  style={{ background: '#059669', color: 'white', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '0.6rem', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 2px 4px rgba(5, 150, 105, 0.2)' }}
+                >
+                  <span>✨</span> Transformer mon cours en Quiz interactif
+                </button>
+                <span style={{ fontSize: '0.85rem', color: '#047857' }}>Ou posez une question personnalisée ci-dessous ↓</span>
+              </div>
             </div>
           )}
 
           {/* Actions rapides de saisie */}
-          <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-            <label style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#6E6E6B', fontWeight: 600, fontSize: '0.9rem' }}>
-              <span>📎</span> Joindre fichier
+          <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '1rem', overflowX: 'auto', paddingBottom: '0.5rem', alignItems: 'center' }}>
+            <label style={{ background: '#10B981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)' }}>
+              <span>📎</span> Partager un cours / fichier
               <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
             </label>
-            <div style={{ width: '1px', background: '#E5E5E2', margin: '0 0.5rem' }}></div>
-            <button onClick={() => handleActionPrompt("Peux-tu m'expliquer en détail le concept suivant : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.4rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Expliquer</button>
-            <button onClick={() => handleActionPrompt("Je souhaite faire une session de révision complète sur : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.4rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Réviser</button>
-            <button onClick={() => handleActionPrompt("Voici mon exercice/devoir, peux-tu le corriger et m'expliquer mes erreurs : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.4rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Corriger</button>
-            <button onClick={() => handleActionPrompt("Génère un quiz de 5 questions avec corrigé sur : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.4rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Quiz</button>
+            <div style={{ width: '1px', background: '#E5E5E2', height: '20px', margin: '0 0.2rem' }}></div>
+            <button onClick={() => handleActionPrompt("Peux-tu m'expliquer en détail le concept suivant : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.5rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Expliquer</button>
+            <button onClick={() => handleActionPrompt("Je souhaite faire une session de révision complète sur : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.5rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Réviser</button>
+            <button onClick={() => handleActionPrompt("Voici mon exercice/devoir, peux-tu le corriger et m'expliquer mes erreurs : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.5rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Corriger</button>
+            <button onClick={() => handleActionPrompt("Génère un quiz de 5 questions avec corrigé sur : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.5rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Quiz</button>
           </div>
 
           <div style={{ position: 'relative' }}>
