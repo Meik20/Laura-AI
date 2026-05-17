@@ -11,6 +11,10 @@ import SignupPage from '../pages/public/SignupPage';
 
 // Learn Pages
 import LearnDashboardPage from '../pages/learn/LearnDashboardPage';
+import LearnChatPage from '../pages/learn/LearnChatPage';
+import LearnRevisionPage from '../pages/learn/LearnRevisionPage';
+import LearnExamsPage from '../pages/learn/LearnExamsPage';
+import LearnResourcesPage from '../pages/learn/LearnResourcesPage';
 
 // Tutor Pages
 import TutorDashboardPage from '../pages/tutor/TutorDashboardPage';
@@ -41,6 +45,10 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <LearnDashboardPage /> },
+      { path: 'chat', element: <LearnChatPage /> },
+      { path: 'revision', element: <LearnRevisionPage /> },
+      { path: 'exams', element: <LearnExamsPage /> },
+      { path: 'resources', element: <LearnResourcesPage /> },
       // Add other learn routes here
     ],
   },
