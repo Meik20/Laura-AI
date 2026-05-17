@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { db } from '../../firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../hooks/useAuth';
 
 export default function TutorApplyPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const inviteCode = searchParams.get('code');
   const { userProfile, signup } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -42,10 +44,11 @@ export default function TutorApplyPage() {
         diplome: formData.diplome,
         competences: formData.competences,
         motivation: formData.motivation,
-        roleLabel: 'Tuteur',
-        isTutorPending: true,
-        isTutor: false,
-        statut: 'en_examen'
+        roleLabel: inviteCode ? 'Tuteur Contributeur' : 'Tuteur',
+        isTutorPending: !inviteCode,
+        isTutor: !!inviteCode,
+        statut: inviteCode ? 'Contributeur' : 'en_examen',
+        role: inviteCode ? 'teacher' : 'student'
       };
 
       if (userProfile?.uid) {
@@ -77,8 +80,16 @@ export default function TutorApplyPage() {
   return (
     <div style={{ padding: '4rem 2rem', background: '#F9F9F8', minHeight: '100vh' }}>
       <div style={{ maxWidth: '700px', margin: '0 auto', background: 'white', padding: '3.5rem', borderRadius: '1.5rem', boxShadow: '0 20px 60px rgba(0,0,0,0.05)', border: '1px solid #E5E5E2' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem' }}>Candidature Tuteur</h1>
-        <p style={{ color: '#6E6E6B', marginBottom: '2.5rem' }}>Votre dossier sera examiné avant toute activation.</p>
+        <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Candidature Tuteur</h1>
+        
+        {inviteCode ? (
+          <div style={{ background: '#E0F2FE', border: '1px solid #BAE6FD', color: '#0369A1', padding: '1.2rem', borderRadius: '0.75rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem', fontWeight: 600 }}>
+            <span>✨</span>
+            <span>Invitation validée ({inviteCode}). Votre compte tuteur sera instantanément activé à la création.</span>
+          </div>
+        ) : (
+          <p style={{ color: '#6E6E6B', marginBottom: '2.5rem' }}>Votre dossier sera examiné avant toute activation.</p>
+        )}
 
         {error && <div style={{ background: '#FEE2E2', color: '#B91C1C', padding: '1rem', borderRadius: '0.75rem', marginBottom: '1.5rem' }}>{error}</div>}
 
