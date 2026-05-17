@@ -141,18 +141,46 @@ class Orchestrator {
     const userExamen = userContext?.examen && userContext.examen !== 'Non défini' ? userContext.examen : "";
     
     // Détermination de l'heure locale (Cameroun)
-    const options = { timeZone: 'Africa/Douala', hour: '2-digit', hour12: false };
-    const currentHour = parseInt(new Intl.DateTimeFormat('fr-FR', options).format(new Date()), 10);
+    const optionsDate = { timeZone: 'Africa/Douala', year: 'numeric', month: 'numeric', day: 'numeric' };
+    const dateParts = new Intl.DateTimeFormat('en-US', optionsDate).formatToParts(new Date());
+    const localMonth = parseInt(dateParts.find(p => p.type === 'month').value, 10);
+    const localDay = parseInt(dateParts.find(p => p.type === 'day').value, 10);
+    const localYear = parseInt(dateParts.find(p => p.type === 'year').value, 10);
+    
+    // JS Date for day of week (months are 0-indexed in Date constructor)
+    const localDate = new Date(localYear, localMonth - 1, localDay);
+    const dayOfWeek = localDate.getDay(); // 0 = Dimanche, 6 = Samedi
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+    const optionsHour = { timeZone: 'Africa/Douala', hour: '2-digit', hour12: false };
+    const currentHour = parseInt(new Intl.DateTimeFormat('fr-FR', optionsHour).format(new Date()), 10);
+    
+    // Jours fériés fixes au Cameroun
+    const holidays = [
+      { m: 1, d: 1, name: "le Nouvel An" },
+      { m: 2, d: 11, name: "la Fête de la Jeunesse" },
+      { m: 5, d: 1, name: "la Fête du Travail" },
+      { m: 5, d: 20, name: "la Fête Nationale de l'Unité" },
+      { m: 8, d: 15, name: "l'Assomption" },
+      { m: 12, d: 25, name: "Noël" }
+    ];
+    const holiday = holidays.find(h => h.m === localMonth && h.d === localDay);
     
     let timeContext = "";
-    if (currentHour >= 5 && currentHour < 12) {
-      timeContext = "C'est le matin. Tu peux lui souhaiter une bonne journée de cours et beaucoup d'énergie.";
-    } else if (currentHour >= 12 && currentHour < 16) {
-      timeContext = "C'est l'après-midi. Demande-lui comment se passe sa journée d'école.";
-    } else if (currentHour >= 16 && currentHour < 21) {
-      timeContext = "C'est la fin de journée/le soir. N'hésite pas à lui demander avec une phrase familière 'Comment a été l'école aujourd'hui ?' ou s'il a beaucoup de devoirs.";
+    if (holiday) {
+      timeContext = `Aujourd'hui c'est jour férié au Cameroun (${holiday.name}). L'élève ne va pas à l'école. Utilise ce contexte pour lui demander s'il profite de son jour de repos ou s'il en profite pour rattraper ses révisions.`;
+    } else if (isWeekend) {
+      timeContext = "Aujourd'hui c'est le week-end ! L'élève se repose de l'école. Souhaite-lui un bon week-end et demande-lui s'il a pu se détendre un peu.";
     } else {
-      timeContext = "C'est tard le soir. Tu peux lui rappeler doucement de se reposer pour être en forme demain, tout en l'aidant.";
+      if (currentHour >= 5 && currentHour < 12) {
+        timeContext = "C'est le matin. Tu peux lui souhaiter une bonne journée de cours et beaucoup d'énergie.";
+      } else if (currentHour >= 12 && currentHour < 16) {
+        timeContext = "C'est l'après-midi. Demande-lui comment se passe sa journée d'école.";
+      } else if (currentHour >= 16 && currentHour < 21) {
+        timeContext = "C'est la fin de journée/le soir. N'hésite pas à lui demander avec une phrase familière 'Comment a été l'école aujourd'hui ?' ou s'il a beaucoup de devoirs.";
+      } else {
+        timeContext = "C'est tard le soir. Tu peux lui rappeler doucement de se reposer pour être en forme demain, tout en l'aidant.";
+      }
     }
     
     let profileString = `Tu parles à ${userName}`;
