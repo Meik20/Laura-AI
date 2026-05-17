@@ -45,38 +45,7 @@ class Orchestrator {
    * Classify the query to determine the best model/strategy based on the matrix
    */
   classifyQuery(query) {
-    const q = query.toLowerCase();
-    
-    // Matrice de routage intelligente
-    if (q.includes('image') || q.includes('schéma') || q.includes('diagramme')) {
-      return { model: 'gemini', strategy: this.strategies.SIMPLE };
-    }
-    
-    if (q.includes('dissertation') || q.includes('philo') || q.includes('argumentation') || q.includes('math')) {
-      return { model: 'claude', strategy: this.strategies.SIMPLE };
-    }
-
-    if (q.includes('svt') || q.includes('bio') || q.includes('sciences')) {
-      return { model: ['gemini', 'claude'], strategy: this.strategies.CONSENSUS };
-    }
-
-    if (q.includes('histoire') || q.includes('géo') || q.includes('emc') || q.includes('langue')) {
-      return { model: ['groq', 'claude'], strategy: this.strategies.CONSENSUS };
-    }
-
-    if (q.includes('correction') || q.includes('rédige') || q.includes('vérifie')) {
-      return { model: 'claude', strategy: this.strategies.CRITIQUE };
-    }
-
-    if (q.includes('concours') || q.includes('résultat') || q.includes('exam')) {
-      return { model: 'groq', strategy: this.strategies.SIMPLE };
-    }
-
-    // Default: High complexity or ambiguous
-    if (q.length > 150) {
-      return { model: ['claude', 'gemini', 'groq'], strategy: this.strategies.CONSENSUS };
-    }
-
+    // Pour l'instant, le modèle doit utiliser GROQ en priorité
     return { model: 'groq', strategy: this.strategies.SIMPLE };
   }
 
