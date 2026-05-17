@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { doc, getDoc, setDoc, arrayUnion, collection, addDoc } from 'firebase/firestore';
 
 export default function LearnChatPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const { userProfile } = useAuth();
@@ -37,6 +39,38 @@ export default function LearnChatPage() {
     }
     loadHistory();
   }, [userProfile?.uid]);
+
+  useEffect(() => {
+    if (isInitializing) return;
+
+    const promptKey = searchParams.get('prompt');
+    const resourceTitle = searchParams.get('resourceTitle');
+    
+    if (promptKey || resourceTitle) {
+      let promptText = '';
+      if (promptKey === 'sujets_frequents') {
+        promptText = `Quels sont les sujets et chapitres qui tombent le plus fréquemment à l'examen de mon niveau (${profileContext.examen}), et comment bien m'y préparer ?`;
+      } else if (promptKey === 'corriges_types') {
+        promptText = `Peux-tu me donner un exemple d'épreuve ou d'annale type pour mon examen (${profileContext.examen}) avec son corrigé détaillé et des conseils méthodologiques ?`;
+      } else if (promptKey === 'simulation_examen') {
+        promptText = `Je souhaite faire une simulation d'examen en condition réelle pour mon niveau (${profileContext.examen}). Donne-moi un sujet complet à traiter en temps limité.`;
+      } else if (promptKey === 'plan_preparation') {
+        promptText = `Élabore un plan de préparation complet et structuré pour mon examen (${profileContext.examen}), en ciblant les notions prioritaires à maîtriser.`;
+      } else if (resourceTitle) {
+        promptText = `Peux-tu m'aider à réviser et m'expliquer en détail l'annale/épreuve suivante : "${resourceTitle}" ?`;
+      }
+      
+      if (promptText) {
+        searchParams.delete('prompt');
+        searchParams.delete('resourceTitle');
+        setSearchParams(searchParams);
+        
+        setTimeout(() => {
+          handleSend(promptText);
+        }, 100);
+      }
+    }
+  }, [searchParams, isInitializing]);
 
   const handleFileAttachment = (e) => {
     const file = e.target.files[0];
