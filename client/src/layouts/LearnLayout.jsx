@@ -1,18 +1,67 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 
 export default function LearnLayout() {
+  const location = useLocation();
+
+  const links = [
+    { path: '/learn/dashboard', label: 'Tableau de bord', icon: '📊' },
+    { path: '/learn/chat', label: 'Chat LAURA AI', icon: '💬' },
+    { path: '/learn/revision', label: 'Révision', icon: '📝' },
+    { path: '/learn/exams', label: 'Examens', icon: '🎓' },
+    { path: '/learn/resources', label: 'Ressources', icon: '📚' },
+    { path: '/learn/history', label: 'Historique', icon: '🕒' },
+    { path: '/learn/progress', label: 'Progression', icon: '📈' },
+    { path: '/learn/profile', label: 'Profil', icon: '👤' },
+    { path: '/learn/settings', label: 'Paramètres', icon: '⚙️' },
+  ];
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
-      <aside style={{ width: '250px', background: '#F0F0EE', borderRight: '1px solid #E5E5E2', padding: '2rem' }}>
-        <h3>Espace Apprenant</h3>
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
-          <a href="/learn/dashboard" style={{ textDecoration: 'none', color: '#1A1A1A' }}>Tableau de bord</a>
-          <a href="/learn/chat" style={{ textDecoration: 'none', color: '#1A1A1A' }}>Chat LAURA AI</a>
+      
+      {/* SIDEBAR */}
+      <aside style={{ width: '260px', background: '#F5F4EF', borderRight: '1px solid #E5E5E2', display: 'flex', flexDirection: 'column' }}>
+        
+        {/* LOGO */}
+        <div style={{ padding: '2rem 1.5rem' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0, color: '#1A1A1A' }}>LAURA AI</h1>
+        </div>
+
+        {/* NAVIGATION */}
+        <nav style={{ flex: 1, padding: '0 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          {links.map((link) => {
+            const isActive = location.pathname.startsWith(link.path);
+            return (
+              <Link 
+                key={link.path} 
+                to={link.path} 
+                style={{ 
+                  display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.8rem 1rem', 
+                  borderRadius: '0.75rem', textDecoration: 'none', fontWeight: isActive ? 700 : 500,
+                  color: isActive ? 'white' : '#444',
+                  background: isActive ? '#1A1A1A' : 'transparent',
+                  transition: 'background 0.2s'
+                }}
+              >
+                <span style={{ fontSize: '1.2rem' }}>{link.icon}</span>
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
+
+        {/* BOTTOM ACTION */}
+        <div style={{ padding: '1.5rem' }}>
+          <button style={{ width: '100%', padding: '0.8rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            <span>➕</span> Nouvelle conv.
+          </button>
+        </div>
       </aside>
-      <main style={{ flex: 1, padding: '2rem', background: '#F9F9F8' }}>
+
+      {/* MAIN CONTENT */}
+      <main style={{ flex: 1, padding: '3rem 4rem', background: '#F9F9F8', overflowY: 'auto', maxHeight: '100vh' }}>
         <Outlet />
       </main>
+
     </div>
   );
 }
