@@ -14,6 +14,9 @@ import LearnDashboardPage from '../pages/learn/LearnDashboardPage';
 
 // Tutor Pages
 import TutorDashboardPage from '../pages/tutor/TutorDashboardPage';
+import BecomeTutorPage from '../pages/public/BecomeTutorPage';
+import TutorApplyPage from '../pages/public/TutorApplyPage';
+import TutorStatusPage from '../pages/tutor/TutorStatusPage';
 
 // Admin Pages
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
@@ -26,6 +29,9 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'signup', element: <SignupPage /> },
+      { path: 'become-tutor', element: <BecomeTutorPage /> },
+      { path: 'tutor/apply', element: <TutorApplyPage /> },
+      { path: 'tutor/status', element: <TutorStatusPage /> },
       // Add other public routes here (about, features, etc.)
     ],
   },
