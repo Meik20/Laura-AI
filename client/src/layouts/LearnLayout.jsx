@@ -43,8 +43,10 @@ export default function LearnLayout() {
       <aside style={{ width: '260px', background: '#F5F4EF', borderRight: '1px solid #E5E5E2', display: 'flex', flexDirection: 'column' }}>
         
         {/* LOGO */}
-        <div style={{ padding: '2rem 1.5rem' }}>
-          <img src="/logo.png" alt="LAURA" style={{ height: '36px' }} />
+        <div style={{ padding: '1.5rem 1.5rem' }}>
+          <Link to="/learn/dashboard" style={{ display: 'flex', alignItems: 'center', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
+            <img src="/logo.png" alt="LAURA" style={{ height: '46px' }} />
+          </Link>
         </div>
 
         {/* NAVIGATION */}

@@ -41,10 +41,12 @@ export default function TutorLayout() {
       <aside style={{ width: '260px', background: '#F5F4EF', borderRight: '1px solid #E5E5E2', display: 'flex', flexDirection: 'column' }}>
         
         {/* LOGO */}
-        <div style={{ padding: '2rem 1.5rem' }}>
-          <h1 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-            <img src="/logo.png" alt="LAURA" style={{ height: '36px' }} />
-            <span style={{ fontSize: '0.8rem', background: '#E0F2FE', color: '#0369A1', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>TUTEUR</span>
+        <div style={{ padding: '1.5rem 1.5rem' }}>
+          <h1 style={{ margin: 0 }}>
+            <Link to="/tutor/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
+              <img src="/logo.png" alt="LAURA" style={{ height: '46px' }} />
+              <span style={{ fontSize: '0.8rem', background: '#E0F2FE', color: '#0369A1', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>TUTEUR</span>
+            </Link>
           </h1>
         </div>
 

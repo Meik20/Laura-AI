@@ -41,10 +41,12 @@ export default function AdminLayout() {
       <aside style={{ width: '280px', background: '#0F1520', borderRight: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column' }}>
         
         {/* LOGO */}
-        <div style={{ padding: '2.5rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-          <h1 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-            <img src="/logo.png" alt="LAURA" style={{ height: '32px', filter: 'brightness(0) invert(1)' }} />
-            <span style={{ fontSize: '0.75rem', background: '#DC2626', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>ADMIN</span>
+        <div style={{ padding: '2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+          <h1 style={{ margin: 0 }}>
+            <Link to="/admin/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
+              <img src="/logo.png" alt="LAURA" style={{ height: '42px', filter: 'brightness(0) invert(1)' }} />
+              <span style={{ fontSize: '0.75rem', background: '#DC2626', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>ADMIN</span>
+            </Link>
           </h1>
         </div>
 
