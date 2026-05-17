@@ -13,10 +13,38 @@ export default function LearnChatPage() {
     examen: userProfile?.examen || 'Non défini'
   };
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    // Logique d'envoi à implémenter
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
+    
+    const userText = input.trim();
     setInput('');
+    setMessages(prev => [...prev, { role: 'user', text: userText }]);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userText, mode: 'simple' })
+      });
+      
+      const data = await response.json();
+      
+      setMessages(prev => [...prev, {
+        role: 'laura',
+        text: data.response || data.error || "Désolée, je n'ai pas pu formuler une réponse."
+      }]);
+    } catch (error) {
+      console.error("Chat error:", error);
+      setMessages(prev => [...prev, {
+        role: 'laura',
+        text: "Une erreur de réseau est survenue. Veuillez réessayer."
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -83,13 +111,20 @@ export default function LearnChatPage() {
               placeholder="Écrivez votre question ici..." 
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
               style={{ width: '100%', padding: '1rem 4rem 1rem 1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', fontSize: '1.05rem', outline: 'none', resize: 'none', boxSizing: 'border-box', fontFamily: 'inherit' }}
             />
             <button 
               onClick={handleSend}
-              style={{ position: 'absolute', right: '1rem', bottom: '1rem', background: '#1A1A1A', color: 'white', border: 'none', width: '36px', height: '36px', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+              disabled={isLoading}
+              style={{ position: 'absolute', right: '1rem', bottom: '1rem', background: isLoading ? '#6E6E6B' : '#1A1A1A', color: 'white', border: 'none', width: '36px', height: '36px', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: isLoading ? 'not-allowed' : 'pointer' }}
             >
-              →
+              {isLoading ? '...' : '→'}
             </button>
           </div>
         </div>
