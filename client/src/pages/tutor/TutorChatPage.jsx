@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { doc, getDoc, setDoc, arrayUnion, collection, addDoc } from 'firebase/firestore';
@@ -6,6 +7,7 @@ import { doc, getDoc, setDoc, arrayUnion, collection, addDoc } from 'firebase/fi
 export default function TutorChatPage() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
   const { userProfile } = useAuth();
   
   const profileContext = {
@@ -30,15 +32,24 @@ export default function TutorChatPage() {
       if (!userProfile?.uid) return;
       try {
         const chatRef = doc(db, 'chats', userProfile.uid);
-        const chatSnap = await getDoc(chatRef);
-        if (chatSnap.exists() && chatSnap.data().messages) {
-          setMessages(chatSnap.data().messages);
+        const welcomeMsg = {
+          role: 'laura',
+          text: `Bonjour Professeur ${profileContext.prenom}. Je suis configurée pour vous assister dans la création de matériel pédagogique en ${profileContext.discipline}. Que souhaitez-vous préparer aujourd'hui ?`,
+          timestamp: new Date().toISOString()
+        };
+
+        if (searchParams.get('new') === 'true') {
+          await setDoc(chatRef, { messages: [welcomeMsg] });
+          setMessages([welcomeMsg]);
+          searchParams.delete('new');
+          setSearchParams(searchParams);
         } else {
-          setMessages([{
-            role: 'laura',
-            text: `Bonjour Professeur ${profileContext.prenom}. Je suis configurée pour vous assister dans la création de matériel pédagogique en ${profileContext.discipline}. Que souhaitez-vous préparer aujourd'hui ?`,
-            timestamp: new Date().toISOString()
-          }]);
+          const chatSnap = await getDoc(chatRef);
+          if (chatSnap.exists() && chatSnap.data().messages?.length > 0) {
+            setMessages(chatSnap.data().messages);
+          } else {
+            setMessages([welcomeMsg]);
+          }
         }
       } catch (e) {
         console.error("Erreur de chargement de l'historique :", e);
@@ -132,11 +143,31 @@ export default function TutorChatPage() {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       
       {/* HEADER */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Chat Pédagogique</h1>
-        <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1rem' }}>
-          Utilisez l'IA pour générer et structurer vos contenus avant de les soumettre.
-        </p>
+      <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Chat Pédagogique</h1>
+          <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1rem' }}>
+            Utilisez l'IA pour générer et structurer vos contenus avant de les soumettre.
+          </p>
+        </div>
+        <button 
+          onClick={async () => {
+            const welcomeMsg = {
+              role: 'laura',
+              text: `Bonjour Professeur ${profileContext.prenom}. Je suis configurée pour vous assister dans la création de matériel pédagogique en ${profileContext.discipline}. Que souhaitez-vous préparer aujourd'hui ?`,
+              timestamp: new Date().toISOString()
+            };
+            setMessages([welcomeMsg]);
+            if (userProfile?.uid) {
+              await setDoc(doc(db, 'chats', userProfile.uid), { messages: [welcomeMsg] });
+            }
+          }} 
+          style={{ padding: '0.8rem 1.5rem', background: '#00A37A', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'background 0.2s' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#008563'} 
+          onMouseLeave={e => e.currentTarget.style.background = '#00A37A'}
+        >
+          <span>+</span> Nouvelle conversation
+        </button>
       </div>
 
       <div style={{ flex: 1, display: 'flex', gap: '2rem', height: 'calc(100vh - 200px)' }}>

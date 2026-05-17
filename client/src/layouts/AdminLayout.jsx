@@ -1,11 +1,19 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
+  const { currentUser, logout } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/', { replace: true });
+    }
+  }, [currentUser, navigate]);
+
+  if (!currentUser) return null;
 
   const handleLogout = async () => {
     try {

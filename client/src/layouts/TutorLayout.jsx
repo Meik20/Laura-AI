@@ -1,11 +1,19 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 
 export default function TutorLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout, userProfile } = useContext(AuthContext);
+  const { currentUser, logout, userProfile } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/', { replace: true });
+    }
+  }, [currentUser, navigate]);
+
+  if (!currentUser) return null;
 
   const handleLogout = async () => {
     try {
@@ -68,6 +76,9 @@ export default function TutorLayout() {
           <div style={{ background: '#E0F2FE', border: '1px solid #BAE6FD', padding: '1rem', borderRadius: '0.75rem', fontSize: '0.85rem', color: '#0369A1', marginBottom: '1rem' }}>
             <strong>Statut:</strong> {userProfile?.roleLabel || 'Contributeur'} ✅
           </div>
+          <button onClick={() => navigate('/tutor/chat?new=true')} style={{ width: '100%', padding: '0.8rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.8rem' }}>
+            <span>➕</span> Nouvelle conv.
+          </button>
           <button onClick={handleLogout} style={{ width: '100%', padding: '0.8rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
             <span>🚪</span> Déconnexion
           </button>
