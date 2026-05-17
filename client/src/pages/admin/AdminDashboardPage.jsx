@@ -17,7 +17,7 @@ export default function AdminDashboardPage() {
     async function fetchStats() {
       try {
         const querySnapshot = await getDocs(collection(db, 'users'));
-        let eleves = 0, etudiants = 0, tuteurs = 0, pendingTutors = 0;
+        let eleves = 0, etudiants = 0, tuteurs = 0, pendingTutors = 0, pendingContributors = 0;
         
         querySnapshot.forEach((doc) => {
           const data = doc.data();
@@ -25,6 +25,7 @@ export default function AdminDashboardPage() {
           if (data.roleLabel === 'Étudiant') etudiants++;
           if (data.isTutor) tuteurs++;
           if (data.isTutorPending) pendingTutors++;
+          if (data.statut === 'En attente de contribution') pendingContributors++;
         });
 
         setStats([
@@ -37,6 +38,9 @@ export default function AdminDashboardPage() {
         const dynamicAlerts = [];
         if (pendingTutors > 0) {
           dynamicAlerts.push({ type: 'warning', msg: `${pendingTutors} candidature(s) tuteur(s) en attente de révision.`, link: '/admin/tutor-applications' });
+        }
+        if (pendingContributors > 0) {
+          dynamicAlerts.push({ type: 'warning', msg: `${pendingContributors} demande(s) de droit Contributeur en attente.`, link: '/admin/users' });
         }
         
         try {

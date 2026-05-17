@@ -20,6 +20,14 @@ export default function TutorChatPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [attachedFile, setAttachedFile] = useState(null);
+
+  const handleFileAttachment = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAttachedFile({ name: file.name, type: file.type });
+    }
+  };
 
   const suggestions = [
     "Générer un plan de cours",
@@ -64,10 +72,16 @@ export default function TutorChatPage() {
 
   const handleSend = async (textToSend) => {
     const userText = textToSend || input.trim();
-    if (!userText || isLoading) return;
+    if ((!userText && !attachedFile) || isLoading) return;
     
+    let fullUserText = userText;
+    if (attachedFile) {
+      fullUserText = `[📎 Fichier joint : ${attachedFile.name}] ${fullUserText}`;
+      setAttachedFile(null);
+    }
+
     if (!textToSend) setInput('');
-    const userMsgObj = { role: 'user', text: userText, timestamp: new Date().toISOString() };
+    const userMsgObj = { role: 'user', text: fullUserText, timestamp: new Date().toISOString() };
     setMessages(prev => [...prev, userMsgObj]);
     setIsLoading(true);
 
@@ -81,7 +95,7 @@ export default function TutorChatPage() {
       const response = await fetch(`${API_BASE}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userText, mode: 'simple', userContext: profileContext })
+        body: JSON.stringify({ message: fullUserText, mode: 'simple', userContext: profileContext })
       });
       
       const data = await response.json();
@@ -204,6 +218,39 @@ export default function TutorChatPage() {
 
           {/* Input */}
           <div style={{ padding: '1.5rem', borderTop: '1px solid #E5E5E2', background: '#FAFAFA' }}>
+            
+            {attachedFile && (
+              <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '1rem', borderRadius: '0.75rem', marginBottom: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#065F46', fontWeight: 700, fontSize: '0.95rem' }}>
+                    <span>📎 Fichier joint :</span>
+                    <span style={{ background: 'white', padding: '0.2rem 0.6rem', borderRadius: '0.4rem', border: '1px solid #D1FAE5' }}>{attachedFile.name}</span>
+                  </div>
+                  <button onClick={() => setAttachedFile(null)} style={{ background: 'transparent', border: 'none', color: '#065F46', fontWeight: 700, cursor: 'pointer', fontSize: '1.1rem' }}>✕</button>
+                </div>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <button 
+                    onClick={() => {
+                      const prompt = `[📎 Document joint : ${attachedFile.name}] J'ai partagé ce document pédagogique avec toi. Peux-tu l'analyser et m'aider à concevoir une fiche d'exercices d'application complète avec corrigé ?`;
+                      setAttachedFile(null);
+                      handleSend(prompt);
+                    }}
+                    style={{ background: '#059669', color: 'white', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '0.6rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 2px 4px rgba(5, 150, 105, 0.2)' }}
+                  >
+                    <span>✨</span> Concevoir des exercices à partir de ce cours
+                  </button>
+                  <span style={{ fontSize: '0.85rem', color: '#047857' }}>Ou posez une question personnalisée ci-dessous ↓</span>
+                </div>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '1rem', alignItems: 'center' }}>
+              <label style={{ background: '#00A37A', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', boxShadow: '0 2px 4px rgba(0, 163, 122, 0.2)' }}>
+                <span>📎</span> Importer un cours / fichier
+                <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
+              </label>
+            </div>
+
             <div style={{ position: 'relative' }}>
               <textarea 
                 rows="3" 
