@@ -1,9 +1,24 @@
+import { useState, useEffect } from 'react';
+import { db } from '../../firebase';
+import { collection, getDocs } from 'firebase/firestore';
+
 export default function AdminAuditPage() {
-  const logs = [
-    { id: 1, action: 'Validation Tuteur', detail: 'Approbation de APP-01 (Jean Dupont)', admin: 'SuperAdmin', date: '16/05/2026 14:30' },
-    { id: 2, action: 'Publication Ressource', detail: 'Publication de RES-01', admin: 'Modérateur1', date: '16/05/2026 10:15' },
-    { id: 3, action: 'Suspension Compte', detail: 'Suspension de USR-03', admin: 'SuperAdmin', date: '15/05/2026 09:00' },
-  ];
+  const [logs, setLogs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const snap = await getDocs(collection(db, 'auditLogs'));
+        setLogs(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
@@ -24,14 +39,20 @@ export default function AdminAuditPage() {
             </tr>
           </thead>
           <tbody>
-            {logs.map((log) => (
-              <tr key={log.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <td style={{ padding: '1.5rem', color: '#94A3B8' }}>{log.date}</td>
-                <td style={{ padding: '1.5rem', fontWeight: 700, color: 'white' }}>{log.action}</td>
-                <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{log.detail}</td>
-                <td style={{ padding: '1.5rem', color: '#3B82F6', fontWeight: 600 }}>{log.admin}</td>
-              </tr>
-            ))}
+            {isLoading ? (
+              <tr><td colSpan="4" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Chargement des logs...</td></tr>
+            ) : logs.length === 0 ? (
+              <tr><td colSpan="4" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Aucun log d'audit.</td></tr>
+            ) : (
+              logs.map((log) => (
+                <tr key={log.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <td style={{ padding: '1.5rem', color: '#94A3B8' }}>{log.date || 'N/A'}</td>
+                  <td style={{ padding: '1.5rem', fontWeight: 700, color: 'white' }}>{log.action || 'Action inconnue'}</td>
+                  <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{log.detail || 'N/A'}</td>
+                  <td style={{ padding: '1.5rem', color: '#3B82F6', fontWeight: 600 }}>{log.admin || 'Système'}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

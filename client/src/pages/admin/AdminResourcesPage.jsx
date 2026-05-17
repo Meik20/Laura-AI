@@ -1,9 +1,24 @@
+import { useState, useEffect } from 'react';
+import { db } from '../../firebase';
+import { collection, getDocs } from 'firebase/firestore';
+
 export default function AdminResourcesPage() {
-  const resources = [
-    { id: 'RES-01', titre: 'Annale BAC Maths 2023', type: 'Annale', cible: 'BAC / Terminale', statut: 'publie' },
-    { id: 'RES-02', titre: 'Fiche: Probabilités', type: 'Fiche', cible: 'Terminale', statut: 'publie' },
-    { id: 'RES-03', titre: 'Quiz SVT Génétique', type: 'Quiz', cible: 'Terminale D', statut: 'brouillon' }
-  ];
+  const [resources, setResources] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const snap = await getDocs(collection(db, 'resources'));
+        setResources(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
@@ -30,21 +45,27 @@ export default function AdminResourcesPage() {
             </tr>
           </thead>
           <tbody>
-            {resources.map((res, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <td style={{ padding: '1.5rem', fontWeight: 700, color: 'white' }}>{res.titre}</td>
-                <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{res.type}</td>
-                <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{res.cible}</td>
-                <td style={{ padding: '1.5rem' }}>
-                  <span style={{ background: res.statut === 'publie' ? '#10B98120' : '#F59E0B20', color: res.statut === 'publie' ? '#10B981' : '#F59E0B', padding: '0.3rem 0.8rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700 }}>
-                    {res.statut.toUpperCase()}
-                  </span>
-                </td>
-                <td style={{ padding: '1.5rem', textAlign: 'right' }}>
-                  <button style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>Éditer</button>
-                </td>
-              </tr>
-            ))}
+            {isLoading ? (
+              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Chargement des ressources...</td></tr>
+            ) : resources.length === 0 ? (
+              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Aucune ressource disponible.</td></tr>
+            ) : (
+              resources.map((res, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <td style={{ padding: '1.5rem', fontWeight: 700, color: 'white' }}>{res.titre || 'Sans titre'}</td>
+                  <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{res.type || 'N/A'}</td>
+                  <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{res.cible || 'N/A'}</td>
+                  <td style={{ padding: '1.5rem' }}>
+                    <span style={{ background: res.statut === 'publie' ? '#10B98120' : '#F59E0B20', color: res.statut === 'publie' ? '#10B981' : '#F59E0B', padding: '0.3rem 0.8rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700 }}>
+                      {(res.statut || 'brouillon').toUpperCase()}
+                    </span>
+                  </td>
+                  <td style={{ padding: '1.5rem', textAlign: 'right' }}>
+                    <button style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>Éditer</button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

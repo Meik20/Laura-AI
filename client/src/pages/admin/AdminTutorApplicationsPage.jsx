@@ -1,9 +1,24 @@
+import { useState, useEffect } from 'react';
+import { db } from '../../firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+
 export default function AdminTutorApplicationsPage() {
-  const applications = [
-    { id: 'APP-01', nom: 'Jean Dupont', discipline: 'Mathématiques', niveau: 'Lycée', experience: '5 ans', statut: 'en_attente', date: '16/05/2026' },
-    { id: 'APP-02', nom: 'Marie Curie', discipline: 'Physique', niveau: 'Université', experience: '12 ans', statut: 'test_requis', date: '15/05/2026' },
-    { id: 'APP-03', nom: 'Alain Turing', discipline: 'Informatique', niveau: 'Lycée', experience: '2 ans', statut: 'valide', date: '10/05/2026' }
-  ];
+  const [applications, setApplications] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const snap = await getDocs(query(collection(db, 'users'), where('isTutorPending', '==', true)));
+        setApplications(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   const getStatusBadge = (status) => {
     switch(status) {
@@ -36,32 +51,36 @@ export default function AdminTutorApplicationsPage() {
             </tr>
           </thead>
           <tbody>
-            {applications.map((app, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <td style={{ padding: '1.5rem' }}>
-                  <div style={{ fontWeight: 700, color: 'white' }}>{app.nom}</div>
-                  <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Soumis le {app.date}</div>
-                </td>
-                <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>
-                  <div style={{ fontWeight: 600 }}>{app.discipline}</div>
-                  <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Niveau: {app.niveau}</div>
-                </td>
-                <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{app.experience}</td>
-                <td style={{ padding: '1.5rem' }}>{getStatusBadge(app.statut)}</td>
-                <td style={{ padding: '1.5rem', textAlign: 'right' }}>
-                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                    <button style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
-                      Ouvrir le dossier
-                    </button>
-                    {app.statut === 'en_attente' && (
+            {isLoading ? (
+              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Chargement des candidatures...</td></tr>
+            ) : applications.length === 0 ? (
+              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Aucune candidature en attente.</td></tr>
+            ) : (
+              applications.map((app, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <td style={{ padding: '1.5rem' }}>
+                    <div style={{ fontWeight: 700, color: 'white' }}>{`${app.prenom || ''} ${app.nom || ''}`.trim() || 'Sans nom'}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Inscrit le {app.createdAt ? new Date(app.createdAt).toLocaleDateString('fr-FR') : 'N/A'}</div>
+                  </td>
+                  <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>
+                    <div style={{ fontWeight: 600 }}>{app.discipline || 'Non précisé'}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Niveau: {app.niveau || 'N/A'}</div>
+                  </td>
+                  <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{app.experience || 'Non précisée'}</td>
+                  <td style={{ padding: '1.5rem' }}>{getStatusBadge('en_attente')}</td>
+                  <td style={{ padding: '1.5rem', textAlign: 'right' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                      <button style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
+                        Ouvrir le dossier
+                      </button>
                       <button style={{ background: '#10B981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>
                         Valider
                       </button>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
