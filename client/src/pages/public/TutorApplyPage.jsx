@@ -6,7 +6,7 @@ import { useAuth } from '../../hooks/useAuth';
 
 export default function TutorApplyPage() {
   const navigate = useNavigate();
-  const { userProfile } = useAuth();
+  const { userProfile, signup } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -31,11 +31,9 @@ export default function TutorApplyPage() {
 
     setIsLoading(true);
     try {
-      const targetUid = userProfile?.uid || `tutor_${Date.now()}`;
-      await setDoc(doc(db, 'users', targetUid), {
+      const profileData = {
         nom: formData.nom,
         prenom: formData.prenom,
-        email: formData.email,
         telephone: formData.telephone,
         discipline: formData.discipline,
         niveau: formData.niveau,
@@ -47,14 +45,27 @@ export default function TutorApplyPage() {
         roleLabel: 'Tuteur',
         isTutorPending: true,
         isTutor: false,
-        createdAt: new Date().toISOString(),
         statut: 'en_examen'
-      }, { merge: true });
+      };
+
+      if (userProfile?.uid) {
+        await setDoc(doc(db, 'users', userProfile.uid), {
+          ...profileData,
+          createdAt: userProfile.createdAt || new Date().toISOString()
+        }, { merge: true });
+      } else {
+        if (!formData.password) {
+          setError('Veuillez définir un mot de passe pour créer votre compte tuteur.');
+          setIsLoading(false);
+          return;
+        }
+        await signup(formData.email, formData.password, profileData);
+      }
 
       navigate('/tutor/status');
     } catch (err) {
       console.error("Erreur candidature:", err);
-      setError('Erreur lors de la soumission de la candidature.');
+      setError(err.message || 'Erreur lors de la soumission de la candidature.');
     } finally {
       setIsLoading(false);
     }

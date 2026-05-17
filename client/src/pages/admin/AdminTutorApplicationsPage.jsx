@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { db } from '../../firebase';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, setDoc } from 'firebase/firestore';
 
 export default function AdminTutorApplicationsPage() {
   const [applications, setApplications] = useState([]);
@@ -19,6 +19,22 @@ export default function AdminTutorApplicationsPage() {
     }
     fetchData();
   }, []);
+
+  const handleValidate = async (userId) => {
+    try {
+      await setDoc(doc(db, 'users', userId), {
+        isTutor: true,
+        isTutorPending: false,
+        statut: 'active',
+        roleLabel: 'Tuteur',
+        adminMessage: "Félicitations, votre compte Tuteur a été validé avec succès !"
+      }, { merge: true });
+      setApplications(prev => prev.filter(app => app.id !== userId));
+    } catch (e) {
+      console.error("Erreur de validation :", e);
+      alert("Erreur lors de la validation.");
+    }
+  };
 
   const getStatusBadge = (status) => {
     switch(status) {
@@ -73,7 +89,7 @@ export default function AdminTutorApplicationsPage() {
                       <button style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
                         Ouvrir le dossier
                       </button>
-                      <button style={{ background: '#10B981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>
+                      <button onClick={() => handleValidate(app.id)} style={{ background: '#10B981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>
                         Valider
                       </button>
                     </div>
