@@ -49,7 +49,16 @@ export default function LearnDashboardPage() {
       try {
         const resSnap = await getDocs(collection(db, 'resources'));
         const allRes = resSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        const filtered = allRes.filter(r => r.statut === 'publie').slice(0, 3);
+        const published = allRes.filter(r => r.statut === 'publie');
+        let filtered = published.filter(r => 
+          (user.examen && r.cible?.toLowerCase().includes(user.examen.toLowerCase())) ||
+          (user.niveau && r.niveau?.toLowerCase().includes(user.niveau.toLowerCase())) ||
+          (user.filiere && r.filiere?.toLowerCase().includes(user.filiere.toLowerCase()))
+        );
+        if (filtered.length === 0) {
+          filtered = published;
+        }
+        filtered = filtered.slice(0, 3);
         if (filtered.length > 0) {
           setRecommandations(filtered.map(r => ({
             id: r.id,

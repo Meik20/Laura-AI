@@ -56,6 +56,8 @@ export default function LearnChatPage() {
         promptText = `Je souhaite faire une simulation d'examen en condition réelle pour mon niveau (${profileContext.examen}). Donne-moi un sujet complet à traiter en temps limité.`;
       } else if (promptKey === 'plan_preparation') {
         promptText = `Élabore un plan de préparation complet et structuré pour mon examen (${profileContext.examen}), en ciblant les notions prioritaires à maîtriser.`;
+      } else if (promptKey === 'programme_revision') {
+        promptText = `Élabore un programme de révision sur mesure pour mon niveau (${profileContext.niveau}) et mon examen (${profileContext.examen}), en tenant compte de ma filière/série.`;
       } else if (resourceTitle) {
         promptText = `Peux-tu m'aider à réviser et m'expliquer en détail l'annale/épreuve suivante : "${resourceTitle}" ?`;
       }

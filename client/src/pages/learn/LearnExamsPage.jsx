@@ -11,9 +11,10 @@ export default function LearnExamsPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const profileContext = {
-    examen: userProfile?.examen || 'BAC',
-    niveau: userProfile?.niveau || 'Terminale',
-    serie: userProfile?.serie || 'D'
+    examen: userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || 'BAC',
+    niveau: userProfile?.niveau || userProfile?.classe || userProfile?.niveauEtude || 'Terminale',
+    serie: userProfile?.serie || '',
+    filiere: userProfile?.filiere || userProfile?.discipline || ''
   };
 
   useEffect(() => {

@@ -6,7 +6,7 @@ import {
   signOut, 
   onAuthStateChanged 
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 
 export const AuthContext = createContext();
 
@@ -58,26 +58,34 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    let unsubscribeSnapshot = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       if (user) {
-        // Fetch user profile from Firestore
-        try {
-          const docRef = doc(db, 'users', user.uid);
-          const docSnap = await getDoc(docRef);
+        const docRef = doc(db, 'users', user.uid);
+        unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
           if (docSnap.exists()) {
             setUserProfile(docSnap.data());
+          } else {
+            setUserProfile(null);
           }
-        } catch (error) {
-          console.error("Erreur lors de la récupération du profil:", error);
-        }
+          setLoading(false);
+        }, (error) => {
+          console.error("Erreur onSnapshot profil:", error);
+          setLoading(false);
+        });
       } else {
+        if (unsubscribeSnapshot) unsubscribeSnapshot();
         setUserProfile(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
   }, []);
 
   const value = {

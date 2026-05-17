@@ -13,10 +13,11 @@ export default function LearnResourcesPage() {
   const [matieresList, setMatieresList] = useState([]);
 
   const profileContext = {
-    role: userProfile?.roleLabel || 'Élève',
-    niveau: userProfile?.niveau || 'Terminale',
-    serie: userProfile?.serie || 'D',
-    examen: userProfile?.examen || 'BAC'
+    role: userProfile?.roleLabel || (userProfile?.role === 'student' ? 'Élève' : userProfile?.role) || 'Élève',
+    niveau: userProfile?.niveau || userProfile?.classe || userProfile?.niveauEtude || 'Terminale',
+    serie: userProfile?.serie || '',
+    examen: userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || 'BAC',
+    filiere: userProfile?.filiere || userProfile?.discipline || ''
   };
 
   const [filters, setFilters] = useState({
@@ -26,6 +27,10 @@ export default function LearnResourcesPage() {
   useEffect(() => {
     if (userProfile?.bookmarks) {
       setBookmarks(userProfile.bookmarks);
+    }
+    if (userProfile) {
+      const userExam = userProfile.examen || userProfile.examenEleve || userProfile.examenEtudiant || '';
+      setFilters(prev => ({ ...prev, examen: userExam }));
     }
   }, [userProfile]);
 
