@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, setDoc } from 'firebase/firestore';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -31,9 +31,36 @@ export default function LoginPage() {
       const docSnap = await getDoc(docRef);
       
       let role = 'student';
+      let isTutor = false;
+
       if (docSnap.exists()) {
         const data = docSnap.data();
-        role = data.role || (data.isTutor ? 'teacher' : 'student');
+        isTutor = !!data.isTutor;
+        role = data.role || (isTutor ? 'teacher' : 'student');
+      }
+
+      // SELF-HEALING: Check if there's any document with the same email that was validated as tutor
+      if (role !== 'teacher' || !isTutor) {
+        const q = query(collection(db, 'users'), where('email', '==', userCred.user.email.toLowerCase().trim()));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((docItem) => {
+          const itemData = docItem.data();
+          if (itemData.isTutor || itemData.role === 'teacher' || itemData.roleLabel === 'Tuteur') {
+            isTutor = true;
+            role = 'teacher';
+          }
+        });
+
+        // Merge the corrected tutor status into the real user document
+        if (isTutor) {
+          await setDoc(docRef, {
+            isTutor: true,
+            isTutorPending: false,
+            statut: 'active',
+            role: 'teacher',
+            roleLabel: 'Tuteur'
+          }, { merge: true });
+        }
       }
       
       if (role === 'teacher') navigate('/tutor/dashboard');
