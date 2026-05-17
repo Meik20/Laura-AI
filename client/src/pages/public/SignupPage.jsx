@@ -47,6 +47,7 @@ export default function SignupPage() {
         role: 'student', // rôle technique
         roleLabel: profileType === 'eleve' ? 'Élève' : 'Étudiant',
         niveau: profileType === 'eleve' ? formData.classe : formData.niveauEtude,
+        serie: profileType === 'eleve' ? formData.serie : null,
         examen: profileType === 'eleve' ? formData.examenEleve : formData.examenEtudiant,
         filiere: profileType === 'etudiant' ? formData.filiere : null,
         etablissement: profileType === 'eleve' ? formData.etablissementEleve : formData.etablissementEtudiant,

@@ -17,8 +17,58 @@ export default function LearnDashboardPage() {
     prenom: userProfile?.prenom || 'Apprenant',
     roleLabel: userProfile?.roleLabel || 'Élève',
     niveau: userProfile?.niveau || 'Non défini',
-    examen: userProfile?.examen || 'Non défini'
+    examen: userProfile?.examen || 'Non défini',
+    serie: userProfile?.serie || null,
+    filiere: userProfile?.filiere || null
   };
+
+  // Logique dynamique des matières et recommandations selon la série/filière
+  let matieres = [
+    { mat: 'Mathématiques', val: 68, color: '#7C6FFF' },
+    { mat: 'Physique-Chimie', val: 40, color: '#F59E0B' },
+    { mat: 'SVT', val: 55, color: '#00D4AA' }
+  ];
+  let recos = [
+    { icon: '📐', text: 'Réviser les Suites numériques' },
+    { icon: '🎲', text: 'Quiz Probabilités' },
+    { icon: '📝', text: `Annale ${user.examen !== 'Non défini' ? user.examen : 'BAC'} Maths 2023` }
+  ];
+
+  if (user.serie && user.serie.startsWith('A')) {
+    matieres = [
+      { mat: 'Philosophie', val: 68, color: '#7C6FFF' },
+      { mat: 'Français / Littérature', val: 40, color: '#F59E0B' },
+      { mat: 'Histoire-Géo', val: 55, color: '#00D4AA' }
+    ];
+    recos = [
+      { icon: '📚', text: 'Réviser les figures de style' },
+      { icon: '🧠', text: 'Quiz Méthodologie Dissertation' },
+      { icon: '📝', text: `Annale ${user.examen !== 'Non défini' ? user.examen : 'BAC'} Philosophie 2023` }
+    ];
+  } else if (user.serie === 'SES' || user.filiere?.toLowerCase().includes('gestion')) {
+    matieres = [
+      { mat: 'Économie', val: 68, color: '#7C6FFF' },
+      { mat: 'Mathématiques', val: 40, color: '#F59E0B' },
+      { mat: 'Histoire-Géo', val: 55, color: '#00D4AA' }
+    ];
+    recos = [
+      { icon: '📊', text: 'Réviser la Croissance économique' },
+      { icon: '📉', text: 'Quiz Offre et Demande' },
+      { icon: '📝', text: `Annale ${user.examen !== 'Non défini' ? user.examen : 'BAC'} Économie 2023` }
+    ];
+  } else if (user.filiere && !user.serie) {
+    // Étudiant supérieur générique
+    matieres = [
+      { mat: 'Matière Principale 1', val: 68, color: '#7C6FFF' },
+      { mat: 'Matière Principale 2', val: 40, color: '#F59E0B' },
+      { mat: 'Matière Optionnelle', val: 55, color: '#00D4AA' }
+    ];
+    recos = [
+      { icon: '📖', text: 'Relire le cours chapitre 1' },
+      { icon: '🎯', text: 'Préparer le prochain TD' },
+      { icon: '📝', text: 'Réviser les partiels précédents' }
+    ];
+  }
 
   const handleSaveGoal = (newGoal) => {
     setCurrentGoal({
@@ -88,11 +138,7 @@ export default function LearnDashboardPage() {
           <div style={cardStyle}>
             <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Ma progression par matière</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-              {[
-                { mat: 'Mathématiques', val: 68, color: '#7C6FFF' },
-                { mat: 'Physique-Chimie', val: 40, color: '#F59E0B' },
-                { mat: 'SVT', val: 55, color: '#00D4AA' }
-              ].map((m, i) => (
+              {matieres.map((m, i) => (
                 <div key={i}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', fontSize: '0.95rem', fontWeight: 600, color: '#444' }}>
                     <span>{m.mat}</span><span>{m.val}%</span>
@@ -114,15 +160,11 @@ export default function LearnDashboardPage() {
           <div style={{ ...cardStyle, background: '#F5F4EF', border: 'none' }}>
             <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Recommandations pour vous</h3>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <li style={{ background: 'white', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span style={{ fontSize: '1.5rem' }}>📐</span> <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>Réviser les Suites numériques</span>
-              </li>
-              <li style={{ background: 'white', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span style={{ fontSize: '1.5rem' }}>🎲</span> <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>Quiz Probabilités</span>
-              </li>
-              <li style={{ background: 'white', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span style={{ fontSize: '1.5rem' }}>📝</span> <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>Annale BAC Maths 2023</span>
-              </li>
+              {recos.map((r, i) => (
+                <li key={i} style={{ background: 'white', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <span style={{ fontSize: '1.5rem' }}>{r.icon}</span> <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{r.text}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -134,7 +176,7 @@ export default function LearnDashboardPage() {
                 <span style={{ color: '#6E6E6B' }}>Profil</span><span style={{ fontWeight: 600 }}>{user.roleLabel}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F0F0EE', paddingBottom: '0.5rem' }}>
-                <span style={{ color: '#6E6E6B' }}>Classe / Niveau</span><span style={{ fontWeight: 600 }}>{user.niveau}</span>
+                <span style={{ color: '#6E6E6B' }}>Classe / Niveau</span><span style={{ fontWeight: 600 }}>{user.niveau} {user.serie ? `(${user.serie})` : ''}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F0F0EE', paddingBottom: '0.5rem' }}>
                 <span style={{ color: '#6E6E6B' }}>Examen préparé</span><span style={{ fontWeight: 600 }}>{user.examen}</span>
