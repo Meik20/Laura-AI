@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { db } from '../../firebase';
+import { doc, getDoc, setDoc, arrayUnion } from 'firebase/firestore';
 
 export default function LearnChatPage() {
   const [input, setInput] = useState('');
@@ -15,14 +17,39 @@ export default function LearnChatPage() {
   };
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  useEffect(() => {
+    async function loadHistory() {
+      if (!userProfile?.uid) return;
+      try {
+        const chatRef = doc(db, 'chats', userProfile.uid);
+        const chatSnap = await getDoc(chatRef);
+        if (chatSnap.exists()) {
+          setMessages(chatSnap.data().messages || []);
+        }
+      } catch (e) {
+        console.error("Erreur de chargement de l'historique :", e);
+      } finally {
+        setIsInitializing(false);
+      }
+    }
+    loadHistory();
+  }, [userProfile?.uid]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
     
     const userText = input.trim();
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: userText }]);
+    const userMsgObj = { role: 'user', text: userText, timestamp: new Date().toISOString() };
+    setMessages(prev => [...prev, userMsgObj]);
     setIsLoading(true);
+
+    if (userProfile?.uid) {
+      const chatRef = doc(db, 'chats', userProfile.uid);
+      setDoc(chatRef, { messages: arrayUnion(userMsgObj) }, { merge: true }).catch(console.error);
+    }
 
     try {
       const response = await fetch('/api/chat', {
@@ -33,16 +60,25 @@ export default function LearnChatPage() {
       
       const data = await response.json();
       
-      setMessages(prev => [...prev, {
-        role: 'laura',
-        text: data.response || data.error || "Désolée, je n'ai pas pu formuler une réponse."
-      }]);
+      const lauraText = data.response || data.error || "Désolée, je n'ai pas pu formuler une réponse.";
+      const lauraMsgObj = { role: 'laura', text: lauraText, timestamp: new Date().toISOString() };
+      
+      setMessages(prev => [...prev, lauraMsgObj]);
+
+      if (userProfile?.uid) {
+        const chatRef = doc(db, 'chats', userProfile.uid);
+        setDoc(chatRef, { messages: arrayUnion(lauraMsgObj) }, { merge: true }).catch(console.error);
+      }
+
     } catch (error) {
       console.error("Chat error:", error);
-      setMessages(prev => [...prev, {
-        role: 'laura',
-        text: "Une erreur de réseau est survenue. Veuillez réessayer."
-      }]);
+      const errorMsgObj = { role: 'laura', text: "Une erreur de réseau est survenue. Veuillez réessayer.", timestamp: new Date().toISOString() };
+      setMessages(prev => [...prev, errorMsgObj]);
+      
+      if (userProfile?.uid) {
+        const chatRef = doc(db, 'chats', userProfile.uid);
+        setDoc(chatRef, { messages: arrayUnion(errorMsgObj) }, { merge: true }).catch(console.error);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -62,32 +98,38 @@ export default function LearnChatPage() {
 
         {/* Liste des Messages */}
         <div style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-          {messages.map((m, i) => (
-            <div key={i} style={{ display: 'flex', gap: '1.5rem' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0, background: m.role === 'user' ? '#00D4AA' : '#1A1A1A', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem' }}>
-                {m.role === 'user' ? 'A' : 'L'}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#1A1A1A' }}>
-                  {m.role === 'user' ? 'Vous' : 'LAURA AI'}
+          {isInitializing ? (
+            <div style={{ textAlign: 'center', color: '#6E6E6B', padding: '2rem' }}>Chargement de l'historique...</div>
+          ) : messages.length === 0 ? (
+            <div style={{ textAlign: 'center', color: '#6E6E6B', padding: '2rem' }}>Aucun message. Posez votre première question à LAURA !</div>
+          ) : (
+            messages.map((m, i) => (
+              <div key={i} style={{ display: 'flex', gap: '1.5rem' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0, background: m.role === 'user' ? '#00D4AA' : '#1A1A1A', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem' }}>
+                  {m.role === 'user' ? 'A' : 'L'}
                 </div>
-                <div style={{ fontSize: '1.05rem', lineHeight: 1.7, color: '#333', whiteSpace: 'pre-wrap' }}>
-                  {m.text}
-                </div>
-                
-                {/* Actions sur la réponse de l'IA (Point 9.3) */}
-                {m.role === 'laura' && (
-                  <div style={{ display: 'flex', gap: '0.8rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-                    {['Simplifier', 'Approfondir', 'Générer quiz', 'Exercice similaire', 'Sauvegarder'].map(action => (
-                      <button key={action} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: '#444', cursor: 'pointer', fontWeight: 600 }}>
-                        {action}
-                      </button>
-                    ))}
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#1A1A1A' }}>
+                    {m.role === 'user' ? 'Vous' : 'LAURA AI'}
                   </div>
-                )}
+                  <div style={{ fontSize: '1.05rem', lineHeight: 1.7, color: '#333', whiteSpace: 'pre-wrap' }}>
+                    {m.text}
+                  </div>
+                  
+                  {/* Actions sur la réponse de l'IA (Point 9.3) */}
+                  {m.role === 'laura' && (
+                    <div style={{ display: 'flex', gap: '0.8rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+                      {['Simplifier', 'Approfondir', 'Générer quiz', 'Exercice similaire', 'Sauvegarder'].map(action => (
+                        <button key={action} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: '#444', cursor: 'pointer', fontWeight: 600 }}>
+                          {action}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         {/* Zone de Saisie */}
