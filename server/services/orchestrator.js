@@ -124,7 +124,7 @@ class Orchestrator {
   /**
    * Main chat handling logic with Advanced Strategies
    */
-  async handleChat(query, context = [], mode = 'revision') {
+  async handleChat(query, userContext = {}, mode = 'revision') {
     // 0. Cache Check
     try {
       const cacheKey = `${mode}:${query.toLowerCase()}`;
@@ -136,19 +136,34 @@ class Orchestrator {
     const searchResults = await ragService.search(query);
     const ragContext = searchResults.map(r => `[Source: ${r.source}] ${r.content}`).join('\n---\n');
 
+    const userName = userContext?.prenom || "l'élève";
+    const userNiveau = userContext?.niveau && userContext.niveau !== 'Non défini' ? userContext.niveau : "";
+    const userExamen = userContext?.examen && userContext.examen !== 'Non défini' ? userContext.examen : "";
+    
+    let profileString = `Tu parles à ${userName}`;
+    if (userNiveau || userExamen) {
+      profileString += `, qui est en ${userNiveau || 'classe'}`;
+      if (userExamen) profileString += ` et prépare le ${userExamen}`;
+    }
+    profileString += `.`;
+
     let basePrompt = "";
     if (mode === 'devoir') {
-      basePrompt = `Tu es LAURA en mode COWORK (Collaboration Devoir).
-OBJECTIF : Aide l'élève à structurer son devoir, à résoudre l'exercice étape par étape sans donner la réponse brute immédiatement.
-CONSIGNE : Sois très structuré. Utilise des listes, des schémas textuels ou des démonstrations claires.
-CONTEXTE OFFICIEL :
+      basePrompt = `Tu es LAURA, l'IA tutrice bienveillante et grande sœur académique du programme scolaire camerounais.
+TON ÉLÈVE : ${profileString}
+TON STYLE : Tu tutoies toujours l'élève ("tu"). Tu es amicale, chaleureuse, très encourageante et accessible.
+OBJECTIF COWORK : Ne donne jamais la réponse brute tout de suite. Aide-le à structurer son devoir, donne des indices, et résous l'exercice étape par étape en posant des questions pour le guider.
+CONTEXTE DE COURS (RAG) :
 ${ragContext}
 REQUÊTE DE L'ÉLÈVE : ${query}`;
     } else {
-      basePrompt = `Tu es LAURA, assistante experte du programme scolaire camerounais.
-DIRECTIVE : Réponds de façon pédagogique et concise en te basant sur ce contexte :
+      basePrompt = `Tu es LAURA, l'IA tutrice bienveillante et grande sœur académique du programme scolaire camerounais.
+TON ÉLÈVE : ${profileString}
+TON STYLE : Tu tutoies toujours l'élève ("tu"). Tu es amicale, chaleureuse, très encourageante et accessible. Personnalise tes exemples selon son niveau et la réalité camerounaise.
+DIRECTIVE : Réponds de façon claire, pédagogique et engageante en utilisant ce contexte si pertinent :
+CONTEXTE DE COURS (RAG) :
 ${ragContext}
-QUESTION : ${query}`;
+QUESTION DE L'ÉLÈVE : ${query}`;
     }
 
     let responseText = "";

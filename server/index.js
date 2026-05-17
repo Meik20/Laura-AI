@@ -49,10 +49,10 @@ app.post('/api/ussd', async (req, res) => {
 
 // AI Orchestration Route
 app.post('/api/chat', async (req, res) => {
-  const { message, mode } = req.body;
+  const { message, mode, userContext } = req.body;
   
   try {
-    const result = await orchestrator.handleChat(message, [], mode);
+    const result = await orchestrator.handleChat(message, userContext, mode);
     res.json(result);
   } catch (error) {
     console.error('Orchestration error:', error);

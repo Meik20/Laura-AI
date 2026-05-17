@@ -7,6 +7,7 @@ export default function LearnChatPage() {
   const { userProfile } = useAuth();
   
   const profileContext = {
+    prenom: userProfile?.prenom || 'Apprenant',
     role: userProfile?.roleLabel || 'Non défini', 
     niveau: userProfile?.niveau || 'Non défini', 
     serie: userProfile?.serie || 'Général', 
@@ -27,7 +28,7 @@ export default function LearnChatPage() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userText, mode: 'simple' })
+        body: JSON.stringify({ message: userText, mode: 'simple', userContext: profileContext })
       });
       
       const data = await response.json();
