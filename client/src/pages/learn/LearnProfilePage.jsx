@@ -14,14 +14,14 @@ export default function LearnProfilePage() {
   useEffect(() => {
     if (userProfile) {
       setFormData({
-        prenom: userProfile.prenom || '',
+        prenom: userProfile.prenom || userProfile.nom || userProfile.displayName || '',
         nom: userProfile.nom || '',
         email: userProfile.email || '',
-        roleLabel: userProfile.roleLabel || 'Élève',
-        niveau: userProfile.niveau || '',
+        roleLabel: userProfile.roleLabel || (userProfile.role === 'student' ? 'Élève' : userProfile.role) || 'Élève',
+        niveau: userProfile.niveau || userProfile.classe || userProfile.niveauEtude || '',
         serie: userProfile.serie || '',
-        filiere: userProfile.filiere || '',
-        examen: userProfile.examen || ''
+        filiere: userProfile.filiere || userProfile.discipline || '',
+        examen: userProfile.examen || userProfile.examenEleve || userProfile.examenEtudiant || ''
       });
     }
   }, [userProfile]);
@@ -34,7 +34,14 @@ export default function LearnProfilePage() {
     setIsSaving(true);
     setSuccessMsg('');
     try {
-      await updateDoc(doc(db, 'users', userProfile.uid), formData);
+      await updateDoc(doc(db, 'users', userProfile.uid), {
+        ...formData,
+        displayName: formData.prenom,
+        classe: formData.niveau,
+        niveauEtude: formData.niveau,
+        examenEleve: formData.examen,
+        examenEtudiant: formData.examen
+      });
       setSuccessMsg("Profil mis à jour avec succès !");
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err) {

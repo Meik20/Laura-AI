@@ -15,8 +15,17 @@ export default function LearnSettingsPage() {
   const [successMsg, setSuccessMsg] = useState('');
 
   useEffect(() => {
-    if (userProfile?.preferences) {
-      setSettings(userProfile.preferences);
+    if (userProfile) {
+      if (userProfile.preferences) {
+        setSettings(userProfile.preferences);
+      } else {
+        setSettings({
+          notifications: userProfile.notifications !== undefined ? userProfile.notifications : true,
+          theme: userProfile.theme || 'clair',
+          rythme: userProfile.rythme || 'regulier',
+          objectifNote: userProfile.objectifNote || '16'
+        });
+      }
     }
   }, [userProfile]);
 
@@ -31,7 +40,13 @@ export default function LearnSettingsPage() {
     setIsSaving(true);
     setSuccessMsg('');
     try {
-      await updateDoc(doc(db, 'users', userProfile.uid), { preferences: settings });
+      await updateDoc(doc(db, 'users', userProfile.uid), { 
+        preferences: settings,
+        notifications: settings.notifications,
+        theme: settings.theme,
+        rythme: settings.rythme,
+        objectifNote: settings.objectifNote
+      });
       setSuccessMsg("Paramètres enregistrés avec succès !");
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err) {
