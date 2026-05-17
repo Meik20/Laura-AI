@@ -1,14 +1,41 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+import { db } from '../../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function TutorStatusPage() {
-  // Simuler les données depuis Firestore (Specs 6.0)
-  const applicationData = {
-    nom: 'Doe',
-    discipline: 'Mathématiques',
-    date: '17 Mai 2026',
-    status: 'en_examen', // reçu, en_examen, test_requis, valide, refuse, active
-    messageAdmin: 'Votre dossier est actuellement en cours d\'analyse par notre équipe pédagogique.'
-  };
+  const { userProfile } = useAuth();
+  const [applicationData, setApplicationData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStatus() {
+      if (!userProfile?.uid) {
+        setIsLoading(false);
+        return;
+      }
+      try {
+        const docRef = doc(db, 'users', userProfile.uid);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          setApplicationData({
+            nom: data.nom || data.prenom || 'Candidat',
+            discipline: data.discipline || data.filiere || 'Général',
+            date: data.createdAt ? new Date(data.createdAt).toLocaleDateString() : 'N/A',
+            status: data.isTutor ? 'active' : data.isTutorPending ? 'en_examen' : 'recu',
+            messageAdmin: data.adminMessage || "Votre dossier est actuellement en cours d'analyse par notre équipe pédagogique."
+          });
+        }
+      } catch (err) {
+        console.error("Erreur fetch status:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchStatus();
+  }, [userProfile?.uid]);
 
   const getStatusColor = (status) => {
     switch(status) {
@@ -18,9 +45,25 @@ export default function TutorStatusPage() {
       case 'valide': return { bg: '#D1FAE5', text: '#065F46', label: 'Validé' };
       case 'active': return { bg: '#10B981', text: '#FFFFFF', label: 'Compte Activé' };
       case 'refuse': return { bg: '#FEE2E2', text: '#B91C1C', label: 'Refusé' };
-      default: return { bg: '#E5E7EB', text: '#374151', label: 'Inconnu' };
+      default: return { bg: '#E5E7EB', text: '#374151', label: 'En attente' };
     }
   };
+
+  if (isLoading) {
+    return <div style={{ padding: '4rem', textAlign: 'center', background: '#F9F9F8', minHeight: '100vh', color: '#6E6E6B' }}>Chargement du statut...</div>;
+  }
+
+  if (!applicationData) {
+    return (
+      <div style={{ padding: '4rem 2rem', background: '#F9F9F8', minHeight: '100vh', textAlign: 'center' }}>
+        <div style={{ maxWidth: '600px', margin: '0 auto', background: 'white', padding: '3.5rem', borderRadius: '1.5rem', boxShadow: '0 20px 60px rgba(0,0,0,0.05)', border: '1px solid #E5E5E2' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '1rem' }}>Aucune candidature trouvée</h1>
+          <p style={{ color: '#6E6E6B', marginBottom: '2rem' }}>Vous n'avez pas encore soumis de dossier de candidature pour devenir tuteur.</p>
+          <Link to="/become-tutor" style={{ padding: '1rem 2rem', background: '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>Postuler maintenant</Link>
+        </div>
+      </div>
+    );
+  }
 
   const statusStyle = getStatusColor(applicationData.status);
 

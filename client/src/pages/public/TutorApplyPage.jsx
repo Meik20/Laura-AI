@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { db } from '../../firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function TutorApplyPage() {
   const navigate = useNavigate();
+  const { userProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -21,18 +25,35 @@ export default function TutorApplyPage() {
     if (formData.password !== formData.confirmPassword) {
       return setError('Les mots de passe ne correspondent pas.');
     }
-    // Validation basique
     if (!formData.nom || !formData.email || !formData.discipline || !formData.motivation) {
       return setError('Veuillez remplir les champs obligatoires.');
     }
 
     setIsLoading(true);
     try {
-      // TODO: Enregistrer les données (Firebase) et uploader le fichier
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      // Redirection après soumission (Point 5.7) vers le statut
+      const targetUid = userProfile?.uid || `tutor_${Date.now()}`;
+      await setDoc(doc(db, 'users', targetUid), {
+        nom: formData.nom,
+        prenom: formData.prenom,
+        email: formData.email,
+        telephone: formData.telephone,
+        discipline: formData.discipline,
+        niveau: formData.niveau,
+        experience: formData.experience,
+        etablissement: formData.etablissement,
+        diplome: formData.diplome,
+        competences: formData.competences,
+        motivation: formData.motivation,
+        roleLabel: 'Tuteur',
+        isTutorPending: true,
+        isTutor: false,
+        createdAt: new Date().toISOString(),
+        statut: 'en_examen'
+      }, { merge: true });
+
       navigate('/tutor/status');
     } catch (err) {
+      console.error("Erreur candidature:", err);
       setError('Erreur lors de la soumission de la candidature.');
     } finally {
       setIsLoading(false);

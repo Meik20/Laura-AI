@@ -17,31 +17,27 @@ export default function LearnProgressPage() {
     } else if (userProfile?.currentGoal) {
       setCurrentGoals([userProfile.currentGoal]);
     } else {
-      setCurrentGoals([
-        { title: 'Réviser 8 chapitres de Maths', progress: 45, date: '1 Juin - 30 Juin' },
-        { title: 'Passer 3 annales de SVT', progress: 33, date: '15 Mai - 15 Juin' }
-      ]);
+      setCurrentGoals([]); // AUCUNE DONNÉE FACTICE
     }
   }, [userProfile]);
 
   useEffect(() => {
     async function fetchActivities() {
-      if (!userProfile?.uid) return;
+      if (!userProfile?.uid) {
+        setIsLoading(false);
+        return;
+      }
       try {
         const actSnap = await getDocs(collection(db, 'users', userProfile.uid, 'activities'));
         const docs = actSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         if (docs.length > 0) {
           setRecentActivities(docs.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5));
         } else {
-          setRecentActivities([
-            { action: 'Quiz Probabilités', result: '14/20', time: 'Il y a 2 heures', type: 'quiz' },
-            { action: 'Révision : Suites arithmétiques', result: 'Terminé', time: 'Hier', type: 'revision' },
-            { action: 'Exercice : Génétique', result: 'En cours', time: 'Il y a 2 jours', type: 'exercice' },
-            { action: 'Annale Maths 2022', result: '12/20', time: 'Semaine dernière', type: 'exam' }
-          ]);
+          setRecentActivities([]); // AUCUNE DONNÉE FACTICE
         }
       } catch (err) {
         console.error("Erreur de récupération des activités :", err);
+        setRecentActivities([]);
       } finally {
         setIsLoading(false);
       }
@@ -50,13 +46,13 @@ export default function LearnProgressPage() {
   }, [userProfile?.uid]);
 
   const subjectProgress = [
-    { matiere: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 68, color: '#7C6FFF' },
-    { matiere: 'SVT', val: userProfile?.matieresProgress?.SVT || 55, color: '#00D4AA' },
-    { matiere: 'Physique-Chimie', val: userProfile?.matieresProgress?.Physique || 40, color: '#F59E0B' },
-    { matiere: 'Philosophie / Français', val: userProfile?.matieresProgress?.Philosophie || 80, color: '#3B82F6' }
+    { matiere: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 0, color: '#7C6FFF' },
+    { matiere: 'SVT', val: userProfile?.matieresProgress?.SVT || 0, color: '#00D4AA' },
+    { matiere: 'Physique-Chimie', val: userProfile?.matieresProgress?.Physique || 0, color: '#F59E0B' },
+    { matiere: 'Philosophie / Français', val: userProfile?.matieresProgress?.Philosophie || 0, color: '#3B82F6' }
   ];
 
-  const globalProgress = Math.round(subjectProgress.reduce((acc, curr) => acc + curr.val, 0) / subjectProgress.length);
+  const globalProgress = Math.round(subjectProgress.reduce((acc, curr) => acc + curr.val, 0) / subjectProgress.length) || 0;
 
   const handleSaveGoal = async (newGoal) => {
     const goalObj = {
@@ -119,18 +115,22 @@ export default function LearnProgressPage() {
             <button onClick={() => setIsGoalModalOpen(true)} style={{ background: '#F5F4EF', border: 'none', padding: '0.4rem 1rem', borderRadius: '2rem', cursor: 'pointer', fontWeight: 600, transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#E5E5E2'} onMouseLeave={e => e.currentTarget.style.background = '#F5F4EF'}>+ Nouveau</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {currentGoals.map((goal, i) => (
-              <div key={i} style={{ background: '#F9F9F8', padding: '1.5rem', borderRadius: '1rem', border: '1px solid #E5E5E2' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem' }}>{goal.title || goal.title}</h3>
-                <p style={{ margin: '0 0 1rem 0', fontSize: '0.85rem', color: '#6E6E6B' }}>{goal.date || goal.period}</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ flex: 1, height: '8px', background: '#E5E5E2', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: `${goal.progress || 0}%`, height: '100%', background: '#1A1A1A', borderRadius: '4px' }}></div>
+            {currentGoals.length === 0 ? (
+              <div style={{ color: '#6E6E6B', fontSize: '0.95rem', padding: '1rem 0' }}>Aucun objectif en cours. Cliquez sur "+ Nouveau" pour en créer un.</div>
+            ) : (
+              currentGoals.map((goal, i) => (
+                <div key={i} style={{ background: '#F9F9F8', padding: '1.5rem', borderRadius: '1rem', border: '1px solid #E5E5E2' }}>
+                  <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem' }}>{goal.title || goal.title}</h3>
+                  <p style={{ margin: '0 0 1rem 0', fontSize: '0.85rem', color: '#6E6E6B' }}>{goal.date || goal.period}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ flex: 1, height: '8px', background: '#E5E5E2', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ width: `${goal.progress || 0}%`, height: '100%', background: '#1A1A1A', borderRadius: '4px' }}></div>
+                    </div>
+                    <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{goal.progress || 0}%</span>
                   </div>
-                  <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{goal.progress || 0}%</span>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 

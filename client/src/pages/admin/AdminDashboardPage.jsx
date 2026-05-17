@@ -11,6 +11,7 @@ export default function AdminDashboardPage() {
     { label: 'Contributeurs', value: '...', icon: '⭐', color: '#F59E0B' }
   ]);
   const [alerts, setAlerts] = useState([]);
+  const [chatActivity, setChatActivity] = useState([0, 0, 0, 0, 0, 0, 0]);
 
   useEffect(() => {
     async function fetchStats() {
@@ -38,7 +39,6 @@ export default function AdminDashboardPage() {
           dynamicAlerts.push({ type: 'warning', msg: `${pendingTutors} candidature(s) tuteur(s) en attente de révision.`, link: '/admin/tutor-applications' });
         }
         
-        // On vérifie s'il y a des ressources en brouillon/soumises
         try {
           const resSnap = await getDocs(collection(db, 'resources'));
           let pendingRes = 0;
@@ -51,6 +51,31 @@ export default function AdminDashboardPage() {
         }
 
         setAlerts(dynamicAlerts);
+
+        // Fetch real chat activity
+        try {
+          const chatsSnap = await getDocs(collection(db, 'chats'));
+          const dayCounts = [0, 0, 0, 0, 0, 0, 0];
+          const now = new Date();
+          chatsSnap.forEach(doc => {
+            const msgs = doc.data().messages || [];
+            msgs.forEach(m => {
+              if (m.timestamp) {
+                const msgDate = new Date(m.timestamp);
+                const diffTime = Math.abs(now - msgDate);
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                if (diffDays < 7) {
+                  dayCounts[6 - diffDays]++;
+                }
+              }
+            });
+          });
+          const maxCount = Math.max(...dayCounts, 1);
+          const heights = dayCounts.map(c => Math.round((c / maxCount) * 100));
+          setChatActivity(heights);
+        } catch (e) {
+          console.error("Erreur fetch chat activity:", e);
+        }
 
       } catch (err) {
         console.error("Erreur fetch stats:", err);
@@ -74,7 +99,7 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* KPI CARDS (Point 17.2) */}
+      {/* KPI CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
         {stats.map((s, i) => (
           <div key={i} style={cardStyle}>
@@ -90,17 +115,19 @@ export default function AdminDashboardPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2.5rem' }}>
         
-        {/* GRAPHIQUE ACTIVITÉ (Simulé) */}
+        {/* GRAPHIQUE ACTIVITÉ (Réel) */}
         <div style={cardStyle}>
           <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700 }}>Activité Chat (7 derniers jours)</h2>
           <div style={{ width: '100%', height: '300px', background: 'rgba(255,255,255,0.02)', borderRadius: '1rem', display: 'flex', alignItems: 'flex-end', gap: '1rem', padding: '1rem' }}>
-            {[40, 60, 45, 80, 50, 90, 70].map((h, i) => (
-              <div key={i} style={{ flex: 1, height: `${h}%`, background: 'linear-gradient(to top, #3B82F6, #60A5FA)', borderRadius: '0.5rem 0.5rem 0 0', opacity: 0.8 }}></div>
+            {chatActivity.map((h, i) => (
+              <div key={i} style={{ flex: 1, height: `${Math.max(h, 4)}%`, background: h > 0 ? 'linear-gradient(to top, #3B82F6, #60A5FA)' : 'rgba(255,255,255,0.05)', borderRadius: '0.5rem 0.5rem 0 0', opacity: 0.8, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '0.5rem', color: '#94A3B8', fontSize: '0.75rem', fontWeight: 700 }}>
+                {h > 0 ? `${h}%` : '0'}
+              </div>
             ))}
           </div>
         </div>
 
-        {/* ALERTES ET ACTIONS À PRENDRE (Point 17.3) */}
+        {/* ALERTES ET ACTIONS À PRENDRE */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div style={cardStyle}>
             <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700 }}>Centre d'action</h2>

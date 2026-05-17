@@ -41,47 +41,44 @@ export default function LearnDashboardPage() {
         if (filtered.length > 0) {
           setRecommandations(filtered.map(r => ({
             id: r.id,
-            icon: r.type === 'Quiz' ? '🎲' : r.type === 'Annale' ? '📝' : '📚',
-            text: r.titre,
+            icon: r.type === 'Quiz' ? '🎲' : r.type === 'Annale' ? '📝' : r.type === 'Épreuve' ? '📜' : '📚',
+            text: r.titre || 'Sans titre',
             url: r.url
           })));
         } else {
-          setRecommandations([
-            { id: 1, icon: '📐', text: 'Réviser les Suites numériques', url: '' },
-            { id: 2, icon: '🎲', text: 'Quiz Probabilités', url: '' },
-            { id: 3, icon: '📝', text: `Annale ${user.examen !== 'Non défini' ? user.examen : 'BAC'} 2023`, url: '' }
-          ]);
+          setRecommandations([]); // AUCUNE DONNÉE FACTICE
         }
       } catch (e) {
         console.error(e);
+        setRecommandations([]);
       }
     }
     fetchRecos();
   }, [user.examen]);
 
   let matieres = [
-    { mat: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 45, color: '#7C6FFF' },
-    { mat: 'Physique-Chimie', val: userProfile?.matieresProgress?.Physique || 30, color: '#F59E0B' },
-    { mat: 'SVT', val: userProfile?.matieresProgress?.SVT || 60, color: '#00D4AA' }
+    { mat: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 0, color: '#7C6FFF' },
+    { mat: 'Physique-Chimie', val: userProfile?.matieresProgress?.Physique || 0, color: '#F59E0B' },
+    { mat: 'SVT', val: userProfile?.matieresProgress?.SVT || 0, color: '#00D4AA' }
   ];
 
   if (user.serie && user.serie.startsWith('A')) {
     matieres = [
-      { mat: 'Philosophie', val: userProfile?.matieresProgress?.Philosophie || 50, color: '#7C6FFF' },
-      { mat: 'Français / Littérature', val: userProfile?.matieresProgress?.Français || 40, color: '#F59E0B' },
-      { mat: 'Histoire-Géo', val: userProfile?.matieresProgress?.Histoire || 65, color: '#00D4AA' }
+      { mat: 'Philosophie', val: userProfile?.matieresProgress?.Philosophie || 0, color: '#7C6FFF' },
+      { mat: 'Français / Littérature', val: userProfile?.matieresProgress?.Français || 0, color: '#F59E0B' },
+      { mat: 'Histoire-Géo', val: userProfile?.matieresProgress?.Histoire || 0, color: '#00D4AA' }
     ];
   } else if (user.serie === 'SES' || user.filiere?.toLowerCase().includes('gestion')) {
     matieres = [
-      { mat: 'Économie', val: userProfile?.matieresProgress?.Économie || 55, color: '#7C6FFF' },
-      { mat: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 45, color: '#F59E0B' },
-      { mat: 'Histoire-Géo', val: userProfile?.matieresProgress?.Histoire || 65, color: '#00D4AA' }
+      { mat: 'Économie', val: userProfile?.matieresProgress?.Économie || 0, color: '#7C6FFF' },
+      { mat: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 0, color: '#F59E0B' },
+      { mat: 'Histoire-Géo', val: userProfile?.matieresProgress?.Histoire || 0, color: '#00D4AA' }
     ];
   } else if (user.filiere && !user.serie) {
     matieres = [
-      { mat: user.filiere, val: 50, color: '#7C6FFF' },
-      { mat: 'Méthodologie', val: 40, color: '#F59E0B' },
-      { mat: 'Culture Générale', val: 70, color: '#00D4AA' }
+      { mat: user.filiere, val: userProfile?.matieresProgress?.[user.filiere] || 0, color: '#7C6FFF' },
+      { mat: 'Méthodologie', val: userProfile?.matieresProgress?.Méthodologie || 0, color: '#F59E0B' },
+      { mat: 'Culture Générale', val: userProfile?.matieresProgress?.Culture || 0, color: '#00D4AA' }
     ];
   }
 
@@ -197,13 +194,17 @@ export default function LearnDashboardPage() {
           {/* RECOMMANDATIONS */}
           <div style={{ ...cardStyle, background: '#F5F4EF', border: 'none' }}>
             <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Recommandations pour vous</h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {recommandations.map((r, i) => (
-                <li key={i} onClick={() => r.url ? window.open(r.url, '_blank') : navigate('/learn/chat')} style={{ background: 'white', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
-                  <span style={{ fontSize: '1.5rem' }}>{r.icon}</span> <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{r.text}</span>
-                </li>
-              ))}
-            </ul>
+            {recommandations.length === 0 ? (
+              <div style={{ color: '#6E6E6B', fontSize: '0.95rem', padding: '1rem 0' }}>Aucune ressource recommandée pour le moment. Explorez le catalogue complet.</div>
+            ) : (
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {recommandations.map((r, i) => (
+                  <li key={i} onClick={() => r.url ? window.open(r.url, '_blank') : navigate('/learn/chat')} style={{ background: 'white', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
+                    <span style={{ fontSize: '1.5rem' }}>{r.icon}</span> <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{r.text}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* PROFIL ACADÉMIQUE */}
