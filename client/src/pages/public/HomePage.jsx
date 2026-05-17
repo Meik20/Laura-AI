@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const qrUrl = typeof window !== 'undefined' ? window.location.origin : 'https://laura-ai.vercel.app';
 
   const handleStart = () => {
     const isLoggedIn = false;
@@ -109,6 +110,45 @@ export default function HomePage() {
             <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📚</div>
             <h3 style={{ fontSize: '1.2rem', marginBottom: '0.75rem', color: '#3B82F6', fontWeight: 800 }}>Ressources Intelligentes</h3>
             <p style={{ color: '#A3A3A3', fontSize: '0.95rem', lineHeight: 1.6 }}>Le système ne vous propose que les documents qui correspondent à votre série et vos lacunes.</p>
+          </div>
+
+        </div>
+      </section>
+
+      {/* SECTION VERSION MOBILE & QR CODE */}
+      <section style={{ padding: '6rem 2rem', background: '#F5F4EF', borderBottom: '1px solid #E5E5E2', textAlign: 'center' }}>
+        <div style={{ maxWidth: '950px', margin: '0 auto', background: 'white', padding: '3.5rem 2.5rem', borderRadius: '2rem', border: '1px solid #E5E5E2', display: 'flex', alignItems: 'center', justifyContent: 'space-around', gap: '3rem', flexWrap: 'wrap-reverse', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+          
+          <div style={{ flex: 1, textAlign: 'left', minWidth: '300px' }}>
+            <span style={{ background: '#ECFDF5', color: '#059669', padding: '0.4rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1.2rem', display: 'inline-block' }}>⚡ Version Mobile & PWA</span>
+            <h2 style={{ fontSize: '2.2rem', fontWeight: 900, marginBottom: '1rem', color: '#1A1A1A', lineHeight: 1.2 }}>
+              Emportez LAURA partout avec vous
+            </h2>
+            <p style={{ color: '#4A4A47', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '2rem' }}>
+              Scannez le QR code ci-contre avec votre smartphone pour ouvrir instantanément l'application sur mobile. Grâce à notre format PWA optimisé, vous pouvez l'installer directement sur votre écran d'accueil sans passer par l'App Store ou Google Play, et profiter de toutes les fonctionnalités de LAURA en un clic !
+            </p>
+            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#00A37A', fontWeight: 700, fontSize: '0.95rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>✓</span> Mode PWA Installable
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#00A37A', fontWeight: 700, fontSize: '0.95rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>✓</span> Notifications instantanées
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#00A37A', fontWeight: 700, fontSize: '0.95rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>✓</span> Fluidité tactile maximale
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', background: '#F9F9F8', padding: '2rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2', width: '220px', flexShrink: 0, boxShadow: '0 8px 20px rgba(0,0,0,0.03)' }}>
+            <div style={{ background: 'white', padding: '1rem', borderRadius: '1rem', border: '1px solid #E5E5E2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}`} 
+                alt="QR Code LAURA AI" 
+                style={{ width: '160px', height: '160px', display: 'block' }} 
+              />
+            </div>
+            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1A1A1A', textAlign: 'center' }}>Scannez pour installer</span>
           </div>
 
         </div>
