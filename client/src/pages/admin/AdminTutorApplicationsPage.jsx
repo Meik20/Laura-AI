@@ -27,6 +27,7 @@ export default function AdminTutorApplicationsPage() {
         isTutor: true,
         isTutorPending: false,
         statut: 'active',
+        role: 'teacher',
         roleLabel: 'Tuteur',
         adminMessage: "Félicitations, votre compte Tuteur a été validé avec succès !"
       }, { merge: true });

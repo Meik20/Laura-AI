@@ -32,11 +32,11 @@ export default function LoginPage() {
       
       let role = 'student';
       if (docSnap.exists()) {
-        role = docSnap.data().role || 'student';
+        const data = docSnap.data();
+        role = data.role || (data.isTutor ? 'teacher' : 'student');
       }
       
-      if (role === 'student') navigate('/learn/dashboard');
-      else if (role === 'teacher') navigate('/tutor/dashboard');
+      if (role === 'teacher') navigate('/tutor/dashboard');
       else if (role === 'admin') navigate('/admin/dashboard');
       else navigate('/learn/dashboard');
       
