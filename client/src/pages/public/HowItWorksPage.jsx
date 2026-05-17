@@ -3,7 +3,7 @@ export default function HowItWorksPage() {
     <div style={{ maxWidth: '800px', margin: '4rem auto', padding: '0 2rem' }}>
       <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '2rem', textAlign: 'center' }}>Comment ça marche ?</h1>
       <p style={{ fontSize: '1.2rem', color: '#6E6E6B', lineHeight: 1.6, textAlign: 'center', marginBottom: '4rem' }}>
-        LAURA AI est conçu pour s'adapter à votre rythme et à votre niveau. Voici comment démarrer :
+        <strong>LAURA</strong> (<em>Learning AI & Unified Resource Assistant</em>) est conçue pour s'adapter à votre rythme et à votre niveau. Voici comment démarrer :
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
