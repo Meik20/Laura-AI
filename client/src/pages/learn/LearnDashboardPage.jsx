@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LearningGoalModal from '../../components/dashboard/LearningGoalModal';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, collection, getDocs } from 'firebase/firestore';
 
 export default function LearnDashboardPage() {
+  const navigate = useNavigate();
+  const { userProfile } = useAuth();
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [currentGoal, setCurrentGoal] = useState({
     title: 'Aucun objectif défini',
     period: 'Non définie',
     progress: 0
   });
-
-  const { userProfile } = useAuth();
+  const [recommandations, setRecommandations] = useState([]);
 
   // Utilisation sécurisée au cas où le profil met du temps à charger
   const user = {
@@ -24,73 +26,93 @@ export default function LearnDashboardPage() {
     filiere: userProfile?.filiere || null
   };
 
-  // Logique dynamique des matières et recommandations selon la série/filière
+  useEffect(() => {
+    if (userProfile?.currentGoal) {
+      setCurrentGoal(userProfile.currentGoal);
+    }
+  }, [userProfile]);
+
+  useEffect(() => {
+    async function fetchRecos() {
+      try {
+        const resSnap = await getDocs(collection(db, 'resources'));
+        const allRes = resSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const filtered = allRes.filter(r => r.statut === 'publie').slice(0, 3);
+        if (filtered.length > 0) {
+          setRecommandations(filtered.map(r => ({
+            id: r.id,
+            icon: r.type === 'Quiz' ? '🎲' : r.type === 'Annale' ? '📝' : '📚',
+            text: r.titre,
+            url: r.url
+          })));
+        } else {
+          setRecommandations([
+            { id: 1, icon: '📐', text: 'Réviser les Suites numériques', url: '' },
+            { id: 2, icon: '🎲', text: 'Quiz Probabilités', url: '' },
+            { id: 3, icon: '📝', text: `Annale ${user.examen !== 'Non défini' ? user.examen : 'BAC'} 2023`, url: '' }
+          ]);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    fetchRecos();
+  }, [user.examen]);
+
   let matieres = [
-    { mat: 'Mathématiques', val: 0, color: '#7C6FFF' },
-    { mat: 'Physique-Chimie', val: 0, color: '#F59E0B' },
-    { mat: 'SVT', val: 0, color: '#00D4AA' }
-  ];
-  let recos = [
-    { icon: '📐', text: 'Réviser les Suites numériques' },
-    { icon: '🎲', text: 'Quiz Probabilités' },
-    { icon: '📝', text: `Annale ${user.examen !== 'Non défini' ? user.examen : 'BAC'} Maths 2023` }
+    { mat: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 45, color: '#7C6FFF' },
+    { mat: 'Physique-Chimie', val: userProfile?.matieresProgress?.Physique || 30, color: '#F59E0B' },
+    { mat: 'SVT', val: userProfile?.matieresProgress?.SVT || 60, color: '#00D4AA' }
   ];
 
   if (user.serie && user.serie.startsWith('A')) {
     matieres = [
-      { mat: 'Philosophie', val: 0, color: '#7C6FFF' },
-      { mat: 'Français / Littérature', val: 0, color: '#F59E0B' },
-      { mat: 'Histoire-Géo', val: 0, color: '#00D4AA' }
-    ];
-    recos = [
-      { icon: '📚', text: 'Réviser les figures de style' },
-      { icon: '🧠', text: 'Quiz Méthodologie Dissertation' },
-      { icon: '📝', text: `Annale ${user.examen !== 'Non défini' ? user.examen : 'BAC'} Philosophie 2023` }
+      { mat: 'Philosophie', val: userProfile?.matieresProgress?.Philosophie || 50, color: '#7C6FFF' },
+      { mat: 'Français / Littérature', val: userProfile?.matieresProgress?.Français || 40, color: '#F59E0B' },
+      { mat: 'Histoire-Géo', val: userProfile?.matieresProgress?.Histoire || 65, color: '#00D4AA' }
     ];
   } else if (user.serie === 'SES' || user.filiere?.toLowerCase().includes('gestion')) {
     matieres = [
-      { mat: 'Économie', val: 0, color: '#7C6FFF' },
-      { mat: 'Mathématiques', val: 0, color: '#F59E0B' },
-      { mat: 'Histoire-Géo', val: 0, color: '#00D4AA' }
-    ];
-    recos = [
-      { icon: '📊', text: 'Réviser la Croissance économique' },
-      { icon: '📉', text: 'Quiz Offre et Demande' },
-      { icon: '📝', text: `Annale ${user.examen !== 'Non défini' ? user.examen : 'BAC'} Économie 2023` }
+      { mat: 'Économie', val: userProfile?.matieresProgress?.Économie || 55, color: '#7C6FFF' },
+      { mat: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 45, color: '#F59E0B' },
+      { mat: 'Histoire-Géo', val: userProfile?.matieresProgress?.Histoire || 65, color: '#00D4AA' }
     ];
   } else if (user.filiere && !user.serie) {
-    // Étudiant supérieur générique
     matieres = [
-      { mat: 'Matière Principale 1', val: 0, color: '#7C6FFF' },
-      { mat: 'Matière Principale 2', val: 0, color: '#F59E0B' },
-      { mat: 'Matière Optionnelle', val: 0, color: '#00D4AA' }
-    ];
-    recos = [
-      { icon: '📖', text: 'Relire le cours chapitre 1' },
-      { icon: '🎯', text: 'Préparer le prochain TD' },
-      { icon: '📝', text: 'Réviser les partiels précédents' }
+      { mat: user.filiere, val: 50, color: '#7C6FFF' },
+      { mat: 'Méthodologie', val: 40, color: '#F59E0B' },
+      { mat: 'Culture Générale', val: 70, color: '#00D4AA' }
     ];
   }
 
-  const handleSaveGoal = (newGoal) => {
-    setCurrentGoal({
+  const handleSaveGoal = async (newGoal) => {
+    const goalObj = {
       title: newGoal.title,
       period: `du ${newGoal.dateDebut} au ${newGoal.dateFin}`,
       progress: 0
-    });
+    };
+    setCurrentGoal(goalObj);
+    if (userProfile?.uid) {
+      try {
+        await updateDoc(doc(db, 'users', userProfile.uid), { currentGoal: goalObj });
+      } catch (err) {
+        console.error("Erreur lors de l'enregistrement de l'objectif :", err);
+      }
+    }
   };
 
   const handleEditProfile = async () => {
-    const newSerie = prompt("Veuillez renseigner ou modifier votre série (ex: A4, C, D, SES) :");
-    if (newSerie && userProfile?.uid) {
-      try {
-        await updateDoc(doc(db, 'users', userProfile.uid), { serie: newSerie.toUpperCase() });
-        alert("Profil mis à jour ! La page va se recharger.");
-        window.location.reload();
-      } catch (err) {
-        console.error(err);
-        alert("Erreur lors de la mise à jour du profil.");
-      }
+    navigate('/learn/profile');
+  };
+
+  const handleQuickAction = (action) => {
+    switch(action) {
+      case 'Parler à LAURA': navigate('/learn/chat'); break;
+      case 'Réviser un chapitre': navigate('/learn/revision'); break;
+      case 'Lancer un quiz': navigate('/learn/revision'); break;
+      case 'Préparer mon examen': navigate('/learn/exams'); break;
+      case 'Voir mes ressources': navigate('/learn/resources'); break;
+      default: navigate('/learn/chat');
     }
   };
 
@@ -107,7 +129,7 @@ export default function LearnDashboardPage() {
             Vous êtes en <strong style={{ color: '#1A1A1A' }}>{user.niveau}</strong> · Examen préparé : <strong style={{ color: '#1A1A1A' }}>{user.examen}</strong>
           </p>
         </div>
-        <button style={{ padding: '0.8rem 1.5rem', background: '#00D4AA', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <button onClick={() => navigate('/learn/chat')} style={{ padding: '0.8rem 1.5rem', background: '#00D4AA', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#00B894'} onMouseLeave={e => e.currentTarget.style.background = '#00D4AA'}>
           <span>+</span> Nouvelle conversation
         </button>
       </div>
@@ -143,7 +165,7 @@ export default function LearnDashboardPage() {
             <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Actions rapides</h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
               {['Parler à LAURA', 'Réviser un chapitre', 'Lancer un quiz', 'Préparer mon examen', 'Voir mes ressources'].map((action, i) => (
-                <button key={i} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.8rem 1.2rem', borderRadius: '0.75rem', fontWeight: 600, color: '#1A1A1A', cursor: 'pointer', flex: '1 1 calc(33% - 1rem)', textAlign: 'center' }}>
+                <button key={i} onClick={() => handleQuickAction(action)} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.8rem 1.2rem', borderRadius: '0.75rem', fontWeight: 600, color: '#1A1A1A', cursor: 'pointer', flex: '1 1 calc(33% - 1rem)', textAlign: 'center', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#E5E5E2'} onMouseLeave={e => e.currentTarget.style.background = '#F5F4EF'}>
                   {action}
                 </button>
               ))}
@@ -176,8 +198,8 @@ export default function LearnDashboardPage() {
           <div style={{ ...cardStyle, background: '#F5F4EF', border: 'none' }}>
             <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Recommandations pour vous</h3>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {recos.map((r, i) => (
-                <li key={i} style={{ background: 'white', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {recommandations.map((r, i) => (
+                <li key={i} onClick={() => r.url ? window.open(r.url, '_blank') : navigate('/learn/chat')} style={{ background: 'white', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
                   <span style={{ fontSize: '1.5rem' }}>{r.icon}</span> <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{r.text}</span>
                 </li>
               ))}
@@ -198,7 +220,7 @@ export default function LearnDashboardPage() {
                 <span style={{ color: '#6E6E6B' }}>Examen préparé</span><span style={{ fontWeight: 600 }}>{user.examen}</span>
               </div>
             </div>
-            <button onClick={handleEditProfile} style={{ width: '100%', marginTop: '1.5rem', padding: '0.8rem', background: 'transparent', border: '1px solid #E5E5E2', borderRadius: '0.6rem', fontWeight: 600, cursor: 'pointer' }}>
+            <button onClick={handleEditProfile} style={{ width: '100%', marginTop: '1.5rem', padding: '0.8rem', background: 'transparent', border: '1px solid #E5E5E2', borderRadius: '0.6rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#F5F4EF'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
               Modifier mon profil
             </button>
           </div>
