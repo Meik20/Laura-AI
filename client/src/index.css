@@ -91,7 +91,8 @@ button:hover {
   gap: 1rem;
 }
 
-input {
+/* IMPORTANT: input styles scoped to .input-area only - prevents overriding public form styles */
+.input-area input {
   flex: 1;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -102,6 +103,6 @@ input {
   outline: none;
 }
 
-input:focus {
+.input-area input:focus {
   border-color: var(--teal);
 }
