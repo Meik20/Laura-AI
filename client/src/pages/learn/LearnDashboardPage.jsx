@@ -9,12 +9,13 @@ export default function LearnDashboardPage() {
     progress: 45
   });
 
-  // Mock de l'utilisateur (à remplacer par le vrai state Firestore)
+  // Lecture des informations de l'utilisateur depuis le localStorage pour personnaliser l'affichage
+  const savedUser = JSON.parse(localStorage.getItem('laura_user')) || {};
   const user = {
-    prenom: 'Amina',
-    roleLabel: 'Élève',
-    niveau: 'Terminale D',
-    examen: 'BAC'
+    prenom: savedUser.prenom || 'Amina',
+    roleLabel: savedUser.roleLabel || 'Élève',
+    niveau: savedUser.niveau || 'Terminale D',
+    examen: savedUser.examen || 'BAC'
   };
 
   const handleSaveGoal = (newGoal) => {
@@ -25,7 +26,7 @@ export default function LearnDashboardPage() {
     });
   };
 
-  const cardStyle = { background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' };
+  const cardStyle = { background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', color: '#1A1A1A' };
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>

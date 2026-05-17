@@ -38,8 +38,18 @@ export default function SignupPage() {
 
     setIsLoading(true);
     try {
+      // Sauvegarde locale pour personnaliser l'expérience immédiatement
+      localStorage.setItem('laura_user', JSON.stringify({
+        prenom: formData.prenom,
+        nom: formData.nom,
+        email: formData.email,
+        roleLabel: profileType === 'eleve' ? 'Élève' : 'Étudiant',
+        niveau: profileType === 'eleve' ? formData.classe : formData.niveauEtude,
+        examen: profileType === 'eleve' ? formData.examenEleve : formData.examenEtudiant,
+      }));
+
       // TODO: Firebase Auth & Firestore Logic
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       // Redirection après succès (Point 3.9)
       navigate('/learn/dashboard');
     } catch (err) {

@@ -19,8 +19,17 @@ export default function LoginPage() {
 
     setIsLoading(true);
     try {
-      // TODO: Connecter à authService.js (Firebase Auth)
-      // Simulation temporaire du comportement attendu dans tes specs (Point 2.4)
+      // Simulation de connexion et gestion des données utilisateur
+      let savedUser = JSON.parse(localStorage.getItem('laura_user'));
+      if (!savedUser) {
+        savedUser = {
+          prenom: email.split('@')[0],
+          roleLabel: 'Élève',
+          niveau: 'Terminale D',
+          examen: 'BAC'
+        };
+        localStorage.setItem('laura_user', JSON.stringify(savedUser));
+      }
       await new Promise(resolve => setTimeout(resolve, 1000)); 
       
       // Simulation de redirection basée sur le rôle
