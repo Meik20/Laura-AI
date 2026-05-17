@@ -1,7 +1,15 @@
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isStandalone) {
+      navigate('/login', { replace: true });
+    }
+  }, [navigate]);
   const qrUrl = typeof window !== 'undefined' ? window.location.origin : 'https://laura-ai.vercel.app';
 
   const handleStart = () => {
@@ -92,25 +100,25 @@ export default function HomePage() {
 
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', gap: '2rem' }}>
 
-          <div style={darkFeatureCard}>
+          <div className="dark-card" style={darkFeatureCard}>
             <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>💬</div>
             <h3 style={{ fontSize: '1.2rem', marginBottom: '0.75rem', color: '#7fc3f7', fontWeight: 800 }}>Chat Contextuel</h3>
             <p style={{ color: 'var(--color-neutral-400)', fontSize: '0.95rem', lineHeight: 1.6 }}>Dialogue interactif adapté à votre niveau, capable de générer des quiz à la demande.</p>
           </div>
 
-          <div style={darkFeatureCard}>
+          <div className="dark-card" style={darkFeatureCard}>
             <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎯</div>
             <h3 style={{ fontSize: '1.2rem', marginBottom: '0.75rem', color: 'var(--color-brand-green)', fontWeight: 800 }}>Objectifs & Suivi</h3>
             <p style={{ color: 'var(--color-neutral-400)', fontSize: '0.95rem', lineHeight: 1.6 }}>Définissez vos objectifs et suivez votre progression en temps réel avec des indicateurs clairs.</p>
           </div>
 
-          <div style={darkFeatureCard}>
+          <div className="dark-card" style={darkFeatureCard}>
             <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📝</div>
             <h3 style={{ fontSize: '1.2rem', marginBottom: '0.75rem', color: 'var(--color-brand-amber)', fontWeight: 800 }}>Simulateur d'Examens</h3>
             <p style={{ color: 'var(--color-neutral-400)', fontSize: '0.95rem', lineHeight: 1.6 }}>Entraînez-vous dans les conditions réelles sur une immense base de données d'annales africaines.</p>
           </div>
 
-          <div style={darkFeatureCard}>
+          <div className="dark-card" style={darkFeatureCard}>
             <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📚</div>
             <h3 style={{ fontSize: '1.2rem', marginBottom: '0.75rem', color: 'var(--color-brand-coral)', fontWeight: 800 }}>Ressources Intelligentes</h3>
             <p style={{ color: 'var(--color-neutral-400)', fontSize: '0.95rem', lineHeight: 1.6 }}>Le système ne vous propose que les documents qui correspondent à votre série et vos lacunes.</p>

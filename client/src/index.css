@@ -284,6 +284,58 @@ p {
   color: var(--color-text-secondary);
 }
 
+/* ============================================================
+   THEMATIC TEXT CONTRAST SYSTEM
+   Ensures premium readability in dark dashboards and card components
+   ============================================================ */
+
+/* --- ADMIN LAYOUT (Dark Theme Dashboard) --- */
+.admin-layout {
+  color: var(--color-white) !important;
+}
+
+.admin-layout h1,
+.admin-layout h2,
+.admin-layout h3,
+.admin-layout h4,
+.admin-layout h5,
+.admin-layout h6 {
+  color: var(--color-white) !important;
+}
+
+.admin-layout p {
+  color: var(--color-neutral-300) !important;
+}
+
+.admin-layout span:not([style*="color"]),
+.admin-layout strong:not([style*="color"]),
+.admin-layout div:not([style*="color"]) {
+  color: var(--color-neutral-200) !important;
+}
+
+/* --- DARK CARD COMPONENT (Premium contrast inside any light dashboard) --- */
+.dark-card {
+  color: var(--color-white) !important;
+}
+
+.dark-card h1,
+.dark-card h2,
+.dark-card h3,
+.dark-card h4,
+.dark-card h5,
+.dark-card h6 {
+  color: var(--color-white) !important;
+}
+
+.dark-card p {
+  color: var(--color-neutral-300) !important;
+}
+
+.dark-card span:not([style*="color"]),
+.dark-card strong:not([style*="color"]) {
+  color: var(--color-neutral-200) !important;
+}
+
 hr {
   border: none;
   border-top: var(--border-width-thin) solid var(--color-border-default);
@@ -2419,4 +2471,130 @@ hr {
 .input-area input:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+/* ============================================================
+   RESPONSIVE SIDEBAR COMPONENT SYSTEM
+   ============================================================ */
+
+/* Mobile header bar (only visible on screens < 1024px) */
+.mobile-header-bar {
+  display: none;
+  height: 60px;
+  background-color: var(--color-bg-card);
+  border-bottom: var(--border-width-thin) solid var(--color-border-default);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-4);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+}
+
+.mobile-header-bar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobile-header-bar__brand img {
+  height: 36px;
+}
+
+.hamburger-btn {
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.hamburger-btn:hover {
+  background-color: var(--color-bg-hover);
+}
+
+/* Sidebar behavior on mobile/desktop */
+.responsive-layout-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.responsive-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  z-index: 200;
+}
+
+/* Sidebar close button (only visible on mobile) */
+.sidebar-close-btn {
+  display: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+
+/* Dark backdrop overlay for mobile */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 150;
+  backdrop-filter: blur(4px);
+}
+
+.sidebar-backdrop.active {
+  display: block;
+}
+
+/* Media Query for Mobile/Tablet Viewports (< 1024px) */
+@media (max-width: 1023px) {
+  .mobile-header-bar {
+    display: flex;
+  }
+
+  .responsive-layout-container {
+    flex-direction: column;
+  }
+
+  .responsive-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
+
+  .responsive-sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebar-close-btn {
+    display: block;
+  }
+
+  /* Adjust main content padding on mobile */
+  .responsive-layout-container main {
+    padding: 1.5rem 1rem !important;
+  }
 }

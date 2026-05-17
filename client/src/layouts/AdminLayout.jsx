@@ -1,11 +1,12 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser, logout } = useContext(AuthContext);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!currentUser) {
@@ -35,15 +36,31 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Inter', sans-serif", color: 'white', background: '#080C14' }}>
+    <div className="admin-layout responsive-layout-container" style={{ minHeight: '100vh', fontFamily: "'Inter', sans-serif", color: 'white', background: '#080C14' }}>
       
+      {/* MOBILE HEADER BAR */}
+      <div className="mobile-header-bar" style={{ background: '#0F1520', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <button className="hamburger-btn" style={{ color: 'white' }} onClick={() => setIsSidebarOpen(true)}>☰</button>
+        <div className="mobile-header-bar__brand">
+          <img src="/logo.png" alt="LAURA" style={{ height: '36px', filter: 'brightness(0) invert(1)' }} />
+          <span style={{ fontSize: '0.75rem', background: '#DC2626', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>ADMIN</span>
+        </div>
+        <div style={{ width: '40px' }}></div>
+      </div>
+
+      {/* BACKDROP OVERLAY */}
+      <div className={`sidebar-backdrop ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+
       {/* SIDEBAR ADMIN */}
-      <aside style={{ width: '280px', background: '#0F1520', borderRight: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column' }}>
+      <aside className={`responsive-sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ background: '#0F1520', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
         
+        {/* MOBILE CLOSE BUTTON */}
+        <button className="sidebar-close-btn" style={{ color: 'white' }} onClick={() => setIsSidebarOpen(false)}>✕</button>
+
         {/* LOGO */}
         <div style={{ padding: '2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
           <h1 style={{ margin: 0 }}>
-            <Link to="/admin/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
+            <Link to="/admin/dashboard" onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
               <img src="/logo.png" alt="LAURA" style={{ height: '42px', filter: 'brightness(0) invert(1)' }} />
               <span style={{ fontSize: '0.75rem', background: '#DC2626', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>ADMIN</span>
             </Link>
@@ -58,6 +75,7 @@ export default function AdminLayout() {
               <Link 
                 key={link.path} 
                 to={link.path} 
+                onClick={() => setIsSidebarOpen(false)}
                 style={{ 
                   display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.8rem 1rem', 
                   borderRadius: '0.75rem', textDecoration: 'none', fontWeight: isActive ? 700 : 500,
