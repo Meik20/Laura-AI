@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function TutorDashboardPage() {
-  // Mocks pour Point 14
+  const { userProfile } = useAuth();
+
   const tutorData = {
-    nom: 'Dupont',
-    statut: 'Contributeur', // "Validé" ou "Contributeur"
-    discipline: 'Mathématiques',
-    messagesAdmin: 1
+    nom: userProfile?.nom || 'Tuteur',
+    statut: userProfile?.statut || 'En attente', // "Validé" ou "Contributeur"
+    discipline: userProfile?.filiere || 'Général',
+    messagesAdmin: 0
   };
 
   const cardStyle = { background: 'white', padding: '2rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2' };
@@ -100,15 +102,15 @@ export default function TutorDashboardPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid #F0F0EE' }}>
                 <span style={{ color: '#444', fontSize: '0.95rem' }}>Brouillons</span>
-                <span style={{ fontWeight: 700 }}>2</span>
+                <span style={{ fontWeight: 700 }}>0</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid #F0F0EE' }}>
                 <span style={{ color: '#444', fontSize: '0.95rem' }}>En revue</span>
-                <span style={{ fontWeight: 700, color: '#F59E0B' }}>1</span>
+                <span style={{ fontWeight: 700, color: '#F59E0B' }}>0</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid #F0F0EE' }}>
                 <span style={{ color: '#444', fontSize: '0.95rem' }}>Validés (Publiés)</span>
-                <span style={{ fontWeight: 700, color: '#10B981' }}>5</span>
+                <span style={{ fontWeight: 700, color: '#10B981' }}>0</span>
               </div>
             </div>
           </div>

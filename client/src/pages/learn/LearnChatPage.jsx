@@ -1,23 +1,17 @@
 import { useState } from 'react';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function LearnChatPage() {
   const [input, setInput] = useState('');
+  const [messages, setMessages] = useState([]);
+  const { userProfile } = useAuth();
   
-  // Mocks selon les spécifications 9.0
   const profileContext = {
-    role: 'Élève', niveau: 'Terminale', serie: 'D', examen: 'BAC'
+    role: userProfile?.roleLabel || 'Non défini', 
+    niveau: userProfile?.niveau || 'Non défini', 
+    serie: userProfile?.serie || 'Général', 
+    examen: userProfile?.examen || 'Non défini'
   };
-
-  const messages = [
-    {
-      role: 'user',
-      text: 'Explique-moi les suites arithmétiques simplement.'
-    },
-    {
-      role: 'laura',
-      text: "Une suite arithmétique est une suite de nombres dans laquelle on ajoute toujours la même valeur pour passer d'un terme au suivant.\n\nExemple : 2, 5, 8, 11...\nIci, on ajoute 3 à chaque fois.\n\nFormule : Un = U0 + n × r"
-    }
-  ];
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -33,8 +27,8 @@ export default function LearnChatPage() {
         
         {/* En-tête du Chat */}
         <div style={{ padding: '1.5rem', borderBottom: '1px solid #E5E5E2', background: '#FAFAFA' }}>
-          <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>Préparation BAC Maths</h2>
-          <span style={{ color: '#6E6E6B', fontSize: '0.9rem' }}>Dernière modification aujourd'hui</span>
+          <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>Préparation {profileContext.examen}</h2>
+          <span style={{ color: '#6E6E6B', fontSize: '0.9rem' }}>Chat Contextuel LAURA AI</span>
         </div>
 
         {/* Liste des Messages */}
@@ -120,9 +114,7 @@ export default function LearnChatPage() {
         <div style={{ background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2' }}>
           <h3 style={{ fontSize: '1rem', margin: '0 0 1rem 0', color: '#6E6E6B', textTransform: 'uppercase', letterSpacing: '1px' }}>Ressources liées</h3>
           <ul style={{ paddingLeft: '1.2rem', margin: 0, color: '#444', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <li style={{ cursor: 'pointer', textDecoration: 'underline' }}>Chapitre 3 : Suites</li>
-            <li style={{ cursor: 'pointer', textDecoration: 'underline' }}>Annale Maths 2022</li>
-            <li style={{ cursor: 'pointer', textDecoration: 'underline' }}>Fiche méthode</li>
+            <li style={{ color: '#6E6E6B', fontSize: '0.9rem', listStyle: 'none', marginLeft: '-1.2rem' }}>Aucune ressource pour l'instant</li>
           </ul>
         </div>
 

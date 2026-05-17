@@ -5,9 +5,9 @@ import { useAuth } from '../../hooks/useAuth';
 export default function LearnDashboardPage() {
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [currentGoal, setCurrentGoal] = useState({
-    title: 'Réviser 8 chapitres de mathématiques',
-    period: 'du 1er juin au 30 juin',
-    progress: 45
+    title: 'Aucun objectif défini',
+    period: 'Non définie',
+    progress: 0
   });
 
   const { userProfile } = useAuth();

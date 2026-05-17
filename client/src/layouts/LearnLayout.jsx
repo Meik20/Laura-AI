@@ -16,7 +16,7 @@ export default function LearnLayout() {
   ];
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Inter', sans-serif", color: '#1A1A1A', background: '#F9F9F8' }}>
       
       {/* SIDEBAR */}
       <aside style={{ width: '260px', background: '#F5F4EF', borderRight: '1px solid #E5E5E2', display: 'flex', flexDirection: 'column' }}>
