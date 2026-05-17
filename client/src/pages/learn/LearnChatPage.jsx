@@ -122,7 +122,7 @@ export default function LearnChatPage() {
 
     } catch (error) {
       console.error("Chat error:", error);
-      const errorMsgObj = { role: 'laura', text: "Une erreur de réseau est survenue. Veuillez réessayer.", timestamp: new Date().toISOString() };
+      const errorMsgObj = { role: 'laura', text: "⚠️ Une erreur de connexion au serveur est survenue. Si vous êtes en environnement de développement local, assurez-vous que le serveur backend Express est bien démarré (exécutez `npm start` ou `node server/index.js` dans un terminal).", timestamp: new Date().toISOString() };
       setMessages(prev => [...prev, errorMsgObj]);
       
       if (userProfile?.uid) {

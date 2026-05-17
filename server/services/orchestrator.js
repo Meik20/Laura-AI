@@ -210,7 +210,8 @@ QUESTION DE L'ÉLÈVE : ${query}`;
 
     let responseText = "";
     let finalModelUsed = "";
-    const modelsToTry = Array.isArray(targetModels) ? [...targetModels, 'local'] : [targetModels, 'local'];
+    const allAvailableModels = ['groq', 'gemini', 'claude', 'local'];
+    const modelsToTry = Array.isArray(targetModels) ? [...targetModels, ...allAvailableModels.filter(m => !targetModels.includes(m))] : [targetModels, ...allAvailableModels.filter(m => m !== targetModels)];
 
     try {
       if (strategy === this.strategies.CONSENSUS) {
