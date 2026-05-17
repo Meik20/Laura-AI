@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "server/index.js",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "start": "node server/index.js",
     "build": "cd client && npm install && npm run build",
