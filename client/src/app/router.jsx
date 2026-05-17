@@ -8,6 +8,10 @@ import AdminLayout from '../layouts/AdminLayout';
 import HomePage from '../pages/public/HomePage';
 import LoginPage from '../pages/public/LoginPage';
 import SignupPage from '../pages/public/SignupPage';
+import BecomeTutorPage from '../pages/public/BecomeTutorPage';
+import TutorApplyPage from '../pages/public/TutorApplyPage';
+import HowItWorksPage from '../pages/public/HowItWorksPage';
+import TutorStatusPage from '../pages/tutor/TutorStatusPage';
 
 // Learn Pages
 import LearnDashboardPage from '../pages/learn/LearnDashboardPage';
@@ -16,15 +20,18 @@ import LearnRevisionPage from '../pages/learn/LearnRevisionPage';
 import LearnExamsPage from '../pages/learn/LearnExamsPage';
 import LearnResourcesPage from '../pages/learn/LearnResourcesPage';
 import LearnProgressPage from '../pages/learn/LearnProgressPage';
+import LearnProfilePage from '../pages/learn/LearnProfilePage';
+import LearnHistoryPage from '../pages/learn/LearnHistoryPage';
+import LearnSettingsPage from '../pages/learn/LearnSettingsPage';
 
 // Tutor Pages
 import TutorDashboardPage from '../pages/tutor/TutorDashboardPage';
 import TutorChatPage from '../pages/tutor/TutorChatPage';
 import TutorSubmissionsPage from '../pages/tutor/TutorSubmissionsPage';
-import BecomeTutorPage from '../pages/public/BecomeTutorPage';
-import TutorApplyPage from '../pages/public/TutorApplyPage';
-import HowItWorksPage from '../pages/public/HowItWorksPage';
-import TutorStatusPage from '../pages/tutor/TutorStatusPage';
+import TutorProfilePage from '../pages/tutor/TutorProfilePage';
+import TutorHistoryPage from '../pages/tutor/TutorHistoryPage';
+import TutorSettingsPage from '../pages/tutor/TutorSettingsPage';
+import TutorResourcesPage from '../pages/tutor/TutorResourcesPage';
 
 // Admin Pages
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
@@ -47,12 +54,11 @@ export const router = createBrowserRouter([
       { path: 'become-tutor', element: <BecomeTutorPage /> },
       { path: 'tutor/apply', element: <TutorApplyPage /> },
       { path: 'tutor/status', element: <TutorStatusPage /> },
-      // Add other public routes here (about, features, etc.)
     ],
   },
   {
     path: '/learn',
-    element: <LearnLayout />, // Add ProtectedRoute wrapper here later
+    element: <LearnLayout />,
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <LearnDashboardPage /> },
@@ -61,23 +67,28 @@ export const router = createBrowserRouter([
       { path: 'exams', element: <LearnExamsPage /> },
       { path: 'resources', element: <LearnResourcesPage /> },
       { path: 'progress', element: <LearnProgressPage /> },
-      // Add other learn routes here
+      { path: 'profile', element: <LearnProfilePage /> },
+      { path: 'history', element: <LearnHistoryPage /> },
+      { path: 'settings', element: <LearnSettingsPage /> },
     ],
   },
   {
     path: '/tutor',
-    element: <TutorLayout />, // Add ProtectedRoute wrapper here later
+    element: <TutorLayout />,
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <TutorDashboardPage /> },
       { path: 'chat', element: <TutorChatPage /> },
       { path: 'submissions', element: <TutorSubmissionsPage /> },
-      // Add other tutor routes here
+      { path: 'profile', element: <TutorProfilePage /> },
+      { path: 'history', element: <TutorHistoryPage /> },
+      { path: 'settings', element: <TutorSettingsPage /> },
+      { path: 'resources', element: <TutorResourcesPage /> },
     ],
   },
   {
     path: '/admin',
-    element: <AdminLayout />, // Add ProtectedRoute wrapper here later
+    element: <AdminLayout />,
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <AdminDashboardPage /> },
@@ -87,7 +98,6 @@ export const router = createBrowserRouter([
       { path: 'access-rules', element: <AdminAccessRulesPage /> },
       { path: 'audit', element: <AdminAuditPage /> },
       { path: 'settings', element: <AdminSettingsPage /> },
-      // Add other admin routes here
     ],
   },
   {
