@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, setDoc } from 'firebase/firestore';
 
 export default function TutorDashboardPage() {
   const { userProfile } = useAuth();
@@ -22,8 +22,8 @@ export default function TutorDashboardPage() {
         // Fetch submissions
         const resSnap = await getDocs(collection(db, 'resources'));
         let b = 0, r = 0, v = 0;
-        resSnap.forEach(doc => {
-          const data = doc.data();
+        resSnap.forEach(docItem => {
+          const data = docItem.data();
           if (data.auteurId === userProfile.uid) {
             if (data.statut === 'brouillon') b++;
             else if (data.statut === 'en_attente' || data.statut === 'en_revue') r++;
@@ -46,10 +46,11 @@ export default function TutorDashboardPage() {
   const handleRequestContributor = async () => {
     if (!userProfile?.uid) return;
     try {
-      await updateDoc(doc(db, 'users', userProfile.uid), { statut: 'En attente de contribution' });
+      await setDoc(doc(db, 'users', userProfile.uid), { statut: 'En attente de contribution' }, { merge: true });
       alert("Votre demande a été envoyée à l'administration.");
     } catch (err) {
       console.error("Erreur demande contributeur:", err);
+      alert("Erreur lors de l'envoi de la demande.");
     }
   };
 
@@ -77,10 +78,10 @@ export default function TutorDashboardPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
           {/* STATUT ET DROITS */}
-          <div style={{ ...cardStyle, background: tutorData.statut === 'Contributeur' ? '#ECFDF5' : '#F5F4EF', border: tutorData.statut === 'Contributeur' ? '1px solid #A7F3D0' : '1px solid #E5E5E2' }}>
+          <div style={{ ...cardStyle, background: tutorData.statut === 'Contributeur' ? '#ECFDF5' : tutorData.statut === 'En attente de contribution' ? '#FEF3C7' : '#F5F4EF', border: tutorData.statut === 'Contributeur' ? '1px solid #A7F3D0' : tutorData.statut === 'En attente de contribution' ? '1px solid #FDE68A' : '1px solid #E5E5E2' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h2 style={{ fontSize: '1.3rem', margin: 0, fontWeight: 800, color: '#065F46' }}>Statut de votre compte</h2>
-              <span style={{ background: tutorData.statut === 'Contributeur' ? '#10B981' : '#6B7280', color: 'white', padding: '0.4rem 1rem', borderRadius: '2rem', fontSize: '0.85rem', fontWeight: 700 }}>
+              <h2 style={{ fontSize: '1.3rem', margin: 0, fontWeight: 800, color: tutorData.statut === 'Contributeur' ? '#065F46' : tutorData.statut === 'En attente de contribution' ? '#92400E' : '#1A1A1A' }}>Statut de votre compte</h2>
+              <span style={{ background: tutorData.statut === 'Contributeur' ? '#10B981' : tutorData.statut === 'En attente de contribution' ? '#F59E0B' : '#6B7280', color: 'white', padding: '0.4rem 1rem', borderRadius: '2rem', fontSize: '0.85rem', fontWeight: 700 }}>
                 {tutorData.statut}
               </span>
             </div>
@@ -88,12 +89,16 @@ export default function TutorDashboardPage() {
               <p style={{ color: '#047857', margin: 0, lineHeight: 1.5 }}>
                 Vous disposez des droits complets. Vous pouvez concevoir, soumettre et modifier des contenus pédagogiques sur la plateforme.
               </p>
+            ) : tutorData.statut === 'En attente de contribution' ? (
+              <p style={{ color: '#92400E', margin: 0, lineHeight: 1.5 }}>
+                Votre demande de statut Contributeur est en cours d'examen par l'équipe administrative. Vous serez notifié dès son approbation.
+              </p>
             ) : (
               <p style={{ color: '#4B5563', margin: 0, lineHeight: 1.5 }}>
                 Votre compte est validé pour l'usage personnel. <strong style={{ color: '#1A1A1A' }}>Demandez le statut Contributeur</strong> pour soumettre vos propres exercices à la communauté.
               </p>
             )}
-            {tutorData.statut !== 'Contributeur' && (
+            {tutorData.statut !== 'Contributeur' && tutorData.statut !== 'En attente de contribution' && (
               <button onClick={handleRequestContributor} style={{ marginTop: '1.5rem', padding: '0.8rem 1.5rem', background: '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#333'} onMouseLeave={e => e.currentTarget.style.background = '#1A1A1A'}>
                 Demander les droits contributeur
               </button>
