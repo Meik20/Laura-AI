@@ -100,7 +100,7 @@ export default function LearnProgressPage() {
       <div style={{ ...cardStyle, background: '#1A1A1A', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Votre Progression</h1>
-          <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>Examen préparé : {userProfile?.examen || 'BAC'} {userProfile?.serie ? `(${userProfile.serie})` : ''}</p>
+          <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>Examen préparé : {userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || 'Non défini'} {userProfile?.serie ? `(${userProfile.serie})` : ''}</p>
         </div>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '3.5rem', fontWeight: 800, color: '#00D4AA', lineHeight: 1 }}>{globalProgress}%</div>

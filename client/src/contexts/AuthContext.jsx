@@ -38,10 +38,22 @@ export function AuthProvider({ children }) {
   }
 
   async function login(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCred.user;
+    try {
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setUserProfile(docSnap.data());
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération du profil au login:", error);
+    }
+    return userCred;
   }
 
   function logout() {
+    setUserProfile(null);
     return signOut(auth);
   }
 

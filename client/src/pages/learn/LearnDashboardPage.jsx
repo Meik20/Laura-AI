@@ -18,12 +18,12 @@ export default function LearnDashboardPage() {
   const [adminMatieres, setAdminMatieres] = useState([]);
 
   const user = {
-    prenom: userProfile?.prenom || 'Apprenant',
-    roleLabel: userProfile?.roleLabel || 'Élève',
-    niveau: userProfile?.niveau || 'Non défini',
-    examen: userProfile?.examen || 'Non défini',
+    prenom: userProfile?.prenom || userProfile?.nom || userProfile?.displayName || 'Apprenant',
+    roleLabel: userProfile?.roleLabel || (userProfile?.role === 'student' ? 'Élève' : userProfile?.role) || 'Élève',
+    niveau: userProfile?.niveau || userProfile?.classe || userProfile?.niveauEtude || 'Non défini',
+    examen: userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || 'Non défini',
     serie: userProfile?.serie || null,
-    filiere: userProfile?.filiere || null
+    filiere: userProfile?.filiere || userProfile?.discipline || null
   };
 
   useEffect(() => {
