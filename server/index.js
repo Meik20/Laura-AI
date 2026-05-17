@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -46,6 +47,13 @@ app.post('/api/chat', async (req, res) => {
     console.error('Orchestration error:', error);
     res.status(500).json({ error: 'LAURA rencontre une difficulté technique.' });
   }
+});
+
+// Serve Frontend in Production
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
 app.listen(PORT, () => {
