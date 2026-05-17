@@ -28,6 +28,11 @@ import TutorStatusPage from '../pages/tutor/TutorStatusPage';
 
 // Admin Pages
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
+import AdminUsersPage from '../pages/admin/AdminUsersPage';
+import AdminTutorApplicationsPage from '../pages/admin/AdminTutorApplicationsPage';
+import AdminResourcesPage from '../pages/admin/AdminResourcesPage';
+import AdminAccessRulesPage from '../pages/admin/AdminAccessRulesPage';
+import AdminAuditPage from '../pages/admin/AdminAuditPage';
 
 export const router = createBrowserRouter([
   {
@@ -75,6 +80,11 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <AdminDashboardPage /> },
+      { path: 'users', element: <AdminUsersPage /> },
+      { path: 'tutor-applications', element: <AdminTutorApplicationsPage /> },
+      { path: 'resources', element: <AdminResourcesPage /> },
+      { path: 'access-rules', element: <AdminAccessRulesPage /> },
+      { path: 'audit', element: <AdminAuditPage /> },
       // Add other admin routes here
     ],
   },
