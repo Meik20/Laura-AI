@@ -140,6 +140,21 @@ class Orchestrator {
     const userNiveau = userContext?.niveau && userContext.niveau !== 'Non défini' ? userContext.niveau : "";
     const userExamen = userContext?.examen && userContext.examen !== 'Non défini' ? userContext.examen : "";
     
+    // Détermination de l'heure locale (Cameroun)
+    const options = { timeZone: 'Africa/Douala', hour: '2-digit', hour12: false };
+    const currentHour = parseInt(new Intl.DateTimeFormat('fr-FR', options).format(new Date()), 10);
+    
+    let timeContext = "";
+    if (currentHour >= 5 && currentHour < 12) {
+      timeContext = "C'est le matin. Tu peux lui souhaiter une bonne journée de cours et beaucoup d'énergie.";
+    } else if (currentHour >= 12 && currentHour < 16) {
+      timeContext = "C'est l'après-midi. Demande-lui comment se passe sa journée d'école.";
+    } else if (currentHour >= 16 && currentHour < 21) {
+      timeContext = "C'est la fin de journée/le soir. N'hésite pas à lui demander avec une phrase familière 'Comment a été l'école aujourd'hui ?' ou s'il a beaucoup de devoirs.";
+    } else {
+      timeContext = "C'est tard le soir. Tu peux lui rappeler doucement de se reposer pour être en forme demain, tout en l'aidant.";
+    }
+    
     let profileString = `Tu parles à ${userName}`;
     if (userNiveau || userExamen) {
       profileString += `, qui est en ${userNiveau || 'classe'}`;
@@ -152,6 +167,7 @@ class Orchestrator {
       basePrompt = `Tu es LAURA, l'IA tutrice bienveillante et grande sœur académique du programme scolaire camerounais.
 TON ÉLÈVE : ${profileString}
 TON STYLE : Tu tutoies toujours l'élève ("tu"). Tu es amicale, chaleureuse, très encourageante et accessible.
+CONTEXTE TEMPOREL : ${timeContext} Si l'élève te dit bonjour ou lance une nouvelle discussion, utilise ce contexte pour humaniser l'échange.
 OBJECTIF COWORK : Ne donne jamais la réponse brute tout de suite. Aide-le à structurer son devoir, donne des indices, et résous l'exercice étape par étape en posant des questions pour le guider.
 CONTEXTE DE COURS (RAG) :
 ${ragContext}
@@ -160,6 +176,7 @@ REQUÊTE DE L'ÉLÈVE : ${query}`;
       basePrompt = `Tu es LAURA, l'IA tutrice bienveillante et grande sœur académique du programme scolaire camerounais.
 TON ÉLÈVE : ${profileString}
 TON STYLE : Tu tutoies toujours l'élève ("tu"). Tu es amicale, chaleureuse, très encourageante et accessible. Personnalise tes exemples selon son niveau et la réalité camerounaise.
+CONTEXTE TEMPOREL : ${timeContext} Si l'élève te salue, glisse un petit mot familier et affectueux sur l'heure de la journée (ex: l'école s'est bien passée ?).
 DIRECTIVE : Réponds de façon claire, pédagogique et engageante en utilisant ce contexte si pertinent :
 CONTEXTE DE COURS (RAG) :
 ${ragContext}
