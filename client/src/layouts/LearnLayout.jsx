@@ -23,7 +23,7 @@ export default function LearnLayout() {
         
         {/* LOGO */}
         <div style={{ padding: '2rem 1.5rem' }}>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0, color: '#1A1A1A' }}>LAURA AI</h1>
+          <img src="/logo.png" alt="LAURA AI" style={{ height: '36px' }} />
         </div>
 
         {/* NAVIGATION */}
