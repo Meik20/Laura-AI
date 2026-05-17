@@ -5,6 +5,7 @@ import { collection, getDocs, query, where, doc, setDoc } from 'firebase/firesto
 export default function AdminTutorApplicationsPage() {
   const [applications, setApplications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedApp, setSelectedApp] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -48,6 +49,37 @@ export default function AdminTutorApplicationsPage() {
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
       
+      {/* MODAL OUVRIR LE DOSSIER */}
+      {selectedApp && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
+          <div style={{ background: '#0F1520', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1.5rem', padding: '2.5rem', maxWidth: '600px', width: '100%', color: 'white', display: 'flex', flexDirection: 'column', gap: '1.5rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>
+              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Dossier de Candidature</h2>
+              <button onClick={() => setSelectedApp(null)} style={{ background: 'transparent', border: 'none', color: '#94A3B8', fontSize: '1.5rem', cursor: 'pointer' }}>×</button>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.95rem' }}>
+              <div><strong style={{ color: '#94A3B8' }}>Candidat :</strong> {selectedApp.prenom} {selectedApp.nom}</div>
+              <div><strong style={{ color: '#94A3B8' }}>Email :</strong> {selectedApp.email}</div>
+              <div><strong style={{ color: '#94A3B8' }}>Téléphone :</strong> {selectedApp.telephone || 'Non renseigné'}</div>
+              <div><strong style={{ color: '#94A3B8' }}>Discipline :</strong> {selectedApp.discipline} ({selectedApp.niveau})</div>
+              <div><strong style={{ color: '#94A3B8' }}>Établissement :</strong> {selectedApp.etablissement || 'Non renseigné'}</div>
+              <div><strong style={{ color: '#94A3B8' }}>Diplôme :</strong> {selectedApp.diplome || 'Non renseigné'}</div>
+              <div><strong style={{ color: '#94A3B8' }}>Compétences :</strong> {selectedApp.competences || 'Non renseignées'}</div>
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <strong style={{ display: 'block', marginBottom: '0.5rem', color: '#94A3B8' }}>Motivation :</strong>
+                <p style={{ margin: 0, lineHeight: 1.5 }}>{selectedApp.motivation || 'Aucune motivation fournie.'}</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
+              <button onClick={() => setSelectedApp(null)} style={{ padding: '0.8rem 1.5rem', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>Fermer</button>
+              <button onClick={() => { handleValidate(selectedApp.id); setSelectedApp(null); }} style={{ padding: '0.8rem 1.5rem', background: '#10B981', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>Valider ce tuteur</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Candidatures Tuteurs</h1>
         <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>
@@ -86,7 +118,7 @@ export default function AdminTutorApplicationsPage() {
                   <td style={{ padding: '1.5rem' }}>{getStatusBadge('en_attente')}</td>
                   <td style={{ padding: '1.5rem', textAlign: 'right' }}>
                     <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                      <button style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
+                      <button onClick={() => setSelectedApp(app)} style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
                         Ouvrir le dossier
                       </button>
                       <button onClick={() => handleValidate(app.id)} style={{ background: '#10B981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>
