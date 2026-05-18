@@ -38,14 +38,14 @@ export default function LearnLayout() {
   ];
 
   return (
-    <div className="learn-layout responsive-layout-container" style={{ minHeight: '100vh', fontFamily: "'Inter', sans-serif", color: '#1A1A1A', background: '#F9F9F8' }}>
+    <div className="learn-layout responsive-layout-container" style={{ minHeight: '100vh', fontFamily: "var(--font-family)", color: 'var(--text-primary)', background: 'var(--bg-secondary)' }}>
       
       {/* MOBILE HEADER BAR */}
-      <div className="mobile-header-bar">
-        <button className="hamburger-btn" onClick={() => setIsSidebarOpen(true)}>☰</button>
+      <div className="mobile-header-bar" style={{ background: 'var(--bg-primary)', borderBottom: '1px solid var(--border-light)' }}>
+        <button className="hamburger-btn" style={{ color: 'var(--text-primary)' }} onClick={() => setIsSidebarOpen(true)}>☰</button>
         <div className="mobile-header-bar__brand">
-          <img src="/logo.png" alt="LAURA" />
-          <span style={{ fontSize: '0.8rem', background: '#1A1A1A', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>ÉLÈVE</span>
+          <img src="/logo.png" alt="LAURA" style={{ height: '36px' }} />
+          <span style={{ fontSize: '0.8rem', background: 'var(--primary-light)', color: 'var(--primary)', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>ÉLÈVE</span>
         </div>
         <div style={{ width: '40px' }}></div>
       </div>
@@ -54,20 +54,20 @@ export default function LearnLayout() {
       <div className={`sidebar-backdrop ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
 
       {/* SIDEBAR */}
-      <aside className={`responsive-sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ background: '#F5F4EF', borderRight: '1px solid #E5E5E2' }}>
+      <aside className={`responsive-sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ background: 'var(--bg-primary)', borderRight: '1px solid var(--border-light)' }}>
         
         {/* MOBILE CLOSE BUTTON */}
-        <button className="sidebar-close-btn" onClick={() => setIsSidebarOpen(false)}>✕</button>
+        <button className="sidebar-close-btn" style={{ color: 'var(--text-primary)' }} onClick={() => setIsSidebarOpen(false)}>✕</button>
 
         {/* LOGO */}
-        <div style={{ padding: '1.5rem 1.5rem' }}>
+        <div style={{ padding: '1.5rem 1.5rem', borderBottom: '1px solid var(--border-light)' }}>
           <Link to="/learn/dashboard" onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', alignItems: 'center', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
             <img src="/logo.png" alt="LAURA" style={{ height: '46px' }} />
           </Link>
         </div>
 
         {/* NAVIGATION */}
-        <nav style={{ flex: 1, padding: '0 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <nav style={{ flex: 1, padding: '1.5rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {links.map((link) => {
             const isActive = location.pathname.startsWith(link.path);
             return (
@@ -78,8 +78,8 @@ export default function LearnLayout() {
                 style={{ 
                   display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.8rem 1rem', 
                   borderRadius: '0.75rem', textDecoration: 'none', fontWeight: isActive ? 700 : 500,
-                  color: isActive ? 'white' : '#444',
-                  background: isActive ? '#1A1A1A' : 'transparent',
+                  color: isActive ? 'var(--primary)' : 'var(--text-secondary)',
+                  background: isActive ? 'var(--primary-light)' : 'transparent',
                   transition: 'background 0.2s'
                 }}
               >
@@ -91,18 +91,18 @@ export default function LearnLayout() {
         </nav>
 
         {/* BOTTOM ACTION */}
-        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-          <button onClick={() => { setIsSidebarOpen(false); navigate('/learn/chat?new=true'); }} style={{ width: '100%', padding: '0.8rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', borderTop: '1px solid var(--border-light)' }}>
+          <button onClick={() => { setIsSidebarOpen(false); navigate('/learn/chat?new=true'); }} style={{ width: '100%', padding: '0.8rem', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-light)', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-secondary)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
             <span>➕</span> Nouvelle conv.
           </button>
-          <button onClick={handleLogout} style={{ width: '100%', padding: '0.8rem', background: '#FEE2E2', color: '#991B1B', border: '1px solid #FECACA', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+          <button onClick={handleLogout} style={{ width: '100%', padding: '0.8rem', background: 'var(--error-light)', color: 'var(--error)', border: '1px solid var(--error)', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'opacity 0.2s' }} onMouseEnter={e => e.currentTarget.style.opacity = '0.85'} onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
             <span>🚪</span> Déconnexion
           </button>
         </div>
       </aside>
 
       {/* MAIN CONTENT */}
-      <main style={{ flex: 1, padding: '3rem 4rem', background: '#F9F9F8', overflowY: 'auto', maxHeight: '100vh' }}>
+      <main style={{ flex: 1, padding: '3rem 4rem', overflowY: 'auto', maxHeight: '100vh' }}>
         <Outlet />
       </main>
 

@@ -36,13 +36,13 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="admin-layout responsive-layout-container" style={{ minHeight: '100vh', fontFamily: "'Inter', sans-serif", color: 'white', background: '#080C14' }}>
+    <div className="admin-layout responsive-layout-container" style={{ minHeight: '100vh', fontFamily: "var(--font-family)", color: 'var(--text-primary)', background: 'var(--bg-secondary)' }}>
       
       {/* MOBILE HEADER BAR */}
-      <div className="mobile-header-bar" style={{ background: '#0F1520', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <button className="hamburger-btn" style={{ color: 'white' }} onClick={() => setIsSidebarOpen(true)}>☰</button>
+      <div className="mobile-header-bar" style={{ background: 'var(--bg-primary)', borderBottom: '1px solid var(--border-light)' }}>
+        <button className="hamburger-btn" style={{ color: 'var(--text-primary)' }} onClick={() => setIsSidebarOpen(true)}>☰</button>
         <div className="mobile-header-bar__brand">
-          <img src="/logo.png" alt="LAURA" style={{ height: '36px', filter: 'brightness(0) invert(1)' }} />
+          <img src="/logo.png" alt="LAURA" style={{ height: '36px' }} />
           <span style={{ fontSize: '0.75rem', background: '#DC2626', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>ADMIN</span>
         </div>
         <div style={{ width: '40px' }}></div>
@@ -52,16 +52,16 @@ export default function AdminLayout() {
       <div className={`sidebar-backdrop ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
 
       {/* SIDEBAR ADMIN */}
-      <aside className={`responsive-sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ background: '#0F1520', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
+      <aside className={`responsive-sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ background: 'var(--bg-primary)', borderRight: '1px solid var(--border-light)' }}>
         
         {/* MOBILE CLOSE BUTTON */}
-        <button className="sidebar-close-btn" style={{ color: 'white' }} onClick={() => setIsSidebarOpen(false)}>✕</button>
+        <button className="sidebar-close-btn" style={{ color: 'var(--text-primary)' }} onClick={() => setIsSidebarOpen(false)}>✕</button>
 
         {/* LOGO */}
-        <div style={{ padding: '2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ padding: '2rem 1.5rem', borderBottom: '1px solid var(--border-light)' }}>
           <h1 style={{ margin: 0 }}>
             <Link to="/admin/dashboard" onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
-              <img src="/logo.png" alt="LAURA" style={{ height: '42px', filter: 'brightness(0) invert(1)' }} />
+              <img src="/logo.png" alt="LAURA" style={{ height: '42px' }} />
               <span style={{ fontSize: '0.75rem', background: '#DC2626', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>ADMIN</span>
             </Link>
           </h1>
@@ -79,9 +79,9 @@ export default function AdminLayout() {
                 style={{ 
                   display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.8rem 1rem', 
                   borderRadius: '0.75rem', textDecoration: 'none', fontWeight: isActive ? 700 : 500,
-                  color: isActive ? 'white' : '#94A3B8',
-                  background: isActive ? 'rgba(255,255,255,0.05)' : 'transparent',
-                  borderLeft: isActive ? '3px solid #DC2626' : '3px solid transparent',
+                  color: isActive ? 'var(--primary)' : 'var(--text-secondary)',
+                  background: isActive ? 'var(--primary-light)' : 'transparent',
+                  borderLeft: isActive ? '3px solid var(--primary)' : '3px solid transparent',
                   transition: 'all 0.2s'
                 }}
               >
@@ -94,7 +94,7 @@ export default function AdminLayout() {
 
         {/* BOTTOM ACTION */}
         <div style={{ padding: '1.5rem' }}>
-          <button onClick={handleLogout} style={{ width: '100%', padding: '0.8rem', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}>
+          <button onClick={handleLogout} style={{ width: '100%', padding: '0.8rem', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-light)', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-secondary)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
             <span>🚪</span> Déconnexion
           </button>
         </div>
