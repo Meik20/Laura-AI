@@ -166,172 +166,189 @@ export default function LearnChatPage() {
   };
 
   return (
-    <div className="chat-layout-wrapper">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)', height: 'calc(100vh - 120px)' }}>
       
-      {/* ZONE CENTRALE : CHAT */}
-      <div className="chat-main-area">
+      {/* HEADER */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', flexShrink: 0 }}>
+        <div>
+          <h1 className="laura-h1">Préparation {profileContext.examen}</h1>
+          <p className="laura-body" style={{ color: 'var(--laura-text-2)' }}>
+            Chat Contextuel LAURA
+          </p>
+        </div>
+        <button 
+          onClick={async () => {
+            setMessages([]);
+            if (userProfile?.uid) {
+              await setDoc(doc(db, 'chats', userProfile.uid), { messages: [] });
+            }
+          }} 
+          className="laura-btn laura-btn-primary"
+        >
+          <span>+</span> Nouvelle conversation
+        </button>
+      </div>
+
+      <div className="laura-page-grid" style={{ flex: 1, minHeight: 0 }}>
         
-        {/* En-tête du Chat */}
-        <div className="chat-header-container">
-          <div>
-            <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>Préparation {profileContext.examen}</h2>
-            <span style={{ color: '#6E6E6B', fontSize: '0.9rem' }}>Chat Contextuel LAURA</span>
-          </div>
-          <button 
-            onClick={async () => {
-              setMessages([]);
-              if (userProfile?.uid) {
-                await setDoc(doc(db, 'chats', userProfile.uid), { messages: [] });
-              }
-            }} 
-            style={{ padding: '0.6rem 1.2rem', background: '#00D4AA', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', transition: 'background 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.background = '#00B894'} 
-            onMouseLeave={e => e.currentTarget.style.background = '#00D4AA'}
-          >
-            <span>+</span> Nouvelle conversation
-          </button>
-        </div>
-
-        {/* Liste des Messages */}
-        <div style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-          {isInitializing ? (
-            <div style={{ textAlign: 'center', color: '#6E6E6B', padding: '2rem' }}>Chargement de l'historique...</div>
-          ) : messages.length === 0 ? (
-            <div style={{ textAlign: 'center', color: '#6E6E6B', padding: '2rem' }}>Aucun message. Posez votre première question à LAURA !</div>
-          ) : (
-            messages.map((m, i) => (
-              <div key={i} style={{ display: 'flex', gap: '1.5rem' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0, background: m.role === 'user' ? '#00D4AA' : 'white', border: m.role === 'user' ? 'none' : '1px solid #E5E5E2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem', overflow: 'hidden', boxShadow: m.role === 'user' ? 'none' : '0 2px 4px rgba(0,0,0,0.05)' }}>
-                  {m.role === 'user' ? 'A' : (
-                    <img src="/icon.png" alt="LAURA" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
-                  )}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#1A1A1A' }}>
-                    {m.role === 'user' ? 'Vous' : 'LAURA'}
-                  </div>
-                  <div style={{ fontSize: '1.05rem', lineHeight: 1.7, color: '#333', whiteSpace: 'pre-wrap' }}>
-                    {m.text}
-                  </div>
-                  
-                  {/* Actions sur la réponse de l'IA */}
-                  {m.role === 'laura' && (
-                    <div style={{ display: 'flex', gap: '0.8rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-                      <button onClick={() => handleSend("Peux-tu réexpliquer cela de manière plus simple et imagée ?")} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: '#444', cursor: 'pointer', fontWeight: 600 }}>Simplifier</button>
-                      <button onClick={() => handleSend("Peux-tu approfondir cette explication avec des exemples concrets et avancés ?")} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: '#444', cursor: 'pointer', fontWeight: 600 }}>Approfondir</button>
-                      <button onClick={() => handleSend("Génère un petit quiz sur l'explication que tu viens de donner pour vérifier ma compréhension.")} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: '#444', cursor: 'pointer', fontWeight: 600 }}>Générer quiz</button>
-                      <button onClick={() => handleSend("Donne-moi un exercice d'application similaire pour m'entraîner.")} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: '#444', cursor: 'pointer', fontWeight: 600 }}>Exercice similaire</button>
-                      <button onClick={() => handleSaveMessage(m.text)} style={{ background: '#10B981', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem', color: 'white', cursor: 'pointer', fontWeight: 700 }}>Sauvegarder</button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Zone de Saisie */}
-        <div style={{ padding: '1.5rem', borderTop: '1px solid #E5E5E2', background: '#FAFAFA' }}>
+        {/* ZONE CENTRALE : CHAT */}
+        <div className="laura-page-main laura-card" style={{ display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
           
-          {attachedFile && (
-            <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '1rem', borderRadius: '0.75rem', marginBottom: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#065F46', fontWeight: 700, fontSize: '0.95rem' }}>
-                  <span>📎 Fichier / Cours joint :</span>
-                  <span style={{ background: 'white', padding: '0.2rem 0.6rem', borderRadius: '0.4rem', border: '1px solid #D1FAE5' }}>{attachedFile.name}</span>
+          {/* Liste des Messages */}
+          <div style={{ flex: 1, padding: 'var(--sp-6)', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
+            {isInitializing ? (
+              <div className="laura-empty">Chargement de l'historique...</div>
+            ) : messages.length === 0 ? (
+              <div className="laura-empty">Aucun message. Posez votre première question à LAURA !</div>
+            ) : (
+              messages.map((m, i) => (
+                <div key={i} style={{ display: 'flex', gap: 'var(--sp-4)' }}>
+                  <div style={{ 
+                    width: '36px', height: '36px', borderRadius: 'var(--r-md)', flexShrink: 0, 
+                    background: m.role === 'user' ? 'var(--laura-primary)' : 'var(--laura-surface)', 
+                    border: m.role === 'user' ? 'none' : '1px solid var(--laura-border-strong)', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                    color: 'white', fontWeight: 700, fontSize: '1rem', overflow: 'hidden' 
+                  }}>
+                    {m.role === 'user' ? 'A' : (
+                      <img src="/icon.png" alt="LAURA" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
+                    )}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, marginBottom: '8px', color: 'var(--laura-text-1)' }}>
+                      {m.role === 'user' ? 'Vous' : 'LAURA'}
+                    </div>
+                    <div className="laura-body" style={{ color: 'var(--laura-text-1)', background: m.role === 'user' ? 'var(--laura-bg-soft)' : 'var(--laura-surface)', padding: 'var(--sp-4)', borderRadius: 'var(--r-md)', border: '1px solid var(--laura-border-soft)' }}>
+                      {m.text}
+                    </div>
+                    
+                    {/* Actions sur la réponse de l'IA */}
+                    {m.role === 'laura' && (
+                      <div style={{ display: 'flex', gap: 'var(--sp-3)', marginTop: 'var(--sp-4)', flexWrap: 'wrap' }}>
+                        <button onClick={() => handleSend("Peux-tu réexpliquer cela de manière plus simple et imagée ?")} className="laura-btn laura-btn-ghost" style={{ padding: '4px 12px', minHeight: '32px', fontSize: '13px' }}>Simplifier</button>
+                        <button onClick={() => handleSend("Peux-tu approfondir cette explication avec des exemples concrets et avancés ?")} className="laura-btn laura-btn-ghost" style={{ padding: '4px 12px', minHeight: '32px', fontSize: '13px' }}>Approfondir</button>
+                        <button onClick={() => handleSend("Génère un petit quiz sur l'explication que tu viens de donner pour vérifier ma compréhension.")} className="laura-btn laura-btn-ghost" style={{ padding: '4px 12px', minHeight: '32px', fontSize: '13px' }}>Générer quiz</button>
+                        <button onClick={() => handleSend("Donne-moi un exercice d'application similaire pour m'entraîner.")} className="laura-btn laura-btn-ghost" style={{ padding: '4px 12px', minHeight: '32px', fontSize: '13px' }}>Exercice similaire</button>
+                        <button onClick={() => handleSaveMessage(m.text)} className="laura-btn laura-btn-secondary" style={{ padding: '4px 12px', minHeight: '32px', fontSize: '13px' }}>Sauvegarder</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <button onClick={() => setAttachedFile(null)} style={{ background: 'transparent', border: 'none', color: '#065F46', fontWeight: 700, cursor: 'pointer', fontSize: '1.1rem' }}>✕</button>
-              </div>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              ))
+            )}
+          </div>
+
+          {/* Zone de Saisie */}
+          <div style={{ padding: 'var(--sp-5)', borderTop: '1px solid var(--laura-border-soft)', background: 'var(--laura-bg-soft)' }}>
+            
+            {attachedFile && (
+              <div className="laura-alert laura-alert-success" style={{ marginBottom: 'var(--sp-4)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>📎 Fichier joint :</span>
+                    <span style={{ background: 'white', padding: '2px 8px', borderRadius: '4px', border: '1px solid var(--laura-border-soft)' }}>{attachedFile.name}</span>
+                  </div>
+                  <button onClick={() => setAttachedFile(null)} style={{ background: 'transparent', border: 'none', color: 'inherit', fontWeight: 700, cursor: 'pointer' }}>✕</button>
+                </div>
                 <button 
                   onClick={() => {
                     const prompt = `[📎 Cours partagé : ${attachedFile.name}] J'ai partagé mon cours avec toi. Peux-tu analyser ce document et créer un quiz interactif complet (avec QCM et explications) pour tester mes connaissances sur ce cours ?`;
                     setAttachedFile(null);
                     handleSend(prompt);
                   }}
-                  style={{ background: '#059669', color: 'white', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '0.6rem', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 2px 4px rgba(5, 150, 105, 0.2)' }}
+                  className="laura-btn laura-btn-primary"
+                  style={{ marginTop: 'var(--sp-3)' }}
                 >
-                  <span>✨</span> Transformer mon cours en Quiz interactif
+                  ✨ Transformer en Quiz
                 </button>
-                <span style={{ fontSize: '0.85rem', color: '#047857' }}>Ou posez une question personnalisée ci-dessous ↓</span>
               </div>
+            )}
+
+            {/* Actions rapides de saisie */}
+            <div style={{ display: 'flex', gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)', overflowX: 'auto', paddingBottom: '4px' }}>
+              <label className="laura-btn laura-btn-secondary" style={{ padding: '6px 12px', minHeight: '32px', fontSize: '13px', cursor: 'pointer' }}>
+                <span>📎</span> Partager un cours
+                <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
+              </label>
+              <div style={{ width: '1px', background: 'var(--laura-border-strong)' }}></div>
+              <button onClick={() => handleActionPrompt("Peux-tu m'expliquer en détail le concept suivant : ")} className="laura-btn laura-btn-ghost" style={{ padding: '6px 12px', minHeight: '32px', fontSize: '13px' }}>Expliquer</button>
+              <button onClick={() => handleActionPrompt("Je souhaite faire une session de révision complète sur : ")} className="laura-btn laura-btn-ghost" style={{ padding: '6px 12px', minHeight: '32px', fontSize: '13px' }}>Réviser</button>
+              <button onClick={() => handleActionPrompt("Voici mon exercice, peux-tu le corriger : ")} className="laura-btn laura-btn-ghost" style={{ padding: '6px 12px', minHeight: '32px', fontSize: '13px' }}>Corriger</button>
+              <button onClick={() => handleActionPrompt("Génère un quiz de 5 questions sur : ")} className="laura-btn laura-btn-ghost" style={{ padding: '6px 12px', minHeight: '32px', fontSize: '13px' }}>Quiz</button>
             </div>
-          )}
 
-          {/* Actions rapides de saisie */}
-          <div className="chat-quick-suggestions">
-            <label style={{ background: '#10B981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)' }}>
-              <span>📎</span> Partager un cours / fichier
-              <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
-            </label>
-            <div style={{ width: '1px', background: '#E5E5E2', height: '20px', margin: '0 0.2rem' }}></div>
-            <button onClick={() => handleActionPrompt("Peux-tu m'expliquer en détail le concept suivant : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.5rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Expliquer</button>
-            <button onClick={() => handleActionPrompt("Je souhaite faire une session de révision complète sur : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.5rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Réviser</button>
-            <button onClick={() => handleActionPrompt("Voici mon exercice/devoir, peux-tu le corriger et m'expliquer mes erreurs : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.5rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Corriger</button>
-            <button onClick={() => handleActionPrompt("Génère un quiz de 5 questions avec corrigé sur : ")} style={{ background: '#E0F2FE', border: 'none', color: '#0369A1', padding: '0.5rem 1rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>Quiz</button>
+            <div style={{ position: 'relative' }}>
+              <textarea 
+                id="chat-textarea"
+                rows="3" 
+                placeholder="Écrivez votre question ici..." 
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                style={{ 
+                  width: '100%', padding: '1rem 4rem 1rem 1rem', borderRadius: 'var(--r-md)', 
+                  border: '1px solid var(--laura-border-strong)', fontSize: '16px', outline: 'none', 
+                  resize: 'none', boxSizing: 'border-box', fontFamily: 'var(--laura-font-body)',
+                  background: 'var(--laura-surface)'
+                }}
+              />
+              <button 
+                onClick={() => handleSend()}
+                disabled={isLoading}
+                style={{ 
+                  position: 'absolute', right: '12px', bottom: '12px', 
+                  background: isLoading ? 'var(--laura-text-3)' : 'var(--laura-text-1)', 
+                  color: 'white', border: 'none', width: '36px', height: '36px', 
+                  borderRadius: '8px', display: 'flex', alignItems: 'center', 
+                  justifyContent: 'center', cursor: isLoading ? 'not-allowed' : 'pointer',
+                  transition: 'background 0.2s'
+                }}
+              >
+                {isLoading ? '...' : '→'}
+              </button>
+            </div>
           </div>
 
-          <div style={{ position: 'relative' }}>
-            <textarea 
-              id="chat-textarea"
-              rows="3" 
-              placeholder="Écrivez votre question ici..." 
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
-              style={{ width: '100%', padding: '1rem 4rem 1rem 1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', fontSize: '1.05rem', outline: 'none', resize: 'none', boxSizing: 'border-box', fontFamily: 'inherit' }}
-            />
-            <button 
-              onClick={() => handleSend()}
-              disabled={isLoading}
-              style={{ position: 'absolute', right: '1rem', bottom: '1rem', background: isLoading ? '#6E6E6B' : '#1A1A1A', color: 'white', border: 'none', width: '36px', height: '36px', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: isLoading ? 'not-allowed' : 'pointer' }}
-            >
-              {isLoading ? '...' : '→'}
-            </button>
+        </div>
+
+        {/* ZONE LATÉRALE : CONTEXTE */}
+        <div className="laura-page-aside" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)', overflowY: 'auto' }}>
+          
+          {/* Contexte Profil */}
+          <div className="laura-card-soft">
+            <h3 className="laura-small" style={{ marginBottom: 'var(--sp-4)', color: 'var(--laura-text-2)', textTransform: 'uppercase', letterSpacing: '1px' }}>Contexte Profil</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--laura-text-2)' }}>Profil</span><span style={{ fontWeight: 600 }}>{profileContext.role}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--laura-text-2)' }}>Niveau</span><span style={{ fontWeight: 600 }}>{profileContext.niveau}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--laura-text-2)' }}>Série</span><span style={{ fontWeight: 600 }}>{profileContext.serie}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--laura-text-2)' }}>Examen</span><span style={{ fontWeight: 600 }}>{profileContext.examen}</span></div>
+            </div>
           </div>
+
+          {/* Ressources Liées */}
+          <div className="laura-card-soft">
+            <h3 className="laura-small" style={{ marginBottom: 'var(--sp-4)', color: 'var(--laura-text-2)', textTransform: 'uppercase', letterSpacing: '1px' }}>Ressources liées</h3>
+            <div className="laura-empty" style={{ padding: 'var(--sp-3)' }}>Aucune ressource pour l'instant</div>
+          </div>
+
+          {/* Suggestions */}
+          <div className="laura-card-soft">
+            <h3 className="laura-small" style={{ marginBottom: 'var(--sp-4)', color: 'var(--laura-text-2)', textTransform: 'uppercase', letterSpacing: '1px' }}>Suggestions</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button onClick={() => handleSend("Donne-moi un quiz rapide de 3 questions sur mon programme actuel.")} className="laura-btn laura-btn-ghost" style={{ textAlign: 'left', justifyContent: 'flex-start' }}>Donne un quiz</button>
+              <button onClick={() => handleSend("Donne-moi un exercice type d'examen avec son corrigé détaillé.")} className="laura-btn laura-btn-ghost" style={{ textAlign: 'left', justifyContent: 'flex-start' }}>Exercice type</button>
+              <button onClick={() => handleSend("Peux-tu simplifier les concepts clés de mon programme actuel ?")} className="laura-btn laura-btn-ghost" style={{ textAlign: 'left', justifyContent: 'flex-start' }}>Simplifie ce concept</button>
+            </div>
+          </div>
+
         </div>
 
       </div>
-
-      {/* ZONE LATÉRALE : CONTEXTE */}
-      <div className="chat-sidebar">
-        
-        {/* Contexte Profil */}
-        <div style={{ background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2' }}>
-          <h3 style={{ fontSize: '1rem', margin: '0 0 1rem 0', color: '#6E6E6B', textTransform: 'uppercase', letterSpacing: '1px' }}>Contexte Profil</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.95rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6E6E6B' }}>Profil</span><span style={{ fontWeight: 600 }}>{profileContext.role}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6E6E6B' }}>Niveau</span><span style={{ fontWeight: 600 }}>{profileContext.niveau}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6E6E6B' }}>Série</span><span style={{ fontWeight: 600 }}>{profileContext.serie}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6E6E6B' }}>Examen</span><span style={{ fontWeight: 600 }}>{profileContext.examen}</span></div>
-          </div>
-        </div>
-
-        {/* Ressources Liées */}
-        <div style={{ background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2' }}>
-          <h3 style={{ fontSize: '1rem', margin: '0 0 1rem 0', color: '#6E6E6B', textTransform: 'uppercase', letterSpacing: '1px' }}>Ressources liées</h3>
-          <ul style={{ paddingLeft: '1.2rem', margin: 0, color: '#444', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <li style={{ color: '#6E6E6B', fontSize: '0.9rem', listStyle: 'none', marginLeft: '-1.2rem' }}>Aucune ressource pour l'instant</li>
-          </ul>
-        </div>
-
-        {/* Suggestions */}
-        <div style={{ background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2' }}>
-          <h3 style={{ fontSize: '1rem', margin: '0 0 1rem 0', color: '#6E6E6B', textTransform: 'uppercase', letterSpacing: '1px' }}>Suggestions</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <button onClick={() => handleSend("Donne-moi un quiz rapide de 3 questions sur mon programme actuel.")} style={{ padding: '0.6rem 1rem', background: '#F5F4EF', border: '1px solid #E5E5E2', borderRadius: '0.5rem', textAlign: 'left', cursor: 'pointer', color: '#444', fontWeight: 600 }}>Donne un quiz</button>
-            <button onClick={() => handleSend("Donne-moi un exercice type d'examen avec son corrigé détaillé.")} style={{ padding: '0.6rem 1rem', background: '#F5F4EF', border: '1px solid #E5E5E2', borderRadius: '0.5rem', textAlign: 'left', cursor: 'pointer', color: '#444', fontWeight: 600 }}>Exercice type</button>
-            <button onClick={() => handleSend("Peux-tu simplifier les concepts clés de mon programme actuel ?")} style={{ padding: '0.6rem 1rem', background: '#F5F4EF', border: '1px solid #E5E5E2', borderRadius: '0.5rem', textAlign: 'left', cursor: 'pointer', color: '#444', fontWeight: 600 }}>Simplifie ce concept</button>
-          </div>
-        </div>
-
-      </div>
-
     </div>
   );
 }
