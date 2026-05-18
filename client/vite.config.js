@@ -15,16 +15,48 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
       registerType: 'autoUpdate',
       includeAssets: ['icon.png', 'logo.png'],
       manifest: {
-        name: 'LAURA — Assistant Éducatif',
+        name: 'LAURA - Learning AI & Unified Resource Assistant',
         short_name: 'LAURA',
-        description: 'Intelligence Artificielle pour le programme scolaire camerounais',
-        theme_color: '#080C14',
-        background_color: '#080C14',
+        description: "Plateforme d'apprentissage intelligente avec assistant IA",
+        start_url: '/',
+        scope: '/',
         display: 'standalone',
+        orientation: 'portrait-primary',
+        theme_color: '#1f73e8',
+        background_color: '#ffffff',
+        categories: ['education', 'productivity'],
         icons: [
+          {
+            src: 'icon.png',
+            sizes: '72x72',
+            type: 'image/png'
+          },
+          {
+            src: 'icon.png',
+            sizes: '96x96',
+            type: 'image/png'
+          },
+          {
+            src: 'icon.png',
+            sizes: '128x128',
+            type: 'image/png'
+          },
+          {
+            src: 'icon.png',
+            sizes: '144x144',
+            type: 'image/png'
+          },
+          {
+            src: 'icon.png',
+            sizes: '152x152',
+            type: 'image/png'
+          },
           {
             src: 'icon.png',
             sizes: '192x192',
@@ -32,11 +64,43 @@ export default defineConfig({
           },
           {
             src: 'icon.png',
-            sizes: '512x512',
+            sizes: '384x384',
             type: 'image/png'
+          },
+          {
+            src: 'icon.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ],
+        shortcuts: [
+          {
+            name: 'Chat LAURA',
+            short_name: 'Chat',
+            description: "Discuter avec l'assistant IA",
+            url: '/learn/chat',
+            icons: [
+              {
+                src: 'icon.png',
+                sizes: '192x192'
+              }
+            ]
+          },
+          {
+            name: 'Mes Révisions',
+            short_name: 'Révision',
+            description: 'Accéder à mes sessions de révision',
+            url: '/learn/revision',
+            icons: [
+              {
+                src: 'icon.png',
+                sizes: '192x192'
+              }
+            ]
           }
         ]
       }
     })
-  ],
+  ]
 })
