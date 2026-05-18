@@ -26,49 +26,56 @@ export default function TutorLayout() {
   };
 
   const links = [
-    { path: '/tutor/dashboard', label: 'Tableau de bord', icon: '📊' },
-    { path: '/tutor/chat', label: 'Chat Pédagogique', icon: '💬' },
+    { path: '/tutor/dashboard', label: 'Dashboard', icon: '📊' },
+    { path: '/tutor/chat', label: 'Chat IA', icon: '💬' },
     { path: '/tutor/resources', label: 'Ressources', icon: '📚' },
-    { path: '/tutor/submissions', label: 'Mes Soumissions', icon: '📤' },
+    { path: '/tutor/submissions', label: 'Soumissions', icon: '📤' },
     { path: '/tutor/history', label: 'Historique', icon: '🕒' },
     { path: '/tutor/profile', label: 'Profil & Droits', icon: '👤' },
-    { path: '/tutor/settings', label: 'Paramètres', icon: '⚙️' },
+    { path: '/tutor/settings', label: 'Réglages', icon: '⚙️' },
+  ];
+
+  // Mobile nav shows 5 main shortcuts
+  const mobileShortcuts = [
+    { path: '/tutor/dashboard', label: 'Tableau', icon: '📊' },
+    { path: '/tutor/chat', label: 'Chat IA', icon: '💬' },
+    { path: '/tutor/resources', label: 'Catalogue', icon: '📚' },
+    { path: '/tutor/submissions', label: 'Activité', icon: '📤' },
+    { path: '/tutor/profile', label: 'Mon Profil', icon: '👤' },
   ];
 
   return (
-    <div className="tutor-layout responsive-layout-container" style={{ minHeight: '100vh', fontFamily: "var(--font-family)", color: 'var(--text-primary)', background: 'var(--bg-secondary)' }}>
+    <div className="laura-app tutor-layout">
       
       {/* MOBILE HEADER BAR */}
-      <div className="mobile-header-bar" style={{ background: 'var(--bg-primary)', borderBottom: '1px solid var(--border-light)' }}>
-        <button className="hamburger-btn" style={{ color: 'var(--text-primary)' }} onClick={() => setIsSidebarOpen(true)}>☰</button>
-        <div className="mobile-header-bar__brand">
+      <header className="laura-topbar mobile-header-bar">
+        <button className="hamburger-btn" style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }} onClick={() => setIsSidebarOpen(true)}>☰</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <img src="/logo.png" alt="LAURA" style={{ height: '36px' }} />
-          <span style={{ fontSize: '0.8rem', background: 'var(--success-light)', color: 'var(--success)', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>TUTEUR</span>
+          <span style={{ fontSize: '0.7rem', background: 'var(--laura-success-bg)', color: 'var(--laura-success)', padding: '0.2rem 0.5rem', borderRadius: 'var(--r-full)', fontWeight: 800 }}>TUTEUR</span>
         </div>
-        <div style={{ width: '40px' }}></div>
-      </div>
+        <div style={{ width: '24px' }}></div>
+      </header>
 
       {/* BACKDROP OVERLAY */}
-      <div className={`sidebar-backdrop ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+      <div className={`laura-backdrop ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
 
-      {/* SIDEBAR TUTEUR */}
-      <aside className={`responsive-sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ background: 'var(--bg-primary)', borderRight: '1px solid var(--border-light)' }}>
+      {/* SIDEBAR TUTEUR (laura-rail) */}
+      <aside className={`laura-rail responsive-sidebar ${isSidebarOpen ? 'open' : ''}`}>
         
         {/* MOBILE CLOSE BUTTON */}
-        <button className="sidebar-close-btn" style={{ color: 'var(--text-primary)' }} onClick={() => setIsSidebarOpen(false)}>✕</button>
+        <button className="sidebar-close-btn" style={{ position: 'absolute', top: '16px', right: '16px', background: 'transparent', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => setIsSidebarOpen(false)}>✕</button>
 
         {/* LOGO */}
-        <div style={{ padding: '1.5rem 1.5rem', borderBottom: '1px solid var(--border-light)' }}>
-          <h1 style={{ margin: 0 }}>
-            <Link to="/tutor/dashboard" onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
-              <img src="/logo.png" alt="LAURA" style={{ height: '46px' }} />
-              <span style={{ fontSize: '0.8rem', background: 'var(--success-light)', color: 'var(--success)', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', fontWeight: 800 }}>TUTEUR</span>
-            </Link>
-          </h1>
+        <div style={{ paddingBottom: 'var(--sp-4)', borderBottom: '1px solid var(--laura-border-soft)' }}>
+          <Link to="/tutor/dashboard" onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+            <img src="/logo.png" alt="LAURA" style={{ height: '42px' }} />
+            <span style={{ fontSize: '0.65rem', background: 'var(--laura-success-bg)', color: 'var(--laura-success)', padding: '1px 6px', borderRadius: 'var(--r-full)', fontWeight: 800 }}>TUTEUR</span>
+          </Link>
         </div>
 
         {/* NAVIGATION */}
-        <nav style={{ flex: 1, padding: '1.5rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <nav className="laura-rail-nav" style={{ flex: 1, marginTop: 'var(--sp-6)' }}>
           {links.map((link) => {
             const isActive = location.pathname.startsWith(link.path);
             return (
@@ -76,39 +83,68 @@ export default function TutorLayout() {
                 key={link.path} 
                 to={link.path} 
                 onClick={() => setIsSidebarOpen(false)}
-                style={{ 
-                  display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.8rem 1rem', 
-                  borderRadius: '0.75rem', textDecoration: 'none', fontWeight: isActive ? 700 : 500,
-                  color: isActive ? 'var(--success)' : 'var(--text-secondary)',
-                  background: isActive ? 'var(--success-light)' : 'transparent',
-                  transition: 'background 0.2s'
-                }}
+                className={`laura-rail-item ${isActive ? 'is-active' : ''}`}
               >
-                <span style={{ fontSize: '1.2rem' }}>{link.icon}</span>
-                {link.label}
+                <span style={{ fontSize: '1.4rem' }}>{link.icon}</span>
+                <span className="rail-label">{link.label}</span>
               </Link>
             );
           })}
         </nav>
 
         {/* BOTTOM ACTION */}
-        <div style={{ padding: '1.5rem', borderTop: '1px solid var(--border-light)' }}>
-          <div style={{ background: 'var(--success-light)', border: '1px solid var(--success)', padding: '1rem', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-sm)', color: 'var(--success)', marginBottom: '1rem' }}>
-            <strong>Statut:</strong> {userProfile?.roleLabel || 'Contributeur'} ✅
+        <div style={{ paddingTop: 'var(--sp-4)', borderTop: '1px solid var(--laura-border-soft)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div className="laura-badge laura-badge-success" style={{ justifyContent: 'center', minHeight: '32px', fontSize: '11px', borderRadius: 'var(--r-md)' }}>
+            Statut: {userProfile?.roleLabel || 'Contributeur'}
           </div>
-          <button onClick={() => { setIsSidebarOpen(false); navigate('/tutor/chat?new=true'); }} style={{ width: '100%', padding: '0.8rem', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-light)', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.8rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-secondary)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            <span>➕</span> Nouvelle conv.
+          <button onClick={() => { setIsSidebarOpen(false); navigate('/tutor/chat?new=true'); }} className="laura-btn laura-btn-primary" style={{ minHeight: '34px', padding: '0 8px', fontSize: '11px' }}>
+            ➕ Nouveau Chat
           </button>
-          <button onClick={handleLogout} style={{ width: '100%', padding: '0.8rem', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-light)', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-secondary)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            <span>🚪</span> Déconnexion
+          <button onClick={handleLogout} className="laura-btn laura-btn-secondary" style={{ minHeight: '34px', padding: '0 8px', fontSize: '11px' }}>
+            🚪 Quitter
           </button>
         </div>
       </aside>
 
-      {/* MAIN CONTENT */}
-      <main style={{ flex: 1, padding: '3rem 4rem', overflowY: 'auto', maxHeight: '100vh' }}>
-        <Outlet />
-      </main>
+      {/* MOBILE BOTTOM NAVIGATION BAR */}
+      <div className="laura-bottom-nav">
+        {mobileShortcuts.map((link) => {
+          const isActive = location.pathname.startsWith(link.path);
+          return (
+            <Link 
+              key={link.path} 
+              to={link.path} 
+              className={`laura-bottom-nav-item ${isActive ? 'is-active' : ''}`}
+            >
+              <span style={{ fontSize: '1.3rem' }}>{link.icon}</span>
+              <span>{link.label}</span>
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* SHELL FOR HEADER & MAIN */}
+      <div className="laura-shell">
+        
+        {/* DESKTOP TOPBAR */}
+        <header className="laura-topbar desktop-only-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '16px', margin: 0, color: 'var(--laura-text-2)' }}>
+            Espace Pédagogique (Tuteurs)
+          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span style={{ fontSize: '13px', color: 'var(--laura-text-2)' }}>
+              Compagnon : <strong>{currentUser.name || currentUser.email}</strong>
+            </span>
+          </div>
+        </header>
+
+        {/* MAIN CONTENT AREA */}
+        <main className="laura-main">
+          <div className="laura-page">
+            <Outlet />
+          </div>
+        </main>
+      </div>
 
     </div>
   );
