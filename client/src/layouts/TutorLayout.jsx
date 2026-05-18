@@ -7,6 +7,7 @@ export default function TutorLayout() {
   const navigate = useNavigate();
   const { currentUser, logout, userProfile } = useContext(AuthContext);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     if (!currentUser) {
@@ -45,7 +46,7 @@ export default function TutorLayout() {
   ];
 
   return (
-    <div className="laura-app tutor-layout">
+    <div className={`laura-app tutor-layout ${isCollapsed ? 'is-collapsed' : ''}`}>
       
       {/* MOBILE HEADER BAR */}
       <header className="laura-topbar mobile-header-bar">
@@ -66,16 +67,30 @@ export default function TutorLayout() {
         {/* MOBILE CLOSE BUTTON */}
         <button className="sidebar-close-btn" style={{ position: 'absolute', top: '16px', right: '16px', background: 'transparent', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => setIsSidebarOpen(false)}>✕</button>
 
-        {/* LOGO */}
-        <div style={{ paddingBottom: 'var(--sp-4)', borderBottom: '1px solid var(--laura-border-soft)' }}>
-          <Link to="/tutor/dashboard" onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
-            <img src="/logo.png" alt="LAURA" style={{ height: '42px' }} />
-            <span style={{ fontSize: '0.65rem', background: 'var(--laura-success-bg)', color: 'var(--laura-success)', padding: '1px 6px', borderRadius: 'var(--r-full)', fontWeight: 800 }}>TUTEUR</span>
+        {/* LOGO & TOGGLE */}
+        <div style={{ paddingBottom: 'var(--sp-4)', borderBottom: '1px solid var(--laura-border-soft)', position: 'relative' }}>
+          <Link to="/tutor/dashboard" onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
+            <img src="/logo.png" alt="LAURA" style={{ height: '42px', transition: 'height 0.2s' }} />
+            {!isCollapsed && <span style={{ fontSize: '0.65rem', background: 'var(--laura-success-bg)', color: 'var(--laura-success)', padding: '1px 6px', borderRadius: 'var(--r-full)', fontWeight: 800 }}>TUTEUR</span>}
           </Link>
+
+          <button 
+            className="desktop-only-header"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            style={{ 
+              position: 'absolute', right: '-12px', top: '12px', 
+              background: 'white', border: '1px solid var(--laura-border-soft)', 
+              borderRadius: '50%', width: '24px', height: '24px', 
+              display: 'flex', alignItems: 'center', justifyContent: 'center', 
+              cursor: 'pointer', zIndex: 10, boxShadow: 'var(--shadow-xs)' 
+            }}
+          >
+            {isCollapsed ? '›' : '‹'}
+          </button>
         </div>
 
         {/* NAVIGATION */}
-        <nav className="laura-rail-nav" style={{ flex: 1, marginTop: 'var(--sp-6)' }}>
+        <nav className="laura-rail-nav no-scrollbar" style={{ flex: 1, marginTop: 'var(--sp-6)', overflowY: 'auto' }}>
           {links.map((link) => {
             const isActive = location.pathname.startsWith(link.path);
             return (
@@ -84,6 +99,7 @@ export default function TutorLayout() {
                 to={link.path} 
                 onClick={() => setIsSidebarOpen(false)}
                 className={`laura-rail-item ${isActive ? 'is-active' : ''}`}
+                title={isCollapsed ? link.label : ''}
               >
                 <span style={{ fontSize: '1.4rem' }}>{link.icon}</span>
                 <span className="rail-label">{link.label}</span>
@@ -94,14 +110,16 @@ export default function TutorLayout() {
 
         {/* BOTTOM ACTION */}
         <div style={{ paddingTop: 'var(--sp-4)', borderTop: '1px solid var(--laura-border-soft)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div className="laura-badge laura-badge-success" style={{ justifyContent: 'center', minHeight: '32px', fontSize: '11px', borderRadius: 'var(--r-md)' }}>
-            Statut: {userProfile?.roleLabel || 'Contributeur'}
-          </div>
-          <button onClick={() => { setIsSidebarOpen(false); navigate('/tutor/chat?new=true'); }} className="laura-btn laura-btn-primary" style={{ minHeight: '34px', padding: '0 8px', fontSize: '11px' }}>
-            ➕ Nouveau Chat
+          {!isCollapsed && (
+            <div className="laura-badge laura-badge-success" style={{ justifyContent: 'center', minHeight: '32px', fontSize: '11px', borderRadius: 'var(--r-md)' }}>
+              Statut: {userProfile?.roleLabel || 'Contributeur'}
+            </div>
+          )}
+          <button onClick={() => { setIsSidebarOpen(false); navigate('/tutor/chat?new=true'); }} className="laura-btn laura-btn-primary" style={{ minHeight: '34px', padding: '0 8px', fontSize: '11px', justifyContent: 'center' }} title="Nouveau Chat">
+            {isCollapsed ? '➕' : '➕ Nouveau Chat'}
           </button>
-          <button onClick={handleLogout} className="laura-btn laura-btn-secondary" style={{ minHeight: '34px', padding: '0 8px', fontSize: '11px' }}>
-            🚪 Quitter
+          <button onClick={handleLogout} className="laura-btn laura-btn-ghost" style={{ minHeight: '34px', padding: '0 8px', fontSize: '11px', color: 'var(--laura-danger)', justifyContent: 'center' }} title="Quitter">
+            {isCollapsed ? '🚪' : '🚪 Quitter'}
           </button>
         </div>
       </aside>

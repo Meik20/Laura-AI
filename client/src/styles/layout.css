@@ -6,6 +6,11 @@
   display: grid;
   grid-template-columns: var(--rail-w) 1fr;
   min-height: 100dvh;
+  transition: grid-template-columns var(--dur-med) var(--ease-standard);
+}
+
+.laura-app.is-collapsed {
+  grid-template-columns: var(--rail-w-compact) 1fr;
 }
 
 .laura-rail {
@@ -21,6 +26,40 @@
   flex-direction: column;
   justify-content: space-between;
   z-index: 40;
+  overflow: hidden;
+  transition: padding var(--dur-med) var(--ease-standard);
+}
+
+.laura-app.is-collapsed .laura-rail {
+  padding: var(--sp-6) 12px;
+}
+
+.laura-app.is-collapsed .rail-label {
+  display: none;
+  opacity: 0;
+}
+
+.laura-rail-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 12px;
+  border-radius: var(--r-md);
+  color: var(--laura-text-2);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all var(--dur-fast) var(--ease-standard);
+  margin-bottom: 4px;
+}
+
+.laura-rail-item:hover, .laura-rail-item.is-active {
+  background: var(--laura-bg-elevated);
+  color: var(--laura-primary);
+}
+
+.laura-app.is-collapsed .laura-rail-item {
+  justify-content: center;
+  padding: 12px 0;
 }
 
 .laura-shell {

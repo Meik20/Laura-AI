@@ -78,8 +78,8 @@
   --sp-12: 48px;
 
   /* Layout */
-  --rail-w: 84px;
-  --rail-w-compact: 72px;
+  --rail-w: 260px;
+  --rail-w-compact: 84px;
   --topbar-h: 72px;
   --content-max: 1360px;
   --aside-w: 320px;

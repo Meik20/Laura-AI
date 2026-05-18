@@ -7,6 +7,7 @@ export default function LearnLayout() {
   const navigate = useNavigate();
   const { currentUser, logout } = useContext(AuthContext);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     if (!currentUser) {
@@ -37,7 +38,6 @@ export default function LearnLayout() {
     { path: '/learn/settings', label: 'Réglages', icon: '⚙️' },
   ];
 
-  // Mobile bottom navigation (5 items)
   const mobileShortcuts = [
     { path: '/learn/dashboard', label: 'Accueil', icon: '📊' },
     { path: '/learn/chat', label: 'Chat IA', icon: '💬' },
@@ -47,7 +47,7 @@ export default function LearnLayout() {
   ];
 
   return (
-    <div className="laura-app learn-layout">
+    <div className={`laura-app learn-layout ${isCollapsed ? 'is-collapsed' : ''}`}>
       
       {/* MOBILE HEADER BAR */}
       <header className="laura-topbar mobile-header-bar">
@@ -68,15 +68,30 @@ export default function LearnLayout() {
         {/* MOBILE CLOSE BUTTON */}
         <button className="sidebar-close-btn" style={{ position: 'absolute', top: '16px', right: '16px', background: 'transparent', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => setIsSidebarOpen(false)}>✕</button>
 
-        {/* LOGO */}
-        <div style={{ paddingBottom: 'var(--sp-4)', borderBottom: '1px solid var(--laura-border-soft)' }}>
-          <Link to="/learn/dashboard" onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
-            <img src="/logo.png" alt="LAURA" style={{ height: '42px' }} />
+        {/* LOGO & TOGGLE */}
+        <div style={{ paddingBottom: 'var(--sp-4)', borderBottom: '1px solid var(--laura-border-soft)', position: 'relative' }}>
+          <Link to="/learn/dashboard" onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
+            <img src="/logo.png" alt="LAURA" style={{ height: '42px', transition: 'height 0.2s' }} />
+            {!isCollapsed && <span style={{ fontWeight: 800, color: 'var(--laura-primary)', fontSize: '14px', letterSpacing: '-0.5px' }}>laura ai</span>}
           </Link>
+          
+          <button 
+            className="desktop-only-header"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            style={{ 
+              position: 'absolute', right: '-12px', top: '12px', 
+              background: 'white', border: '1px solid var(--laura-border-soft)', 
+              borderRadius: '50%', width: '24px', height: '24px', 
+              display: 'flex', alignItems: 'center', justifyContent: 'center', 
+              cursor: 'pointer', zIndex: 10, boxShadow: 'var(--shadow-xs)' 
+            }}
+          >
+            {isCollapsed ? '›' : '‹'}
+          </button>
         </div>
 
         {/* NAVIGATION */}
-        <nav className="laura-rail-nav" style={{ flex: 1, marginTop: 'var(--sp-6)' }}>
+        <nav className="laura-rail-nav no-scrollbar" style={{ flex: 1, marginTop: 'var(--sp-6)', overflowY: 'auto' }}>
           {links.map((link) => {
             const isActive = location.pathname.startsWith(link.path);
             return (
@@ -85,6 +100,7 @@ export default function LearnLayout() {
                 to={link.path} 
                 onClick={() => setIsSidebarOpen(false)}
                 className={`laura-rail-item ${isActive ? 'is-active' : ''}`}
+                title={isCollapsed ? link.label : ''}
               >
                 <span style={{ fontSize: '1.4rem' }}>{link.icon}</span>
                 <span className="rail-label">{link.label}</span>
@@ -95,11 +111,11 @@ export default function LearnLayout() {
 
         {/* BOTTOM ACTION */}
         <div style={{ paddingTop: 'var(--sp-4)', borderTop: '1px solid var(--laura-border-soft)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <button onClick={() => { setIsSidebarOpen(false); navigate('/learn/chat?new=true'); }} className="laura-btn laura-btn-primary" style={{ minHeight: '34px', padding: '0 8px', fontSize: '11px' }}>
-            ➕ Nouveau Chat
+          <button onClick={() => { setIsSidebarOpen(false); navigate('/learn/chat?new=true'); }} className="laura-btn laura-btn-primary" style={{ minHeight: '34px', padding: '0 8px', fontSize: '11px', justifyContent: 'center' }} title="Nouveau Chat">
+            {isCollapsed ? '➕' : '➕ Nouveau Chat'}
           </button>
-          <button onClick={handleLogout} className="laura-btn laura-btn-secondary" style={{ minHeight: '34px', padding: '0 8px', fontSize: '11px', color: 'var(--laura-danger)' }}>
-            🚪 Quitter
+          <button onClick={handleLogout} className="laura-btn laura-btn-ghost" style={{ minHeight: '34px', padding: '0 8px', fontSize: '11px', color: 'var(--laura-danger)', justifyContent: 'center' }} title="Quitter">
+            {isCollapsed ? '🚪' : '🚪 Quitter'}
           </button>
         </div>
       </aside>
