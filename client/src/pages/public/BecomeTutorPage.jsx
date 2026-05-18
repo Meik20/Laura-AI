@@ -24,12 +24,12 @@ export default function BecomeTutorPage() {
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '4rem auto', padding: '0 2rem' }}>
+    <div className="tutor-apply-container">
       
       {/* MODAL INVITATION */}
       {showModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 0, 0, 0.5)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: 'white', padding: '2.5rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2', width: '100%', maxWidth: '400px', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{ background: 'white', padding: '2.5rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2', width: '100%', maxWidth: '400px', boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div>
               <h3 style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Entrez votre code</h3>
               <p style={{ margin: 0, color: '#6E6E6B', fontSize: '0.9rem' }}>Saisissez le code d'invitation fourni par l'administration.</p>
@@ -75,7 +75,7 @@ export default function BecomeTutorPage() {
         <p style={{ fontSize: '1.2rem', color: '#6E6E6B', lineHeight: 1.6 }}>
           Rejoignez LAURA en tant que tuteur après étude de votre profil, validation de vos compétences et activation par l’administration.
         </p>
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '2rem' }}>
+        <div className="tutor-buttons-row">
           <Link to="/tutor/apply" style={{ background: '#1A1A1A', color: 'white', padding: '1rem 2rem', borderRadius: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
             Candidater comme tuteur
           </Link>
@@ -101,7 +101,7 @@ export default function BecomeTutorPage() {
 
       <div style={{ background: '#F5F4EF', padding: '2.5rem', borderRadius: '1.5rem', border: '1px solid rgba(0,0,0,0.05)' }}>
         <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1.5rem' }}>Différence entre Tuteur Validé et Contributeur</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+        <div className="tutor-grid">
           <div>
             <h4 style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#1A1A1A' }}>Tuteur Validé</h4>
             <ul style={{ paddingLeft: '1.5rem', color: '#6E6E6B', gap: '0.5rem', display: 'flex', flexDirection: 'column' }}>

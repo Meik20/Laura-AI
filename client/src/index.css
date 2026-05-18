@@ -2665,3 +2665,237 @@ hr {
     font-size: 0.85rem !important;
   }
 }
+
+/* ============================================================
+   LAURA AI — CUSTOM RESPONSIVE CSS OVERRIDES FOR MOBILE DEVICE LAYOUTS
+   ============================================================ */
+
+/* 1. Responsive Auth pages (Login & Signup) */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+.auth-card {
+  background: white !important;
+  padding: 3.5rem !important;
+  border-radius: 1.5rem !important;
+  width: 100% !important;
+  max-width: 450px !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05) !important;
+  border: 1px solid #E5E5E2 !important;
+  box-sizing: border-box;
+}
+
+.auth-card--signup {
+  max-width: 600px !important;
+}
+
+@media (max-width: 768px) {
+  .auth-container {
+    min-height: calc(100vh - 120px) !important;
+    padding: 1rem 0.5rem !important;
+  }
+  .auth-card {
+    padding: 2rem 1.2rem !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important;
+    width: 95% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* 2. Responsive Dashboard grid & header */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  width: 100%;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+@media (max-width: 1023px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  .dashboard-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+  .dashboard-header button {
+    align-self: flex-start !important;
+    width: auto !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header h1 {
+    font-size: 1.8rem !important;
+  }
+  .dashboard-header p {
+    font-size: 0.95rem !important;
+  }
+  .dashboard-header button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* 3. Responsive Quick Actions */
+.quick-actions-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+}
+
+.quick-action-btn {
+  background: #F5F4EF !important;
+  border: 1px solid #E5E5E2 !important;
+  padding: 0.8rem 1.2rem !important;
+  border-radius: 0.75rem !important;
+  font-weight: 600 !important;
+  color: #1A1A1A !important;
+  cursor: pointer;
+  flex: 1 1 calc(33% - 1rem) !important;
+  text-align: center;
+  transition: background 0.2s !important;
+}
+
+@media (max-width: 768px) {
+  .quick-action-btn {
+    flex: 1 1 calc(50% - 1rem) !important;
+    padding: 0.7rem 1rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-action-btn {
+    flex: 1 1 100% !important;
+  }
+}
+
+/* 4. Responsive Chat Page Overrides */
+.chat-header-container {
+  padding: 1.5rem;
+  border-bottom: 1px solid #E5E5E2;
+  background: #FAFAFA;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .chat-header-container {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+    padding: 1rem !important;
+  }
+  .chat-header-container button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* 5. Horizontal Quick Suggestions Row in Chat */
+.chat-quick-suggestions {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  align-items: center;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+.chat-quick-suggestions::-webkit-scrollbar {
+  height: 4px;
+}
+
+.chat-quick-suggestions::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+}
+
+.chat-quick-suggestions label,
+.chat-quick-suggestions button {
+  flex-shrink: 0 !important;
+}
+
+/* 6. Responsive Public Layout Header */
+.public-header-nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .public-header-nav {
+    gap: 0.6rem !important;
+  }
+  .public-header-nav a:not(:last-child) {
+    display: none !important; /* Hide non-primary links on mobile header to avoid squishing the logo */
+  }
+}
+
+/* 7. Tutor onboarding page styles */
+.tutor-apply-container {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  box-sizing: border-box;
+}
+
+.tutor-buttons-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.tutor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .tutor-apply-container {
+    margin: 2rem auto !important;
+    padding: 0 1rem !important;
+  }
+  .tutor-buttons-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .tutor-buttons-row a,
+  .tutor-buttons-row button {
+    text-align: center !important;
+    width: 100% !important;
+  }
+  .tutor-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+
+

@@ -70,8 +70,8 @@ export default function SignupPage() {
   const labelStyle = { display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: '#444' };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh', padding: '2rem 0' }}>
-      <div style={{ background: 'white', padding: '3.5rem', borderRadius: '1.5rem', width: '100%', maxWidth: '600px', boxShadow: '0 20px 60px rgba(0,0,0,0.05)', border: '1px solid #E5E5E2' }}>
+    <div className="auth-container">
+      <div className="auth-card auth-card--signup">
         <h1 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', color: '#1A1A1A' }}>Créer un compte apprenant</h1>
         <p style={{ textAlign: 'center', color: '#6E6E6B', marginBottom: '2.5rem' }}>Prêt à booster vos résultats scolaires ?</p>
 

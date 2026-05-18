@@ -76,8 +76,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
-      <div style={{ background: 'white', padding: '3.5rem', borderRadius: '1.5rem', width: '100%', maxWidth: '450px', boxShadow: '0 20px 60px rgba(0,0,0,0.05)', border: '1px solid #E5E5E2' }}>
+    <div className="auth-container">
+      <div className="auth-card">
         <h1 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', color: '#1A1A1A' }}>
           Connexion à LAURA
         </h1>

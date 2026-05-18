@@ -123,25 +123,25 @@ export default function LearnDashboardPage() {
   const cardStyle = { background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', color: '#1A1A1A' };
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', boxSizing: 'border-box' }}>
       
       {/* HEADER / WELCOME */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="dashboard-header">
         <div>
           <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Bonjour {user.prenom} 👋</h1>
           <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
             Vous êtes en <strong style={{ color: '#1A1A1A' }}>{user.niveau}</strong> · Examen préparé : <strong style={{ color: '#1A1A1A' }}>{user.examen}</strong>
           </p>
         </div>
-        <button onClick={() => navigate('/learn/chat?new=true')} style={{ padding: '0.8rem 1.5rem', background: '#00D4AA', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#00B894'} onMouseLeave={e => e.currentTarget.style.background = '#00D4AA'}>
+        <button onClick={() => navigate('/learn/chat?new=true')} style={{ padding: '0.8rem 1.5rem', background: '#00D4AA', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'background 0.2s', flexShrink: 0 }} onMouseEnter={e => e.currentTarget.style.background = '#00B894'} onMouseLeave={e => e.currentTarget.style.background = '#00D4AA'}>
           <span>+</span> Nouvelle conversation
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem', alignItems: 'start' }}>
+      <div className="dashboard-grid">
         
         {/* COLONNE GAUCHE (Principale) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', boxSizing: 'border-box' }}>
           
           {/* CARTE OBJECTIF */}
           <div style={{ ...cardStyle, background: '#1A1A1A', color: 'white', border: 'none' }}>
@@ -167,9 +167,9 @@ export default function LearnDashboardPage() {
           {/* ACTIONS RAPIDES */}
           <div style={cardStyle}>
             <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Actions rapides</h3>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+            <div className="quick-actions-container">
               {['Parler à LAURA', 'Réviser un chapitre', 'Lancer un quiz', 'Préparer mon examen', 'Voir mes ressources'].map((action, i) => (
-                <button key={i} onClick={() => handleQuickAction(action)} style={{ background: '#F5F4EF', border: '1px solid #E5E5E2', padding: '0.8rem 1.2rem', borderRadius: '0.75rem', fontWeight: 600, color: '#1A1A1A', cursor: 'pointer', flex: '1 1 calc(33% - 1rem)', textAlign: 'center', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#E5E5E2'} onMouseLeave={e => e.currentTarget.style.background = '#F5F4EF'}>
+                <button key={i} onClick={() => handleQuickAction(action)} className="quick-action-btn">
                   {action}
                 </button>
               ))}

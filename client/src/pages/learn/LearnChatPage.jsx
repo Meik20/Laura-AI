@@ -172,7 +172,7 @@ export default function LearnChatPage() {
       <div className="chat-main-area">
         
         {/* En-tête du Chat */}
-        <div style={{ padding: '1.5rem', borderBottom: '1px solid #E5E5E2', background: '#FAFAFA', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="chat-header-container">
           <div>
             <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>Préparation {profileContext.examen}</h2>
             <span style={{ color: '#6E6E6B', fontSize: '0.9rem' }}>Chat Contextuel LAURA</span>
@@ -259,7 +259,7 @@ export default function LearnChatPage() {
           )}
 
           {/* Actions rapides de saisie */}
-          <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '1rem', overflowX: 'auto', paddingBottom: '0.5rem', alignItems: 'center' }}>
+          <div className="chat-quick-suggestions">
             <label style={{ background: '#10B981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)' }}>
               <span>📎</span> Partager un cours / fichier
               <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />

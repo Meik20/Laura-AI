@@ -1,18 +1,27 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 
 export default function PublicLayout() {
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-family-primary)', background: 'var(--color-bg-page)', color: 'var(--color-text-primary)' }}>
       
-      <header style={{ padding: '1.2rem 3rem', background: 'var(--color-bg-card)', borderBottom: 'var(--border-width-thin) solid var(--color-border-default)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
-          <img src="/logo.png" alt="LAURA" style={{ height: '48px' }} />
+      <header style={{ padding: '1rem 2rem', background: 'var(--color-bg-card)', borderBottom: 'var(--border-width-thin) solid var(--color-border-default)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', transition: 'transform 0.2s', flexShrink: 0 }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
+          <img src="/logo.png" alt="LAURA" style={{ height: '40px', objectFit: 'contain' }} />
         </Link>
-        <nav style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <Link to="/how-it-works" style={{ color: 'var(--color-text-secondary)', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem' }}>Comment ça marche</Link>
-          <Link to="/become-tutor" style={{ color: 'var(--color-text-secondary)', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem' }}>Devenez tuteur</Link>
-          <Link to="/login" style={{ color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: 700, fontSize: '0.95rem' }}>Connexion</Link>
-          <Link to="/signup" style={{ background: 'var(--color-primary)', color: 'var(--color-white)', padding: '0.6rem 1.3rem', borderRadius: '0.6rem', textDecoration: 'none', fontWeight: 700, fontSize: '0.95rem', transition: 'background-color var(--transition-fast)' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-primary-dark)'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-primary)'}>S'inscrire</Link>
+        <nav className="public-header-nav" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {!isLoginPage && (
+            <>
+              <Link to="/how-it-works" style={{ color: 'var(--color-text-secondary)', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem' }}>Comment ça marche</Link>
+              <Link to="/become-tutor" style={{ color: 'var(--color-text-secondary)', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem' }}>Devenez tuteur</Link>
+            </>
+          )}
+          {!isLoginPage && (
+            <Link to="/login" style={{ color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: 700, fontSize: '0.95rem' }}>Connexion</Link>
+          )}
+          <Link to="/signup" style={{ background: 'var(--color-primary)', color: 'var(--color-white)', padding: '0.6rem 1.3rem', borderRadius: '0.6rem', textDecoration: 'none', fontWeight: 700, fontSize: '0.95rem', transition: 'background-color var(--transition-fast)', flexShrink: 0 }} onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-primary-dark)'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-primary)'}>S'inscrire</Link>
         </nav>
       </header>
 
