@@ -72,14 +72,73 @@
 }
 
 /* Responsive Media Queries */
-@media (max-width: 1024px) {
-  :root {
-    --rail-w: 72px;
-    --aside-w: 280px;
+
+/* ============================================================
+   RESPONSIVE LAYOUT & SIDEBAR DRAWER SYSTEM
+   ============================================================ */
+
+/* Desktop default states (>= 1024px) */
+.mobile-header-bar {
+  display: none !important;
+}
+
+.desktop-only-header {
+  display: flex !important;
+}
+
+.responsive-sidebar {
+  display: flex !important;
+  transform: none !important;
+  position: sticky !important;
+  box-shadow: none !important;
+  z-index: 40 !important;
+}
+
+.sidebar-close-btn {
+  display: none !important;
+}
+
+/* Tablet & Mobile adaptive views (< 1024px) */
+@media (max-width: 1023px) {
+  .laura-app {
+    grid-template-columns: 1fr !important; /* Force single column flow to avoid grid split conflicts */
   }
 
+  .mobile-header-bar {
+    display: flex !important; /* Show mobile header */
+  }
+
+  .desktop-only-header {
+    display: none !important; /* Hide desktop header */
+  }
+
+  /* Transform Sidebar into an Off-screen Drawer */
+  .responsive-sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px !important;
+    height: 100vh !important;
+    z-index: 200 !important;
+    transform: translateX(-100%) !important;
+    transition: transform var(--dur-med) var(--ease-standard) !important;
+    box-shadow: none !important;
+    display: flex !important;
+  }
+
+  .responsive-sidebar.open {
+    transform: translateX(0) !important;
+    box-shadow: var(--shadow-lg) !important;
+  }
+
+  .sidebar-close-btn {
+    display: block !important; /* Show mobile close icon */
+  }
+
+  /* Adjust page grid for single column layout */
   .laura-page-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
 
   .laura-page-aside {
@@ -87,71 +146,64 @@
   }
 }
 
-@media (max-width: 768px) {
+/* Mobile view adaptations (< 768px) */
+@media (max-width: 767px) {
   :root {
     --topbar-h: 64px;
   }
 
-  .laura-app {
-    grid-template-columns: 1fr;
-  }
-
-  .laura-rail {
-    display: none;
-  }
-
   .laura-main {
-    padding: 16px 16px calc(88px + var(--safe-bottom));
+    padding: 16px 16px calc(88px + var(--safe-bottom)) !important;
   }
 
   .laura-topbar {
-    padding: 0 16px;
-    height: calc(var(--topbar-h) + var(--safe-top));
-    padding-top: var(--safe-top);
+    padding: 0 16px !important;
+    height: calc(var(--topbar-h) + var(--safe-top)) !important;
+    padding-top: var(--safe-top) !important;
   }
 
   .laura-bottom-nav {
-    display: flex;
-    position: fixed;
+    display: flex !important;
+    position: fixed !important;
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(72px + var(--safe-bottom));
-    padding-bottom: var(--safe-bottom);
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-top: 1px solid var(--laura-border-soft);
-    z-index: 50;
-    align-items: center;
-    justify-content: space-around;
+    height: calc(72px + var(--safe-bottom)) !important;
+    padding-bottom: var(--safe-bottom) !important;
+    background: rgba(255, 255, 255, 0.82) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-top: 1px solid var(--laura-border-soft) !important;
+    z-index: 50 !important;
+    align-items: center !important;
+    justify-content: space-around !important;
   }
 
   .laura-bottom-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    color: var(--laura-text-2);
-    font-size: var(--fs-xs);
-    font-weight: 600;
-    text-decoration: none;
-    flex: 1;
-    height: 100%;
-    cursor: pointer;
-    transition: all var(--dur-fast) var(--ease-standard);
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    color: var(--laura-text-2) !important;
+    font-size: var(--fs-xs) !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    flex: 1 !important;
+    height: 100% !important;
+    cursor: pointer !important;
+    transition: all var(--dur-fast) var(--ease-standard) !important;
   }
 
   .laura-bottom-nav-item.is-active {
-    color: var(--laura-primary);
+    color: var(--laura-primary) !important;
   }
 
   .laura-hero-body {
-    padding: 24px;
+    padding: 24px !important;
   }
 
   .laura-hero-text {
-    font-size: 30px;
+    font-size: 30px !important;
   }
 }
