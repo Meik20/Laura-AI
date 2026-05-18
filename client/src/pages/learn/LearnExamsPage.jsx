@@ -33,18 +33,11 @@ export default function LearnExamsPage() {
     fetchExamData();
   }, []);
 
-  const actionStyle = {
-    flex: 1, padding: '1.5rem', background: 'white', border: '1px solid #E5E5E2', 
-    borderRadius: '1.2rem', textAlign: 'center', cursor: 'pointer',
-    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.8rem',
-    transition: 'transform 0.2s, box-shadow 0.2s'
-  };
-
   // Filtrer les annales recommandées pour l'examen actuel
   const recommendedAnnales = examResources.filter(r => !profileContext.examen || r.cible?.toLowerCase().includes(profileContext.examen.toLowerCase()) || r.titre?.toLowerCase().includes(profileContext.examen.toLowerCase())).slice(0, 5);
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+    <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
       {/* HEADER */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -57,64 +50,94 @@ export default function LearnExamsPage() {
       </div>
 
       {/* OUTILS PRINCIPAUX */}
-      <div className="tools-grid">
-        <button onClick={() => navigate('/learn/resources?type=Annale')} style={actionStyle} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
-          <span style={{ fontSize: '2.5rem' }}>📚</span>
-          <span style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1A1A1A' }}>Annales</span>
-        </button>
-        <button onClick={() => navigate('/learn/chat?prompt=sujets_frequents')} style={actionStyle} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
-          <span style={{ fontSize: '2.5rem' }}>🎯</span>
-          <span style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1A1A1A' }}>Sujets fréquents</span>
-        </button>
-        <button onClick={() => navigate('/learn/chat?prompt=corriges_types')} style={actionStyle} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
-          <span style={{ fontSize: '2.5rem' }}>✅</span>
-          <span style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1A1A1A' }}>Corrigés</span>
-        </button>
-        <button onClick={() => navigate('/learn/chat?prompt=simulation_examen')} style={actionStyle} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
-          <span style={{ fontSize: '2.5rem' }}>⏱️</span>
-          <span style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1A1A1A' }}>Simulation</span>
-        </button>
+      <div className="learn-card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="minimal-list-item" onClick={() => navigate('/learn/resources?type=Annale')}>
+          <div className="minimal-list-item-content">
+            <div className="minimal-list-item-title">📚 Bibliothèque d'Annales</div>
+            <div className="minimal-list-item-subtitle">Accéder aux sujets officiels d'examens des années précédentes</div>
+          </div>
+          <span className="chevron-action">→</span>
+        </div>
+        <div className="minimal-list-item" onClick={() => navigate('/learn/chat?prompt=sujets_frequents')}>
+          <div className="minimal-list-item-content">
+            <div className="minimal-list-item-title">🎯 Sujets fréquents</div>
+            <div className="minimal-list-item-subtitle">Consulter les thématiques qui tombent le plus souvent à l'examen</div>
+          </div>
+          <span className="chevron-action">→</span>
+        </div>
+        <div className="minimal-list-item" onClick={() => navigate('/learn/chat?prompt=corriges_types')}>
+          <div className="minimal-list-item-content">
+            <div className="minimal-list-item-title">✅ Corrigés types</div>
+            <div className="minimal-list-item-subtitle">Analyser les corrigés et critères de correction officiels</div>
+          </div>
+          <span className="chevron-action">→</span>
+        </div>
+        <div className="minimal-list-item" onClick={() => navigate('/learn/chat?prompt=simulation_examen')}>
+          <div className="minimal-list-item-content">
+            <div className="minimal-list-item-title">⏱️ Simulation chronométrée</div>
+            <div className="minimal-list-item-subtitle">S'entraîner en temps réel avec des conditions d'examen réelles</div>
+          </div>
+          <span className="chevron-action">→</span>
+        </div>
       </div>
 
       <div className="two-column-grid">
         
         {/* ANNALES RECOMMANDÉES */}
-        <div className="learn-card">
-          <h2 style={{ fontSize: '1.5rem', margin: '0 0 1.5rem 0', fontWeight: 800 }}>Annales recommandées</h2>
+        <div className="learn-card" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ padding: '1rem 1rem 0.5rem 1rem' }}>
+            <h2 style={{ fontSize: '14px', margin: 0, fontWeight: 500 }}>Annales recommandées</h2>
+          </div>
+          <div className="divider" />
           {isLoading ? (
-            <div style={{ color: '#6E6E6B', padding: '1rem 0' }}>Chargement des annales...</div>
+            <div style={{ color: '#6E6E6B', padding: '1rem' }}>Chargement des annales...</div>
           ) : recommendedAnnales.length === 0 ? (
-            <div style={{ color: '#6E6E6B', padding: '1rem 0', fontSize: '0.95rem' }}>Aucune annale spécifique trouvée. Explorez le catalogue complet.</div>
+            <div style={{ color: '#6E6E6B', padding: '1rem', fontSize: '0.95rem' }}>Aucune annale spécifique trouvée. Explorez le catalogue complet.</div>
           ) : (
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               {recommendedAnnales.map((annale) => (
-                <li key={annale.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: '#F5F4EF', borderRadius: '0.75rem' }}>
-                  <div>
-                    <div style={{ fontWeight: 700, color: '#1A1A1A', marginBottom: '0.2rem' }}>{annale.titre}</div>
-                    <div style={{ fontSize: '0.8rem', color: '#6E6E6B' }}>{annale.cible} · {annale.type}</div>
+                <div 
+                  key={annale.id} 
+                  className="minimal-list-item" 
+                  onClick={() => annale.url ? window.open(annale.url, '_blank') : navigate(`/learn/chat?resourceTitle=${encodeURIComponent(annale.titre)}`)}
+                >
+                  <div className="minimal-list-item-content">
+                    <div className="minimal-list-item-title">📝 {annale.titre}</div>
+                    <div className="minimal-list-item-subtitle">{annale.cible} · {annale.type}</div>
                   </div>
-                  <button onClick={() => annale.url ? window.open(annale.url, '_blank') : navigate(`/learn/chat?resourceTitle=${encodeURIComponent(annale.titre)}`)} style={{ background: '#1A1A1A', color: 'white', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#333'} onMouseLeave={e => e.currentTarget.style.background = '#1A1A1A'}>
-                    Ouvrir
-                  </button>
-                </li>
+                  <span className="chevron-action">→</span>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
 
         {/* PRÉPARATION GUIDÉE */}
-        <div className="learn-card">
-          <h2 style={{ fontSize: '1.5rem', margin: '0 0 1.5rem 0', fontWeight: 800 }}>Préparation Guidée</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <button onClick={() => navigate('/learn/chat?prompt=plan_preparation')} style={{ width: '100%', padding: '1.2rem', textAlign: 'left', background: '#E0F2FE', color: '#0369A1', border: 'none', borderRadius: '0.75rem', fontWeight: 700, fontSize: '1.05rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', transition: 'opacity 0.2s' }} onMouseEnter={e => e.currentTarget.style.opacity = 0.9} onMouseLeave={e => e.currentTarget.style.opacity = 1}>
-              <span style={{ fontSize: '1.5rem' }}>🤖</span> Demander un plan de préparation à LAURA
-            </button>
-            <button onClick={() => navigate('/learn/chat?prompt=sujets_frequents')} style={{ width: '100%', padding: '1.2rem', textAlign: 'left', background: '#F5F4EF', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.75rem', fontWeight: 700, fontSize: '1.05rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#E5E5E2'} onMouseLeave={e => e.currentTarget.style.background = '#F5F4EF'}>
-              <span style={{ fontSize: '1.5rem' }}>🔍</span> Réviser les sujets qui tombent souvent
-            </button>
-            <button onClick={() => navigate('/learn/chat?prompt=simulation_examen')} style={{ width: '100%', padding: '1.2rem', textAlign: 'left', background: '#F5F4EF', color: '#1A1A1A', border: '1px solid #E5E5E2', borderRadius: '0.75rem', fontWeight: 700, fontSize: '1.05rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#E5E5E2'} onMouseLeave={e => e.currentTarget.style.background = '#F5F4EF'}>
-              <span style={{ fontSize: '1.5rem' }}>📝</span> Lancer une simulation en condition réelle
-            </button>
+        <div className="learn-card" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ padding: '1rem 1rem 0.5rem 1rem' }}>
+            <h2 style={{ fontSize: '14px', margin: 0, fontWeight: 500 }}>Préparation Guidée</h2>
+          </div>
+          <div className="divider" />
+          <div className="minimal-list-item" onClick={() => navigate('/learn/chat?prompt=plan_preparation')}>
+            <div className="minimal-list-item-content">
+              <div className="minimal-list-item-title">🤖 Plan personnalisé</div>
+              <div className="minimal-list-item-subtitle">Demander un plan de préparation sur mesure à LAURA</div>
+            </div>
+            <span className="chevron-action">→</span>
+          </div>
+          <div className="minimal-list-item" onClick={() => navigate('/learn/chat?prompt=sujets_frequents')}>
+            <div className="minimal-list-item-content">
+              <div className="minimal-list-item-title">🔍 Sujets fréquents</div>
+              <div className="minimal-list-item-subtitle">Réviser les sujets récurrents dans votre série</div>
+            </div>
+            <span className="chevron-action">→</span>
+          </div>
+          <div className="minimal-list-item" onClick={() => navigate('/learn/chat?prompt=simulation_examen')}>
+            <div className="minimal-list-item-content">
+              <div className="minimal-list-item-title">✍️ Simulation d'examen</div>
+              <div className="minimal-list-item-subtitle">Lancer une simulation complète en situation réelle</div>
+            </div>
+            <span className="chevron-action">→</span>
           </div>
         </div>
 

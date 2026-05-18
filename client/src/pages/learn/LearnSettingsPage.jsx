@@ -79,42 +79,59 @@ export default function LearnSettingsPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #F0F0EE', paddingBottom: '1.5rem' }}>
+          <div className="setting-item">
             <div>
-              <div style={{ fontWeight: 700, color: '#1A1A1A', fontSize: '1.1rem', marginBottom: '0.2rem' }}>Notifications de rappel</div>
-              <div style={{ fontSize: '0.9rem', color: '#6E6E6B' }}>Recevoir des rappels pour vos sessions de révision planifiées.</div>
+              <div style={{ fontWeight: 500, color: 'var(--color-text-primary)', fontSize: '13px', marginBottom: '0.125rem' }}>
+                Notifications de rappel
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
+                Recevoir des rappels pour vos sessions de révision planifiées.
+              </div>
             </div>
-            <input type="checkbox" name="notifications" checked={settings.notifications} onChange={handleChange} style={{ width: '24px', height: '24px', accentColor: '#00D4AA', cursor: 'pointer' }} />
+            <div 
+              className={`toggle ${settings.notifications ? 'active' : ''}`} 
+              onClick={() => setSettings({ ...settings, notifications: !settings.notifications })} 
+            />
           </div>
 
-          <div style={{ borderBottom: '1px solid #F0F0EE', paddingBottom: '1.5rem' }}>
-            <label style={labelStyle}>Thème de l'interface</label>
-            <select name="theme" value={settings.theme} onChange={handleChange} style={inputStyle}>
+          <div className="divider" />
+
+          <div style={{ padding: '0.875rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+            <label>Thème de l'interface</label>
+            <select name="theme" value={settings.theme} onChange={handleChange} style={{ width: '100%' }}>
               <option value="clair">Thème Clair (Par défaut)</option>
               <option value="sombre">Thème Sombre</option>
             </select>
           </div>
 
-          <div style={{ borderBottom: '1px solid #F0F0EE', paddingBottom: '1.5rem' }}>
-            <label style={labelStyle}>Rythme de travail souhaité</label>
-            <select name="rythme" value={settings.rythme} onChange={handleChange} style={inputStyle}>
+          <div className="divider" />
+
+          <div style={{ padding: '0.875rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+            <label>Rythme de travail souhaité</label>
+            <select name="rythme" value={settings.rythme} onChange={handleChange} style={{ width: '100%' }}>
               <option value="modere">Modéré (15-30 min par jour)</option>
               <option value="regulier">Régulier (1h par jour - Recommandé)</option>
               <option value="intensif">Intensif (2h+ par jour - Préparation examen)</option>
             </select>
           </div>
 
-          <div>
-            <label style={labelStyle}>Objectif de moyenne générale (sur 20)</label>
-            <input type="number" name="objectifNote" min="10" max="20" value={settings.objectifNote} onChange={handleChange} style={inputStyle} />
-            <span style={{ fontSize: '0.85rem', color: '#6E6E6B', marginTop: '0.4rem', display: 'block' }}>LAURA adaptera la difficulté de ses explications et quiz pour atteindre cet objectif.</span>
+          <div className="divider" />
+
+          <div style={{ padding: '0.875rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+            <label>Objectif de moyenne générale (sur 20)</label>
+            <input type="number" name="objectifNote" min="10" max="20" value={settings.objectifNote} onChange={handleChange} style={{ width: '100%' }} />
+            <span style={{ fontSize: '11px', color: 'var(--color-text-secondary)', marginTop: '0.25rem', display: 'block' }}>
+              LAURA adaptera la difficulté de ses explications et quiz pour atteindre cet objectif.
+            </span>
           </div>
 
-          <button type="submit" disabled={isSaving} style={{ padding: '1rem', background: isSaving ? '#6E6E6B' : '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontSize: '1.1rem', fontWeight: 700, cursor: isSaving ? 'not-allowed' : 'pointer', marginTop: '1rem', transition: 'background 0.2s' }} onMouseEnter={e => !isSaving && (e.currentTarget.style.background = '#333')} onMouseLeave={e => !isSaving && (e.currentTarget.style.background = '#1A1A1A')}>
-            {isSaving ? 'Enregistrement...' : 'Enregistrer les préférences'}
-          </button>
+          <div style={{ padding: '0.875rem 1rem' }}>
+            <button type="submit" disabled={isSaving} className="primary" style={{ width: '100%', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {isSaving ? 'Enregistrement...' : 'Enregistrer les préférences'}
+            </button>
+          </div>
 
         </form>
       </div>

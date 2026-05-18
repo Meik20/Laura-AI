@@ -52,10 +52,6 @@ export default function LearnProfilePage() {
     }
   };
 
-  const inputStyle = { width: '100%', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', background: '#F9F9F8', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' };
-  const labelStyle = { display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600, color: '#444' };
-  const cardStyle = { background: 'white', padding: '2.5rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' };
-
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
       
@@ -63,7 +59,7 @@ export default function LearnProfilePage() {
       <div>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Mon Profil</h1>
         <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
-          Gérez vos informations personnelles et académiques.
+          Gerez vos informations personnelles et academiques.
         </p>
       </div>
 
@@ -74,61 +70,61 @@ export default function LearnProfilePage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           
           <div className="form-grid">
             <div>
-              <label style={labelStyle}>Prénom *</label>
-              <input type="text" name="prenom" required value={formData.prenom} onChange={handleChange} style={inputStyle} />
+              <label>Prenom *</label>
+              <input type="text" name="prenom" required value={formData.prenom} onChange={handleChange} style={{ width: '100%' }} />
             </div>
             <div>
-              <label style={labelStyle}>Nom</label>
-              <input type="text" name="nom" value={formData.nom} onChange={handleChange} style={inputStyle} />
+              <label>Nom</label>
+              <input type="text" name="nom" value={formData.nom} onChange={handleChange} style={{ width: '100%' }} />
             </div>
           </div>
 
           <div>
-            <label style={labelStyle}>Adresse Email</label>
-            <input type="email" name="email" disabled value={formData.email} style={{ ...inputStyle, background: '#E5E5E2', cursor: 'not-allowed', color: '#6E6E6B' }} />
-            <span style={{ fontSize: '0.8rem', color: '#6E6E6B', marginTop: '0.3rem', display: 'block' }}>L'adresse email ne peut pas être modifiée.</span>
+            <label>Adresse Email</label>
+            <input type="email" name="email" disabled value={formData.email} style={{ width: '100%', background: '#E5E5E2', cursor: 'not-allowed', color: '#6E6E6B' }} />
+            <span style={{ fontSize: '11px', color: '#6E6E6B', marginTop: '0.3rem', display: 'block' }}>L'adresse email ne peut pas etre modifiee.</span>
           </div>
 
-          <hr style={{ border: 'none', borderTop: '1px solid #F0F0EE', margin: '1rem 0' }} />
+          <div className="divider" style={{ margin: '0.5rem 0' }} />
 
-          <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: '#1A1A1A' }}>Informations Académiques</h3>
+          <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 500, color: '#1A1A1A' }}>Informations Academiques</h3>
 
           <div className="form-grid">
             <div>
-              <label style={labelStyle}>Statut / Profil</label>
-              <select name="roleLabel" value={formData.roleLabel} onChange={handleChange} style={inputStyle}>
-                <option value="Élève">Élève (Lycée / Collège)</option>
-                <option value="Étudiant">Étudiant (Supérieur)</option>
+              <label>Statut / Profil</label>
+              <select name="roleLabel" value={formData.roleLabel} onChange={handleChange} style={{ width: '100%' }}>
+                <option value="Eleve">Eleve (Lycee / College)</option>
+                <option value="Etudiant">Etudiant (Superieur)</option>
                 <option value="Autre">Autre</option>
               </select>
             </div>
             <div>
-              <label style={labelStyle}>Classe / Niveau *</label>
-              <input type="text" name="niveau" placeholder="ex: Terminale, Licence 1" required value={formData.niveau} onChange={handleChange} style={inputStyle} />
+              <label>Classe / Niveau *</label>
+              <input type="text" name="niveau" placeholder="ex: Terminale, Licence 1" required value={formData.niveau} onChange={handleChange} style={{ width: '100%' }} />
             </div>
           </div>
 
           <div className="form-grid">
             <div>
-              <label style={labelStyle}>Série (Lycée)</label>
-              <input type="text" name="serie" placeholder="ex: D, C, A4, SES" value={formData.serie} onChange={handleChange} style={inputStyle} />
+              <label>Serie (Lycee)</label>
+              <input type="text" name="serie" placeholder="ex: D, C, A4, SES" value={formData.serie} onChange={handleChange} style={{ width: '100%' }} />
             </div>
             <div>
-              <label style={labelStyle}>Filière (Supérieur)</label>
-              <input type="text" name="filiere" placeholder="ex: Droit, Médecine, Informatique" value={formData.filiere} onChange={handleChange} style={inputStyle} />
+              <label>Filiere (Superieur)</label>
+              <input type="text" name="filiere" placeholder="ex: Droit, Medecine, Informatique" value={formData.filiere} onChange={handleChange} style={{ width: '100%' }} />
             </div>
           </div>
 
           <div>
-            <label style={labelStyle}>Examen préparé *</label>
-            <input type="text" name="examen" placeholder="ex: BAC, BTS, Licence" required value={formData.examen} onChange={handleChange} style={inputStyle} />
+            <label>Examen prepare *</label>
+            <input type="text" name="examen" placeholder="ex: BAC, BTS, Licence" required value={formData.examen} onChange={handleChange} style={{ width: '100%' }} />
           </div>
 
-          <button type="submit" disabled={isSaving} style={{ padding: '1rem', background: isSaving ? '#6E6E6B' : '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontSize: '1.1rem', fontWeight: 700, cursor: isSaving ? 'not-allowed' : 'pointer', marginTop: '1rem', transition: 'background 0.2s' }} onMouseEnter={e => !isSaving && (e.currentTarget.style.background = '#333')} onMouseLeave={e => !isSaving && (e.currentTarget.style.background = '#1A1A1A')}>
+          <button type="submit" disabled={isSaving} className="primary" style={{ width: '100%', height: '36px', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {isSaving ? 'Enregistrement...' : 'Enregistrer les modifications'}
           </button>
 

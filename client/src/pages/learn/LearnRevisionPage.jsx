@@ -81,11 +81,8 @@ export default function LearnRevisionPage() {
     }
   };
 
-  const inputStyle = { width: '100%', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', background: '#F9F9F8', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' };
-  const labelStyle = { display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600, color: '#444' };
-
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+    <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
       {/* HEADER */}
       <div>
@@ -101,11 +98,11 @@ export default function LearnRevisionPage() {
         <div className="learn-card">
           <h2 style={{ fontSize: '1.5rem', margin: '0 0 2rem 0', fontWeight: 800 }}>Nouvelle session</h2>
           
-          <form onSubmit={handleStartSession} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <form onSubmit={handleStartSession} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div className="form-grid">
               <div>
-                <label style={labelStyle}>Matière (Programme Officiel) *</label>
-                <select name="matiere" required value={sessionConfig.matiere} onChange={handleChange} style={inputStyle}>
+                <label>Matière (Programme Officiel) *</label>
+                <select name="matiere" required value={sessionConfig.matiere} onChange={handleChange} style={{ width: '100%' }}>
                   <option value="">Sélectionner</option>
                   {matieresList.map(m => (
                     <option key={m.id} value={m.nom}>
@@ -115,15 +112,15 @@ export default function LearnRevisionPage() {
                 </select>
               </div>
               <div>
-                <label style={labelStyle}>Chapitre *</label>
-                <input type="text" name="chapitre" required placeholder="ex: Nombres complexes" value={sessionConfig.chapitre} onChange={handleChange} style={inputStyle} />
+                <label>Chapitre *</label>
+                <input type="text" name="chapitre" required placeholder="ex: Nombres complexes" value={sessionConfig.chapitre} onChange={handleChange} style={{ width: '100%' }} />
               </div>
             </div>
 
             <div className="form-grid">
               <div>
-                <label style={labelStyle}>Type de session</label>
-                <select name="type" value={sessionConfig.type} onChange={handleChange} style={inputStyle}>
+                <label>Type de session</label>
+                <select name="type" value={sessionConfig.type} onChange={handleChange} style={{ width: '100%' }}>
                   <option value="Resume">Résumé de cours</option>
                   <option value="Quiz">Générer un Quiz</option>
                   <option value="Exercice">Résolution d'exercice</option>
@@ -131,14 +128,14 @@ export default function LearnRevisionPage() {
                 </select>
               </div>
               <div>
-                <label style={labelStyle}>Durée souhaitée (minutes)</label>
-                <select name="duree" value={sessionConfig.duree} onChange={handleChange} style={inputStyle}>
+                <label>Durée souhaitée (minutes)</label>
+                <select name="duree" value={sessionConfig.duree} onChange={handleChange} style={{ width: '100%' }}>
                   <option value="15">15 min (Rapide)</option><option value="30">30 min (Standard)</option><option value="60">1h (Approfondi)</option>
                 </select>
               </div>
             </div>
 
-            <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '1rem', background: isLoading ? '#6E6E6B' : '#00D4AA', color: 'white', border: 'none', borderRadius: '0.75rem', fontSize: '1.1rem', fontWeight: 700, cursor: isLoading ? 'not-allowed' : 'pointer', marginTop: '1rem', transition: 'background 0.2s' }} onMouseEnter={e => !isLoading && (e.currentTarget.style.background = '#00B894')} onMouseLeave={e => !isLoading && (e.currentTarget.style.background = '#00D4AA')}>
+            <button type="submit" disabled={isLoading} className="primary" style={{ width: '100%', height: '36px', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {isLoading ? 'Démarrage en cours...' : 'Démarrer la session'}
             </button>
           </form>
@@ -147,27 +144,37 @@ export default function LearnRevisionPage() {
         {/* SESSIONS RÉCENTES & ACTIONS */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
-          <div style={{ background: '#1A1A1A', color: 'white', padding: '2rem', borderRadius: '1.5rem' }}>
-            <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.2rem', fontWeight: 700 }}>Besoin d'aide ?</h3>
-            <p style={{ color: '#94A3B8', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '1.5rem' }}>
+          <div className="learn-card" style={{ background: '#1A1A1A', color: 'white' }}>
+            <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '14px', fontWeight: 500, color: 'white' }}>Besoin d'aide ?</h3>
+            <p style={{ color: '#94A3B8', fontSize: '12px', lineHeight: 1.5, marginBottom: '1rem' }}>
               Vous ne savez pas par quoi commencer ? Demandez à LAURA de créer un programme de révision sur mesure.
             </p>
-            <button onClick={() => navigate('/learn/chat?prompt=programme_revision')} style={{ width: '100%', padding: '0.8rem', background: 'white', color: '#1A1A1A', border: 'none', borderRadius: '0.5rem', fontWeight: 700, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#F5F4EF'} onMouseLeave={e => e.currentTarget.style.background = 'white'}>
+            <button onClick={() => navigate('/learn/chat?prompt=programme_revision')} style={{ width: '100%', height: '32px', background: 'white', color: '#1A1A1A', border: 'none', borderRadius: '6px', fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
               Demander à LAURA
             </button>
           </div>
 
-          <div style={{ background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2' }}>
-            <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: '#444' }}>Reprendre une session</h3>
+          <div className="learn-card" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '1rem 1rem 0.5rem 1rem' }}>
+              <h3 style={{ margin: 0, fontSize: '13px', fontWeight: 500, color: 'var(--color-text-primary)' }}>Reprendre une session</h3>
+            </div>
+            <div className="divider" />
             {recentSessions.length === 0 ? (
-              <div style={{ fontSize: '0.85rem', color: '#6E6E6B', padding: '0.5rem 0' }}>Aucune session récente inachevée.</div>
+              <div style={{ fontSize: '12px', color: '#6E6E6B', padding: '1rem' }}>Aucune session récente inachevée.</div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {recentSessions.map(session => (
-                  <button key={session.id} onClick={() => navigate(`/learn/chat?sessionId=${session.id}&matiere=${encodeURIComponent(session.matiere)}&chapitre=${encodeURIComponent(session.chapitre)}`)} style={{ textAlign: 'left', padding: '1rem', background: '#F5F4EF', border: '1px solid #E5E5E2', borderRadius: '0.75rem', cursor: 'pointer', transition: 'border-color 0.2s' }} onMouseEnter={e => e.currentTarget.style.borderColor = '#1A1A1A'} onMouseLeave={e => e.currentTarget.style.borderColor = '#E5E5E2'}>
-                    <div style={{ fontWeight: 700, color: '#1A1A1A', marginBottom: '0.3rem' }}>{session.type} : {session.chapitre}</div>
-                    <div style={{ fontSize: '0.8rem', color: '#6E6E6B' }}>{session.matiere} · {session.duree} min</div>
-                  </button>
+                  <div 
+                    key={session.id} 
+                    className="minimal-list-item" 
+                    onClick={() => navigate(`/learn/chat?sessionId=${session.id}&matiere=${encodeURIComponent(session.matiere)}&chapitre=${encodeURIComponent(session.chapitre)}`)}
+                  >
+                    <div className="minimal-list-item-content">
+                      <div className="minimal-list-item-title">{session.type} : {session.chapitre}</div>
+                      <div className="minimal-list-item-subtitle">{session.matiere} · {session.duree} min</div>
+                    </div>
+                    <span className="chevron-action">→</span>
+                  </div>
                 ))}
               </div>
             )}
