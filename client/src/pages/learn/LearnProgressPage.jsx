@@ -4,6 +4,82 @@ import { db } from '../../firebase';
 import { collection, getDocs, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import LearningGoalModal from '../../components/dashboard/LearningGoalModal';
 
+const filterMatieres = (allMatieres, userProfile) => {
+  const examen = (userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || '').toLowerCase();
+  const niveau = (userProfile?.niveau || userProfile?.classe || userProfile?.niveauEtude || '').toLowerCase();
+  const serie = (userProfile?.serie || '').toLowerCase();
+  const filiere = (userProfile?.filiere || userProfile?.discipline || '').toLowerCase();
+
+  // If user is BTS or Superior Level
+  const isBtsOrSup = examen.includes('bts') || niveau.includes('bts') || niveau.includes('supérieur') || niveau.includes('étudiant') || niveau.includes('licence') || niveau.includes('université');
+
+  let filtered = [];
+
+  if (allMatieres && allMatieres.length > 0) {
+    filtered = allMatieres.filter(m => {
+      const mNiveau = (m.niveau || '').toLowerCase();
+      const mSerie = (m.serie || '').toLowerCase();
+      const mFiliere = (m.filiere || '').toLowerCase();
+
+      if (isBtsOrSup) {
+        return mNiveau.includes('bts') || mNiveau.includes('supérieur') || mNiveau.includes('étudiant') || 
+               (filiere && mFiliere.includes(filiere)) || (serie && mSerie.includes(serie));
+      } else if (examen.includes('bepc') || niveau.includes('collège') || niveau.includes('3eme') || niveau.includes('4eme') || niveau.includes('5eme') || niveau.includes('6eme')) {
+        return mNiveau.includes('collège') || mNiveau.includes('bepc');
+      } else {
+        return mNiveau.includes('lycée') || mNiveau.includes('bac') || mSerie.includes('toutes') || 
+               (serie && mSerie.includes(serie));
+      }
+    });
+  }
+
+  if (filtered.length > 0) {
+    return filtered;
+  }
+
+  // Fallbacks
+  if (isBtsOrSup) {
+    if (filiere.includes('mcv') || serie.includes('mcv') || examen.includes('mcv') || filiere.includes('commer') || filiere.includes('vent')) {
+      return [
+        { id: 'bts_mcv_1', nom: 'Relation Client et Vente (RCNV)', niveau: 'Supérieur', serie: 'MCV', filiere: 'Commerce' },
+        { id: 'bts_mcv_2', nom: 'Relation Client à Distance (RCDD)', niveau: 'Supérieur', serie: 'MCV', filiere: 'Commerce' },
+        { id: 'bts_mcv_3', nom: 'Animation et Dynamisation Commerciale (RCAR)', niveau: 'Supérieur', serie: 'MCV', filiere: 'Commerce' },
+        { id: 'bts_mcv_4', nom: 'Culture Générale et Expression', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
+        { id: 'bts_mcv_5', nom: 'Économie - Droit', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
+        { id: 'bts_mcv_6', nom: 'Management des Entreprises', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
+        { id: 'bts_mcv_7', nom: 'Anglais Commercial', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Langues' }
+      ];
+    }
+    return [
+      { id: 'bts_gen_1', nom: 'Culture Générale et Expression', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
+      { id: 'bts_gen_2', nom: 'Économie - Droit', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
+      { id: 'bts_gen_3', nom: 'Management des Entreprises', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
+      { id: 'bts_gen_4', nom: 'Anglais Commercial', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Langues' },
+      { id: 'bts_gen_5', nom: 'Relation Client et Vente', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Commerce' }
+    ];
+  } else if (examen.includes('bepc') || niveau.includes('collège')) {
+    return [
+      { id: 'col_1', nom: 'Mathématiques', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
+      { id: 'col_2', nom: 'Français', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
+      { id: 'col_3', nom: 'Sciences de la Vie et de la Terre', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
+      { id: 'col_4', nom: 'Physique-Chimie', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
+      { id: 'col_5', nom: 'Histoire-Géographie', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
+      { id: 'col_6', nom: 'Anglais', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' }
+    ];
+  } else {
+    return [
+      { id: 'lyc_1', nom: 'Mathématiques', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' },
+      { id: 'lyc_2', nom: 'Physique-Chimie', niveau: 'Lycée', serie: 'C, D, TI', filiere: 'Général' },
+      { id: 'lyc_3', nom: 'SVT', niveau: 'Lycée', serie: 'C, D', filiere: 'Général' },
+      { id: 'lyc_4', nom: 'Philosophie', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' },
+      { id: 'lyc_5', nom: 'Français', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' },
+      { id: 'lyc_6', nom: 'Histoire-Géo', niveau: 'Lycée', serie: 'A, C, D', filiere: 'Général' },
+      { id: 'lyc_7', nom: 'Économie', niveau: 'Lycée', serie: 'SES, B', filiere: 'Général' },
+      { id: 'lyc_8', nom: 'Informatique', niveau: 'Lycée', serie: 'TI', filiere: 'Général' }
+    ];
+  }
+};
+
 export default function LearnProgressPage() {
   const { userProfile } = useAuth();
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
@@ -58,18 +134,13 @@ export default function LearnProgressPage() {
     fetchInitialData();
   }, [userProfile?.uid]);
 
-  const subjectProgress = adminMatieres.length > 0
-    ? adminMatieres.map((m, i) => ({
-        matiere: m.nom,
-        val: userProfile?.matieresProgress?.[m.nom] || 0,
-        color: i % 4 === 0 ? '#7C6FFF' : i % 4 === 1 ? '#00D4AA' : i % 4 === 2 ? '#F59E0B' : '#3B82F6'
-      }))
-    : [
-        { matiere: 'Mathématiques', val: userProfile?.matieresProgress?.Mathématiques || 0, color: '#7C6FFF' },
-        { matiere: 'SVT', val: userProfile?.matieresProgress?.SVT || 0, color: '#00D4AA' },
-        { matiere: 'Physique-Chimie', val: userProfile?.matieresProgress?.Physique || 0, color: '#F59E0B' },
-        { matiere: 'Philosophie / Français', val: userProfile?.matieresProgress?.Philosophie || 0, color: '#3B82F6' }
-      ];
+  const filteredMatieres = filterMatieres(adminMatieres, userProfile);
+
+  const subjectProgress = filteredMatieres.map((m, i) => ({
+    matiere: m.nom,
+    val: userProfile?.matieresProgress?.[m.nom] || 0,
+    color: i % 4 === 0 ? '#7C6FFF' : i % 4 === 1 ? '#00D4AA' : i % 4 === 2 ? '#F59E0B' : '#3B82F6'
+  }));
 
   const globalProgress = Math.round(subjectProgress.reduce((acc, curr) => acc + curr.val, 0) / subjectProgress.length) || 0;
 
