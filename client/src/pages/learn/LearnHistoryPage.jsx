@@ -62,7 +62,7 @@ export default function LearnHistoryPage() {
         </p>
       </div>
 
-      <div style={cardStyle}>
+      <div className="learn-card">
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#6E6E6B', fontSize: '1.1rem' }}>Chargement de l'historique...</div>
         ) : sessions.length === 0 ? (
@@ -70,7 +70,7 @@ export default function LearnHistoryPage() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {sessions.map(item => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', background: '#FAFAFA', borderRadius: '1.2rem', border: '1px solid #F0F0EE', transition: 'box-shadow 0.2s' }} onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.03)'} onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}>
+              <div key={item.id} className="history-item-row" style={{ padding: '1.5rem', background: '#FAFAFA', borderRadius: '1.2rem', border: '1px solid #F0F0EE', transition: 'box-shadow 0.2s' }} onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.03)'} onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}>
                 <div style={{ flex: 1, marginRight: '2rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.5rem' }}>
                     <span style={{ background: item.typeDoc === 'session' ? '#E0F2FE' : '#FEF3C7', color: item.typeDoc === 'session' ? '#0369A1' : '#D97706', padding: '0.2rem 0.6rem', borderRadius: '1rem', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase' }}>

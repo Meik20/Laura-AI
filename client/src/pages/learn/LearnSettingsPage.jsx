@@ -72,7 +72,7 @@ export default function LearnSettingsPage() {
         </p>
       </div>
 
-      <div style={cardStyle}>
+      <div className="learn-card">
         {successMsg && (
           <div style={{ padding: '1rem', background: '#D1FAE5', color: '#065F46', borderRadius: '0.75rem', fontWeight: 600, marginBottom: '2rem', border: '1px solid #A7F3D0' }}>
             {successMsg}

@@ -152,7 +152,7 @@ export default function LearnResourcesPage() {
           Aucune ressource ne correspond à vos critères de recherche.
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.5rem' }}>
           {filteredResources.map(res => {
             const isBookmarked = bookmarks.includes(res.id);
             const icon = res.type === 'Quiz' ? '🎲' : res.type === 'Annale' ? '📝' : res.type === 'Épreuve' ? '📜' : '📚';

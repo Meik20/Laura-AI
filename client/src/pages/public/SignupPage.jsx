@@ -80,7 +80,7 @@ export default function SignupPage() {
         <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           
           {/* IDENTITÉ COMMUNE */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="form-grid">
             <div><label style={labelStyle}>Nom</label><input type="text" name="nom" value={formData.nom} onChange={handleChange} style={inputStyle} /></div>
             <div><label style={labelStyle}>Prénom</label><input type="text" name="prenom" value={formData.prenom} onChange={handleChange} style={inputStyle} /></div>
           </div>
@@ -104,7 +104,7 @@ export default function SignupPage() {
           {/* CHAMPS SPÉCIFIQUES ÉLÈVE (Point 3.4 & 3.6) */}
           {profileType === 'eleve' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', padding: '1rem', borderLeft: '3px solid #7C6FFF' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="form-grid">
                 <div>
                   <label style={labelStyle}>Classe / niveau</label>
                   <select name="classe" value={formData.classe} onChange={handleChange} style={inputStyle}>
@@ -126,7 +126,7 @@ export default function SignupPage() {
                   <option value="">Sélectionner</option><option value="BEPC">BEPC</option><option value="Probatoire">Probatoire</option><option value="BAC">BAC</option><option value="GCE O-Level">GCE O-Level</option><option value="GCE A-Level">GCE A-Level</option>
                 </select>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="form-grid">
                 <div><label style={labelStyle}>Langue préférée</label><select name="langueEleve" value={formData.langueEleve} onChange={handleChange} style={inputStyle}><option>Français</option><option>Anglais</option></select></div>
                 <div><label style={labelStyle}>Établissement</label><input type="text" name="etablissementEleve" value={formData.etablissementEleve} onChange={handleChange} style={inputStyle} /></div>
               </div>
@@ -136,7 +136,7 @@ export default function SignupPage() {
           {/* CHAMPS SPÉCIFIQUES ÉTUDIANT (Point 3.5) */}
           {profileType === 'etudiant' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', padding: '1rem', borderLeft: '3px solid #00D4AA' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="form-grid">
                 <div>
                   <label style={labelStyle}>Niveau d'étude *</label>
                   <select name="niveauEtude" value={formData.niveauEtude} onChange={handleChange} style={inputStyle}>
@@ -146,7 +146,7 @@ export default function SignupPage() {
                 <div><label style={labelStyle}>Filière / domaine *</label><input type="text" name="filiere" value={formData.filiere} onChange={handleChange} style={inputStyle} /></div>
               </div>
               <div><label style={labelStyle}>Établissement</label><input type="text" name="etablissementEtudiant" value={formData.etablissementEtudiant} onChange={handleChange} style={inputStyle} /></div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="form-grid">
                 <div><label style={labelStyle}>Examen préparé (Optionnel)</label><input type="text" name="examenEtudiant" value={formData.examenEtudiant} onChange={handleChange} placeholder="ex: Partiels S2" style={inputStyle} /></div>
                 <div><label style={labelStyle}>Langue préférée</label><select name="langueEtudiant" value={formData.langueEtudiant} onChange={handleChange} style={inputStyle}><option>Français</option><option>Anglais</option></select></div>
               </div>

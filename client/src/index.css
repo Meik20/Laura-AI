@@ -2898,4 +2898,176 @@ hr {
   }
 }
 
+/* ============================================================
+   LAURA AI — DEEP MOBILE UI/UX & RESPONSIVENESS OVERRIDES
+   ============================================================ */
+
+/* 1. Global Responsive Typography & Padding Reductions for Student main workspace */
+@media (max-width: 768px) {
+  .responsive-layout-container main {
+    padding: 1.2rem 0.8rem !important; /* Extremely clean & compact padding */
+  }
+
+  .responsive-layout-container main h1,
+  .responsive-layout-container h1 {
+    font-size: 1.8rem !important; /* Scaled down from 2.5rem to fit mobile viewports */
+    line-height: 1.25 !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  .responsive-layout-container main h2,
+  .responsive-layout-container h2 {
+    font-size: 1.4rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0.8rem !important;
+  }
+
+  .responsive-layout-container main h3,
+  .responsive-layout-container h3 {
+    font-size: 1.1rem !important;
+    margin-bottom: 0.6rem !important;
+  }
+
+  .responsive-layout-container main p,
+  .responsive-layout-container p {
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Automatically scale down inputs, selects, and textareas */
+  .responsive-layout-container main input,
+  .responsive-layout-container main select,
+  .responsive-layout-container main textarea {
+    padding: 0.8rem !important; /* More compact inputs */
+    font-size: 0.95rem !important;
+  }
+}
+
+/* 2. Responsive Card Layouts (Saves space, reduces massive desktop borders/paddings) */
+.learn-card {
+  background: white !important;
+  padding: 2.5rem !important;
+  border-radius: 1.5rem !important;
+  border: 1px solid #E5E5E2 !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.02) !important;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .learn-card {
+    padding: 1.5rem 1.2rem !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.02) !important;
+  }
+}
+
+/* 3. Form Grid System (2 columns on desktop, stacks on mobile to prevent squished fields) */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.8rem !important;
+  }
+}
+
+/* 4. Tools Grid (4 columns on desktop, 2x2 grid on mobile to keep icons perfectly visible) */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .tools-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .tools-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.8rem !important;
+  }
+}
+
+/* 5. Symmetric Two-Column Grid (Stacks on tablet & mobile) */
+.two-column-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .two-column-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+
+/* 6. Asymmetrical Grid (For 1fr 300px sidebar-style main content layouts, stacks on mobile) */
+.asymmetrical-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 2.5rem;
+  align-items: start;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .asymmetrical-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+
+/* 7. Progress Tracker Header responsive layouts */
+.progress-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+@media (max-width: 768px) {
+  .progress-header {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 1.5rem !important;
+  }
+}
+
+/* 8. History Item Row responsive layout */
+.history-item-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+@media (max-width: 600px) {
+  .history-item-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+  .history-item-row button {
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
+
+
+
 

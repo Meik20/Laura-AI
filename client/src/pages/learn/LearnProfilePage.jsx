@@ -67,7 +67,7 @@ export default function LearnProfilePage() {
         </p>
       </div>
 
-      <div style={cardStyle}>
+      <div className="learn-card">
         {successMsg && (
           <div style={{ padding: '1rem', background: '#D1FAE5', color: '#065F46', borderRadius: '0.75rem', fontWeight: 600, marginBottom: '2rem', border: '1px solid #A7F3D0' }}>
             {successMsg}
@@ -76,7 +76,7 @@ export default function LearnProfilePage() {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div className="form-grid">
             <div>
               <label style={labelStyle}>Prénom *</label>
               <input type="text" name="prenom" required value={formData.prenom} onChange={handleChange} style={inputStyle} />
@@ -97,7 +97,7 @@ export default function LearnProfilePage() {
 
           <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: '#1A1A1A' }}>Informations Académiques</h3>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div className="form-grid">
             <div>
               <label style={labelStyle}>Statut / Profil</label>
               <select name="roleLabel" value={formData.roleLabel} onChange={handleChange} style={inputStyle}>
@@ -112,7 +112,7 @@ export default function LearnProfilePage() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div className="form-grid">
             <div>
               <label style={labelStyle}>Série (Lycée)</label>
               <input type="text" name="serie" placeholder="ex: D, C, A4, SES" value={formData.serie} onChange={handleChange} style={inputStyle} />

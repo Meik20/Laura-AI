@@ -95,14 +95,14 @@ export default function LearnRevisionPage() {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '2.5rem', alignItems: 'start' }}>
+      <div className="asymmetrical-grid">
         
         {/* CONFIGURATION DE LA SESSION */}
-        <div style={{ background: 'white', padding: '2.5rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+        <div className="learn-card">
           <h2 style={{ fontSize: '1.5rem', margin: '0 0 2rem 0', fontWeight: 800 }}>Nouvelle session</h2>
           
           <form onSubmit={handleStartSession} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div className="form-grid">
               <div>
                 <label style={labelStyle}>Matière (Programme Officiel) *</label>
                 <select name="matiere" required value={sessionConfig.matiere} onChange={handleChange} style={inputStyle}>
@@ -120,7 +120,7 @@ export default function LearnRevisionPage() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div className="form-grid">
               <div>
                 <label style={labelStyle}>Type de session</label>
                 <select name="type" value={sessionConfig.type} onChange={handleChange} style={inputStyle}>

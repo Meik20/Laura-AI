@@ -97,9 +97,9 @@ export default function LearnProgressPage() {
     <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
       {/* HEADER & GLOBAL PROGRESS */}
-      <div style={{ ...cardStyle, background: '#1A1A1A', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="learn-card progress-header" style={{ background: '#1A1A1A', color: 'white' }}>
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Votre Progression</h1>
+          <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: 'white' }}>Votre Progression</h1>
           <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>Examen préparé : {userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || 'Non défini'} {userProfile?.serie ? `(${userProfile.serie})` : ''}</p>
         </div>
         <div style={{ textAlign: 'center' }}>
@@ -108,10 +108,10 @@ export default function LearnProgressPage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'start' }}>
+      <div className="two-column-grid">
         
         {/* PAR MATIÈRE */}
-        <div style={cardStyle}>
+        <div className="learn-card">
           <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.3rem', fontWeight: 800 }}>Progression par matière (Programme Officiel)</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {subjectProgress.map((m, i) => (
@@ -128,7 +128,7 @@ export default function LearnProgressPage() {
         </div>
 
         {/* OBJECTIFS EN COURS */}
-        <div style={cardStyle}>
+        <div className="learn-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>Objectifs en cours</h2>
             <button onClick={() => setIsGoalModalOpen(true)} style={{ background: '#F5F4EF', border: 'none', padding: '0.4rem 1rem', borderRadius: '2rem', cursor: 'pointer', fontWeight: 600, transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#E5E5E2'} onMouseLeave={e => e.currentTarget.style.background = '#F5F4EF'}>+ Nouveau</button>
@@ -156,7 +156,7 @@ export default function LearnProgressPage() {
       </div>
 
       {/* HISTORIQUE D'ACTIVITÉS */}
-      <div style={cardStyle}>
+      <div className="learn-card">
         <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.3rem', fontWeight: 800 }}>Activités récentes</h2>
         {isLoading ? (
           <div style={{ color: '#6E6E6B', padding: '1rem 0' }}>Chargement des activités...</div>

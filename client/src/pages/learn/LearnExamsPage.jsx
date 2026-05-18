@@ -57,7 +57,7 @@ export default function LearnExamsPage() {
       </div>
 
       {/* OUTILS PRINCIPAUX */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
+      <div className="tools-grid">
         <button onClick={() => navigate('/learn/resources?type=Annale')} style={actionStyle} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
           <span style={{ fontSize: '2.5rem' }}>📚</span>
           <span style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1A1A1A' }}>Annales</span>
@@ -76,10 +76,10 @@ export default function LearnExamsPage() {
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2.5rem', alignItems: 'start' }}>
+      <div className="two-column-grid">
         
         {/* ANNALES RECOMMANDÉES */}
-        <div style={{ background: 'white', padding: '2rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2' }}>
+        <div className="learn-card">
           <h2 style={{ fontSize: '1.5rem', margin: '0 0 1.5rem 0', fontWeight: 800 }}>Annales recommandées</h2>
           {isLoading ? (
             <div style={{ color: '#6E6E6B', padding: '1rem 0' }}>Chargement des annales...</div>
@@ -103,7 +103,7 @@ export default function LearnExamsPage() {
         </div>
 
         {/* PRÉPARATION GUIDÉE */}
-        <div style={{ background: 'white', padding: '2rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2' }}>
+        <div className="learn-card">
           <h2 style={{ fontSize: '1.5rem', margin: '0 0 1.5rem 0', fontWeight: 800 }}>Préparation Guidée</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <button onClick={() => navigate('/learn/chat?prompt=plan_preparation')} style={{ width: '100%', padding: '1.2rem', textAlign: 'left', background: '#E0F2FE', color: '#0369A1', border: 'none', borderRadius: '0.75rem', fontWeight: 700, fontSize: '1.05rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', transition: 'opacity 0.2s' }} onMouseEnter={e => e.currentTarget.style.opacity = 0.9} onMouseLeave={e => e.currentTarget.style.opacity = 1}>
