@@ -11,6 +11,22 @@
   --error: #d33b27;
   --warning: #f57c00;
   
+  /* Utility and layout compatibility colors */
+  --color-neutral-900: #1a1a1a;
+  --color-neutral-800: #202124;
+  --color-neutral-700: #3c4043;
+  --color-neutral-500: #70757a;
+  --color-neutral-400: #9aa0a6;
+  --color-white: #ffffff;
+  --color-bg-page: #f8f9fa;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #5f6368;
+  --color-bg-card: #ffffff;
+  --color-primary: #1f73e8;
+  --color-primary-dark: #1565cd;
+  --color-primary-light: #e8f0fe;
+  --color-border-default: #dadce0;
+  
   /* Text */
   --text-primary: #1a1a1a;
   --text-secondary: #5f6368;
