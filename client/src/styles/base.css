@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap');
+
+/* ========================================
+   LAURA AI - Resets & Base Styles
+   ======================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  color: var(--laura-text-1);
+  background:
+    radial-gradient(circle at top left, rgba(139, 92, 246, 0.10), transparent 24%),
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.10), transparent 28%),
+    linear-gradient(180deg, #F8FAFC 0%, #EEF2FF 100%);
+  background-attachment: fixed;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Typography Utilities */
+.laura-hero-text {
+  font-family: var(--font-display);
+  font-size: var(--fs-hero);
+  line-height: 1.05;
+  font-weight: 700;
+}
+
+.laura-h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+.laura-h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+.laura-h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.laura-body-lg { font-size: var(--fs-lg); }
+.laura-body { font-size: var(--fs-md); }
+.laura-small { font-size: var(--fs-sm); color: var(--laura-text-2); }
+.laura-xs { font-size: var(--fs-xs); color: var(--laura-text-3); }
+
+/* Focus outlines */
+:focus-visible {
+  outline: 2px solid rgba(79, 70, 229, 0.65);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

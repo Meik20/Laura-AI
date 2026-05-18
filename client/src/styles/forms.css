@@ -1,0 +1,55 @@
+/* ========================================
+   LAURA AI - Forms & Inputs
+   ======================================== */
+
+.laura-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.laura-label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--laura-text-2);
+}
+
+.laura-input,
+.laura-textarea,
+.laura-select {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--laura-border-soft);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--laura-text-1);
+  outline: none;
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard),
+    background var(--dur-fast) var(--ease-standard);
+}
+
+.laura-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.laura-input:focus,
+.laura-textarea:focus,
+.laura-select:focus {
+  border-color: rgba(79, 70, 229, 0.45);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.10);
+  background: white;
+}
+
+.laura-input::placeholder,
+.laura-textarea::placeholder {
+  color: var(--laura-text-3);
+}
+
+.laura-help {
+  font-size: var(--fs-sm);
+  color: var(--laura-text-3);
+}

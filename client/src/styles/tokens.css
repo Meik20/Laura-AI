@@ -1,0 +1,96 @@
+/* ========================================
+   LAURA AI - Design System Tokens
+   ======================================== */
+
+:root {
+  /* Colors */
+  --laura-primary: #2563EB;
+  --laura-primary-hover: #1D4ED8;
+  --laura-secondary: #4F46E5;
+  --laura-accent: #8B5CF6;
+
+  --laura-success: #16A34A;
+  --laura-warning: #D97706;
+  --laura-danger: #DC2626;
+
+  --laura-bg: #F8FAFC;
+  --laura-bg-soft: #F1F5F9;
+  --laura-bg-elevated: #EEF2FF;
+
+  --laura-surface: rgba(255, 255, 255, 0.82);
+  --laura-surface-solid: #FFFFFF;
+  --laura-surface-soft: #F8FAFC;
+  --laura-surface-tint: #EEF2FF;
+
+  --laura-text-1: #0F172A;
+  --laura-text-2: #475569;
+  --laura-text-3: #94A3B8;
+  --laura-text-inverse: #F8FAFC;
+
+  --laura-border-soft: rgba(148, 163, 184, 0.16);
+  --laura-border-strong: rgba(71, 85, 105, 0.18);
+
+  --laura-info-bg: rgba(37, 99, 235, 0.08);
+  --laura-success-bg: rgba(22, 163, 74, 0.10);
+  --laura-warning-bg: rgba(217, 119, 6, 0.12);
+  --laura-danger-bg: rgba(220, 38, 38, 0.10);
+
+  --laura-gradient: linear-gradient(135deg, #2563EB 0%, #4F46E5 52%, #8B5CF6 100%);
+  --laura-ai-bg: linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(139, 92, 246, 0.10));
+
+  /* Typography */
+  --font-ui: "Inter", sans-serif;
+  --font-display: "Sora", sans-serif;
+
+  --fs-hero: 40px;
+  --fs-h1: 30px;
+  --fs-h2: 24px;
+  --fs-h3: 20px;
+  --fs-lg: 16px;
+  --fs-md: 14px;
+  --fs-sm: 12px;
+  --fs-xs: 11px;
+
+  /* Radius */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-2xl: 36px;
+  --r-full: 9999px;
+
+  /* Shadows */
+  --shadow-xs: 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 12px 30px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 20px 60px rgba(37, 99, 235, 0.12);
+
+  /* Spacing */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  /* Layout */
+  --rail-w: 84px;
+  --rail-w-compact: 72px;
+  --topbar-h: 72px;
+  --content-max: 1360px;
+  --aside-w: 320px;
+
+  /* Motion */
+  --dur-fast: 140ms;
+  --dur-med: 200ms;
+  --dur-slow: 280ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Safe area */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}

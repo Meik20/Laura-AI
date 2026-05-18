@@ -1,0 +1,203 @@
+/* ==========================================================================
+   LAURA AI - Legacy Layout & Component Adaptations (Transitional Overrides)
+   Matches old styles and transparently unifies them under the Inter/Sora theme.
+   ========================================================================== */
+
+/* Force Light Page backgrounds for all layouts */
+.admin-layout, .tutor-layout, .learn-layout {
+  background: var(--laura-bg) !important;
+  color: var(--laura-text-1) !important;
+}
+
+.admin-layout main, .tutor-layout main, .learn-layout main {
+  background: var(--laura-bg) !important;
+}
+
+/* Force light sidebars & mobile headers */
+.responsive-sidebar {
+  background: var(--laura-surface-solid) !important;
+  border-right: 1px solid var(--laura-border-soft) !important;
+}
+
+.mobile-header-bar {
+  background: var(--laura-surface-solid) !important;
+  border-bottom: 1px solid var(--laura-border-soft) !important;
+}
+
+.mobile-header-bar * {
+  color: var(--laura-text-1) !important;
+}
+
+/* Clear brightness/invert filters on brand logos */
+.mobile-header-bar img, .responsive-sidebar img {
+  filter: none !important;
+}
+
+/* Unify Sidebar Navigation Links to light Material You state */
+.responsive-sidebar nav a {
+  color: var(--laura-text-2) !important;
+  background: transparent !important;
+  border-left: 3px solid transparent !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Hover & Active states for Admin sidebar links */
+.admin-layout .responsive-sidebar nav a:hover,
+.admin-layout .responsive-sidebar nav a[class*="active"],
+.admin-layout .responsive-sidebar nav a[style*="background"] {
+  color: var(--laura-primary) !important;
+  background: var(--laura-surface-tint) !important;
+  border-left: 3px solid var(--laura-primary) !important;
+  font-weight: 700 !important;
+}
+
+/* Hover & Active states for Tutor sidebar links (uses elegant green theme) */
+.tutor-layout .responsive-sidebar nav a:hover,
+.tutor-layout .responsive-sidebar nav a[class*="active"],
+.tutor-layout .responsive-sidebar nav a[style*="background"] {
+  color: var(--laura-success) !important;
+  background: var(--laura-success-bg) !important;
+  border-left: 3px solid var(--laura-success) !important;
+  font-weight: 700 !important;
+}
+
+/* Hover & Active states for Student sidebar links (uses primary blue theme) */
+.learn-layout .responsive-sidebar nav a:hover,
+.learn-layout .responsive-sidebar nav a[class*="active"],
+.learn-layout .responsive-sidebar nav a[style*="background"] {
+  color: var(--laura-primary) !important;
+  background: var(--laura-surface-tint) !important;
+  border-left: 3px solid var(--laura-primary) !important;
+  font-weight: 700 !important;
+}
+
+/* Force light sidebar footer status badge & buttons */
+.responsive-sidebar div[style*="background: #E0F2FE"],
+.responsive-sidebar div[style*="background:#E0F2FE"] {
+  background: var(--laura-surface-tint) !important;
+  color: var(--laura-primary-hover) !important;
+  border-color: var(--laura-surface-tint) !important;
+}
+
+.responsive-sidebar button {
+  background: transparent !important;
+  color: var(--laura-text-1) !important;
+  border: 1px solid var(--laura-border-soft) !important;
+  transition: background 0.2s ease !important;
+}
+
+.responsive-sidebar button:hover {
+  background: var(--laura-bg-soft) !important;
+}
+
+/* ==========================================================
+   CARDS, CHARTS, AND SUBPAGE ELEMENT OVERRIDES
+   Instantly transforms all dark panels into clean light cards.
+   ========================================================== */
+
+/* Target any div acting as a card with dark background styles */
+div[style*="background: rgb(15, 21, 32)"],
+div[style*="background:#0F1520"],
+div[style*="background: #0F1520"],
+div[style*="background: rgb(8, 12, 20)"],
+div[style*="background:#080C14"],
+div[style*="background: #080C14"] {
+  background: var(--laura-surface-solid) !important;
+  background-color: var(--laura-surface-solid) !important;
+  border: 1px solid var(--laura-border-soft) !important;
+  box-shadow: var(--shadow-sm) !important;
+  color: var(--laura-text-1) !important;
+  border-radius: var(--r-md) !important;
+}
+
+/* Target card titles and value counters to ensure high contrast */
+div[style*="background: rgb(15, 21, 32)"] h1,
+div[style*="background: rgb(15, 21, 32)"] h2,
+div[style*="background: rgb(15, 21, 32)"] h3,
+div[style*="background: rgb(15, 21, 32)"] span,
+div[style*="background:#0F1520"] h1,
+div[style*="background:#0F1520"] h2,
+div[style*="background:#0F1520"] h3,
+div[style*="background:#0F1520"] span,
+div[style*="background: #0F1520"] h1,
+div[style*="background: #0F1520"] h2,
+div[style*="background: #0F1520"] h3,
+div[style*="background: #0F1520"] span {
+  color: var(--laura-text-1) !important;
+}
+
+/* Subtitle and helper texts in cards */
+div[style*="background: rgb(15, 21, 32)"] span[style*="color: #94A3B8"],
+div[style*="background:#0F1520"] span[style*="color: #94A3B8"],
+div[style*="background: #0F1520"] span[style*="color: #94A3B8"],
+p[style*="color: #94A3B8"] {
+  color: var(--laura-text-2) !important;
+}
+
+/* Real-time Activity Charts override to match the bright theme */
+div[style*="background: rgba(255, 255, 255, 0.02)"],
+div[style*="background:rgba(255,255,255,0.02)"] {
+  background: var(--laura-bg-soft) !important;
+  border: 1px solid var(--laura-border-soft) !important;
+}
+
+div[style*="background: rgba(255, 255, 255, 0.05)"],
+div[style*="background:rgba(255,255,255,0.05)"] {
+  background: var(--laura-border-soft) !important;
+}
+
+/* Alert boxes in the Action Center */
+div[style*="background: rgba(255, 255, 255, 0.03)"],
+div[style*="background:rgba(255,255,255,0.03)"] {
+  background: var(--laura-bg-soft) !important;
+  border-color: var(--laura-border-soft) !important;
+}
+
+div[style*="background: rgba(255, 255, 255, 0.03)"] span,
+div[style*="background:rgba(255,255,255,0.03)"] span {
+  color: var(--laura-text-1) !important;
+}
+
+div[style*="background: rgba(255, 255, 255, 0.03)"] a,
+div[style*="background:rgba(255,255,255,0.03)"] a {
+  color: var(--laura-primary) !important;
+}
+
+/* ==========================================================
+   HOMEPAGE FEATURES SECTION & DARK BAND OVERRIDES
+   Converts dark homepage bands into elegant light sections.
+   ========================================================== */
+
+/* Target the dark Features Section by its background color (#111827 or var(--color-neutral-900)) */
+section[style*="background: var(--color-neutral-900)"],
+section[style*="background:var(--color-neutral-900)"] {
+  background: var(--laura-bg) !important;
+  color: var(--laura-text-1) !important;
+  border-bottom: 1px solid var(--laura-border-soft) !important;
+}
+
+section[style*="background: var(--color-neutral-900)"] h2,
+section[style*="background: var(--color-neutral-900)"] h3 {
+  color: var(--laura-text-1) !important;
+}
+
+section[style*="background: var(--color-neutral-900)"] p {
+  color: var(--laura-text-2) !important;
+}
+
+/* Target the dark cards inside the Features Section */
+.dark-card,
+div[style*="background: var(--color-neutral-800)"] {
+  background: var(--laura-surface-solid) !important;
+  border: 1px solid var(--laura-border-soft) !important;
+  box-shadow: var(--shadow-sm) !important;
+  color: var(--laura-text-1) !important;
+}
+
+.dark-card h3 {
+  color: var(--laura-primary) !important;
+}
+
+.dark-card p {
+  color: var(--laura-text-2) !important;
+}

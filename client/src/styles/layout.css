@@ -1,0 +1,86 @@
+/* ========================================
+   LAURA AI - Layout Shell & Grids
+   ======================================== */
+
+.laura-app {
+  display: grid;
+  grid-template-columns: var(--rail-w) 1fr;
+  min-height: 100dvh;
+}
+
+.laura-rail {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  padding: var(--sp-6) var(--sp-4);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid var(--laura-border-soft);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 40;
+}
+
+.laura-shell {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.laura-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--sp-6);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--laura-border-soft);
+}
+
+.laura-main {
+  padding: var(--sp-8) var(--sp-6);
+  flex: 1;
+  overflow-y: auto;
+}
+
+.laura-page {
+  width: min(100%, var(--content-max));
+  margin: 0 auto;
+}
+
+.laura-page-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--aside-w);
+  gap: var(--sp-6);
+  align-items: start;
+}
+
+.laura-page-main,
+.laura-page-aside {
+  min-width: 0;
+}
+
+/* Backdrops */
+.laura-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 45;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-med) var(--ease-standard);
+}
+
+.laura-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
