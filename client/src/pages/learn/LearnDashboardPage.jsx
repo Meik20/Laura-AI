@@ -11,7 +11,6 @@ const filterMatieres = (allMatieres, userProfile) => {
   const serie = (userProfile?.serie || '').toLowerCase();
   const filiere = (userProfile?.filiere || userProfile?.discipline || '').toLowerCase();
 
-  // If user is BTS or Superior Level
   const isBtsOrSup = examen.includes('bts') || niveau.includes('bts') || niveau.includes('supérieur') || niveau.includes('étudiant') || niveau.includes('licence') || niveau.includes('université');
 
   let filtered = [];
@@ -38,7 +37,6 @@ const filterMatieres = (allMatieres, userProfile) => {
     return filtered;
   }
 
-  // Fallbacks
   if (isBtsOrSup) {
     if (filiere.includes('mcv') || serie.includes('mcv') || examen.includes('mcv') || filiere.includes('commer') || filiere.includes('vent')) {
       return [
@@ -46,37 +44,22 @@ const filterMatieres = (allMatieres, userProfile) => {
         { id: 'bts_mcv_2', nom: 'Relation Client à Distance (RCDD)', niveau: 'Supérieur', serie: 'MCV', filiere: 'Commerce' },
         { id: 'bts_mcv_3', nom: 'Animation et Dynamisation Commerciale (RCAR)', niveau: 'Supérieur', serie: 'MCV', filiere: 'Commerce' },
         { id: 'bts_mcv_4', nom: 'Culture Générale et Expression', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
-        { id: 'bts_mcv_5', nom: 'Économie - Droit', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
-        { id: 'bts_mcv_6', nom: 'Management des Entreprises', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
-        { id: 'bts_mcv_7', nom: 'Anglais Commercial', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Langues' }
+        { id: 'bts_mcv_5', nom: 'Économie - Droit', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' }
       ];
     }
     return [
       { id: 'bts_gen_1', nom: 'Culture Générale et Expression', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
-      { id: 'bts_gen_2', nom: 'Économie - Droit', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
-      { id: 'bts_gen_3', nom: 'Management des Entreprises', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
-      { id: 'bts_gen_4', nom: 'Anglais Commercial', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Langues' },
-      { id: 'bts_gen_5', nom: 'Relation Client et Vente', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Commerce' }
+      { id: 'bts_gen_2', nom: 'Économie - Droit', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' }
     ];
   } else if (examen.includes('bepc') || niveau.includes('collège')) {
     return [
       { id: 'col_1', nom: 'Mathématiques', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
-      { id: 'col_2', nom: 'Français', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
-      { id: 'col_3', nom: 'Sciences de la Vie et de la Terre', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
-      { id: 'col_4', nom: 'Physique-Chimie', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
-      { id: 'col_5', nom: 'Histoire-Géographie', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
-      { id: 'col_6', nom: 'Anglais', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' }
+      { id: 'col_2', nom: 'Français', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' }
     ];
   } else {
     return [
       { id: 'lyc_1', nom: 'Mathématiques', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' },
-      { id: 'lyc_2', nom: 'Physique-Chimie', niveau: 'Lycée', serie: 'C, D, TI', filiere: 'Général' },
-      { id: 'lyc_3', nom: 'SVT', niveau: 'Lycée', serie: 'C, D', filiere: 'Général' },
-      { id: 'lyc_4', nom: 'Philosophie', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' },
-      { id: 'lyc_5', nom: 'Français', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' },
-      { id: 'lyc_6', nom: 'Histoire-Géo', niveau: 'Lycée', serie: 'A, C, D', filiere: 'Général' },
-      { id: 'lyc_7', nom: 'Économie', niveau: 'Lycée', serie: 'SES, B', filiere: 'Général' },
-      { id: 'lyc_8', nom: 'Informatique', niveau: 'Lycée', serie: 'TI', filiere: 'Général' }
+      { id: 'lyc_2', nom: 'Physique-Chimie', niveau: 'Lycée', serie: 'C, D, TI', filiere: 'Général' }
     ];
   }
 };
@@ -110,7 +93,6 @@ export default function LearnDashboardPage() {
 
   useEffect(() => {
     async function fetchInitialData() {
-      // Fetch Admin Matieres
       try {
         const docRef = doc(db, 'adminSettings', 'global');
         const docSnap = await getDoc(docRef);
@@ -121,7 +103,6 @@ export default function LearnDashboardPage() {
         console.error("Erreur admin matieres:", err);
       }
 
-      // Fetch Recos
       try {
         const resSnap = await getDocs(collection(db, 'resources'));
         const allRes = resSnap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -158,7 +139,7 @@ export default function LearnDashboardPage() {
   let matieres = filteredMatieres.map((m, i) => ({
     mat: m.nom,
     val: userProfile?.matieresProgress?.[m.nom] || 0,
-    color: i % 3 === 0 ? '#7C6FFF' : i % 3 === 1 ? '#F59E0B' : '#00D4AA'
+    color: i % 3 === 0 ? 'var(--laura-primary)' : i % 3 === 1 ? 'var(--laura-accent)' : 'var(--laura-success)'
   }));
 
   const handleSaveGoal = async (newGoal) => {
@@ -177,10 +158,6 @@ export default function LearnDashboardPage() {
     }
   };
 
-  const handleEditProfile = async () => {
-    navigate('/learn/profile');
-  };
-
   const handleQuickAction = (action) => {
     switch(action) {
       case 'Parler à LAURA': navigate('/learn/chat'); break;
@@ -192,56 +169,54 @@ export default function LearnDashboardPage() {
     }
   };
 
-  const cardStyle = { background: 'white', padding: '1.5rem', borderRadius: '1.2rem', border: '1px solid #E5E5E2', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', color: '#1A1A1A' };
-
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', boxSizing: 'border-box' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
       
       {/* HEADER / WELCOME */}
-      <div className="dashboard-header">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Bonjour {user.prenom} 👋</h1>
-          <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
-            Vous êtes en <strong style={{ color: '#1A1A1A' }}>{user.niveau}</strong> · Examen préparé : <strong style={{ color: '#1A1A1A' }}>{user.examen}</strong>
+          <h1 className="laura-h1">Bonjour {user.prenom} 👋</h1>
+          <p className="laura-body" style={{ color: 'var(--laura-text-2)' }}>
+            Vous êtes en <strong>{user.niveau}</strong> · Examen préparé : <strong>{user.examen}</strong>
           </p>
         </div>
-        <button onClick={() => navigate('/learn/chat?new=true')} style={{ padding: '0.8rem 1.5rem', background: '#00D4AA', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'background 0.2s', flexShrink: 0 }} onMouseEnter={e => e.currentTarget.style.background = '#00B894'} onMouseLeave={e => e.currentTarget.style.background = '#00D4AA'}>
+        <button onClick={() => navigate('/learn/chat?new=true')} className="laura-btn laura-btn-primary">
           <span>+</span> Nouvelle conversation
         </button>
       </div>
 
-      <div className="dashboard-grid">
+      <div className="laura-page-grid">
         
         {/* COLONNE GAUCHE (Principale) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', boxSizing: 'border-box' }}>
+        <div className="laura-page-main" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
           
           {/* CARTE OBJECTIF */}
-          <div style={{ ...cardStyle, background: '#1A1A1A', color: 'white', border: 'none' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '1px' }}>Objectif d'apprentissage</h3>
-              <button onClick={() => setIsGoalModalOpen(true)} style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.4rem 1rem', borderRadius: '2rem', fontSize: '0.85rem', cursor: 'pointer' }}>Modifier</button>
+          <div className="laura-card" style={{ background: 'var(--laura-ai-bg)', border: '1px solid var(--laura-primary)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-5)' }}>
+              <h3 className="laura-small" style={{ textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--laura-primary)' }}>Objectif d'apprentissage</h3>
+              <button onClick={() => setIsGoalModalOpen(true)} className="laura-btn" style={{ background: 'white', color: 'var(--laura-primary)', padding: '4px 12px', minHeight: '32px', fontSize: '13px' }}>Modifier</button>
             </div>
             
-            <h2 style={{ fontSize: '1.5rem', margin: '0 0 0.5rem 0' }}>{currentGoal.title}</h2>
-            <p style={{ margin: '0 0 2rem 0', color: '#94A3B8' }}>Période : {currentGoal.period}</p>
+            <h2 className="laura-h2">{currentGoal.title}</h2>
+            <p className="laura-body" style={{ color: 'var(--laura-text-2)', marginBottom: 'var(--sp-6)' }}>Période : {currentGoal.period}</p>
 
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>
                 <span>Progression</span>
-                <span>{currentGoal.progress}%</span>
+                <span style={{ color: 'var(--laura-primary)' }}>{currentGoal.progress}%</span>
               </div>
-              <div style={{ width: '100%', height: '12px', background: 'rgba(255,255,255,0.1)', borderRadius: '6px', overflow: 'hidden' }}>
-                <div style={{ width: `${currentGoal.progress}%`, height: '100%', background: '#00D4AA', borderRadius: '6px' }}></div>
+              <div className="laura-progress" style={{ height: '8px' }}>
+                <div className="laura-progress-fill" style={{ width: `${currentGoal.progress}%` }}></div>
               </div>
             </div>
           </div>
 
           {/* ACTIONS RAPIDES */}
-          <div style={cardStyle}>
-            <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Actions rapides</h3>
-            <div className="quick-actions-container">
+          <div className="laura-card">
+            <h3 className="laura-h3" style={{ marginBottom: 'var(--sp-5)' }}>Actions rapides</h3>
+            <div style={{ display: 'flex', gap: 'var(--sp-3)', overflowX: 'auto', paddingBottom: 'var(--sp-2)' }}>
               {['Parler à LAURA', 'Réviser un chapitre', 'Lancer un quiz', 'Préparer mon examen', 'Voir mes ressources'].map((action, i) => (
-                <button key={i} onClick={() => handleQuickAction(action)} className="quick-action-btn">
+                <button key={i} onClick={() => handleQuickAction(action)} className="laura-btn laura-btn-secondary" style={{ whiteSpace: 'nowrap' }}>
                   {action}
                 </button>
               ))}
@@ -249,16 +224,16 @@ export default function LearnDashboardPage() {
           </div>
 
           {/* PROGRESSION DÉTAILLÉE */}
-          <div style={cardStyle}>
-            <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Ma progression par matière (Programme Officiel)</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+          <div className="laura-card">
+            <h3 className="laura-h3" style={{ marginBottom: 'var(--sp-5)' }}>Ma progression par matière</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
               {matieres.map((m, i) => (
                 <div key={i}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', fontSize: '0.95rem', fontWeight: 600, color: '#444' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: 'var(--laura-text-1)' }}>
                     <span>{m.mat}</span><span>{m.val}%</span>
                   </div>
-                  <div style={{ width: '100%', height: '8px', background: '#F0F0EE', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: `${m.val}%`, height: '100%', background: m.color, borderRadius: '4px' }}></div>
+                  <div className="laura-progress" style={{ height: '6px' }}>
+                    <div className="laura-progress-fill" style={{ width: `${m.val}%`, background: m.color }}></div>
                   </div>
                 </div>
               ))}
@@ -268,18 +243,18 @@ export default function LearnDashboardPage() {
         </div>
 
         {/* COLONNE DROITE (Latérale) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div className="laura-page-aside" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
           
           {/* RECOMMANDATIONS */}
-          <div style={{ ...cardStyle, background: '#F5F4EF', border: 'none' }}>
-            <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Recommandations pour vous</h3>
+          <div className="laura-card-soft">
+            <h3 className="laura-h3" style={{ marginBottom: 'var(--sp-5)' }}>Recommandations pour vous</h3>
             {recommandations.length === 0 ? (
-              <div style={{ color: '#6E6E6B', fontSize: '0.95rem', padding: '1rem 0' }}>Aucune ressource recommandée pour le moment. Explorez le catalogue complet.</div>
+              <div className="laura-empty">Aucune ressource recommandée pour le moment.</div>
             ) : (
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
                 {recommandations.map((r, i) => (
-                  <li key={i} onClick={() => r.url ? window.open(r.url, '_blank') : navigate('/learn/chat')} style={{ background: 'white', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
-                    <span style={{ fontSize: '1.5rem' }}>{r.icon}</span> <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{r.text}</span>
+                  <li key={i} onClick={() => r.url ? window.open(r.url, '_blank') : navigate('/learn/chat')} className="laura-card" style={{ padding: 'var(--sp-4)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', transition: 'transform 0.2s', boxShadow: 'none' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
+                    <span style={{ fontSize: '1.5rem' }}>{r.icon}</span> <span style={{ fontWeight: 600, fontSize: '14px', color: 'var(--laura-text-1)' }}>{r.text}</span>
                   </li>
                 ))}
               </ul>
@@ -287,20 +262,20 @@ export default function LearnDashboardPage() {
           </div>
 
           {/* PROFIL ACADÉMIQUE */}
-          <div style={cardStyle}>
-            <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Profil Académique</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', fontSize: '0.95rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F0F0EE', paddingBottom: '0.5rem' }}>
-                <span style={{ color: '#6E6E6B' }}>Profil</span><span style={{ fontWeight: 600 }}>{user.roleLabel}</span>
+          <div className="laura-card">
+            <h3 className="laura-h3" style={{ marginBottom: 'var(--sp-5)' }}>Profil Académique</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--laura-border-soft)', paddingBottom: '8px' }}>
+                <span style={{ color: 'var(--laura-text-2)' }}>Profil</span><span style={{ fontWeight: 600 }}>{user.roleLabel}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F0F0EE', paddingBottom: '0.5rem' }}>
-                <span style={{ color: '#6E6E6B' }}>Classe / Niveau</span><span style={{ fontWeight: 600 }}>{user.niveau} {user.serie ? `(${user.serie})` : ''}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--laura-border-soft)', paddingBottom: '8px' }}>
+                <span style={{ color: 'var(--laura-text-2)' }}>Niveau</span><span style={{ fontWeight: 600 }}>{user.niveau} {user.serie ? `(${user.serie})` : ''}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F0F0EE', paddingBottom: '0.5rem' }}>
-                <span style={{ color: '#6E6E6B' }}>Examen préparé</span><span style={{ fontWeight: 600 }}>{user.examen}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--laura-border-soft)', paddingBottom: '8px' }}>
+                <span style={{ color: 'var(--laura-text-2)' }}>Examen</span><span style={{ fontWeight: 600 }}>{user.examen}</span>
               </div>
             </div>
-            <button onClick={handleEditProfile} style={{ width: '100%', marginTop: '1.5rem', padding: '0.8rem', background: 'transparent', border: '1px solid #E5E5E2', borderRadius: '0.6rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#F5F4EF'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+            <button onClick={() => navigate('/learn/profile')} className="laura-btn laura-btn-ghost" style={{ width: '100%', marginTop: 'var(--sp-5)' }}>
               Modifier mon profil
             </button>
           </div>

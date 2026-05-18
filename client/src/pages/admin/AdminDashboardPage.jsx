@@ -5,10 +5,10 @@ import { collection, getDocs } from 'firebase/firestore';
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState([
-    { label: 'Élèves', value: '...', icon: '🎒', color: '#3B82F6' },
-    { label: 'Étudiants', value: '...', icon: '🎓', color: '#8B5CF6' },
-    { label: 'Tuteurs (Total)', value: '...', icon: '👨‍🏫', color: '#10B981' },
-    { label: 'Contributeurs', value: '...', icon: '⭐', color: '#F59E0B' }
+    { label: 'Élèves', value: '...', icon: '🎒', color: 'var(--laura-primary)' },
+    { label: 'Étudiants', value: '...', icon: '🎓', color: 'var(--laura-accent)' },
+    { label: 'Tuteurs (Total)', value: '...', icon: '👨‍🏫', color: 'var(--laura-success)' },
+    { label: 'Contributeurs', value: '...', icon: '⭐', color: 'var(--laura-warning)' }
   ]);
   const [alerts, setAlerts] = useState([]);
   const [chatActivity, setChatActivity] = useState([0, 0, 0, 0, 0, 0, 0]);
@@ -29,10 +29,10 @@ export default function AdminDashboardPage() {
         });
 
         setStats([
-          { label: 'Élèves', value: eleves.toString(), icon: '🎒', color: '#3B82F6' },
-          { label: 'Étudiants', value: etudiants.toString(), icon: '🎓', color: '#8B5CF6' },
-          { label: 'Tuteurs (Total)', value: tuteurs.toString(), icon: '👨‍🏫', color: '#10B981' },
-          { label: 'Contributeurs', value: '0', icon: '⭐', color: '#F59E0B' }
+          { label: 'Élèves', value: eleves.toString(), icon: '🎒', color: 'var(--laura-primary)' },
+          { label: 'Étudiants', value: etudiants.toString(), icon: '🎓', color: 'var(--laura-accent)' },
+          { label: 'Tuteurs (Total)', value: tuteurs.toString(), icon: '👨‍🏫', color: 'var(--laura-success)' },
+          { label: 'Contributeurs', value: '0', icon: '⭐', color: 'var(--laura-warning)' }
         ]);
 
         const dynamicAlerts = [];
@@ -88,43 +88,39 @@ export default function AdminDashboardPage() {
     fetchStats();
   }, []);
 
-  const cardStyle = { background: 'var(--bg-primary)', padding: '2rem', borderRadius: '1.5rem', border: '1px solid var(--border-light)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' };
-
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
       
       {/* HEADER */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Tableau de bord</h1>
-          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
-            Vue globale de l'activité sur LAURA.
-          </p>
-        </div>
+      <div>
+        <h1 className="laura-h1">Vue Globale</h1>
+        <p className="laura-body" style={{ color: 'var(--laura-text-2)' }}>
+          Supervision de l'activité sur LAURA.
+        </p>
       </div>
 
       {/* KPI CARDS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--sp-5)' }}>
         {stats.map((s, i) => (
-          <div key={i} style={cardStyle}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div key={i} className="laura-card" style={{ padding: 'var(--sp-5)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-4)' }}>
               <span style={{ fontSize: '2rem' }}>{s.icon}</span>
-              <span style={{ background: `${s.color}15`, color: s.color, padding: '0.2rem 0.6rem', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 700 }}>Actifs</span>
+              <span className="laura-badge" style={{ background: `color-mix(in srgb, ${s.color} 10%, transparent)`, color: s.color }}>Actifs</span>
             </div>
-            <h3 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>{s.value}</h3>
-            <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{s.label}</span>
+            <h3 className="laura-h2" style={{ marginBottom: '4px' }}>{s.value}</h3>
+            <span className="laura-small" style={{ fontWeight: 600 }}>{s.label}</span>
           </div>
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2.5rem' }}>
+      <div className="laura-page-grid">
         
-        {/* GRAPHIQUE ACTIVITÉ (Réel) */}
-        <div style={cardStyle}>
-          <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--text-primary)' }}>Activité Chat (7 derniers jours)</h2>
-          <div style={{ width: '100%', height: '300px', background: 'var(--bg-secondary)', borderRadius: '1rem', display: 'flex', alignItems: 'flex-end', gap: '1rem', padding: '1rem' }}>
+        {/* GRAPHIQUE ACTIVITÉ */}
+        <div className="laura-page-main laura-card" style={{ padding: 'var(--sp-6)' }}>
+          <h2 className="laura-h3" style={{ marginBottom: 'var(--sp-6)' }}>Activité Chat (7 derniers jours)</h2>
+          <div style={{ width: '100%', height: '300px', background: 'var(--laura-bg-soft)', borderRadius: 'var(--r-md)', display: 'flex', alignItems: 'flex-end', gap: '1rem', padding: '1rem' }}>
             {chatActivity.map((h, i) => (
-              <div key={i} style={{ flex: 1, height: `${Math.max(h, 4)}%`, background: h > 0 ? 'linear-gradient(to top, var(--primary), var(--primary-dark))' : 'var(--border-light)', borderRadius: '0.5rem 0.5rem 0 0', opacity: 0.9, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '0.5rem', color: h > 0 ? 'white' : 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: 700 }}>
+              <div key={i} style={{ flex: 1, height: `${Math.max(h, 4)}%`, background: h > 0 ? 'var(--laura-gradient)' : 'var(--laura-border-strong)', borderRadius: 'var(--r-xs) var(--r-xs) 0 0', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '8px', color: h > 0 ? 'white' : 'transparent', fontSize: 'var(--fs-xs)', fontWeight: 700 }}>
                 {h > 0 ? `${h}%` : '0'}
               </div>
             ))}
@@ -132,21 +128,19 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* ALERTES ET ACTIONS À PRENDRE */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div style={cardStyle}>
-            <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--text-primary)' }}>Centre d'action</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {alerts.length === 0 ? (
-                <div style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Aucune action requise pour le moment.</div>
-              ) : (
-                alerts.map((a, i) => (
-                  <div key={i} style={{ padding: '1rem', borderRadius: '1rem', background: 'var(--bg-secondary)', borderLeft: `4px solid ${a.type === 'warning' ? '#F59E0B' : a.type === 'error' ? '#DC2626' : 'var(--primary)'}`, display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                    <span style={{ color: 'var(--text-primary)', fontSize: '0.95rem', lineHeight: 1.5 }}>{a.msg}</span>
-                    <Link to={a.link} style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none', alignSelf: 'flex-start' }}>Traiter →</Link>
-                  </div>
-                ))
-              )}
-            </div>
+        <div className="laura-page-aside laura-card" style={{ padding: 'var(--sp-6)' }}>
+          <h2 className="laura-h3" style={{ marginBottom: 'var(--sp-6)' }}>Centre d'action</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+            {alerts.length === 0 ? (
+              <div className="laura-empty">Aucune action requise pour le moment.</div>
+            ) : (
+              alerts.map((a, i) => (
+                <div key={i} className={`laura-alert laura-alert-${a.type}`} style={{ flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ fontWeight: 600 }}>{a.msg}</span>
+                  <Link to={a.link} style={{ fontSize: 'var(--fs-sm)', fontWeight: 700, textDecoration: 'underline' }}>Traiter l'action</Link>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
