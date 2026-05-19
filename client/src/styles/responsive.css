@@ -165,18 +165,21 @@
   .laura-bottom-nav {
     display: flex !important;
     position: fixed !important;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: calc(72px + var(--safe-bottom)) !important;
-    padding-bottom: var(--safe-bottom) !important;
-    background: rgba(255, 255, 255, 0.82) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    border-top: 1px solid var(--laura-border-soft) !important;
-    z-index: 50 !important;
+    left: 16px !important;
+    right: 16px !important;
+    bottom: calc(12px + var(--safe-bottom)) !important;
+    height: 66px !important;
+    background: var(--laura-bg-nav) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--laura-border-default) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12) !important;
+    z-index: 1000 !important;
     align-items: center !important;
     justify-content: space-around !important;
+    padding: 0 8px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 
   .laura-bottom-nav-item {
@@ -185,18 +188,52 @@
     align-items: center !important;
     justify-content: center !important;
     gap: 4px !important;
-    color: var(--laura-text-2) !important;
-    font-size: var(--fs-xs) !important;
-    font-weight: 600 !important;
+    color: var(--laura-text-tertiary) !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
     text-decoration: none !important;
     flex: 1 !important;
     height: 100% !important;
     cursor: pointer !important;
-    transition: all var(--dur-fast) var(--ease-standard) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+  }
+
+  .laura-bottom-nav-item span:first-child {
+    font-size: 1.35rem !important;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
   }
 
   .laura-bottom-nav-item.is-active {
     color: var(--laura-primary) !important;
+  }
+
+  .laura-bottom-nav-item.is-active span:first-child {
+    transform: translateY(-4px) scale(1.12) !important;
+  }
+
+  .laura-bottom-nav-item.is-active::after {
+    content: '' !important;
+    display: block !important;
+    position: absolute !important;
+    bottom: 6px !important;
+    width: 5px !important;
+    height: 5px !important;
+    border-radius: 50% !important;
+    background: var(--laura-primary) !important;
+    box-shadow: 0 0 8px var(--laura-primary) !important;
+    animation: navDotPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+  }
+
+  @keyframes navDotPop {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 
   .laura-hero-body {

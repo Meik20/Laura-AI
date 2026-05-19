@@ -45,6 +45,7 @@
   --laura-bg-secondary:    #f5f7ff;   /* Fond secondaire — hover, surfaces */
   --laura-bg-sidebar:      #ffffff;   /* Fond sidebar */
   --laura-bg-topbar:       #ffffff;   /* Fond topbar */
+  --laura-bg-nav:          rgba(255, 255, 255, 0.85); /* Fond nav mobile */
 
   /* --- Couleurs de Texte --- */
   --laura-text-primary:    #1a1a2e;   /* Texte principal — presque noir teinté */
@@ -211,6 +212,20 @@
   /* Typography Bridge to unified design system */
   --font-ui:               var(--laura-font);
   --font-display:          var(--laura-font);
+
+  /* Legacy layout compatibility bridge mappings */
+  --color-primary:         var(--laura-primary);
+  --color-primary-dark:    var(--laura-primary-hover);
+  --color-white:           #ffffff;
+  --color-bg-page:         var(--laura-bg-page);
+  --color-bg-card:         var(--laura-bg-card);
+  --color-border-default:  var(--laura-border-default);
+  --color-text-primary:    var(--laura-text-primary);
+  --color-text-secondary:  var(--laura-text-secondary);
+  --color-neutral-900:     #0f172a;
+  --color-neutral-400:     #94a3b8;
+  --color-neutral-500:     #64748b;
+  --font-family-primary:   var(--font-ui);
 
   --fs-hero:               var(--laura-text-3xl);
   --fs-h1:                 var(--laura-text-2xl);
@@ -1713,6 +1728,7 @@ hr {
     --laura-bg-secondary: #1e2135;
     --laura-bg-sidebar:   #12151f;
     --laura-bg-topbar:    #1a1d2e;
+    --laura-bg-nav:       rgba(26, 29, 46, 0.85);
 
     --laura-text-primary:   rgba(255, 255, 255, 0.92);
     --laura-text-secondary: rgba(255, 255, 255, 0.65);

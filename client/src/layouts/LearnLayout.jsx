@@ -5,7 +5,7 @@ import { AuthContext } from '../contexts/AuthContext';
 export default function LearnLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentUser, logout } = useContext(AuthContext);
+  const { currentUser, logout, userProfile } = useContext(AuthContext);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -54,7 +54,7 @@ export default function LearnLayout() {
         <button className="hamburger-btn" style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }} onClick={() => setIsSidebarOpen(true)}>☰</button>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <img src="/logo.png" alt="LAURA" style={{ height: '36px' }} />
-          <span style={{ fontSize: '0.7rem', background: 'var(--laura-info-bg)', color: 'var(--laura-primary)', padding: '0.2rem 0.5rem', borderRadius: 'var(--r-full)', fontWeight: 800 }}>ÉLÈVE</span>
+          <span style={{ fontSize: '0.7rem', background: 'var(--laura-info-bg)', color: 'var(--laura-primary)', padding: '0.2rem 0.5rem', borderRadius: 'var(--r-full)', fontWeight: 800 }}>{(userProfile?.roleLabel || 'Élève').toUpperCase()}</span>
         </div>
         <div style={{ width: '24px' }}></div>
       </header>
@@ -147,7 +147,7 @@ export default function LearnLayout() {
           </h2>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span style={{ fontSize: '13px', color: 'var(--laura-text-2)' }}>
-              Étudiant : <strong>{currentUser.name || currentUser.email}</strong>
+              {userProfile?.roleLabel || 'Élève'} : <strong>{currentUser.name || currentUser.email}</strong>
             </span>
           </div>
         </header>

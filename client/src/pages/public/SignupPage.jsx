@@ -66,14 +66,14 @@ export default function SignupPage() {
     }
   };
 
-  const inputStyle = { width: '100%', padding: '0.9rem', borderRadius: '0.6rem', border: '1px solid #E5E5E2', background: '#F9F9F8', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' };
-  const labelStyle = { display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: '#444' };
+  const inputStyle = { width: '100%', padding: '0.9rem', borderRadius: '0.6rem', border: '1px solid var(--laura-border-strong)', background: 'var(--laura-bg-input)', color: 'var(--laura-text-1)', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' };
+  const labelStyle = { display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: 'var(--laura-text-2)' };
 
   return (
     <div className="auth-container">
       <div className="auth-card auth-card--signup">
-        <h1 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', color: '#1A1A1A' }}>Créer un compte apprenant</h1>
-        <p style={{ textAlign: 'center', color: '#6E6E6B', marginBottom: '2.5rem' }}>Prêt à booster vos résultats scolaires ?</p>
+        <h1 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--laura-text-primary)' }}>Créer un compte apprenant</h1>
+        <p style={{ textAlign: 'center', color: 'var(--laura-text-secondary)', marginBottom: '2.5rem' }}>Prêt à booster vos résultats scolaires ?</p>
 
         {error && <div style={{ background: '#FEE2E2', color: '#B91C1C', padding: '1rem', borderRadius: '0.75rem', marginBottom: '1.5rem', fontSize: '0.9rem', fontWeight: 500 }}>{error}</div>}
 
@@ -89,13 +89,13 @@ export default function SignupPage() {
           <div><label style={labelStyle}>Confirmation du mot de passe</label><input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} style={inputStyle} /></div>
 
           {/* SÉLECTION DU PROFIL (Point 3.3) */}
-          <div style={{ margin: '1.5rem 0', padding: '1.5rem', background: '#F5F4EF', borderRadius: '0.75rem' }}>
-            <label style={{ ...labelStyle, fontSize: '1rem', marginBottom: '1rem' }}>Quel est votre profil ?</label>
+          <div style={{ margin: '1.5rem 0', padding: '1.5rem', background: 'var(--laura-bg-secondary)', borderRadius: '0.75rem', border: '1px solid var(--laura-border-soft)' }}>
+            <label style={{ ...labelStyle, fontSize: '1rem', marginBottom: '1rem', color: 'var(--laura-text-primary)' }}>Quel est votre profil ?</label>
             <div style={{ display: 'flex', gap: '2rem' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: profileType === 'eleve' ? 700 : 500 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--laura-text-2)', fontWeight: profileType === 'eleve' ? 700 : 500 }}>
                 <input type="radio" name="profileType" value="eleve" checked={profileType === 'eleve'} onChange={() => setProfileType('eleve')} /> Élève (Secondaire)
               </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: profileType === 'etudiant' ? 700 : 500 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--laura-text-2)', fontWeight: profileType === 'etudiant' ? 700 : 500 }}>
                 <input type="radio" name="profileType" value="etudiant" checked={profileType === 'etudiant'} onChange={() => setProfileType('etudiant')} /> Étudiant (Supérieur)
               </label>
             </div>
@@ -153,14 +153,14 @@ export default function SignupPage() {
             </div>
           )}
 
-          <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '1rem', background: '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontSize: '1.05rem', fontWeight: 700, cursor: isLoading ? 'not-allowed' : 'pointer', marginTop: '1rem' }}>
+          <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '1rem', background: 'var(--laura-primary)', color: 'white', border: 'none', borderRadius: '0.75rem', fontSize: '1.05rem', fontWeight: 700, cursor: isLoading ? 'not-allowed' : 'pointer', marginTop: '1rem' }}>
             {isLoading ? 'Création en cours...' : 'Créer mon compte'}
           </button>
         </form>
 
         <div style={{ marginTop: '2.5rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.95rem' }}>
-          <p style={{ color: '#6E6E6B', margin: 0 }}>Déjà inscrit ? <Link to="/login" style={{ color: '#00A37A', fontWeight: 700, textDecoration: 'none' }}>Se connecter</Link></p>
-          <p style={{ color: '#6E6E6B', margin: 0 }}>Vous souhaitez devenir tuteur ? <Link to="/become-tutor" style={{ color: '#1A1A1A', fontWeight: 600, textDecoration: 'underline' }}>Devenez tuteur</Link></p>
+          <p style={{ color: 'var(--laura-text-secondary)', margin: 0 }}>Déjà inscrit ? <Link to="/login" style={{ color: 'var(--laura-green)', fontWeight: 700, textDecoration: 'none' }}>Se connecter</Link></p>
+          <p style={{ color: 'var(--laura-text-secondary)', margin: 0 }}>Vous souhaitez devenir tuteur ? <Link to="/become-tutor" style={{ color: 'var(--laura-text-primary)', fontWeight: 600, textDecoration: 'underline' }}>Devenez tuteur</Link></p>
         </div>
       </div>
     </div>
