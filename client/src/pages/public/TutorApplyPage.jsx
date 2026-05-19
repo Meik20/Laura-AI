@@ -3,6 +3,7 @@ import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { db } from '../../firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../hooks/useAuth';
+import { uploadFile } from '../../utils/storage';
 
 export default function TutorApplyPage() {
   const navigate = useNavigate();
@@ -17,6 +18,27 @@ export default function TutorApplyPage() {
     discipline: '', niveau: '', experience: '', etablissement: '', diplome: '', competences: '',
     motivation: ''
   });
+  const [cvFile, setCvFile] = useState(null);
+  const [cvUploading, setCvUploading] = useState(false);
+  const [cvUrl, setCvUrl] = useState('');
+  const [cvName, setCvName] = useState('');
+
+  const handleCvChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setCvFile(file);
+    setCvName(file.name);
+    setCvUploading(true);
+    try {
+      const { url } = await uploadFile(file, 'contributions', 'cv_tuteurs');
+      setCvUrl(url);
+    } catch (err) {
+      console.error('CV upload error:', err);
+      setError('Erreur lors de l’envoi du justificatif. Veuillez réessayer.');
+    } finally {
+      setCvUploading(false);
+    }
+  };
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -44,6 +66,8 @@ export default function TutorApplyPage() {
         diplome: formData.diplome,
         competences: formData.competences,
         motivation: formData.motivation,
+        cvUrl: cvUrl || '',
+        cvFileName: cvName || '',
         roleLabel: inviteCode ? 'Tuteur Contributeur' : 'Tuteur',
         isTutorPending: !inviteCode,
         isTutor: !!inviteCode,
@@ -169,7 +193,13 @@ export default function TutorApplyPage() {
             </div>
             <div className="form-group" style={{ marginTop: 'var(--sp-4)' }}>
               <label>Pièce justificative (CV, Diplôme, Carte Pro) *</label>
-              <input type="file" className="laura-input" style={{ background: 'var(--laura-bg-card)', padding: '8px 12px', minHeight: 'auto' }} />
+              <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: `2px dashed ${cvUrl ? 'var(--clr-green)' : 'var(--brd-subtle)'}`, borderRadius: 'var(--rd-md)', cursor: 'pointer' }}>
+                <i className={`ti ti-${cvUrl ? 'circle-check' : cvUploading ? 'loader-2' : 'upload'}`} style={{ fontSize: '1.3rem', color: cvUrl ? 'var(--clr-green)' : cvUploading ? 'var(--clr-brand)' : 'var(--txt-tertiary)' }}></i>
+                <span style={{ fontSize: 'var(--tx-sm)', color: cvUrl ? 'var(--clr-green)' : 'var(--txt-secondary)' }}>
+                  {cvUploading ? 'Envoi en cours...' : cvUrl ? `✅ ${cvName}` : 'Choisir un fichier (PDF, image…)'}
+                </span>
+                <input type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" onChange={handleCvChange} style={{ display: 'none' }} />
+              </label>
             </div>
           </div>
 

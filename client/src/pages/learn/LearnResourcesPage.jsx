@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { db, storage } from '../../firebase';
+import { db } from '../../firebase';
 import {
   collection, getDocs, doc, updateDoc, arrayUnion, arrayRemove,
   getDoc, addDoc, serverTimestamp
 } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { uploadContribution } from '../../utils/storage';
 
 /* ─── Matières filter logic (preserved) ─────────────────────────────────── */
 const filterMatieres = (allMatieres, userProfile) => {
@@ -94,25 +94,16 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
     if (!userProfile?.uid) { setError('Vous devez être connecté.'); return; }
 
     setUploading(true);
+    setProgress(10); // start indicator
     try {
-      // 1. Upload file to Storage
-      const storageRef = ref(storage, `contributions/${userProfile.uid}/${Date.now()}_${file.name}`);
-      const task = uploadBytesResumable(storageRef, file);
-
-      await new Promise((resolve, reject) => {
-        task.on('state_changed',
-          (snap) => setProgress(Math.round((snap.bytesTransferred / snap.totalBytes) * 100)),
-          reject,
-          resolve
-        );
-      });
-
-      const downloadURL = await getDownloadURL(task.snapshot.ref);
+      // 1. Upload file to Supabase Storage
+      const { url } = await uploadContribution(file, userProfile.uid);
+      setProgress(80);
 
       // 2. Save submission to Firestore (statut = 'en_attente')
       await addDoc(collection(db, 'contributions'), {
         ...form,
-        url: downloadURL,
+        url,
         fileName: file.name,
         fileSize: file.size,
         fileType: file.type,
@@ -123,6 +114,7 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
         createdAt: serverTimestamp(),
       });
 
+      setProgress(100);
       setSubmitted(true);
     } catch (err) {
       console.error(err);
