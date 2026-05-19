@@ -9,8 +9,13 @@
    1. IMPORT DE POLICE & LAYOUT MODULES
    ============================================================ */
 
+@import './styles/base.css';
+@import './styles/components.css';
+@import './styles/forms.css';
+@import './styles/chat.css';
 @import './styles/layout.css';
 @import './styles/responsive.css';
+@import './styles/overrides.css';
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&display=swap');
 
 
@@ -202,6 +207,19 @@
 
   --laura-gradient:        linear-gradient(135deg, var(--laura-blue) 0%, var(--laura-blue-dark) 100%);
   --laura-ai-bg:           linear-gradient(135deg, var(--laura-blue-light), var(--laura-green-light));
+
+  /* Typography Bridge to unified design system */
+  --font-ui:               var(--laura-font);
+  --font-display:          var(--laura-font);
+
+  --fs-hero:               var(--laura-text-3xl);
+  --fs-h1:                 var(--laura-text-2xl);
+  --fs-h2:                 var(--laura-text-xl);
+  --fs-h3:                 var(--laura-text-lg);
+  --fs-lg:                 var(--laura-text-md);
+  --fs-md:                 var(--laura-text-base);
+  --fs-sm:                 var(--laura-text-sm);
+  --fs-xs:                 var(--laura-text-xs);
 
   /* Spacing Bridge */
   --sp-1: var(--laura-space-1);

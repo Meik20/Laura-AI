@@ -46,9 +46,19 @@
   position: relative;
   overflow: hidden;
   background: var(--laura-gradient);
-  color: white;
+  color: white !important;
   border-radius: var(--r-xl);
   box-shadow: var(--shadow-lg);
+}
+
+.laura-hero h1,
+.laura-hero h2,
+.laura-hero h3,
+.laura-hero p,
+.laura-hero span,
+.laura-hero .laura-hero-text,
+.laura-hero .laura-body-lg {
+  color: white !important;
 }
 
 .laura-hero::before {
