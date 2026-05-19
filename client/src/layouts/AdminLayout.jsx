@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, Navigate } from 'react-router-dom';
 import { useContext, useState, useCallback } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -28,8 +28,7 @@ export default function AdminLayout() {
   const [collapsed, setCollapsed]   = useState(false);
 
   if (!currentUser) {
-    navigate('/', { replace: true });
-    return null;
+    return <Navigate to="/" replace />;
   }
 
   const handleLogout = useCallback(async () => {
