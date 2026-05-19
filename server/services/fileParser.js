@@ -44,7 +44,7 @@ async function extractImage(buffer, mimeType) {
   // Try Gemini Vision first (better quality for handwritten exercises)
   if (genAI) {
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
       const base64 = bufferToBase64(buffer, mimeType);
       const result = await model.generateContent([
         {
@@ -117,31 +117,63 @@ async function analyzeFile(buffer, mimeType, originalName) {
 }
 
 /**
- * Perform OCR on an array of base64 images using Gemini Vision
+ * Perform OCR on an array of base64 images using Gemini Vision (fallback to Tesseract)
  */
 async function analyzeBase64Images(inlineDataArray) {
-  if (!genAI) return { text: null, method: 'gemini-missing-key', note: 'Backend lacks GOOGLE_AI_API_KEY' };
+  let geminiFailed = false;
 
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const prompt = 'Transcris intégralement et fidèlement tout le texte visible dans ce document/cette image. Si c\'est un exercice scolaire ou un document mathématique, retranscris chaque question, formule, chiffre et instruction avec précision. Ne reformule pas, transcris simplement.';
-    
-    const result = await model.generateContent([
-      ...inlineDataArray.map(item => ({
-        inlineData: { data: item.base64, mimeType: item.mimeType || 'image/jpeg' }
-      })),
-      prompt
-    ]);
+  if (genAI) {
+    try {
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const prompt = 'Transcris intégralement et fidèlement tout le texte visible dans ce document/cette image. Si c\'est un exercice scolaire ou un document mathématique, retranscris chaque question, formule, chiffre et instruction avec précision. Ne reformule pas, transcris simplement.';
+      
+      const result = await model.generateContent([
+        ...inlineDataArray.map(item => ({
+          inlineData: { data: item.base64, mimeType: item.mimeType || 'image/jpeg' }
+        })),
+        prompt
+      ]);
 
-    const text = result.response.text()?.trim();
-    if (text && text.length > 10) {
-      return { text, method: 'gemini-vision-backend' };
+      const text = result.response.text()?.trim();
+      if (text && text.length > 10) {
+        return { text, method: 'gemini-vision-backend' };
+      }
+    } catch (err) {
+      console.warn('[fileParser] Gemini analyzeBase64Images error:', err.message);
+      geminiFailed = true;
     }
-    return { text: null, method: 'gemini-vision-backend', note: 'Aucun texte n\'a pu être identifié.' };
-  } catch (err) {
-    console.error('[fileParser] Gemini analyzeBase64Images error:', err);
-    return { text: null, method: 'gemini-error', note: err.message };
+  } else {
+    geminiFailed = true;
   }
+
+  // Fallback to Tesseract.js if Gemini is unavailable or failed
+  if (geminiFailed) {
+    console.log('[fileParser] Falling back to Tesseract OCR for base64 images...');
+    try {
+      const Tesseract = require('tesseract.js');
+      let fullText = '';
+      
+      for (const item of inlineDataArray) {
+        // Tesseract recognizes base64 URIs
+        const dataUri = `data:${item.mimeType || 'image/jpeg'};base64,${item.base64}`;
+        const { data: { text } } = await Tesseract.recognize(dataUri, 'fra+eng', {
+          logger: () => {}, 
+        });
+        fullText += text + '\n\n';
+      }
+
+      const finalText = fullText.trim();
+      if (finalText.length > 10) {
+        return { text: finalText, method: 'tesseract-ocr-backend' };
+      }
+      return { text: null, method: 'tesseract-ocr-backend', note: 'Aucun texte n\'a pu être identifié par Tesseract.' };
+    } catch (err) {
+      console.error('[fileParser] Tesseract error:', err.message);
+      return { text: null, method: 'ocr-error', note: 'Tesseract: ' + err.message };
+    }
+  }
+
+  return { text: null, method: 'gemini-vision-backend', note: 'Aucun texte n\'a pu être identifié.' };
 }
 
 module.exports = { analyzeFile, analyzeBase64Images };

@@ -15,7 +15,7 @@ const FEATURES = [
   {
     icon: '✦', color: 'var(--clr-warning)',
     title: 'Simulateur d\'Examens',
-    desc: 'Entraînez-vous dans les conditions réelles sur une immense base d\'annales africaines.',
+    desc: 'Entraînez-vous dans les conditions réelles sur une immense base d\'annales camerounaises et africaines.',
   },
   {
     icon: '⊕', color: 'var(--clr-error)',
@@ -33,7 +33,7 @@ const AUDIENCES = [
   {
     icon: '🎓',
     title: 'Pour les Étudiants (Supérieur)',
-    desc: 'Un accompagnement approfondi pour les filières universitaires, préparations aux partiels, concours et soutenances.',
+    desc: 'Un accompagnement approfondi pour les filières universitaires, préparations aux partiels, examens, concours et soutenances.',
   },
 ];
 
