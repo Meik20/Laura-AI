@@ -6,10 +6,11 @@
    ============================================================ */
 
 /* ============================================================
-   1. IMPORT DE POLICE
-   DM Sans — équivalent qualité Google Sans, 100% libre
+   1. IMPORT DE POLICE & LAYOUT MODULES
    ============================================================ */
 
+@import './styles/layout.css';
+@import './styles/responsive.css';
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&display=swap');
 
 
@@ -169,6 +170,71 @@
   --laura-z-modal:     500;
   --laura-z-toast:     600;
   --laura-z-tooltip:   700;
+
+  /* ============================================================
+     LEGACY VARIABLE BRIDGES (Mappings to new brand system)
+     ============================================================ */
+  --laura-primary:         var(--laura-blue);
+  --laura-primary-hover:   var(--laura-blue-dark);
+  --laura-secondary:       var(--laura-blue);
+  --laura-accent:          var(--laura-green);
+
+  --laura-bg:              var(--laura-bg-page);
+  --laura-bg-soft:         var(--laura-bg-secondary);
+  --laura-bg-elevated:     var(--laura-blue-light);
+
+  --laura-surface:         var(--laura-bg-card);
+  --laura-surface-solid:   var(--laura-bg-card);
+  --laura-surface-soft:    var(--laura-bg-secondary);
+  --laura-surface-tint:    var(--laura-blue-light);
+
+  --laura-text-1:          var(--laura-text-primary);
+  --laura-text-2:          var(--laura-text-secondary);
+  --laura-text-3:          var(--laura-text-tertiary);
+
+  --laura-border-soft:     var(--laura-border-light);
+  --laura-border-strong:   var(--laura-border-default);
+
+  --laura-info-bg:         var(--laura-info-light);
+  --laura-success-bg:      var(--laura-success-light);
+  --laura-warning-bg:      var(--laura-warning-light);
+  --laura-danger-bg:       var(--laura-error-light);
+
+  --laura-gradient:        linear-gradient(135deg, var(--laura-blue) 0%, var(--laura-blue-dark) 100%);
+  --laura-ai-bg:           linear-gradient(135deg, var(--laura-blue-light), var(--laura-green-light));
+
+  /* Spacing Bridge */
+  --sp-1: var(--laura-space-1);
+  --sp-2: var(--laura-space-2);
+  --sp-3: var(--laura-space-3);
+  --sp-4: var(--laura-space-4);
+  --sp-5: var(--laura-space-5);
+  --sp-6: var(--laura-space-6);
+  --sp-8: var(--laura-space-8);
+  --sp-10: var(--laura-space-10);
+  --sp-12: var(--laura-space-12);
+
+  /* Radius Bridge */
+  --r-xs: var(--laura-radius-sm);
+  --r-sm: var(--laura-radius-base);
+  --r-md: var(--laura-radius-md);
+  --r-lg: var(--laura-radius-lg);
+  --r-xl: var(--laura-radius-xl);
+  --r-2xl: var(--laura-radius-2xl);
+  --r-full: var(--laura-radius-pill);
+
+  /* Layout dimensions */
+  --rail-w: var(--laura-sidebar-width);
+  --rail-w-compact: var(--laura-sidebar-collapsed);
+  --topbar-h: var(--laura-topbar-height);
+  --content-max: var(--laura-content-max);
+  --aside-w: var(--laura-right-panel-width);
+
+  /* Motion */
+  --dur-fast: var(--laura-transition-fast);
+  --dur-med: var(--laura-transition-base);
+  --dur-slow: var(--laura-transition-slow);
+  --ease-standard: ease;
 }
 
 
