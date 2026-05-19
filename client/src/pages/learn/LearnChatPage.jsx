@@ -99,10 +99,47 @@ export default function LearnChatPage() {
     }
   }, [searchParams, isInitializing]);
 
-  const handleFileAttachment = (e) => {
+  const handleFileAttachment = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setAttachedFile({ name: file.name, type: file.type });
+    if (!file) return;
+
+    // Show immediate preview while analyzing
+    setAttachedFile({ name: file.name, type: file.type, status: 'analyzing', text: null });
+
+    try {
+      const API_BASE = import.meta.env.VITE_BACKEND_URL || '';
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(`${API_BASE}/api/analyze-file`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.extractedText) {
+        setAttachedFile({
+          name: file.name,
+          type: file.type,
+          status: 'ready',
+          text: data.extractedText,
+          pages: data.pages,
+          method: data.method,
+        });
+      } else {
+        // File couldn't be parsed (scanned PDF, unsupported format)
+        setAttachedFile({
+          name: file.name,
+          type: file.type,
+          status: 'no-text',
+          text: null,
+          note: data.note || 'Impossible d\'extraire le texte de ce fichier.',
+        });
+      }
+    } catch (err) {
+      console.error('File analysis error:', err);
+      setAttachedFile({ name: file.name, type: file.type, status: 'error', text: null });
     }
   };
 
@@ -112,7 +149,12 @@ export default function LearnChatPage() {
 
     let fullUserText = textToSend;
     if (attachedFile) {
-      fullUserText = `[📎 Fichier joint : ${attachedFile.name}] ${fullUserText}`;
+      if (attachedFile.text) {
+        // Include extracted content so the AI can actually read and analyze it
+        fullUserText = `${fullUserText}\n\n[📎 Document joint : "${attachedFile.name}"${attachedFile.pages ? ` (${attachedFile.pages} page${attachedFile.pages > 1 ? 's' : ''})` : ''}]\n\n--- CONTENU EXTRAIT DU DOCUMENT ---\n${attachedFile.text}\n--- FIN DU DOCUMENT ---`;
+      } else {
+        fullUserText = `[📎 Fichier joint : ${attachedFile.name}] ${fullUserText}`;
+      }
       setAttachedFile(null);
     }
 
@@ -293,21 +335,34 @@ export default function LearnChatPage() {
           {attachedFile && (
             <div className="card" style={{
               padding: 'var(--sp-4)',
-              background: 'var(--clr-brand-lt)',
-              border: '1px solid rgba(79,110,247,0.2)',
+              background: attachedFile.status === 'ready'
+                ? 'color-mix(in srgb, var(--clr-green) 8%, var(--srf-base))'
+                : attachedFile.status === 'no-text' || attachedFile.status === 'error'
+                  ? 'color-mix(in srgb, var(--clr-warning) 8%, var(--srf-base))'
+                  : 'var(--clr-brand-lt)',
+              border: `1px solid ${attachedFile.status === 'ready' ? 'rgba(34,197,94,0.25)' : attachedFile.status === 'no-text' || attachedFile.status === 'error' ? 'rgba(234,179,8,0.25)' : 'rgba(79,110,247,0.2)'}`,
               borderRadius: 'var(--rd-lg)',
               marginBottom: 'var(--sp-3)',
               animation: 'slideIn var(--dur-base) var(--ease-out)'
             }}>
               <div className="row row--between">
-                <div className="row" style={{ minWidth: 0 }}>
-                  <span style={{ fontSize: '1.5rem' }}>📎</span>
+                <div className="row" style={{ minWidth: 0, gap: 'var(--sp-3)' }}>
+                  <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>
+                    {attachedFile.status === 'analyzing' ? '⏳' :
+                     attachedFile.status === 'ready'     ? '✅' :
+                     attachedFile.status === 'no-text'   ? '⚠️' :
+                     attachedFile.status === 'error'     ? '❌' : '📎'}
+                  </span>
                   <div style={{ minWidth: 0 }}>
                     <p className="truncate" style={{ fontSize: 'var(--tx-sm)', fontWeight: 'var(--fw-semibold)', margin: 0, color: 'var(--clr-brand)' }}>
                       {attachedFile.name}
                     </p>
                     <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', margin: 0 }}>
-                      Fichier prêt à l'envoi
+                      {attachedFile.status === 'analyzing' && 'Extraction du contenu en cours...'}
+                      {attachedFile.status === 'ready' && `✓ Contenu extrait${attachedFile.pages ? ` · ${attachedFile.pages} page${attachedFile.pages > 1 ? 's' : ''}` : ''} · prêt pour analyse`}
+                      {attachedFile.status === 'no-text' && (attachedFile.note || 'Texte non lisible — LAURA le verra quand même')}
+                      {attachedFile.status === 'error' && 'Erreur d\'analyse — LAURA le verra quand même'}
+                      {!attachedFile.status && 'Fichier prêt à l\'envoi'}
                     </p>
                   </div>
                 </div>
@@ -321,30 +376,43 @@ export default function LearnChatPage() {
                 </button>
               </div>
 
-              <div style={{ display: 'flex', gap: 'var(--sp-3)', marginTop: 'var(--sp-4)' }}>
-                <button
-                  onClick={() => {
-                    const prompt = `[📎 Fichier joint : ${attachedFile.name}] J'ai partagé mon fichier avec toi. Peux-tu l'analyser et créer un quiz complet pour tester mes connaissances ?`;
-                    setAttachedFile(null);
-                    handleSend(prompt);
-                  }}
-                  className="laura-btn laura-btn-primary"
-                  style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
-                >
-                  ✨ Créer un Quiz
-                </button>
-                <button
-                  onClick={() => {
-                    const prompt = `[📎 Fichier joint : ${attachedFile.name}] Peux-tu me faire un résumé clair et synthétique de ce document ?`;
-                    setAttachedFile(null);
-                    handleSend(prompt);
-                  }}
-                  className="laura-btn laura-btn-secondary"
-                  style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
-                >
-                  📝 Résumer
-                </button>
-              </div>
+              {attachedFile.status === 'ready' && (
+                <div style={{ display: 'flex', gap: 'var(--sp-3)', marginTop: 'var(--sp-4)' }}>
+                  <button
+                    onClick={() => {
+                      const prompt = `Analyse ce document et crée un quiz complet de 5 questions pour tester mes connaissances.`;
+                      setAttachedFile(prev => prev);
+                      handleSend(prompt);
+                    }}
+                    className="laura-btn laura-btn-primary"
+                    style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
+                  >
+                    ✨ Créer un Quiz
+                  </button>
+                  <button
+                    onClick={() => {
+                      const prompt = `Fais-moi un résumé clair et synthétique de ce document.`;
+                      setAttachedFile(prev => prev);
+                      handleSend(prompt);
+                    }}
+                    className="laura-btn laura-btn-secondary"
+                    style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
+                  >
+                    📝 Résumer
+                  </button>
+                  <button
+                    onClick={() => {
+                      const prompt = `Corrige et explique en détail tous les exercices présents dans ce document.`;
+                      setAttachedFile(prev => prev);
+                      handleSend(prompt);
+                    }}
+                    className="laura-btn laura-btn-secondary"
+                    style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
+                  >
+                    ✏️ Corriger
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
