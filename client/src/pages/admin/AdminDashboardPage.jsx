@@ -5,13 +5,34 @@ import { collection, getDocs } from 'firebase/firestore';
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState([
-    { label: 'Élèves', value: '...', icon: '🎒', color: 'var(--laura-primary)' },
-    { label: 'Étudiants', value: '...', icon: '🎓', color: 'var(--laura-accent)' },
-    { label: 'Tuteurs (Total)', value: '...', icon: '👨‍🏫', color: 'var(--laura-success)' },
-    { label: 'Contributeurs', value: '...', icon: '⭐', color: 'var(--laura-warning)' }
+    { label: 'Élèves', value: '...', iconClass: 'backpack', color: 'var(--clr-brand)', badgeClass: 'brand' },
+    { label: 'Étudiants', value: '...', iconClass: 'school', color: 'var(--clr-brand)', badgeClass: 'brand' },
+    { label: 'Tuteurs (Total)', value: '...', iconClass: 'presentation', color: 'var(--clr-green)', badgeClass: 'green' },
+    { label: 'Contributeurs', value: '...', iconClass: 'award', color: 'var(--clr-warning)', badgeClass: 'warning' }
   ]);
   const [alerts, setAlerts] = useState([]);
-  const [chatActivity, setChatActivity] = useState([0, 0, 0, 0, 0, 0, 0]);
+  const [chatActivity, setChatActivity] = useState([
+    { count: 0, height: 4 },
+    { count: 0, height: 4 },
+    { count: 0, height: 4 },
+    { count: 0, height: 4 },
+    { count: 0, height: 4 },
+    { count: 0, height: 4 },
+    { count: 0, height: 4 }
+  ]);
+
+  const getDayLabels = () => {
+    const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+    const labels = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      labels.push(days[d.getDay()]);
+    }
+    return labels;
+  };
+
+  const dayLabels = getDayLabels();
 
   useEffect(() => {
     async function fetchStats() {
@@ -29,10 +50,10 @@ export default function AdminDashboardPage() {
         });
 
         setStats([
-          { label: 'Élèves', value: eleves.toString(), icon: '🎒', color: 'var(--laura-primary)' },
-          { label: 'Étudiants', value: etudiants.toString(), icon: '🎓', color: 'var(--laura-accent)' },
-          { label: 'Tuteurs (Total)', value: tuteurs.toString(), icon: '👨‍🏫', color: 'var(--laura-success)' },
-          { label: 'Contributeurs', value: '0', icon: '⭐', color: 'var(--laura-warning)' }
+          { label: 'Élèves', value: eleves.toString(), iconClass: 'backpack', color: 'var(--clr-brand)', badgeClass: 'brand' },
+          { label: 'Étudiants', value: etudiants.toString(), iconClass: 'school', color: 'var(--clr-brand)', badgeClass: 'brand' },
+          { label: 'Tuteurs (Total)', value: tuteurs.toString(), iconClass: 'presentation', color: 'var(--clr-green)', badgeClass: 'green' },
+          { label: 'Contributeurs', value: '0', iconClass: 'award', color: 'var(--clr-warning)', badgeClass: 'warning' }
         ]);
 
         const dynamicAlerts = [];
@@ -75,8 +96,11 @@ export default function AdminDashboardPage() {
             });
           });
           const maxCount = Math.max(...dayCounts, 1);
-          const heights = dayCounts.map(c => Math.round((c / maxCount) * 100));
-          setChatActivity(heights);
+          const activityData = dayCounts.map(count => ({
+            count,
+            height: Math.max(Math.round((count / maxCount) * 100), 5)
+          }));
+          setChatActivity(activityData);
         } catch (e) {
           console.error("Erreur fetch chat activity:", e);
         }
@@ -91,12 +115,14 @@ export default function AdminDashboardPage() {
   return (
     <div className="stack stack--lg animate-in">
       
-      {/* HEADER */}
-      <div className="page-header">
-        <div className="page-header__title">
-          <h1 className="laura-h1">Vue Globale</h1>
-          <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>
-            Supervision de l'activité sur LAURA.
+      {/* WELCOME HERO PANEL */}
+      <div className="hero-panel" style={{ marginBottom: 'var(--sp-2)' }}>
+        <div className="hero-panel__body stack stack--xs">
+          <h1 style={{ color: 'var(--txt-inverse)', margin: 0, fontSize: 'var(--tx-2xl)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+            Bonjour, Administrateur 👋
+          </h1>
+          <p style={{ margin: 0, opacity: 0.95, fontSize: 'var(--tx-base)', color: 'var(--txt-inverse)' }}>
+            Bienvenue sur votre console de supervision éducative. Suivez l'activité des élèves, étudiants et enseignants de LAURA en temps réel.
           </p>
         </div>
       </div>
@@ -104,13 +130,49 @@ export default function AdminDashboardPage() {
       {/* KPI CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--sp-5)' }}>
         {stats.map((s, i) => (
-          <div key={i} className="card card--hoverable card__body" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
-            <div className="row row--between" style={{ marginBottom: 'var(--sp-2)' }}>
-              <span style={{ fontSize: '2rem' }}>{s.icon}</span>
-              <span className="badge" style={{ background: `color-mix(in srgb, ${s.color} 10%, transparent)`, color: s.color }}>Actifs</span>
+          <div 
+            key={i} 
+            className="card card--hoverable card__body" 
+            style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: 'var(--sp-3)',
+              background: 'var(--srf-base)',
+              boxShadow: 'var(--shd-sm)',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+          >
+            <div className="row row--between" style={{ alignItems: 'center' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '46px',
+                height: '46px',
+                borderRadius: '12px',
+                background: `color-mix(in srgb, ${s.color} 10%, transparent)`,
+                color: s.color
+              }}>
+                <i className={`ti ti-${s.iconClass}`} style={{ fontSize: '1.4rem' }}></i>
+              </div>
+              <span className={`badge badge--${s.badgeClass}`}>Actifs</span>
             </div>
-            <h3 style={{ fontSize: '2rem', fontWeight: 800, margin: 0 }}>{s.value}</h3>
-            <span style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', fontWeight: 600 }}>{s.label}</span>
+            <div>
+              <h3 style={{ fontSize: '2.4rem', fontWeight: 800, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)', letterSpacing: '-0.02em' }}>{s.value}</h3>
+              <span style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', fontWeight: 600 }}>{s.label}</span>
+            </div>
+            
+            {/* Soft background glow line */}
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              height: '4px',
+              background: s.color,
+              opacity: 0.8
+            }}></div>
           </div>
         ))}
       </div>
@@ -118,34 +180,81 @@ export default function AdminDashboardPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--sp-6)' }}>
         
         {/* GRAPHIQUE ACTIVITÉ */}
-        <div className="card card__body" style={{ flex: 2 }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 'var(--sp-6)' }}>Activité Chat (7 derniers jours)</h2>
-          <div style={{ width: '100%', height: '300px', background: 'var(--srf-raised)', borderRadius: 'var(--rd-lg)', display: 'flex', alignItems: 'flex-end', gap: 'var(--sp-3)', padding: 'var(--sp-4)' }}>
-            {chatActivity.map((h, i) => (
-              <div key={i} style={{ flex: 1, height: `${Math.max(h, 4)}%`, background: h > 0 ? 'var(--grd-brand)' : 'var(--brd-subtle)', borderRadius: 'var(--rd-sm) var(--rd-sm) 0 0', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '8px', color: h > 0 ? 'white' : 'transparent', fontSize: 'var(--tx-xs)', fontWeight: 700, transition: 'height var(--dur-slow) var(--ease-spring)' }}>
-                {h > 0 ? `${h}%` : '0'}
+        <div className="card card__body" style={{ flex: 2, display: 'flex', flexDirection: 'column', background: 'var(--srf-base)' }}>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 'var(--sp-6)', display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', color: 'var(--txt-primary)' }}>
+            <i className="ti ti-chart-bar" style={{ color: 'var(--clr-brand)', fontSize: '1.4rem' }}></i>
+            Activité Chat (7 derniers jours)
+          </h2>
+          <div style={{ 
+            width: '100%', 
+            height: '300px', 
+            background: 'var(--srf-raised)', 
+            borderRadius: 'var(--rd-lg)', 
+            display: 'flex', 
+            alignItems: 'flex-end', 
+            gap: 'var(--sp-4)', 
+            padding: 'var(--sp-6) var(--sp-6) var(--sp-4) var(--sp-6)',
+            boxSizing: 'border-box'
+          }}>
+            {chatActivity.map((act, i) => (
+              <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--sp-2)', height: '100%', justifyContent: 'flex-end' }}>
+                <div 
+                  style={{ 
+                    width: '100%', 
+                    height: `${act.height}%`, 
+                    background: act.count > 0 ? 'var(--grd-brand)' : 'var(--brd-subtle)', 
+                    borderRadius: 'var(--rd-sm) var(--rd-sm) 0 0', 
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    justifyContent: 'center',
+                    paddingTop: '8px',
+                    color: act.count > 0 ? 'white' : 'transparent',
+                    fontSize: 'var(--tx-xs)',
+                    fontWeight: 700,
+                    transition: 'height var(--dur-slow) var(--ease-spring)',
+                    boxShadow: act.count > 0 ? '0 4px 12px rgba(79, 110, 247, 0.2)' : 'none'
+                  }}
+                >
+                  {act.count > 0 && <span style={{ opacity: 0.95 }}>{act.count}</span>}
+                </div>
+                <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', fontWeight: 600 }}>
+                  {dayLabels[i]}
+                </span>
               </div>
             ))}
           </div>
         </div>
 
         {/* ALERTES ET ACTIONS À PRENDRE */}
-        <div className="card card__body" style={{ flex: 1 }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 'var(--sp-6)' }}>Centre d'action</h2>
-          <div className="stack stack--md">
+        <div className="card card__body" style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--srf-base)' }}>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 'var(--sp-6)', display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', color: 'var(--txt-primary)' }}>
+            <i className="ti ti-bell-ringing" style={{ color: 'var(--clr-warning)', fontSize: '1.4rem' }}></i>
+            Centre d'action
+          </h2>
+          <div className="stack stack--md" style={{ flex: 1, justifyContent: 'center' }}>
             {alerts.length === 0 ? (
-              <div className="empty-state">
-                <span className="empty-state__icon">🎉</span>
-                <p className="empty-state__title">Tout est à jour</p>
-                <p className="empty-state__text">Aucune action requise pour le moment.</p>
+              <div className="stack" style={{ padding: '2.5rem var(--sp-4)', textAlign: 'center', background: 'var(--srf-raised)', borderRadius: 'var(--rd-lg)', border: '1px dashed var(--brd-strong)', margin: 'auto 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '50%', background: 'var(--clr-success-lt)', color: 'var(--clr-success)', margin: '0 auto var(--sp-4) auto' }}>
+                  <i className="ti ti-circle-check" style={{ fontSize: '2.2rem' }}></i>
+                </div>
+                <h4 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)' }}>Tout est en ordre</h4>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Aucune action requise pour le moment.</p>
               </div>
             ) : (
-              alerts.map((a, i) => (
-                <div key={i} className={`alert alert--${a.type}`} style={{ flexDirection: 'column', gap: '8px' }}>
-                  <span style={{ fontWeight: 600 }}>{a.msg}</span>
-                  <Link to={a.link} style={{ fontSize: 'var(--tx-sm)', fontWeight: 700, textDecoration: 'underline' }}>Traiter l'action</Link>
-                </div>
-              ))
+              <div className="stack stack--sm" style={{ width: '100%' }}>
+                {alerts.map((a, i) => (
+                  <div key={i} className={`alert alert--${a.type}`} style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-start', padding: '1rem', width: '100%', boxSizing: 'border-box' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <i className={`ti ti-${a.type === 'warning' ? 'alert-triangle' : 'info-circle'}`} style={{ fontSize: '1.2rem', color: `var(--clr-${a.type})` }}></i>
+                      <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{a.msg}</span>
+                    </div>
+                    <Link to={a.link} className="btn btn--ghost btn--sm" style={{ paddingLeft: 0, height: 'auto', textDecoration: 'underline', color: 'var(--clr-brand)', fontWeight: 700 }}>
+                      Traiter l'action <i className="ti ti-arrow-right" style={{ fontSize: '1rem', marginLeft: '4px' }}></i>
+                    </Link>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
