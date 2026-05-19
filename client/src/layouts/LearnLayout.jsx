@@ -139,7 +139,7 @@ export default function LearnLayout() {
   const [profileOpen,   setProfileOpen]   = useState(false);
 
   if (!currentUser) {
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true });
     return null;
   }
 

@@ -33,7 +33,7 @@ export default function TutorLayout() {
   const [collapsed, setCollapsed]   = useState(false);
 
   if (!currentUser) {
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true });
     return null;
   }
 
