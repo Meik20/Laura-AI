@@ -1,0 +1,18 @@
+{
+  "auth": {
+    "login_title": "Connexion à LAURA",
+    "email_label": "Adresse e-mail",
+    "email_placeholder": "vous@email.com",
+    "password_label": "Mot de passe",
+    "forgot_password": "Oublié ?",
+    "password_placeholder": "••••••••",
+    "login_button": "Se connecter",
+    "login_loading": "Connexion en cours...",
+    "no_account": "Vous n'avez pas de compte ?",
+    "signup_link": "S'inscrire",
+    "become_tutor_text": "Vous souhaitez devenir tuteur ?",
+    "become_tutor_link": "Devenez tuteur",
+    "error_empty": "Veuillez remplir tous les champs.",
+    "error_invalid": "Identifiants invalides. Veuillez réessayer."
+  }
+}

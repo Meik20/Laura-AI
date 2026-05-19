@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { doc, getDoc, collection, query, where, getDocs, setDoc } from 'firebase/firestore';
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const { t } = useTranslation();
 
   const { login } = useAuth();
 
@@ -18,7 +20,7 @@ export default function LoginPage() {
     setError('');
     
     if (!email || !password) {
-      setError('Veuillez remplir tous les champs.');
+      setError(t('auth.error_empty'));
       return;
     }
 
@@ -69,7 +71,7 @@ export default function LoginPage() {
       
     } catch (err) {
       console.error(err);
-      setError('Identifiants invalides. Veuillez réessayer.');
+      setError(t('auth.error_invalid'));
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +80,7 @@ export default function LoginPage() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Connexion à LAURA</h1>
+        <h1>{t('auth.login_title')}</h1>
 
         {error && (
           <div className="auth-error-alert">
@@ -88,10 +90,10 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="auth-form">
           <div className="form-group">
-            <label>Adresse e-mail</label>
+            <label>{t('auth.email_label')}</label>
             <input 
               type="email" 
-              placeholder="vous@email.com" 
+              placeholder={t('auth.email_placeholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -99,28 +101,28 @@ export default function LoginPage() {
 
           <div className="form-group">
             <div className="row row--between">
-              <label>Mot de passe</label>
-              <span className="forgot-link">Oublié ?</span>
+              <label>{t('auth.password_label')}</label>
+              <span className="forgot-link">{t('auth.forgot_password')}</span>
             </div>
             <input 
               type="password" 
-              placeholder="••••••••" 
+              placeholder={t('auth.password_placeholder')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
           <button type="submit" disabled={isLoading} className="laura-btn laura-btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-            {isLoading ? 'Connexion en cours...' : 'Se connecter'}
+            {isLoading ? t('auth.login_loading') : t('auth.login_button')}
           </button>
         </form>
 
         <div className="auth-footer-links">
           <p>
-            Vous n'avez pas de compte ? <Link to="/signup" className="auth-accent-link">S'inscrire</Link>
+            {t('auth.no_account')} <Link to="/signup" className="auth-accent-link">{t('auth.signup_link')}</Link>
           </p>
           <p>
-            Vous souhaitez devenir tuteur ? <Link to="/become-tutor" className="auth-underline-link">Devenez tuteur</Link>
+            {t('auth.become_tutor_text')} <Link to="/become-tutor" className="auth-underline-link">{t('auth.become_tutor_link')}</Link>
           </p>
         </div>
       </div>

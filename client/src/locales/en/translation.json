@@ -1,0 +1,18 @@
+{
+  "auth": {
+    "login_title": "Sign in to LAURA",
+    "email_label": "Email address",
+    "email_placeholder": "you@email.com",
+    "password_label": "Password",
+    "forgot_password": "Forgot?",
+    "password_placeholder": "••••••••",
+    "login_button": "Sign in",
+    "login_loading": "Signing in...",
+    "no_account": "Don't have an account?",
+    "signup_link": "Sign up",
+    "become_tutor_text": "Want to become a tutor?",
+    "become_tutor_link": "Become a tutor",
+    "error_empty": "Please fill in all fields.",
+    "error_invalid": "Invalid credentials. Please try again."
+  }
+}
