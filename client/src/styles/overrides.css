@@ -201,3 +201,295 @@ div[style*="background: var(--color-neutral-800)"] {
 .dark-card p {
   color: var(--laura-text-2) !important;
 }
+
+/* ==========================================================================
+   LAURA AI - Centralized Design System Bridge (Legacy Unification)
+   Elegant CSS overrides using brand tokens to elevate all raw subpages.
+   ========================================================================== */
+
+/* 1. AUTHENTICATION PORTAL (Login & Signup Pages) */
+.auth-container {
+  min-height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: radial-gradient(circle at 10% 20%, rgba(238, 242, 255, 0.8) 0%, rgba(248, 250, 252, 1) 90%) !important;
+  padding: 40px 24px !important;
+  box-sizing: border-box !important;
+  font-family: var(--font-ui) !important;
+}
+
+.auth-card {
+  width: 100% !important;
+  max-width: 440px !important;
+  background: rgba(255, 255, 255, 0.84) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  border-radius: var(--r-xl) !important;
+  padding: 40px !important;
+  box-shadow: var(--shadow-lg) !important;
+  box-sizing: border-box !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.auth-card:hover {
+  box-shadow: 0 30px 70px rgba(37, 99, 235, 0.1) !important;
+}
+
+.auth-card h1 {
+  font-family: var(--font-display) !important;
+  font-size: 28px !important;
+  font-weight: 800 !important;
+  color: var(--laura-text-1) !important;
+  letter-spacing: -0.8px !important;
+  margin-bottom: 24px !important;
+}
+
+/* 2. FORM FIELDS & TYPOGRAPHY BRIDGE */
+.auth-card label,
+.learn-card label,
+.form-grid label,
+.form-grid span {
+  display: block !important;
+  margin-bottom: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--laura-text-2) !important;
+  text-align: left !important;
+  font-family: var(--font-ui) !important;
+}
+
+/* Sleek inputs, dropdown selects and textareas */
+.auth-card input[type="email"],
+.auth-card input[type="password"],
+.auth-card input[type="text"],
+.learn-card input[type="text"],
+.learn-card input[type="number"],
+.learn-card select,
+.auth-card select,
+.learn-card textarea {
+  width: 100% !important;
+  min-height: 48px !important;
+  padding: 12px 16px !important;
+  border-radius: var(--r-sm) !important;
+  border: 1px solid var(--laura-border-strong) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: var(--laura-text-1) !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  font-size: 14px !important;
+  font-family: var(--font-ui) !important;
+  transition: border-color var(--dur-fast) var(--ease-standard),
+              box-shadow var(--dur-fast) var(--ease-standard),
+              background var(--dur-fast) var(--ease-standard) !important;
+}
+
+/* Premium Focus glow states */
+.auth-card input:focus,
+.learn-card input:focus,
+.learn-card select:focus,
+.learn-card textarea:focus,
+.auth-card select:focus {
+  border-color: var(--laura-primary) !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12) !important;
+  background: white !important;
+}
+
+/* Elegant custom SVG arrow for all select boxes */
+.auth-card select,
+.learn-card select {
+  appearance: none !important;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23475569' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E") !important;
+  background-position: right 14px center !important;
+  background-repeat: no-repeat !important;
+  background-size: 18px !important;
+  padding-right: 44px !important;
+  cursor: pointer !important;
+}
+
+/* 3. BUTTONS & MICRO-INTERACTIONS BRIDGE */
+.auth-card button[type="submit"],
+.learn-card button.primary {
+  width: 100% !important;
+  min-height: 48px !important;
+  background: var(--laura-gradient) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: var(--r-full) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.18) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: transform var(--dur-fast) var(--ease-standard),
+              box-shadow var(--dur-fast) var(--ease-standard),
+              opacity var(--dur-fast) var(--ease-standard) !important;
+  font-family: var(--font-ui) !important;
+}
+
+.auth-card button[type="submit"]:hover,
+.learn-card button.primary:hover {
+  transform: translateY(-1.5px) !important;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.24) !important;
+}
+
+.auth-card button[type="submit"]:active,
+.learn-card button.primary:active {
+  transform: scale(0.98) !important;
+}
+
+.auth-card button[disabled],
+.learn-card button.primary[disabled] {
+  opacity: 0.65 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* 4. SUBPAGES & CARDS HARMONIZATION */
+.learn-card {
+  background: var(--laura-surface) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  border-radius: var(--r-lg) !important;
+  box-shadow: var(--shadow-md) !important;
+  padding: var(--sp-6) !important;
+  box-sizing: border-box !important;
+  font-family: var(--font-ui) !important;
+}
+
+.learn-card h2,
+.learn-card h3 {
+  font-family: var(--font-display) !important;
+  color: var(--laura-text-1) !important;
+}
+
+/* Redesign the dark 'Need Help' banner to use premium brand gradient */
+.learn-card[style*="background: rgb(26, 26, 26)"],
+.learn-card[style*="background:#1A1A1A"],
+.learn-card[style*="background: #1A1A1A"] {
+  background: var(--laura-gradient) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.learn-card[style*="background: rgb(26, 26, 26)"] h3,
+.learn-card[style*="background:#1A1A1A"] h3,
+.learn-card[style*="background: #1A1A1A"] h3 {
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+}
+
+.learn-card[style*="background: rgb(26, 26, 26)"] p,
+.learn-card[style*="background:#1A1A1A"] p,
+.learn-card[style*="background: #1A1A1A"] p {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+/* Style white CTA button inside helper banner */
+.learn-card[style*="background: rgb(26, 26, 26)"] button,
+.learn-card[style*="background:#1A1A1A"] button,
+.learn-card[style*="background: #1A1A1A"] button {
+  background: white !important;
+  color: var(--laura-primary) !important;
+  border: none !important;
+  border-radius: var(--r-full) !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  min-height: 36px !important;
+  box-shadow: var(--shadow-sm) !important;
+  transition: transform var(--dur-fast) var(--ease-standard),
+              box-shadow var(--dur-fast) var(--ease-standard) !important;
+}
+
+.learn-card[style*="background: rgb(26, 26, 26)"] button:hover,
+.learn-card[style*="background:#1A1A1A"] button:hover,
+.learn-card[style*="background: #1A1A1A"] button:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* 5. GRIDS & LAYOUT ALIGNMENTS */
+.form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: var(--sp-4) !important;
+}
+
+.asymmetrical-grid {
+  display: grid !important;
+  grid-template-columns: 1.7fr 1fr !important;
+  gap: var(--sp-6) !important;
+  align-items: start !important;
+}
+
+@media (max-width: 1024px) {
+  .asymmetrical-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 6. LISTS & CHEVRON ACTIONS BRIDGE */
+.minimal-list-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 14px 16px !important;
+  border-bottom: 1px solid var(--laura-border-soft) !important;
+  cursor: pointer !important;
+  transition: background var(--dur-fast) var(--ease-standard) !important;
+  border-left: 3px solid transparent !important;
+}
+
+.minimal-list-item:hover {
+  background: var(--laura-bg-soft) !important;
+  border-left-color: var(--laura-primary) !important;
+}
+
+.minimal-list-item:last-child {
+  border-bottom: none !important;
+}
+
+.minimal-list-item-title {
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: var(--laura-text-1) !important;
+  margin-bottom: 2px !important;
+}
+
+.minimal-list-item-subtitle {
+  font-size: 12px !important;
+  color: var(--laura-text-2) !important;
+}
+
+.chevron-action {
+  font-size: 16px !important;
+  color: var(--laura-text-3) !important;
+  transition: transform var(--dur-fast) var(--ease-standard),
+              color var(--dur-fast) var(--ease-standard) !important;
+}
+
+.minimal-list-item:hover .chevron-action {
+  transform: translateX(4px) !important;
+  color: var(--laura-primary) !important;
+}
+
+.divider {
+  height: 1px !important;
+  background: var(--laura-border-soft) !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
