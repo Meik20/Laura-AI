@@ -7,32 +7,46 @@ function LanguageSwitcher() {
   const currentLang = i18n.language || 'fr';
   const isFr = currentLang.startsWith('fr');
 
-  const toggleLanguage = () => {
-    i18n.changeLanguage(isFr ? 'en' : 'fr');
-  };
-
   return (
-    <button 
-      onClick={toggleLanguage} 
-      className="lang-switcher-btn"
-      style={{
-        background: 'rgba(79, 110, 247, 0.08)',
-        border: '1px solid rgba(79, 110, 247, 0.15)',
-        cursor: 'pointer',
-        fontSize: '12px',
-        fontWeight: '600',
-        color: 'var(--clr-brand)',
-        padding: '6px 12px',
-        borderRadius: '6px',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '6px',
-        transition: 'all 0.2s ease',
-        textTransform: 'uppercase'
-      }}
-    >
-      🌐 {isFr ? 'English (EN)' : 'Français (FR)'}
-    </button>
+    <div style={{ display: 'inline-flex', gap: '8px', alignItems: 'center', background: 'var(--srf-raised)', padding: '4px 8px', borderRadius: '20px', border: '1px solid var(--brd-subtle)' }}>
+      <button
+        onClick={() => i18n.changeLanguage('fr')}
+        title="Français"
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: '16px',
+          opacity: isFr ? 1 : 0.4,
+          transform: isFr ? 'scale(1.1)' : 'scale(0.9)',
+          transition: 'all 0.2s',
+          padding: 0,
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        🇫🇷
+      </button>
+      <span style={{ color: 'var(--brd-strong)', fontSize: '10px' }}>|</span>
+      <button
+        onClick={() => i18n.changeLanguage('en')}
+        title="English"
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: '16px',
+          opacity: !isFr ? 1 : 0.4,
+          transform: !isFr ? 'scale(1.1)' : 'scale(0.9)',
+          transition: 'all 0.2s',
+          padding: 0,
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        🇬🇧
+      </button>
+    </div>
   );
 }
 
