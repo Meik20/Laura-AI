@@ -1,153 +1,195 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+const FEATURES = [
+  {
+    icon: '◎', color: 'var(--clr-brand)',
+    title: 'Chat Contextuel',
+    desc: 'Dialogue interactif adapté à votre niveau, capable de générer des quiz à la demande.',
+  },
+  {
+    icon: '▲', color: 'var(--clr-green)',
+    title: 'Objectifs & Suivi',
+    desc: 'Définissez vos objectifs et suivez votre progression en temps réel avec des indicateurs clairs.',
+  },
+  {
+    icon: '✦', color: 'var(--clr-warning)',
+    title: 'Simulateur d\'Examens',
+    desc: 'Entraînez-vous dans les conditions réelles sur une immense base d\'annales africaines.',
+  },
+  {
+    icon: '⊕', color: 'var(--clr-error)',
+    title: 'Ressources Intelligentes',
+    desc: 'Le système ne vous propose que les documents correspondant à votre série et vos lacunes.',
+  },
+];
+
+const AUDIENCES = [
+  {
+    icon: '🎒',
+    title: 'Pour les Élèves (Secondaire)',
+    desc: 'Préparation au BAC, Probatoire ou BEPC. Des explications simplifiées, des fiches de révisions et des annales corrigées.',
+  },
+  {
+    icon: '🎓',
+    title: 'Pour les Étudiants (Supérieur)',
+    desc: 'Un accompagnement approfondi pour les filières universitaires, préparations aux partiels, concours et soutenances.',
+  },
+];
+
 export default function HomePage() {
   const navigate = useNavigate();
+  const qrUrl = typeof window !== 'undefined' ? window.location.origin : 'https://laura-ai.vercel.app';
 
   useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    if (isStandalone) {
-      navigate('/login', { replace: true });
-    }
+    if (isStandalone) navigate('/login', { replace: true });
   }, [navigate]);
-  const qrUrl = typeof window !== 'undefined' ? window.location.origin : 'https://laura-ai.vercel.app';
-
-  const handleStart = () => {
-    const isLoggedIn = false;
-    if (isLoggedIn) navigate('/learn/dashboard');
-    else navigate('/signup');
-  };
 
   return (
-    <div className="laura-page" style={{ paddingBottom: 'var(--sp-12)' }}>
+    <div className="home-page">
 
-      {/* HERO SECTION */}
-      <section className="laura-hero" style={{ margin: 'var(--sp-6) 0', borderRadius: 'var(--r-2xl)' }}>
-        <div className="laura-hero-body" style={{ textAlign: 'center', padding: '6rem 2rem' }}>
-          <div className="laura-pill" style={{ marginBottom: '1.5rem', background: 'rgba(255,255,255,0.25)', color: 'white' }}>
+      {/* ── HERO ─────────────────────────────────────────────────────────── */}
+      <section className="home-hero">
+        <div className="home-hero__inner">
+
+          {/* Announcement badge */}
+          <div className="home-hero__badge">
             ✨ Découvrez la nouvelle version 2.0
           </div>
-          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <h1 className="laura-hero-text" style={{ marginBottom: '1.5rem' }}>
-              L'intelligence artificielle éducative qui accompagne vos apprentissages
-            </h1>
-            <p className="laura-body-lg" style={{ marginBottom: '3rem', opacity: 0.9 }}>
-              LAURA est votre tuteur personnel sur-mesure. Des révisions ciblées, des examens préparés avec précision et des explications toujours claires.
-            </p>
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button onClick={handleStart} className="laura-btn" style={{ background: 'white', color: 'var(--laura-primary)', padding: '0 32px', minHeight: '56px', fontSize: '16px' }}>
-                Commencer gratuitement
-              </button>
-              <Link to="/how-it-works" className="laura-btn" style={{ background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', padding: '0 32px', minHeight: '56px', fontSize: '16px' }}>
-                Voir comment ça marche
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* POUR QUI ? */}
-      <section style={{ padding: '4rem 1rem', textAlign: 'center' }}>
-        <h2 className="laura-h2" style={{ marginBottom: '1rem' }}>Pour qui est LAURA ?</h2>
-        <p className="laura-body" style={{ color: 'var(--laura-text-2)', marginBottom: '3rem' }}>Un outil pensé pour chaque étape du parcours scolaire.</p>
-        
-        <div style={{ maxWidth: '900px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
-          <div className="laura-card" style={{ padding: '2rem', textAlign: 'left' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎒</div>
-            <h3 className="laura-h3" style={{ marginBottom: '0.75rem' }}>Pour les Élèves (Secondaire)</h3>
-            <p className="laura-body" style={{ color: 'var(--laura-text-2)' }}>Préparation au BAC, Probatoire ou BEPC. Des explications simplifiées, des fiches de révisions générées à la volée et des annales corrigées.</p>
-          </div>
+          <h1 className="home-hero__title">
+            L'intelligence artificielle éducative qui accompagne vos apprentissages
+          </h1>
 
-          <div className="laura-card" style={{ padding: '2rem', textAlign: 'left' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎓</div>
-            <h3 className="laura-h3" style={{ marginBottom: '0.75rem' }}>Pour les Étudiants (Supérieur)</h3>
-            <p className="laura-body" style={{ color: 'var(--laura-text-2)' }}>Un accompagnement approfondi pour les filières universitaires, les préparations aux partiels, concours et soutenances.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* FONCTIONNALITÉS */}
-      <section style={{ padding: '5rem 1rem', textAlign: 'center' }}>
-        <h2 className="laura-h2" style={{ marginBottom: '1rem' }}>Des fonctionnalités surpuissantes</h2>
-        <p className="laura-body" style={{ color: 'var(--laura-text-2)', marginBottom: '4rem' }}>Tout ce dont vous avez besoin pour réussir, réuni en un seul endroit.</p>
-
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
-          
-          <div className="laura-card-tint" style={{ padding: '2rem', textAlign: 'left' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>💬</div>
-            <h3 className="laura-h3" style={{ marginBottom: '0.75rem', color: 'var(--laura-primary)' }}>Chat Contextuel</h3>
-            <p className="laura-body" style={{ color: 'var(--laura-text-2)' }}>Dialogue interactif adapté à votre niveau, capable de générer des quiz à la demande.</p>
-          </div>
-
-          <div className="laura-card-tint" style={{ padding: '2rem', textAlign: 'left' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🎯</div>
-            <h3 className="laura-h3" style={{ marginBottom: '0.75rem', color: 'var(--laura-success)' }}>Objectifs & Suivi</h3>
-            <p className="laura-body" style={{ color: 'var(--laura-text-2)' }}>Définissez vos objectifs et suivez votre progression en temps réel avec des indicateurs clairs.</p>
-          </div>
-
-          <div className="laura-card-tint" style={{ padding: '2rem', textAlign: 'left' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📝</div>
-            <h3 className="laura-h3" style={{ marginBottom: '0.75rem', color: 'var(--laura-warning)' }}>Simulateur d'Examens</h3>
-            <p className="laura-body" style={{ color: 'var(--laura-text-2)' }}>Entraînez-vous dans les conditions réelles sur une immense base de données d'annales africaines.</p>
-          </div>
-
-          <div className="laura-card-tint" style={{ padding: '2rem', textAlign: 'left' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📚</div>
-            <h3 className="laura-h3" style={{ marginBottom: '0.75rem', color: 'var(--laura-danger)' }}>Ressources Intelligentes</h3>
-            <p className="laura-body" style={{ color: 'var(--laura-text-2)' }}>Le système ne vous propose que les documents qui correspondent à votre série et vos lacunes.</p>
-          </div>
-
-        </div>
-      </section>
-
-      {/* SECTION VERSION MOBILE & QR CODE */}
-      <section style={{ padding: '4rem 1rem' }}>
-        <div className="laura-card" style={{ maxWidth: '950px', margin: '0 auto', padding: '3.5rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-around', gap: '3rem', flexWrap: 'wrap-reverse' }}>
-          
-          <div style={{ flex: 1, textAlign: 'left', minWidth: '300px' }}>
-            <div className="laura-pill" style={{ background: 'var(--laura-success-bg)', color: 'var(--laura-success)', marginBottom: '1.2rem' }}>
-              ⚡ Version Mobile & PWA
-            </div>
-            <h2 className="laura-h2" style={{ marginBottom: '1rem' }}>
-              Emportez LAURA partout avec vous
-            </h2>
-            <p className="laura-body" style={{ color: 'var(--laura-text-2)', marginBottom: '2rem' }}>
-              Scannez le QR code ci-contre avec votre smartphone pour ouvrir instantanément l'application sur mobile. Grâce à notre format PWA optimisé, vous pouvez l'installer directement sur votre écran d'accueil sans passer par l'App Store ou Google Play !
-            </p>
-            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--laura-success)', fontWeight: 600 }}>
-                <span style={{ fontSize: '1.2rem' }}>✓</span> Mode PWA Installable
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--laura-success)', fontWeight: 600 }}>
-                <span style={{ fontSize: '1.2rem' }}>✓</span> Notifications instantanées
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', background: 'var(--laura-bg-soft)', padding: '2rem', borderRadius: 'var(--r-xl)', width: '220px', flexShrink: 0 }}>
-            <div style={{ background: 'white', padding: '1rem', borderRadius: 'var(--r-md)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}`} 
-                alt="QR Code LAURA AI" 
-                style={{ width: '160px', height: '160px', display: 'block' }} 
-              />
-            </div>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--laura-text-2)' }}>Scannez pour installer</span>
-          </div>
-
-        </div>
-      </section>
-
-      {/* DEVENEZ TUTEUR */}
-      <section style={{ padding: '4rem 1rem', textAlign: 'center' }}>
-        <div className="laura-card-soft" style={{ maxWidth: '800px', margin: '0 auto', padding: '4rem 2rem', background: 'var(--laura-surface-tint)' }}>
-          <h2 className="laura-h2" style={{ marginBottom: '1rem', color: 'var(--laura-primary)' }}>Vous êtes enseignant ?</h2>
-          <p className="laura-body" style={{ color: 'var(--laura-text-2)', marginBottom: '2.5rem' }}>
-            Rejoignez la communauté LAURA. Partagez votre expertise, proposez vos ressources et aidez des milliers d'élèves à réussir.
+          <p className="home-hero__sub">
+            LAURA est votre tuteur personnel sur-mesure. Des révisions ciblées, des examens préparés avec précision et des explications toujours claires.
           </p>
-          <Link to="/become-tutor" className="laura-btn laura-btn-primary" style={{ padding: '0 32px', minHeight: '52px', fontSize: '15px' }}>
-            Découvrir le programme Tuteur →
-          </Link>
+
+          <div className="home-hero__cta">
+            <Link to="/signup" className="laura-btn" style={{
+              background: 'white', color: 'var(--clr-brand)',
+              minHeight: '52px', padding: '0 var(--sp-8)', fontSize: 'var(--tx-md)',
+              fontWeight: 'var(--fw-bold)', boxShadow: '0 4px 20px rgba(255,255,255,0.3)'
+            }}>
+              Commencer gratuitement
+            </Link>
+            <Link to="/how-it-works" className="laura-btn" style={{
+              background: 'rgba(255,255,255,0.18)',
+              color: 'white',
+              border: '1.5px solid rgba(255,255,255,0.45)',
+              minHeight: '52px', padding: '0 var(--sp-8)', fontSize: 'var(--tx-md)',
+            }}>
+              Comment ça marche →
+            </Link>
+          </div>
+
+          {/* Social proof */}
+          <div className="home-hero__trust">
+            <span>✓ Gratuit</span>
+            <span>✓ Sans téléchargement</span>
+            <span>✓ Adapté au programme africain</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── AUDIENCES ────────────────────────────────────────────────────── */}
+      <section className="home-section">
+        <div className="home-section__inner">
+          <div className="home-section__header">
+            <h2>Pour qui est LAURA ?</h2>
+            <p>Un outil pensé pour chaque étape du parcours scolaire.</p>
+          </div>
+
+          <div className="card-grid">
+            {AUDIENCES.map(({ icon, title, desc }) => (
+              <div key={title} className="card card--hoverable" style={{ padding: 'var(--sp-8)' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: 'var(--sp-5)' }}>{icon}</div>
+                <h3 style={{ marginBottom: 'var(--sp-3)', fontSize: 'var(--tx-lg)' }}>{title}</h3>
+                <p style={{ fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FEATURES ─────────────────────────────────────────────────────── */}
+      <section className="home-section home-section--tinted">
+        <div className="home-section__inner">
+          <div className="home-section__header">
+            <h2>Des fonctionnalités surpuissantes</h2>
+            <p>Tout ce dont vous avez besoin pour réussir, réuni en un seul endroit.</p>
+          </div>
+
+          <div className="card-grid card-grid--3" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+            {FEATURES.map(({ icon, color, title, desc }) => (
+              <div key={title} className="card card--hoverable" style={{ padding: 'var(--sp-6)' }}>
+                <div style={{
+                  width: '48px', height: '48px', borderRadius: 'var(--rd-md)',
+                  background: `${color}18`, color, display: 'flex',
+                  alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1.4rem', marginBottom: 'var(--sp-4)'
+                }}>
+                  {icon}
+                </div>
+                <h3 style={{ fontSize: 'var(--tx-md)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)', color }}>{title}</h3>
+                <p style={{ fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PWA / MOBILE ─────────────────────────────────────────────────── */}
+      <section className="home-section">
+        <div className="home-section__inner">
+          <div className="home-pwa">
+            <div className="home-pwa__text">
+              <span className="badge badge--green" style={{ marginBottom: 'var(--sp-4)', display: 'inline-flex' }}>
+                ⚡ Version Mobile & PWA
+              </span>
+              <h2 style={{ marginBottom: 'var(--sp-4)' }}>Emportez LAURA partout avec vous</h2>
+              <p style={{ marginBottom: 'var(--sp-6)', fontSize: 'var(--tx-base)', lineHeight: 'var(--lh-relaxed)' }}>
+                Scannez le QR code avec votre smartphone pour ouvrir l'application sur mobile. Grâce à notre format PWA optimisé, installez-la directement sur votre écran d'accueil sans passer par l'App Store.
+              </p>
+              <div className="stack stack--sm">
+                {['Mode PWA Installable', 'Notifications instantanées', 'Fonctionne hors-ligne'].map(f => (
+                  <div key={f} className="row" style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)' }}>
+                    <span>✓</span> {f}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="home-pwa__qr">
+              <div style={{ background: 'white', padding: 'var(--sp-4)', borderRadius: 'var(--rd-lg)' }}>
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}`}
+                  alt="QR Code LAURA AI"
+                  style={{ width: '160px', height: '160px', display: 'block' }}
+                />
+              </div>
+              <p style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', textAlign: 'center' }}>
+                Scannez pour installer
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TEACHER CTA ──────────────────────────────────────────────────── */}
+      <section className="home-section">
+        <div className="home-section__inner">
+          <div className="home-cta-panel">
+            <div className="home-cta-panel__badge">Pour les enseignants</div>
+            <h2 className="home-cta-panel__title">Vous êtes enseignant ?</h2>
+            <p className="home-cta-panel__sub">
+              Rejoignez la communauté LAURA. Partagez votre expertise, proposez vos ressources et aidez des milliers d'élèves à réussir.
+            </p>
+            <Link to="/become-tutor" className="laura-btn laura-btn-primary" style={{ minHeight: '50px', padding: '0 var(--sp-8)', fontSize: 'var(--tx-md)' }}>
+              Découvrir le programme Tuteur →
+            </Link>
+          </div>
         </div>
       </section>
 

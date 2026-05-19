@@ -1,55 +1,327 @@
-/* ========================================
-   LAURA AI - Forms & Inputs
-   ======================================== */
+/* ==========================================================================
+   LAURA AI — Form System
+   Accessible, elegant, token-driven.
+   ========================================================================== */
 
-.laura-field {
+.form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 
-.laura-label {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--laura-text-2);
+.form-group__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
 }
 
+label,
+.form-label {
+  font-size: var(--tx-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--txt-secondary);
+  display: block;
+}
+
+.form-hint {
+  font-size: var(--tx-xs);
+  color: var(--txt-tertiary);
+}
+
+/* ─────────────────────────────────────────────
+   INPUT / SELECT / TEXTAREA
+───────────────────────────────────────────── */
+
+.input,
 .laura-input,
-.laura-textarea,
-.laura-select {
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="search"],
+input[type="url"],
+input[type="file"],
+select,
+textarea {
   width: 100%;
-  min-height: 48px;
-  padding: 12px 14px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--laura-border-soft);
-  background: rgba(255, 255, 255, 0.88);
-  color: var(--laura-text-1);
+  height: 48px;
+  padding: 0 var(--sp-4);
+  border-radius: var(--rd-md);
+  border: 1px solid var(--brd-input);
+  background: var(--srf-raised);
+  color: var(--txt-primary);
+  font-size: var(--tx-base);
+  font-family: var(--font);
   outline: none;
+  box-sizing: border-box;
   transition:
-    border-color var(--dur-fast) var(--ease-standard),
-    box-shadow var(--dur-fast) var(--ease-standard),
-    background var(--dur-fast) var(--ease-standard);
+    border-color var(--dur-fast) var(--ease-std),
+    box-shadow var(--dur-fast) var(--ease-std),
+    background var(--dur-fast) var(--ease-std);
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-.laura-textarea {
+textarea {
+  height: auto;
   min-height: 120px;
+  padding: var(--sp-4);
   resize: vertical;
+  line-height: var(--lh-relaxed);
 }
 
+input[type="file"] {
+  height: auto;
+  padding: var(--sp-3) var(--sp-4);
+  cursor: pointer;
+}
+
+.input:focus,
 .laura-input:focus,
-.laura-textarea:focus,
-.laura-select:focus {
-  border-color: rgba(79, 70, 229, 0.45);
-  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.10);
-  background: white;
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="search"]:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--clr-brand);
+  box-shadow: var(--shd-glow);
+  background: var(--srf-base);
 }
 
-.laura-input::placeholder,
-.laura-textarea::placeholder {
-  color: var(--laura-text-3);
+.input::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--txt-tertiary);
 }
 
-.laura-help {
-  font-size: var(--fs-sm);
-  color: var(--laura-text-3);
+/* ─────────────────────────────────────────────
+   SELECT custom arrow
+───────────────────────────────────────────── */
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238896a7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--sp-4) center;
+  padding-right: var(--sp-10);
+  cursor: pointer;
 }
+
+/* ─────────────────────────────────────────────
+   FORM GRID
+───────────────────────────────────────────── */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+}
+
+@media (min-width: 480px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.form-grid--1 { grid-template-columns: 1fr; }
+
+/* ─────────────────────────────────────────────
+   AUTH SPECIFIC
+───────────────────────────────────────────── */
+
+.auth-container {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--srf-page);
+  padding: var(--sp-6) var(--sp-4);
+}
+
+.auth-card {
+  background: var(--srf-base);
+  border: 1px solid var(--brd-subtle);
+  border-radius: var(--rd-2xl);
+  padding: var(--sp-8) var(--sp-8);
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--shd-lg);
+  animation: scaleIn var(--dur-slow) var(--ease-spring);
+}
+
+.auth-card h1 {
+  font-size: var(--tx-2xl);
+  font-weight: var(--fw-bold);
+  text-align: center;
+  margin-bottom: var(--sp-2);
+}
+
+.auth-card--signup,
+.auth-card--apply {
+  max-width: 660px;
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: var(--txt-secondary);
+  font-size: var(--tx-sm);
+  margin-bottom: var(--sp-6);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin-top: var(--sp-6);
+}
+
+.auth-form button[type="submit"],
+.auth-form .btn--primary {
+  width: 100%;
+  margin-top: var(--sp-2);
+}
+
+.auth-footer-links {
+  margin-top: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  text-align: center;
+  font-size: var(--tx-sm);
+}
+
+.auth-footer-links p {
+  color: var(--txt-secondary);
+  margin: 0;
+}
+
+.auth-accent-link {
+  color: var(--clr-green);
+  font-weight: var(--fw-bold);
+  text-decoration: none;
+}
+
+.auth-accent-link:hover { text-decoration: underline; opacity: 1; }
+
+.auth-underline-link {
+  color: var(--txt-primary);
+  font-weight: var(--fw-semibold);
+  text-decoration: underline;
+}
+
+.auth-error-alert {
+  padding: var(--sp-4);
+  border-radius: var(--rd-md);
+  background: var(--clr-error-lt);
+  color: var(--clr-error);
+  font-size: var(--tx-sm);
+  font-weight: var(--fw-medium);
+  border: 1px solid rgba(226,75,74,0.18);
+}
+
+.auth-info-alert {
+  padding: var(--sp-4);
+  border-radius: var(--rd-md);
+  background: var(--clr-info-lt);
+  color: var(--clr-info);
+  font-size: var(--tx-sm);
+  font-weight: var(--fw-semibold);
+  border: 1px solid rgba(79,110,247,0.18);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+/* Profile type selector */
+.profile-select-box {
+  background: var(--srf-raised);
+  border: 1px solid var(--brd-subtle);
+  border-radius: var(--rd-lg);
+  padding: var(--sp-5);
+}
+
+.profile-select-label {
+  font-size: var(--tx-sm);
+  font-weight: var(--fw-bold);
+  color: var(--txt-primary);
+  margin-bottom: var(--sp-3);
+  display: block;
+}
+
+.profile-radio-group {
+  display: flex;
+  gap: var(--sp-5);
+  flex-wrap: wrap;
+}
+
+.profile-radio-label {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  cursor: pointer;
+  font-size: var(--tx-sm);
+  font-weight: var(--fw-medium);
+  color: var(--txt-secondary);
+  user-select: none;
+}
+
+.profile-radio-label input[type="radio"] {
+  width: auto;
+  height: auto;
+  min-height: auto;
+  accent-color: var(--clr-brand);
+}
+
+.profile-radio-label.is-active {
+  color: var(--clr-brand);
+  font-weight: var(--fw-bold);
+}
+
+.profile-conditional-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  border-left: 3px solid var(--clr-brand);
+  padding-left: var(--sp-5);
+}
+
+/* Apply form sections */
+.apply-section { margin-bottom: var(--sp-6); }
+
+.apply-section-title {
+  font-size: var(--tx-lg);
+  font-weight: var(--fw-bold);
+  color: var(--txt-primary);
+  padding-bottom: var(--sp-3);
+  margin-bottom: var(--sp-5);
+  border-bottom: 1px solid var(--brd-subtle);
+}
+
+.apply-actions {
+  display: flex;
+  gap: var(--sp-4);
+  margin-top: var(--sp-6);
+}
+
+/* Forgot password link */
+.forgot-link {
+  font-size: var(--tx-xs);
+  color: var(--clr-brand);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.forgot-link:hover { text-decoration: underline; }
+
+/* Backwards-compat aliases */
+.forgot-password-link  { font-size: var(--tx-xs); color: var(--clr-brand); font-weight: var(--fw-semibold); cursor: pointer; }
+.laura-modal-backdrop  { position: fixed; inset: 0; background: var(--laura-overlay); backdrop-filter: blur(8px); z-index: var(--z-modal); display: flex; align-items: center; justify-content: center; }
+.laura-modal-card      { background: var(--srf-base); border-radius: var(--rd-2xl); border: 1px solid var(--brd-subtle); box-shadow: var(--shd-xl); padding: var(--sp-8); width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: var(--sp-5); }
+.form-group-header     { display: flex; justify-content: space-between; align-items: center; }

@@ -493,3 +493,301 @@ div[style*="background: var(--color-neutral-800)"] {
   width: 100% !important;
   margin: 0 !important;
 }
+
+/* 7. AUTH FORM MODULAR HELPER CLASSES */
+.auth-form {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-4) !important;
+}
+
+.form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-2) !important;
+}
+
+.form-group-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.forgot-password-link {
+  font-size: 13px !important;
+  color: var(--laura-primary) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+}
+
+.auth-error-alert {
+  background: var(--laura-danger-bg) !important;
+  color: var(--laura-error) !important;
+  padding: var(--sp-4) !important;
+  border-radius: var(--r-md) !important;
+  margin-bottom: var(--sp-4) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border: 1px solid rgba(226, 75, 74, 0.15) !important;
+}
+
+.auth-footer-links {
+  margin-top: var(--sp-8) !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-3) !important;
+  font-size: 14px !important;
+}
+
+.auth-footer-links p {
+  margin: 0 !important;
+  color: var(--laura-text-2) !important;
+}
+
+.auth-accent-link {
+  color: var(--laura-accent) !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+}
+
+.auth-accent-link:hover {
+  text-decoration: underline !important;
+}
+
+.auth-underline-link {
+  color: var(--laura-text-primary) !important;
+  font-weight: 600 !important;
+  text-decoration: underline !important;
+}
+
+.auth-subtitle {
+  text-align: center !important;
+  color: var(--laura-text-2) !important;
+  margin-top: calc(-1 * var(--sp-2)) !important;
+  margin-bottom: var(--sp-8) !important;
+  font-size: 14px !important;
+}
+
+.auth-card.auth-card--signup,
+.auth-card.auth-card--apply {
+  max-width: 700px !important;
+}
+
+/* 8. CONDITIONAL PROFILE SELECTIONS */
+.profile-select-box {
+  margin: var(--sp-4) 0 !important;
+  padding: var(--sp-5) !important;
+  background: var(--laura-bg-secondary) !important;
+  border-radius: var(--r-md) !important;
+  border: 1px solid var(--laura-border-soft) !important;
+}
+
+.profile-select-label {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--laura-text-primary) !important;
+  margin-bottom: var(--sp-4) !important;
+}
+
+.profile-radio-group {
+  display: flex !important;
+  gap: var(--sp-6) !important;
+}
+
+.profile-radio-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-2) !important;
+  cursor: pointer !important;
+  color: var(--laura-text-2) !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  user-select: none !important;
+}
+
+.profile-radio-label input[type="radio"] {
+  width: auto !important;
+  min-height: auto !important;
+  margin: 0 !important;
+}
+
+.profile-radio-label.is-active {
+  font-weight: 700 !important;
+  color: var(--laura-primary) !important;
+}
+
+.profile-conditional-fields {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-4) !important;
+  padding: var(--sp-4) 0 !important;
+  border-left: 3px solid var(--laura-primary) !important;
+  padding-left: var(--sp-4) !important;
+}
+
+/* 9. MODAL STYLES (Tutor Invite) */
+.laura-modal-backdrop {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: var(--laura-overlay) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: var(--laura-z-modal) !important;
+}
+
+.laura-modal-card {
+  background: var(--laura-bg-card) !important;
+  padding: var(--sp-8) !important;
+  border-radius: var(--r-xl) !important;
+  border: 1px solid var(--laura-border-strong) !important;
+  width: 100% !important;
+  max-width: 400px !important;
+  box-shadow: var(--laura-shadow-xl) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-5) !important;
+}
+
+/* 10. TUTOR LANDING & APPLICATION PAGES */
+.tutor-apply-container {
+  max-width: var(--laura-content-max);
+  margin: 0 auto;
+  padding: var(--sp-10) var(--sp-6) var(--sp-16) var(--sp-6);
+}
+
+.tutor-landing-hero {
+  text-align: center !important;
+  margin-bottom: var(--sp-12) !important;
+}
+
+.tutor-landing-hero h1 {
+  font-size: 42px !important;
+  font-weight: 800 !important;
+  margin-bottom: var(--sp-4) !important;
+  color: var(--laura-text-primary) !important;
+}
+
+.tutor-landing-hero p {
+  font-size: 18px !important;
+  color: var(--laura-text-secondary) !important;
+  line-height: var(--laura-leading-relaxed) !important;
+  max-width: 720px !important;
+  margin: 0 auto !important;
+}
+
+.tutor-buttons-row {
+  display: flex !important;
+  gap: var(--sp-4) !important;
+  justify-content: center !important;
+  margin-top: var(--sp-8) !important;
+  flex-wrap: wrap !important;
+}
+
+.tutor-info-panel {
+  background: var(--laura-bg-card) !important;
+  padding: var(--sp-8) !important;
+  border-radius: var(--r-xl) !important;
+  border: 1px solid var(--laura-border-soft) !important;
+  margin-bottom: var(--sp-6) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.tutor-info-panel h3 {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  margin-bottom: var(--sp-5) !important;
+  color: var(--laura-text-primary) !important;
+}
+
+.tutor-info-panel ol {
+  padding-left: var(--sp-5) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-3) !important;
+  color: var(--laura-text-secondary) !important;
+  list-style-type: decimal !important;
+}
+
+.tutor-compare-panel {
+  background: var(--laura-bg-secondary) !important;
+  padding: var(--sp-8) !important;
+  border-radius: var(--r-xl) !important;
+  border: 1px solid var(--laura-border-soft) !important;
+}
+
+.tutor-compare-panel h3 {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  margin-bottom: var(--sp-5) !important;
+  color: var(--laura-text-primary) !important;
+}
+
+.tutor-compare-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+  gap: var(--sp-8) !important;
+}
+
+.tutor-compare-col h4 {
+  font-weight: 700 !important;
+  margin-bottom: var(--sp-3) !important;
+  font-size: 16px !important;
+}
+
+.tutor-compare-col--valid h4 {
+  color: var(--laura-text-primary) !important;
+}
+
+.tutor-compare-col--contrib h4 {
+  color: var(--laura-green) !important;
+}
+
+.tutor-compare-col ul {
+  padding-left: var(--sp-5) !important;
+  color: var(--laura-text-secondary) !important;
+  gap: var(--sp-2) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  list-style-type: disc !important;
+}
+
+/* 11. TUTOR APPLICATION FORM STYLE HARMONIZATION */
+.auth-info-alert {
+  background: var(--laura-blue-light) !important;
+  border: 1px solid var(--laura-border-strong) !important;
+  color: var(--laura-primary) !important;
+  padding: var(--sp-4) !important;
+  border-radius: var(--r-md) !important;
+  margin-bottom: var(--sp-6) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-3) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
+.apply-section {
+  margin-bottom: var(--sp-6) !important;
+}
+
+.apply-section-title {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  margin-bottom: var(--sp-4) !important;
+  border-bottom: 1px solid var(--laura-border-soft) !important;
+  padding-bottom: var(--sp-2) !important;
+  color: var(--laura-text-primary) !important;
+}
+
+.apply-actions {
+  display: flex !important;
+  gap: var(--sp-4) !important;
+  margin-top: var(--sp-6) !important;
+}

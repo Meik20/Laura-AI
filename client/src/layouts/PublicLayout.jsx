@@ -1,24 +1,19 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+
+const AUTH_ROUTES = ['/login', '/signup', '/tutor/apply', '/tutor/status'];
+const AUTH_WIDE   = ['/become-tutor', '/how-it-works'];
 
 export default function PublicLayout() {
-  const location = useLocation();
-  const isLoginPage = location.pathname === '/login';
-  const isSignupPage = location.pathname === '/signup';
+  const { pathname } = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  if (isLoginPage || isSignupPage) {
+  // ── Auth pages: centered single-column, no navbar ──
+  if (AUTH_ROUTES.some(p => pathname.startsWith(p))) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        background: 'var(--laura-bg-page)', 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        padding: '2rem 1.5rem',
-        boxSizing: 'border-box'
-      }}>
-        <Link to="/" style={{ marginBottom: '1.5rem', display: 'inline-block', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
-          <img src="/logo.png" alt="LAURA" style={{ height: '48px', objectFit: 'contain' }} />
+      <div className="public-auth-shell">
+        <Link to="/" className="public-auth-logo">
+          <img src="/logo.png" alt="LAURA" style={{ height: '44px' }} />
         </Link>
         <Outlet />
       </div>
@@ -26,32 +21,86 @@ export default function PublicLayout() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-family-primary)', background: 'var(--color-bg-page)', color: 'var(--color-text-primary)' }}>
-      
-      <header style={{ padding: '1rem 2rem', background: 'var(--color-bg-card)', borderBottom: 'var(--border-width-thin) solid var(--color-border-default)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', transition: 'transform 0.2s', flexShrink: 0 }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
-          <img src="/logo.png" alt="LAURA" style={{ height: '40px', objectFit: 'contain' }} />
-        </Link>
-        <nav className="public-header-nav" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <Link to="/how-it-works" style={{ color: 'var(--color-text-secondary)', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem' }}>Comment ça marche</Link>
-          <Link to="/become-tutor" style={{ color: 'var(--color-text-secondary)', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem' }}>Devenez tuteur</Link>
-          <Link to="/login" style={{ color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: 700, fontSize: '0.95rem' }}>Connexion</Link>
-          <Link to="/signup" style={{ background: 'var(--color-primary)', color: 'var(--color-white)', padding: '0.6rem 1.3rem', borderRadius: '0.6rem', textDecoration: 'none', fontWeight: 700, fontSize: '0.95rem', transition: 'background-color var(--transition-fast)', flexShrink: 0 }} onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-primary-dark)'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-primary)'}>S'inscrire</Link>
-        </nav>
+    <div className="public-shell">
+
+      {/* ── Topbar ── */}
+      <header className="public-topbar">
+        <div className="public-topbar__inner">
+
+          {/* Brand */}
+          <Link to="/" className="public-topbar__brand">
+            <img src="/logo.png" alt="LAURA" style={{ height: '36px' }} />
+            <span className="public-topbar__name">laura ai</span>
+          </Link>
+
+          {/* Desktop nav */}
+          <nav className="public-topbar__nav desktop-only" aria-label="Navigation publique">
+            <NavLink to="/how-it-works" className={({ isActive }) => `public-nav-link${isActive ? ' active' : ''}`}>
+              Comment ça marche
+            </NavLink>
+            <NavLink to="/become-tutor" className={({ isActive }) => `public-nav-link${isActive ? ' active' : ''}`}>
+              Devenez tuteur
+            </NavLink>
+          </nav>
+
+          {/* Desktop CTA */}
+          <div className="public-topbar__actions desktop-only">
+            <Link to="/login" className="public-nav-link">Connexion</Link>
+            <Link to="/signup" className="laura-btn laura-btn-primary" style={{ minHeight: '38px', padding: '0 var(--sp-5)', fontSize: 'var(--tx-sm)' }}>
+              S'inscrire gratuitement
+            </Link>
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            className="l-topbar__menu-btn mobile-only"
+            onClick={() => setMobileMenuOpen(o => !o)}
+            aria-label="Menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? '✕' : '☰'}
+          </button>
+        </div>
+
+        {/* Mobile dropdown nav */}
+        {mobileMenuOpen && (
+          <div className="public-mobile-nav" role="navigation" aria-label="Navigation mobile">
+            <NavLink to="/how-it-works" className="public-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+              Comment ça marche
+            </NavLink>
+            <NavLink to="/become-tutor" className="public-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+              Devenez tuteur
+            </NavLink>
+            <hr className="divider" />
+            <Link to="/login" className="public-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+              Connexion
+            </Link>
+            <Link to="/signup" className="laura-btn laura-btn-primary" style={{ width: '100%' }} onClick={() => setMobileMenuOpen(false)}>
+              S'inscrire gratuitement
+            </Link>
+          </div>
+        )}
       </header>
 
-      <main style={{ flex: 1 }}>
+      {/* ── Content ── */}
+      <main className="public-main">
         <Outlet />
       </main>
 
-      <footer style={{ background: 'var(--color-neutral-900)', color: 'var(--color-neutral-400)', padding: '3rem 2rem', textAlign: 'center' }}>
-        <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'center' }}>
-          <Link to="/" style={{ display: 'inline-flex', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
-            <img src="/logo.png" alt="LAURA" style={{ height: '40px', filter: 'brightness(0) invert(1)' }} />
+      {/* ── Footer ── */}
+      <footer className="public-footer">
+        <div className="public-footer__inner">
+          <Link to="/" className="public-footer__brand">
+            <img src="/logo.png" alt="LAURA" style={{ height: '36px', filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
+            <span className="public-footer__name">laura ai</span>
           </Link>
+          <div className="public-footer__links">
+            <Link to="/how-it-works" className="public-footer__link">Comment ça marche</Link>
+            <Link to="/become-tutor" className="public-footer__link">Devenez tuteur</Link>
+            <Link to="/login"        className="public-footer__link">Connexion</Link>
+          </div>
+          <p className="public-footer__copy">© 2026 LAURA — Tous droits réservés</p>
         </div>
-        <p style={{ fontSize: '0.9rem', marginBottom: '0.5rem', color: 'var(--color-white)' }}>Learning AI & Unified Resource Assistant</p>
-        <p style={{ fontSize: '0.85rem', color: 'var(--color-neutral-500)' }}>© 2026 LAURA — Tous droits réservés</p>
       </footer>
     </div>
   );

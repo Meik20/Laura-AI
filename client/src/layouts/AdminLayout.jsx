@@ -1,161 +1,137 @@
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { useContext, useEffect, useState } from 'react';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { useContext, useState, useCallback } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 
+const NAV_ITEMS = [
+  { to: '/admin/dashboard',          label: 'Vue Globale',   icon: '⊞' },
+  { to: '/admin/users',              label: 'Utilisateurs',  icon: '◉' },
+  { to: '/admin/tutor-applications', label: 'Candidatures',  icon: '▣' },
+  { to: '/admin/resources',          label: 'Catalogue',     icon: '⊕' },
+  { to: '/admin/access-rules',       label: 'Accès',         icon: '◈' },
+  { to: '/admin/audit',              label: 'Logs',          icon: '↺' },
+  { to: '/admin/settings',           label: 'Réglages',      icon: '⊛' },
+];
+
+const BOTTOM_NAV = [
+  { to: '/admin/dashboard',          label: 'Vue',       icon: '⊞' },
+  { to: '/admin/users',              label: 'Membres',   icon: '◉' },
+  { to: '/admin/tutor-applications', label: 'Postulants',icon: '▣' },
+  { to: '/admin/resources',          label: 'Ressources',icon: '⊕' },
+  { to: '/admin/settings',           label: 'Réglages',  icon: '⊛' },
+];
+
 export default function AdminLayout() {
-  const location = useLocation();
   const navigate = useNavigate();
   const { currentUser, logout } = useContext(AuthContext);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [collapsed, setCollapsed]   = useState(false);
 
-  useEffect(() => {
-    if (!currentUser) {
-      navigate('/', { replace: true });
-    }
-  }, [currentUser, navigate]);
+  if (!currentUser) {
+    navigate('/login', { replace: true });
+    return null;
+  }
 
-  if (!currentUser) return null;
+  const handleLogout = useCallback(async () => {
+    try   { await logout(); navigate('/login'); }
+    catch { /* silent */ }
+  }, [logout, navigate]);
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/login');
-    } catch (err) {
-      console.error("Erreur de déconnexion :", err);
-    }
-  };
-
-  const links = [
-    { path: '/admin/dashboard', label: 'Vue Globale', icon: '🌍' },
-    { path: '/admin/users', label: 'Utilisateurs', icon: '👥' },
-    { path: '/admin/tutor-applications', label: 'Candidatures', icon: '🎓' },
-    { path: '/admin/resources', label: 'Catalogue', icon: '📚' },
-    { path: '/admin/access-rules', label: 'Accès', icon: '🔐' },
-    { path: '/admin/audit', label: 'Logs', icon: '📋' },
-    { path: '/admin/settings', label: 'Réglages', icon: '⚙️' },
-  ];
-
-  // Mobile nav shows 5 main shortcuts
-  const mobileShortcuts = [
-    { path: '/admin/dashboard', label: 'Vue', icon: '🌍' },
-    { path: '/admin/users', label: 'Membres', icon: '👥' },
-    { path: '/admin/tutor-applications', label: 'Postulants', icon: '🎓' },
-    { path: '/admin/resources', label: 'Ressources', icon: '📚' },
-    { path: '/admin/settings', label: 'Réglages', icon: '⚙️' },
-  ];
+  const closeDrawer = () => setDrawerOpen(false);
 
   return (
-    <div className={`laura-app admin-layout ${isCollapsed ? 'is-collapsed' : ''}`}>
-      
-      {/* MOBILE HEADER BAR */}
-      <header className="laura-topbar mobile-header-bar">
-        <button className="hamburger-btn" style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }} onClick={() => setIsSidebarOpen(true)}>☰</button>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <img src="/logo.png" alt="LAURA" style={{ height: '36px' }} />
-          <span style={{ fontSize: '0.7rem', background: 'var(--laura-danger)', color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--r-full)', fontWeight: 800 }}>ADMIN</span>
-        </div>
-        <div style={{ width: '24px' }}></div>
-      </header>
+    <div className="l-app">
 
-      {/* BACKDROP OVERLAY */}
-      <div className={`laura-backdrop ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+      {/* Backdrop */}
+      <div className={`l-backdrop${drawerOpen ? ' is-open' : ''}`} onClick={closeDrawer} aria-hidden="true" />
 
-      {/* SIDEBAR ADMIN (laura-rail) */}
-      <aside className={`laura-rail responsive-sidebar ${isSidebarOpen ? 'open' : ''}`}>
-        
-        {/* MOBILE CLOSE BUTTON */}
-        <button className="sidebar-close-btn" style={{ position: 'absolute', top: '16px', right: '16px', background: 'transparent', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => setIsSidebarOpen(false)}>✕</button>
-
-        {/* LOGO & TOGGLE */}
-        <div style={{ paddingBottom: 'var(--sp-4)', borderBottom: '1px solid var(--laura-border-soft)', position: 'relative' }}>
-          <Link to="/admin/dashboard" onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
-            <img src="/logo.png" alt="LAURA" style={{ height: '42px', transition: 'height 0.2s' }} />
-            {!isCollapsed && <span style={{ fontSize: '0.65rem', background: 'var(--laura-danger)', color: 'white', padding: '1px 6px', borderRadius: 'var(--r-full)', fontWeight: 800 }}>ADMIN</span>}
-          </Link>
-
-          <button 
-            className="desktop-only-header"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            style={{ 
-              position: 'absolute', right: '-12px', top: '12px', 
-              background: 'white', border: '1px solid var(--laura-border-soft)', 
-              borderRadius: '50%', width: '24px', height: '24px', 
-              display: 'flex', alignItems: 'center', justifyContent: 'center', 
-              cursor: 'pointer', zIndex: 10, boxShadow: 'var(--shadow-xs)' 
-            }}
-          >
-            {isCollapsed ? '›' : '‹'}
+      {/* Sidebar */}
+      <aside className={`l-sidebar${drawerOpen ? ' is-open' : ''}${collapsed ? ' is-collapsed' : ''}`}
+             style={{ '--sidebar-accent': 'var(--clr-error)' }}>
+        <div className="l-sidebar__header">
+          <NavLink to="/admin/dashboard" className="l-sidebar__brand" onClick={closeDrawer}>
+            <img src="/logo.png" alt="LAURA" className="l-sidebar__logo" />
+            <span className="l-sidebar__name">laura ai</span>
+          </NavLink>
+          <button className="l-sidebar__toggle desktop-only" onClick={() => setCollapsed(c => !c)} aria-label="Toggle">
+            {collapsed ? '›' : '‹'}
           </button>
+          <button className="l-sidebar__toggle mobile-only" onClick={closeDrawer} aria-label="Fermer">✕</button>
         </div>
 
-        {/* NAVIGATION */}
-        <nav className="laura-rail-nav no-scrollbar" style={{ flex: 1, marginTop: 'var(--sp-6)', overflowY: 'auto' }}>
-          {links.map((link) => {
-            const isActive = location.pathname.startsWith(link.path);
-            return (
-              <Link 
-                key={link.path} 
-                to={link.path} 
-                onClick={() => setIsSidebarOpen(false)}
-                className={`laura-rail-item ${isActive ? 'is-active' : ''}`}
-                title={isCollapsed ? link.label : ''}
-              >
-                <span style={{ fontSize: '1.4rem' }}>{link.icon}</span>
-                <span className="rail-label">{link.label}</span>
-              </Link>
-            );
-          })}
+        {/* Admin role badge */}
+        {!collapsed && (
+          <div style={{ padding: 'var(--sp-3) var(--sp-4) 0', flexShrink: 0 }}>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 'var(--sp-1)',
+              fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)',
+              background: 'var(--clr-error-lt)', color: 'var(--clr-error)',
+              padding: '3px 10px', borderRadius: 'var(--rd-full)'
+            }}>
+              ◈ ADMINISTRATION
+            </span>
+          </div>
+        )}
+
+        <nav className="l-sidebar__nav no-scrollbar" aria-label="Navigation admin">
+          {NAV_ITEMS.map(({ to, label, icon }) => (
+            <NavLink key={to} to={to} onClick={closeDrawer}
+              className={({ isActive }) => `l-nav-item${isActive ? ' active' : ''}`}
+              title={collapsed ? label : undefined}
+            >
+              <span className="l-nav-item__icon" aria-hidden="true">{icon}</span>
+              <span className="l-nav-item__label">{label}</span>
+            </NavLink>
+          ))}
         </nav>
 
-        {/* BOTTOM ACTION */}
-        <div style={{ paddingTop: 'var(--sp-4)', borderTop: '1px solid var(--laura-border-soft)' }}>
-          <button onClick={handleLogout} className="laura-btn laura-btn-ghost" style={{ width: '100%', minHeight: '38px', padding: '0 8px', fontSize: '12px', justifyContent: 'center' }} title="Quitter">
-            {isCollapsed ? '🚪' : '🚪 Quitter'}
+        <div className="l-sidebar__footer">
+          <button onClick={handleLogout} className="laura-btn laura-btn-ghost"
+            style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)', justifyContent: 'center' }}>
+            {collapsed ? '⏻' : '⏻ Déconnexion'}
           </button>
         </div>
       </aside>
 
-      {/* MOBILE BOTTOM NAVIGATION BAR */}
-      <div className="laura-bottom-nav">
-        {mobileShortcuts.map((link) => {
-          const isActive = location.pathname.startsWith(link.path);
-          return (
-            <Link 
-              key={link.path} 
-              to={link.path} 
-              className={`laura-bottom-nav-item ${isActive ? 'is-active' : ''}`}
-            >
-              <span style={{ fontSize: '1.3rem' }}>{link.icon}</span>
-              <span>{link.label}</span>
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* SHELL FOR HEADER & MAIN */}
-      <div className="laura-shell">
-        
-        {/* DESKTOP TOPBAR */}
-        <header className="laura-topbar desktop-only-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '16px', margin: 0, color: 'var(--laura-text-2)' }}>
-            Espace d'Administration
-          </h2>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span style={{ fontSize: '13px', color: 'var(--laura-text-2)' }}>
-              Connecté : <strong>{currentUser.name || currentUser.email}</strong>
+      {/* Main */}
+      <div className="l-main">
+        <header className="l-topbar">
+          <div className="l-topbar__left">
+            <button className="l-topbar__menu-btn mobile-only" onClick={() => setDrawerOpen(true)} aria-label="Menu">☰</button>
+            <NavLink to="/admin/dashboard" className="mobile-only"
+              style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', textDecoration: 'none' }}>
+              <img src="/logo.png" alt="LAURA" style={{ height: '30px' }} />
+              <span style={{ fontSize: 'var(--tx-xs)', fontWeight: 800, background: 'var(--clr-error-lt)', color: 'var(--clr-error)', padding: '2px var(--sp-2)', borderRadius: 'var(--rd-full)' }}>
+                ADMIN
+              </span>
+            </NavLink>
+            <p className="desktop-only" style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', margin: 0 }}>
+              Console d'Administration LAURA
+            </p>
+          </div>
+          <div className="l-topbar__right">
+            <span className="desktop-only"
+              style={{ fontSize: 'var(--tx-xs)', background: 'var(--clr-error-lt)', color: 'var(--clr-error)', padding: '3px 10px', borderRadius: 'var(--rd-full)', fontWeight: 'var(--fw-bold)' }}>
+              ◈ Admin
             </span>
+            <div className="avatar avatar--sm" style={{ background: 'var(--clr-error-lt)', color: 'var(--clr-error)' }}>A</div>
           </div>
         </header>
 
-        {/* MAIN CONTENT AREA */}
-        <main className="laura-main">
-          <div className="laura-page">
-            <Outlet />
-          </div>
+        <main className="l-content">
+          <Outlet />
         </main>
       </div>
 
+      {/* Mobile Bottom Nav */}
+      <nav className="l-bottom-nav" aria-label="Navigation mobile admin">
+        {BOTTOM_NAV.map(({ to, label, icon }) => (
+          <NavLink key={to} to={to}
+            className={({ isActive }) => `l-bottom-nav__item${isActive ? ' active' : ''}`}>
+            <span className="l-bottom-nav__icon" aria-hidden="true">{icon}</span>
+            <span>{label}</span>
+          </NavLink>
+        ))}
+      </nav>
     </div>
   );
 }

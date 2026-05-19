@@ -78,57 +78,49 @@ export default function LoginPage() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', color: 'var(--laura-text-primary)' }}>
-          Connexion à LAURA
-        </h1>
+        <h1>Connexion à LAURA</h1>
 
         {error && (
-          <div style={{ background: '#FEE2E2', color: '#B91C1C', padding: '1rem', borderRadius: '0.75rem', marginBottom: '1.5rem', fontSize: '0.9rem', fontWeight: 500 }}>
+          <div className="auth-error-alert">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600, color: 'var(--laura-text-2)' }}>Adresse e-mail</label>
+        <form onSubmit={handleLogin} className="auth-form">
+          <div className="form-group">
+            <label>Adresse e-mail</label>
             <input 
               type="email" 
               placeholder="vous@email.com" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              style={{ width: '100%', padding: '1rem', borderRadius: '0.75rem', border: '1px solid var(--laura-border-strong)', background: 'var(--laura-bg-input)', color: 'var(--laura-text-1)', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
 
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <label style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--laura-text-2)' }}>Mot de passe</label>
-              <span style={{ fontSize: '0.85rem', color: 'var(--laura-primary)', fontWeight: 600, cursor: 'pointer' }}>Oublié ?</span>
+          <div className="form-group">
+            <div className="row row--between">
+              <label>Mot de passe</label>
+              <span className="forgot-link">Oublié ?</span>
             </div>
             <input 
               type="password" 
               placeholder="••••••••" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{ width: '100%', padding: '1rem', borderRadius: '0.75rem', border: '1px solid var(--laura-border-strong)', background: 'var(--laura-bg-input)', color: 'var(--laura-text-1)', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
 
-          <button 
-            type="submit" 
-            disabled={isLoading}
-            style={{ width: '100%', padding: '1rem', background: 'var(--laura-primary)', color: 'white', border: 'none', borderRadius: '0.75rem', fontSize: '1.05rem', fontWeight: 700, cursor: isLoading ? 'not-allowed' : 'pointer', marginTop: '0.5rem' }}
-          >
+          <button type="submit" disabled={isLoading} className="laura-btn laura-btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
             {isLoading ? 'Connexion en cours...' : 'Se connecter'}
           </button>
         </form>
 
-        <div style={{ marginTop: '2.5rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.95rem' }}>
-          <p style={{ color: 'var(--laura-text-secondary)', margin: 0 }}>
-            Vous n'avez pas de compte ? <Link to="/signup" style={{ color: 'var(--laura-green)', fontWeight: 700, textDecoration: 'none' }}>S'inscrire</Link>
+        <div className="auth-footer-links">
+          <p>
+            Vous n'avez pas de compte ? <Link to="/signup" className="auth-accent-link">S'inscrire</Link>
           </p>
-          <p style={{ color: 'var(--laura-text-secondary)', margin: 0 }}>
-            Vous souhaitez devenir tuteur ? <Link to="/become-tutor" style={{ color: 'var(--laura-text-primary)', fontWeight: 600, textDecoration: 'underline' }}>Devenez tuteur</Link>
+          <p>
+            Vous souhaitez devenir tuteur ? <Link to="/become-tutor" className="auth-underline-link">Devenez tuteur</Link>
           </p>
         </div>
       </div>

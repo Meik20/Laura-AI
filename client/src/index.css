@@ -1,7 +1,15 @@
 /* ==========================================================================
-   LAURA AI - Centralized Design System Entry Point
-   Imports the global modular theme registry. All legacy styles have been cleaned
-   to avoid collisions.
+   LAURA AI — Design System Entry Point
+   Single source of truth. All styles flow from here.
    ========================================================================== */
 
-@import './theme.css';
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+
+@import './styles/tokens.css';
+@import './styles/base.css';
+@import './styles/layout.css';
+@import './styles/components.css';
+@import './styles/forms.css';
+@import './styles/chat.css';
+@import './styles/responsive.css';
+@import './styles/globals.css';
