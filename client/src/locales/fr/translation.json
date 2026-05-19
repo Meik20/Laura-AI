@@ -14,5 +14,73 @@
     "become_tutor_link": "Devenez tuteur",
     "error_empty": "Veuillez remplir tous les champs.",
     "error_invalid": "Identifiants invalides. Veuillez réessayer."
+  },
+  "nav": {
+    "how_it_works": "Comment ça marche",
+    "become_tutor": "Devenez tuteur",
+    "login": "Connexion",
+    "signup": "S'inscrire gratuitement",
+    "rights_reserved": "© 2026 LAURA — Tous droits réservés"
+  },
+  "home": {
+    "hero": {
+      "announcement": "✨ Découvrez la nouvelle version 2.0",
+      "title": "L'intelligence artificielle éducative qui accompagne vos apprentissages",
+      "sub": "LAURA est votre tuteur personnel sur-mesure. Des révisions ciblées, des examens préparés avec précision et des explications toujours claires.",
+      "cta_start": "Commencer gratuitement",
+      "cta_how": "Comment ça marche →",
+      "trust_free": "✓ Gratuit",
+      "trust_no_download": "✓ Sans téléchargement",
+      "trust_african_program": "✓ Adapté au programme africain"
+    },
+    "audiences": {
+      "title": "Pour qui est LAURA ?",
+      "sub": "Un outil pensé pour chaque étape du parcours scolaire.",
+      "student": {
+        "title": "Pour les Élèves (Secondaire)",
+        "desc": "Préparation au BAC, Probatoire ou BEPC. Des explications simplifiées, des fiches de révisions et des annales corrigées."
+      },
+      "college": {
+        "title": "Pour les Étudiants (Supérieur)",
+        "desc": "Un accompagnement approfondi pour les filières universitaires, préparations aux partiels, examens, concours et soutenances."
+      }
+    },
+    "features": {
+      "title": "Des fonctionnalités surpuissantes",
+      "sub": "Tout ce dont vous avez besoin pour réussir, réuni en un seul endroit.",
+      "chat": {
+        "title": "Chat Contextuel",
+        "desc": "Dialogue interactif adapté à votre niveau, capable de générer des quiz à la demande."
+      },
+      "goals": {
+        "title": "Objectifs & Suivi",
+        "desc": "Définissez vos objectifs et suivez votre progression en temps réel avec des indicateurs clairs."
+      },
+      "exams": {
+        "title": "Simulateur d'Examens",
+        "desc": "Entraînez-vous dans les conditions réelles sur une immense base d'annales camerounaises et africaines."
+      },
+      "resources": {
+        "title": "Ressources Intelligentes",
+        "desc": "Le système ne vous propose que les documents correspondant à votre série et vos lacunes."
+      }
+    },
+    "pwa": {
+      "badge": "⚡ Version Mobile & PWA",
+      "title": "Emportez LAURA partout avec vous",
+      "desc": "Scannez le QR code avec votre smartphone pour ouvrir l'application sur mobile. Grâce à notre format PWA optimisé, installez-la directement sur votre écran d'accueil sans passer par l'App Store.",
+      "features": {
+        "installable": "Mode PWA Installable",
+        "notifications": "Notifications instantanées",
+        "offline": "Fonctionne hors-ligne"
+      },
+      "qr_caption": "Scannez pour installer"
+    },
+    "teacher": {
+      "badge": "Pour les enseignants",
+      "title": "Vous êtes enseignant ?",
+      "sub": "Rejoignez la communauté LAURA. Partagez votre expertise, proposez vos ressources et aidez des milliers d'élèves à réussir.",
+      "cta": "Découvrir le programme Tuteur →"
+    }
   }
 }

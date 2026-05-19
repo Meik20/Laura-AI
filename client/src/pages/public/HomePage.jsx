@@ -1,43 +1,45 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const FEATURES = [
   {
     icon: '◎', color: 'var(--clr-brand)',
-    title: 'Chat Contextuel',
-    desc: 'Dialogue interactif adapté à votre niveau, capable de générer des quiz à la demande.',
+    titleKey: 'home.features.chat.title',
+    descKey: 'home.features.chat.desc',
   },
   {
     icon: '▲', color: 'var(--clr-green)',
-    title: 'Objectifs & Suivi',
-    desc: 'Définissez vos objectifs et suivez votre progression en temps réel avec des indicateurs clairs.',
+    titleKey: 'home.features.goals.title',
+    descKey: 'home.features.goals.desc',
   },
   {
     icon: '✦', color: 'var(--clr-warning)',
-    title: 'Simulateur d\'Examens',
-    desc: 'Entraînez-vous dans les conditions réelles sur une immense base d\'annales camerounaises et africaines.',
+    titleKey: 'home.features.exams.title',
+    descKey: 'home.features.exams.desc',
   },
   {
     icon: '⊕', color: 'var(--clr-error)',
-    title: 'Ressources Intelligentes',
-    desc: 'Le système ne vous propose que les documents correspondant à votre série et vos lacunes.',
+    titleKey: 'home.features.resources.title',
+    descKey: 'home.features.resources.desc',
   },
 ];
 
 const AUDIENCES = [
   {
     icon: '🎒',
-    title: 'Pour les Élèves (Secondaire)',
-    desc: 'Préparation au BAC, Probatoire ou BEPC. Des explications simplifiées, des fiches de révisions et des annales corrigées.',
+    titleKey: 'home.audiences.student.title',
+    descKey: 'home.audiences.student.desc',
   },
   {
     icon: '🎓',
-    title: 'Pour les Étudiants (Supérieur)',
-    desc: 'Un accompagnement approfondi pour les filières universitaires, préparations aux partiels, examens, concours et soutenances.',
+    titleKey: 'home.audiences.college.title',
+    descKey: 'home.audiences.college.desc',
   },
 ];
 
 export default function HomePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const qrUrl = typeof window !== 'undefined' ? window.location.origin : 'https://laura-ai.vercel.app';
 
@@ -55,15 +57,15 @@ export default function HomePage() {
 
           {/* Announcement badge */}
           <div className="home-hero__badge">
-            ✨ Découvrez la nouvelle version 2.0
+            {t('home.hero.announcement')}
           </div>
 
           <h1 className="home-hero__title">
-            L'intelligence artificielle éducative qui accompagne vos apprentissages
+            {t('home.hero.title')}
           </h1>
 
           <p className="home-hero__sub">
-            LAURA est votre tuteur personnel sur-mesure. Des révisions ciblées, des examens préparés avec précision et des explications toujours claires.
+            {t('home.hero.sub')}
           </p>
 
           <div className="home-hero__cta">
@@ -72,7 +74,7 @@ export default function HomePage() {
               minHeight: '52px', padding: '0 var(--sp-8)', fontSize: 'var(--tx-md)',
               fontWeight: 'var(--fw-bold)', boxShadow: '0 4px 20px rgba(255,255,255,0.3)'
             }}>
-              Commencer gratuitement
+              {t('home.hero.cta_start')}
             </Link>
             <Link to="/how-it-works" className="laura-btn" style={{
               background: 'rgba(255,255,255,0.18)',
@@ -80,15 +82,15 @@ export default function HomePage() {
               border: '1.5px solid rgba(255,255,255,0.45)',
               minHeight: '52px', padding: '0 var(--sp-8)', fontSize: 'var(--tx-md)',
             }}>
-              Comment ça marche →
+              {t('home.hero.cta_how')}
             </Link>
           </div>
 
           {/* Social proof */}
           <div className="home-hero__trust">
-            <span>✓ Gratuit</span>
-            <span>✓ Sans téléchargement</span>
-            <span>✓ Adapté au programme africain</span>
+            <span>{t('home.hero.trust_free')}</span>
+            <span>{t('home.hero.trust_no_download')}</span>
+            <span>{t('home.hero.trust_african_program')}</span>
           </div>
         </div>
       </section>
@@ -97,16 +99,16 @@ export default function HomePage() {
       <section className="home-section">
         <div className="home-section__inner">
           <div className="home-section__header">
-            <h2>Pour qui est LAURA ?</h2>
-            <p>Un outil pensé pour chaque étape du parcours scolaire.</p>
+            <h2>{t('home.audiences.title')}</h2>
+            <p>{t('home.audiences.sub')}</p>
           </div>
 
           <div className="card-grid">
-            {AUDIENCES.map(({ icon, title, desc }) => (
-              <div key={title} className="card card--hoverable" style={{ padding: 'var(--sp-8)' }}>
+            {AUDIENCES.map(({ icon, titleKey, descKey }) => (
+              <div key={titleKey} className="card card--hoverable" style={{ padding: 'var(--sp-8)' }}>
                 <div style={{ fontSize: '2.5rem', marginBottom: 'var(--sp-5)' }}>{icon}</div>
-                <h3 style={{ marginBottom: 'var(--sp-3)', fontSize: 'var(--tx-lg)' }}>{title}</h3>
-                <p style={{ fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>{desc}</p>
+                <h3 style={{ marginBottom: 'var(--sp-3)', fontSize: 'var(--tx-lg)' }}>{t(titleKey)}</h3>
+                <p style={{ fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>{t(descKey)}</p>
               </div>
             ))}
           </div>
@@ -117,13 +119,13 @@ export default function HomePage() {
       <section className="home-section home-section--tinted">
         <div className="home-section__inner">
           <div className="home-section__header">
-            <h2>Des fonctionnalités surpuissantes</h2>
-            <p>Tout ce dont vous avez besoin pour réussir, réuni en un seul endroit.</p>
+            <h2>{t('home.features.title')}</h2>
+            <p>{t('home.features.sub')}</p>
           </div>
 
           <div className="card-grid card-grid--3" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-            {FEATURES.map(({ icon, color, title, desc }) => (
-              <div key={title} className="card card--hoverable" style={{ padding: 'var(--sp-6)' }}>
+            {FEATURES.map(({ icon, color, titleKey, descKey }) => (
+              <div key={titleKey} className="card card--hoverable" style={{ padding: 'var(--sp-6)' }}>
                 <div style={{
                   width: '48px', height: '48px', borderRadius: 'var(--rd-md)',
                   background: `${color}18`, color, display: 'flex',
@@ -132,8 +134,8 @@ export default function HomePage() {
                 }}>
                   {icon}
                 </div>
-                <h3 style={{ fontSize: 'var(--tx-md)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)', color }}>{title}</h3>
-                <p style={{ fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>{desc}</p>
+                <h3 style={{ fontSize: 'var(--tx-md)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)', color }}>{t(titleKey)}</h3>
+                <p style={{ fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>{t(descKey)}</p>
               </div>
             ))}
           </div>
@@ -146,14 +148,18 @@ export default function HomePage() {
           <div className="home-pwa">
             <div className="home-pwa__text">
               <span className="badge badge--green" style={{ marginBottom: 'var(--sp-4)', display: 'inline-flex' }}>
-                ⚡ Version Mobile & PWA
+                {t('home.pwa.badge')}
               </span>
-              <h2 style={{ marginBottom: 'var(--sp-4)' }}>Emportez LAURA partout avec vous</h2>
+              <h2 style={{ marginBottom: 'var(--sp-4)' }}>{t('home.pwa.title')}</h2>
               <p style={{ marginBottom: 'var(--sp-6)', fontSize: 'var(--tx-base)', lineHeight: 'var(--lh-relaxed)' }}>
-                Scannez le QR code avec votre smartphone pour ouvrir l'application sur mobile. Grâce à notre format PWA optimisé, installez-la directement sur votre écran d'accueil sans passer par l'App Store.
+                {t('home.pwa.desc')}
               </p>
               <div className="stack stack--sm">
-                {['Mode PWA Installable', 'Notifications instantanées', 'Fonctionne hors-ligne'].map(f => (
+                {[
+                  t('home.pwa.features.installable'),
+                  t('home.pwa.features.notifications'),
+                  t('home.pwa.features.offline')
+                ].map(f => (
                   <div key={f} className="row" style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)' }}>
                     <span>✓</span> {f}
                   </div>
@@ -170,7 +176,7 @@ export default function HomePage() {
                 />
               </div>
               <p style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', textAlign: 'center' }}>
-                Scannez pour installer
+                {t('home.pwa.qr_caption')}
               </p>
             </div>
           </div>
@@ -181,13 +187,13 @@ export default function HomePage() {
       <section className="home-section">
         <div className="home-section__inner">
           <div className="home-cta-panel">
-            <div className="home-cta-panel__badge">Pour les enseignants</div>
-            <h2 className="home-cta-panel__title">Vous êtes enseignant ?</h2>
+            <div className="home-cta-panel__badge">{t('home.teacher.badge')}</div>
+            <h2 className="home-cta-panel__title">{t('home.teacher.title')}</h2>
             <p className="home-cta-panel__sub">
-              Rejoignez la communauté LAURA. Partagez votre expertise, proposez vos ressources et aidez des milliers d'élèves à réussir.
+              {t('home.teacher.sub')}
             </p>
             <Link to="/become-tutor" className="laura-btn laura-btn-primary" style={{ minHeight: '50px', padding: '0 var(--sp-8)', fontSize: 'var(--tx-md)' }}>
-              Découvrir le programme Tuteur →
+              {t('home.teacher.cta')}
             </Link>
           </div>
         </div>

@@ -14,5 +14,73 @@
     "become_tutor_link": "Become a tutor",
     "error_empty": "Please fill in all fields.",
     "error_invalid": "Invalid credentials. Please try again."
+  },
+  "nav": {
+    "how_it_works": "How it works",
+    "become_tutor": "Become a tutor",
+    "login": "Sign in",
+    "signup": "Sign up for free",
+    "rights_reserved": "© 2026 LAURA — All rights reserved"
+  },
+  "home": {
+    "hero": {
+      "announcement": "✨ Discover the new version 2.0",
+      "title": "Educational artificial intelligence that accompanies your learning",
+      "sub": "LAURA is your customized personal tutor. Targeted revision sessions, meticulously prepared exams, and consistently clear explanations.",
+      "cta_start": "Get started for free",
+      "cta_how": "How it works →",
+      "trust_free": "✓ Free",
+      "trust_no_download": "✓ No download required",
+      "trust_african_program": "✓ Aligned with African curriculum"
+    },
+    "audiences": {
+      "title": "Who is LAURA for?",
+      "sub": "A tool designed for every stage of your educational path.",
+      "student": {
+        "title": "For Students (Secondary)",
+        "desc": "Preparation for BAC, Probatoire, or BEPC. Simplified explanations, revision sheets, and corrected past exams."
+      },
+      "college": {
+        "title": "For Students (Higher Ed)",
+        "desc": "In-depth support for university courses, midterms, exams, competitive tests, and thesis defense preparations."
+      }
+    },
+    "features": {
+      "title": "Powerful Features",
+      "sub": "Everything you need to succeed, gathered in one place.",
+      "chat": {
+        "title": "Contextual Chat",
+        "desc": "Interactive dialogue tailored to your level, capable of generating on-demand quizzes."
+      },
+      "goals": {
+        "title": "Goals & Analytics",
+        "desc": "Define your objectives and track your progress in real-time with clear indicators."
+      },
+      "exams": {
+        "title": "Exam Simulator",
+        "desc": "Practice under real conditions on a massive database of Cameroonian and African past exams."
+      },
+      "resources": {
+        "title": "Smart Resources",
+        "desc": "The system only suggests documents corresponding to your stream and knowledge gaps."
+      }
+    },
+    "pwa": {
+      "badge": "⚡ Mobile & PWA Version",
+      "title": "Take LAURA everywhere with you",
+      "desc": "Scan the QR code with your smartphone to open the app on mobile. Thanks to our optimized PWA format, install it directly on your home screen without going through the App Store.",
+      "features": {
+        "installable": "Installable PWA Mode",
+        "notifications": "Instant notifications",
+        "offline": "Works offline"
+      },
+      "qr_caption": "Scan to install"
+    },
+    "teacher": {
+      "badge": "For teachers",
+      "title": "Are you a teacher?",
+      "sub": "Join the LAURA community. Share your expertise, provide your resources, and help thousands of students succeed.",
+      "cta": "Discover the Tutor Program →"
+    }
   }
 }

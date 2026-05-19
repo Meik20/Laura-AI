@@ -68,6 +68,7 @@ const AUTH_WIDE   = ['/become-tutor', '/how-it-works'];
 export default function PublicLayout() {
   const { pathname } = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   // ── Auth pages: centered single-column, no navbar ──
   if (AUTH_ROUTES.some(p => pathname.startsWith(p))) {
@@ -100,19 +101,19 @@ export default function PublicLayout() {
           {/* Desktop nav */}
           <nav className="public-topbar__nav desktop-only" aria-label="Navigation publique">
             <NavLink to="/how-it-works" className={({ isActive }) => `public-nav-link${isActive ? ' active' : ''}`}>
-              Comment ça marche
+              {t('nav.how_it_works')}
             </NavLink>
             <NavLink to="/become-tutor" className={({ isActive }) => `public-nav-link${isActive ? ' active' : ''}`}>
-              Devenez tuteur
+              {t('nav.become_tutor')}
             </NavLink>
           </nav>
 
           {/* Desktop CTA */}
           <div className="public-topbar__actions desktop-only" style={{ gap: '16px' }}>
             <LanguageSwitcher />
-            <Link to="/login" className="public-nav-link">Connexion</Link>
+            <Link to="/login" className="public-nav-link">{t('nav.login')}</Link>
             <Link to="/signup" className="laura-btn laura-btn-primary" style={{ minHeight: '38px', padding: '0 var(--sp-5)', fontSize: 'var(--tx-sm)' }}>
-              S'inscrire gratuitement
+              {t('nav.signup')}
             </Link>
           </div>
 
@@ -131,20 +132,20 @@ export default function PublicLayout() {
         {mobileMenuOpen && (
           <div className="public-mobile-nav" role="navigation" aria-label="Navigation mobile">
             <NavLink to="/how-it-works" className="public-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-              Comment ça marche
+              {t('nav.how_it_works')}
             </NavLink>
             <NavLink to="/become-tutor" className="public-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-              Devenez tuteur
+              {t('nav.become_tutor')}
             </NavLink>
             <hr className="divider" />
             <div style={{ padding: '8px 12px' }}>
               <LanguageSwitcher />
             </div>
             <Link to="/login" className="public-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-              Connexion
+              {t('nav.login')}
             </Link>
             <Link to="/signup" className="laura-btn laura-btn-primary" style={{ width: '100%' }} onClick={() => setMobileMenuOpen(false)}>
-              S'inscrire gratuitement
+              {t('nav.signup')}
             </Link>
           </div>
         )}
@@ -168,11 +169,11 @@ export default function PublicLayout() {
             </span>
           </div>
           <div className="public-footer__links">
-            <Link to="/how-it-works" className="public-footer__link">Comment ça marche</Link>
-            <Link to="/become-tutor" className="public-footer__link">Devenez tuteur</Link>
-            <Link to="/login"        className="public-footer__link">Connexion</Link>
+            <Link to="/how-it-works" className="public-footer__link">{t('nav.how_it_works')}</Link>
+            <Link to="/become-tutor" className="public-footer__link">{t('nav.become_tutor')}</Link>
+            <Link to="/login"        className="public-footer__link">{t('nav.login')}</Link>
           </div>
-          <p className="public-footer__copy">© 2026 LAURA — Tous droits réservés</p>
+          <p className="public-footer__copy">{t('nav.rights_reserved')}</p>
         </div>
       </footer>
     </div>
