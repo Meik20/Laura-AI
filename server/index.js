@@ -33,13 +33,24 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net"],
       imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "https://firebaseapp.com", "https://*.googleapis.com", "https://*.firebaseio.com"],
+      connectSrc: [
+        "'self'",
+        "https://laura-ai-production.up.railway.app",
+        "https://laura-ai-lake.vercel.app",
+        "https://firebaseapp.com",
+        "https://*.googleapis.com",
+        "https://*.firebaseio.com",
+        "https://*.firebase.com",
+        "https://identitytoolkit.googleapis.com",
+        "https://securetoken.googleapis.com",
+      ],
     },
   },
 }));
+
 const ALLOWED_ORIGINS = [
   'https://laura-ai-lake.vercel.app',
   'https://laura-ai.vercel.app',
@@ -159,10 +170,30 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
+// CORS-safe error handler — ensures CORS headers are present even on errors
+app.use((err, req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  console.error('[LAURA Error]', err.message);
+  res.status(err.status || 500).json({ error: err.message || 'Erreur serveur.' });
+});
+
 // Serve Frontend in Production
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.use((req, res) => {
+  // API 404 — return JSON, not HTML
+  if (req.path.startsWith('/api/')) {
+    const origin = req.headers.origin;
+    if (origin && ALLOWED_ORIGINS.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    return res.status(404).json({ error: `Route not found: ${req.path}` });
+  }
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
