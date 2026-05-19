@@ -13,6 +13,92 @@ function getInitials(profile) {
   return 'A';
 }
 
+/**
+ * Renders a LAURA markdown response into structured JSX.
+ * Supports: ## headers, **bold**, - lists, --- separators, plain text.
+ */
+function RenderMessage({ text }) {
+  const lines = text.split('\n');
+  const elements = [];
+  let listBuffer = [];
+
+  const flushList = (key) => {
+    if (listBuffer.length > 0) {
+      elements.push(
+        <ul key={`ul-${key}`} style={{ margin: '6px 0 6px 16px', padding: 0, listStyle: 'disc' }}>
+          {listBuffer.map((item, i) => (
+            <li key={i} style={{ marginBottom: '3px', lineHeight: '1.5' }}
+              dangerouslySetInnerHTML={{ __html: item }} />
+          ))}
+        </ul>
+      );
+      listBuffer = [];
+    }
+  };
+
+  const parseBold = (s) => s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+  lines.forEach((line, i) => {
+    // Separator ---
+    if (/^---+$/.test(line.trim())) {
+      flushList(i);
+      elements.push(<hr key={i} style={{ border: 'none', borderTop: '1px solid rgba(128,128,128,0.25)', margin: '10px 0' }} />);
+      return;
+    }
+    // ## Header (exercise titles)
+    if (/^##\s/.test(line)) {
+      flushList(i);
+      const content = parseBold(line.replace(/^##\s/, ''));
+      elements.push(
+        <p key={i} style={{ fontWeight: 700, fontSize: '1rem', margin: '12px 0 4px', color: 'var(--clr-brand)' }}
+          dangerouslySetInnerHTML={{ __html: content }} />
+      );
+      return;
+    }
+    // ### Sub-header
+    if (/^###\s/.test(line)) {
+      flushList(i);
+      const content = parseBold(line.replace(/^###\s/, ''));
+      elements.push(
+        <p key={i} style={{ fontWeight: 600, fontSize: '0.9rem', margin: '8px 0 2px' }}
+          dangerouslySetInnerHTML={{ __html: content }} />
+      );
+      return;
+    }
+    // - list item
+    if (/^[-*]\s/.test(line)) {
+      listBuffer.push(parseBold(line.replace(/^[-*]\s/, '')));
+      return;
+    }
+    // numbered list
+    if (/^\d+\.\s/.test(line)) {
+      listBuffer.push(parseBold(line));
+      return;
+    }
+    flushList(i);
+    // Empty line → spacing
+    if (line.trim() === '') {
+      elements.push(<br key={i} />);
+      return;
+    }
+    // Detect interactive CTA (✅ ...) — highlight it
+    if (line.startsWith('✅') || line.startsWith('📋') || line.startsWith('📝')) {
+      elements.push(
+        <p key={i} style={{ margin: '10px 0 4px', padding: '8px 12px', background: 'rgba(79,110,247,0.08)', borderLeft: '3px solid var(--clr-brand)', borderRadius: '4px', fontWeight: 500 }}
+          dangerouslySetInnerHTML={{ __html: parseBold(line) }} />
+      );
+      return;
+    }
+    // Normal paragraph
+    elements.push(
+      <p key={i} style={{ margin: '3px 0', lineHeight: '1.6' }}
+        dangerouslySetInnerHTML={{ __html: parseBold(line) }} />
+    );
+  });
+  flushList('final');
+  return <div style={{ fontSize: 'var(--tx-sm)' }}>{elements}</div>;
+}
+
 export default function LearnChatPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [input, setInput] = useState('');
@@ -256,12 +342,16 @@ export default function LearnChatPage() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)', maxWidth: '100%' }}>
                     <div className="chat-msg__bubble">
-                      {m.text}
+                      {isUser ? m.text : <RenderMessage text={m.text} />}
                     </div>
 
-                    {/* AI action shortcuts */}
+                    {/* AI action shortcuts — shown below each AI message */}
                     {!isUser && (
                       <div className="row" style={{ flexWrap: 'wrap', gap: 'var(--sp-2)', paddingLeft: '2px' }}>
+                        <button onClick={() => handleSend("suite")}
+                          className="laura-btn laura-btn-primary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
+                          ▶ Suite
+                        </button>
                         <button onClick={() => handleSend("Explique cette réponse de manière plus simple.")}
                           className="laura-btn laura-btn-ghost" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
                           Simplifier
@@ -270,13 +360,9 @@ export default function LearnChatPage() {
                           className="laura-btn laura-btn-ghost" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
                           Approfondir
                         </button>
-                        <button onClick={() => handleSend("Génère un quiz de révision sur cette explication.")}
-                          className="laura-btn laura-btn-ghost" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                          Générer quiz
-                        </button>
                         <button onClick={() => handleSaveMessage(m.text)}
                           className="laura-btn laura-btn-secondary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                          Sauvegarder
+                          💾 Sauvegarder
                         </button>
                       </div>
                     )}
@@ -394,48 +480,55 @@ export default function LearnChatPage() {
             </div>
           )}
 
-          {/* Quick prompt suggestions row */}
-          <div className="no-scrollbar" style={{
-            display: 'flex',
-            gap: 'var(--sp-2)',
-            overflowX: 'auto',
-            paddingBottom: 'var(--sp-3)',
-            whiteSpace: 'nowrap',
-            flexShrink: 0
-          }}>
-            <label className="laura-btn laura-btn-secondary" style={{
-              padding: '0 var(--sp-4)',
-              minHeight: '34px',
-              fontSize: 'var(--tx-xs)',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 'var(--sp-1)'
-            }}>
-              <span>📎</span> Partager un fichier
+          {/* ── Toolbar : file attach + quick actions (compact, single row) ── */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', marginBottom: 'var(--sp-2)', flexWrap: 'wrap' }}>
+
+            {/* 📎 Attach file — always first */}
+            <label style={{
+              display: 'inline-flex', alignItems: 'center', gap: '5px',
+              padding: '0 var(--sp-3)', minHeight: '32px',
+              fontSize: 'var(--tx-xs)', borderRadius: 'var(--rd-full)',
+              cursor: 'pointer', border: '1px solid var(--brd-input)',
+              background: 'var(--srf-base)', color: 'var(--txt-primary)',
+              fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0,
+              transition: 'background var(--dur-fast)'
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--srf-raised)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--srf-base)'}
+            >
+              📎 <span>Joindre un fichier</span>
               <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
             </label>
 
-            <span style={{ width: '1px', background: 'var(--brd-subtle)', flexShrink: 0 }} />
+            {/* Divider */}
+            <span style={{ height: '20px', width: '1px', background: 'var(--brd-subtle)', flexShrink: 0 }} />
 
-            <button onClick={() => handleActionPrompt("Peux-tu m'expliquer en détail le concept suivant : ")}
-              className="laura-btn laura-btn-ghost" style={{ padding: '0 var(--sp-4)', minHeight: '34px', fontSize: 'var(--tx-xs)', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              Expliquer
-            </button>
-            <button onClick={() => handleActionPrompt("Je souhaite faire une session de révision complète sur : ")}
-              className="laura-btn laura-btn-ghost" style={{ padding: '0 var(--sp-4)', minHeight: '34px', fontSize: 'var(--tx-xs)', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              Réviser
-            </button>
-            <button onClick={() => handleActionPrompt("Voici mon exercice, peux-tu le corriger : ")}
-              className="laura-btn laura-btn-ghost" style={{ padding: '0 var(--sp-4)', minHeight: '34px', fontSize: 'var(--tx-xs)', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              Corriger
-            </button>
-            <button onClick={() => handleActionPrompt("Génère un quiz de 5 questions sur : ")}
-              className="laura-btn laura-btn-ghost" style={{ padding: '0 var(--sp-4)', minHeight: '34px', fontSize: 'var(--tx-xs)', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              Quiz
-            </button>
+            {/* Quick action chips */}
+            {[
+              { label: '💡 Expliquer',  prompt: "Peux-tu m'expliquer en détail le concept suivant : " },
+              { label: '📖 Réviser',    prompt: "Je souhaite faire une session de révision complète sur : " },
+              { label: '✏️ Corriger',   prompt: "Voici mon exercice, peux-tu le corriger étape par étape : " },
+              { label: '🧠 Quiz',       prompt: "Génère un quiz de 5 questions sur : " },
+              { label: '📄 Résoudre',   prompt: "Voici une épreuve complète, analyse-la et traite tous les exercices un par un : " },
+            ].map(({ label, prompt }) => (
+              <button
+                key={label}
+                onClick={() => handleActionPrompt(prompt)}
+                style={{
+                  display: 'inline-flex', alignItems: 'center',
+                  padding: '0 var(--sp-3)', minHeight: '32px',
+                  fontSize: 'var(--tx-xs)', borderRadius: 'var(--rd-full)',
+                  border: '1px solid var(--brd-subtle)',
+                  background: 'transparent', color: 'var(--txt-secondary)',
+                  cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+                  transition: 'all var(--dur-fast)'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--clr-brand-lt)'; e.currentTarget.style.color = 'var(--clr-brand)'; e.currentTarget.style.borderColor = 'var(--clr-brand)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--txt-secondary)'; e.currentTarget.style.borderColor = 'var(--brd-subtle)'; }}
+              >
+                {label}
+              </button>
+            ))}
           </div>
 
           {/* Text Input Row */}
