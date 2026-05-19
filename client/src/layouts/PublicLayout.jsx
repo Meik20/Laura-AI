@@ -90,10 +90,15 @@ export default function PublicLayout() {
       {/* ── Footer ── */}
       <footer className="public-footer">
         <div className="public-footer__inner">
-          <Link to="/" className="public-footer__brand">
-            <img src="/logo.png" alt="LAURA" style={{ height: '36px', filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
-            <span className="public-footer__name">laura ai</span>
-          </Link>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+            <Link to="/" className="public-footer__brand" style={{ marginBottom: 0 }}>
+              <img src="/logo.png" alt="LAURA" style={{ height: '36px', filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
+              <span className="public-footer__name">laura ai</span>
+            </Link>
+            <span style={{ fontSize: '13px', color: 'var(--txt-tertiary)', opacity: 0.8, letterSpacing: '0.2px' }}>
+              Learning AI & Unified Resource Assistant
+            </span>
+          </div>
           <div className="public-footer__links">
             <Link to="/how-it-works" className="public-footer__link">Comment ça marche</Link>
             <Link to="/become-tutor" className="public-footer__link">Devenez tuteur</Link>
