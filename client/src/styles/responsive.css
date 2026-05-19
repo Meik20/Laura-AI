@@ -395,3 +395,85 @@
 @media (min-width: 1024px) {
   .asymmetrical-grid { grid-template-columns: 1.7fr 1fr; align-items: start; }
 }
+
+/* ─────────────────────────────────────────────
+   ADMIN SETTINGS — responsive sidebar layout
+───────────────────────────────────────────── */
+
+/* Mobile: stack tabs above content */
+.settings-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+/* Desktop: sidebar + content side-by-side */
+@media (min-width: 768px) {
+  .settings-layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: var(--sp-8);
+    align-items: start;
+  }
+}
+
+/* Mobile sidebar: horizontal scrollable chip row */
+.settings-sidebar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: var(--sp-2);
+  padding-bottom: var(--sp-1);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.settings-sidebar::-webkit-scrollbar { display: none; }
+
+/* Desktop sidebar: vertical stack */
+@media (min-width: 768px) {
+  .settings-sidebar {
+    flex-direction: column;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    gap: var(--sp-1);
+  }
+}
+
+/* Tab button */
+.settings-tab {
+  flex-shrink: 0;
+  text-align: left;
+  white-space: nowrap;
+  padding: var(--sp-2) var(--sp-4);
+  background: transparent;
+  color: var(--txt-secondary);
+  border: 1px solid var(--brd-subtle);
+  border-left: 3px solid transparent;
+  border-radius: var(--rd-2xl);
+  font-weight: var(--fw-medium);
+  font-size: var(--tx-sm);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-std);
+  width: auto;
+}
+
+/* Desktop tab: full width, left-border indicator */
+@media (min-width: 768px) {
+  .settings-tab {
+    width: 100%;
+    border-radius: var(--rd-md);
+    border: none;
+    border-left: 3px solid transparent;
+    padding: var(--sp-3) var(--sp-5);
+  }
+}
+
+.settings-tab--active {
+  background: var(--clr-brand-lt);
+  color: var(--clr-brand);
+  border-color: var(--clr-brand);
+  font-weight: var(--fw-bold);
+}
+

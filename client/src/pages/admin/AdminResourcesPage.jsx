@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { db } from '../../firebase';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { uploadResource } from '../../utils/storage';
 
 export default function AdminResourcesPage() {
   const [resources, setResources] = useState([]);
@@ -11,6 +12,7 @@ export default function AdminResourcesPage() {
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ titre: '', type: 'Annale', cible: 'Terminale', statut: 'publie', url: '' });
   const [isSaving, setIsSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(null); // null | 'uploading' | 'done' | 'error'
 
   useEffect(() => {
     async function fetchData() {
@@ -34,7 +36,22 @@ export default function AdminResourcesPage() {
       setEditingId(null);
       setFormData({ titre: '', type: 'Annale', cible: 'Terminale', statut: 'publie', url: '' });
     }
+    setUploadProgress(null);
     setShowModal(true);
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadProgress('uploading');
+    try {
+      const { url } = await uploadResource(file, formData.type);
+      setFormData(prev => ({ ...prev, url }));
+      setUploadProgress('done');
+    } catch (err) {
+      console.error('Upload error:', err);
+      setUploadProgress('error');
+    }
   };
 
   const handleSave = async (e) => {
@@ -164,8 +181,22 @@ export default function AdminResourcesPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label" style={{ display: 'block', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)' }}>Lien / URL (Optionnel)</label>
-                <input type="url" value={formData.url} onChange={e => setFormData({...formData, url: e.target.value})} placeholder="https://..." className="form-input" style={{ width: '100%', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-md)', color: 'var(--txt-primary)' }} />
+                <label className="form-label" style={{ display: 'block', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)' }}>Fichier ou URL</label>
+
+                {/* File picker — uploads to Supabase */}
+                <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '2px dashed var(--brd-subtle)', borderRadius: 'var(--rd-md)', cursor: 'pointer', marginBottom: 'var(--sp-2)' }}>
+                  <span style={{ fontSize: '1.3rem' }}>📎</span>
+                  <span style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)' }}>
+                    {uploadProgress === 'uploading' ? 'Envoi en cours...' :
+                     uploadProgress === 'done'      ? '✅ Fichier envoyé avec succès' :
+                     uploadProgress === 'error'     ? '❌ Erreur — essaie avec une URL' :
+                     'Choisir un fichier (PDF, image…)'}
+                  </span>
+                  <input type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" onChange={handleFileUpload} style={{ display: 'none' }} />
+                </label>
+
+                {/* Manual URL fallback */}
+                <input type="url" value={formData.url} onChange={e => setFormData({...formData, url: e.target.value})} placeholder="ou coller une URL directement" className="form-input" style={{ width: '100%', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-md)', color: 'var(--txt-primary)' }} />
               </div>
 
               <div className="row" style={{ justifyContent: 'flex-end', gap: 'var(--sp-4)', marginTop: 'var(--sp-4)' }}>

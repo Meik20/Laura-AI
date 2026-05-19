@@ -126,28 +126,15 @@ export default function AdminSettingsPage() {
         </div>
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 'var(--sp-8)' }}>
+      <div className="settings-layout">
         
         {/* Navigation Sidebar */}
-        <div className="stack stack--xs">
+        <div className="settings-sidebar">
           {tabs.map((tab) => (
             <button 
               key={tab} 
               onClick={() => setActiveTab(tab)}
-              style={{ 
-                textAlign: 'left', 
-                padding: 'var(--sp-3) var(--sp-5)', 
-                background: activeTab === tab ? 'var(--clr-brand-lt)' : 'transparent', 
-                color: activeTab === tab ? 'var(--clr-brand)' : 'var(--txt-secondary)', 
-                border: 'none',
-                borderLeft: activeTab === tab ? '3px solid var(--clr-brand)' : '3px solid transparent',
-                borderRadius: 'var(--rd-md)', 
-                fontWeight: activeTab === tab ? 'var(--fw-bold)' : 'var(--fw-medium)', 
-                cursor: 'pointer',
-                transition: 'all var(--dur-fast)',
-                fontSize: 'var(--tx-sm)',
-                width: '100%'
-              }}
+              className={`settings-tab${activeTab === tab ? ' settings-tab--active' : ''}`}
             >
               {tab}
             </button>
