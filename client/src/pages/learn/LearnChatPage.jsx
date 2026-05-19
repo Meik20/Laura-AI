@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { doc, getDoc, setDoc, arrayUnion, collection, addDoc } from 'firebase/firestore';
+import { extractFileContent } from '../../utils/fileExtractor';
 
 function getInitials(profile) {
   const prenom = profile?.prenom || '';
@@ -106,41 +107,18 @@ export default function LearnChatPage() {
     // Show immediate preview while analyzing
     setAttachedFile({ name: file.name, type: file.type, status: 'analyzing', text: null });
 
-    try {
-      const API_BASE = import.meta.env.VITE_BACKEND_URL || '';
-      const formData = new FormData();
-      formData.append('file', file);
+    const API_BASE = import.meta.env.VITE_BACKEND_URL || '';
+    const result = await extractFileContent(file, API_BASE);
 
-      const response = await fetch(`${API_BASE}/api/analyze-file`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.success && data.extractedText) {
-        setAttachedFile({
-          name: file.name,
-          type: file.type,
-          status: 'ready',
-          text: data.extractedText,
-          pages: data.pages,
-          method: data.method,
-        });
-      } else {
-        // File couldn't be parsed (scanned PDF, unsupported format)
-        setAttachedFile({
-          name: file.name,
-          type: file.type,
-          status: 'no-text',
-          text: null,
-          note: data.note || 'Impossible d\'extraire le texte de ce fichier.',
-        });
-      }
-    } catch (err) {
-      console.error('File analysis error:', err);
-      setAttachedFile({ name: file.name, type: file.type, status: 'error', text: null });
-    }
+    setAttachedFile({
+      name: file.name,
+      type: file.type,
+      status: result.status,
+      text: result.text,
+      pages: result.pages,
+      method: result.method,
+      note: result.note,
+    });
   };
 
   const handleSend = async (customText) => {
