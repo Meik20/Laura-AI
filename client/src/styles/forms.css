@@ -153,6 +153,59 @@ select {
   animation: scaleIn var(--dur-slow) var(--ease-spring);
 }
 
+/* ── Mobile: fit everything on one screen, no scroll ── */
+@media (max-width: 480px) {
+  .auth-container {
+    align-items: center;
+    padding: var(--sp-4) var(--sp-4);
+    min-height: 100dvh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .auth-card {
+    padding: var(--sp-5) var(--sp-5);
+    border-radius: var(--rd-xl);
+    box-shadow: var(--shd-md);
+    width: 100%;
+  }
+
+  .auth-card h1 {
+    font-size: var(--tx-xl);
+    margin-bottom: var(--sp-1);
+  }
+
+  .auth-subtitle {
+    font-size: var(--tx-xs);
+    margin-bottom: var(--sp-3);
+  }
+
+  .auth-form {
+    gap: var(--sp-3);
+    margin-top: var(--sp-3);
+  }
+
+  .auth-form input[type="email"],
+  .auth-form input[type="password"],
+  .auth-form input[type="text"] {
+    height: 42px;
+    font-size: var(--tx-sm);
+  }
+
+  .auth-form button[type="submit"],
+  .auth-form .laura-btn {
+    min-height: 42px;
+    font-size: var(--tx-sm);
+  }
+
+  .auth-footer-links {
+    margin-top: var(--sp-3);
+    gap: var(--sp-2);
+    font-size: var(--tx-xs);
+  }
+}
+
+
 .auth-card h1 {
   font-size: var(--tx-2xl);
   font-weight: var(--fw-bold);
