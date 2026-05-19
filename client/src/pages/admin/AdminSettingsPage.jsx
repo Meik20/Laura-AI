@@ -417,16 +417,16 @@ export default function AdminSettingsPage() {
                       <div style={{ fontWeight: 600, color: 'white', marginBottom: '0.5rem' }}>Statut des clés d'API (Environnement)</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '0.8rem', border: '1px solid rgba(255,255,255,0.05)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
-                          <span style={{ color: '#CBD5E1' }}>Google Gemini API</span>
-                          <span style={{ color: '#10B981', fontWeight: 700 }}>✓ Connecté (Fichier .env)</span>
+                          <span style={{ color: 'var(--txt-secondary)' }}>Google Gemini API</span>
+                          <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>[OK] Connecté (Fichier .env)</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
-                          <span style={{ color: '#CBD5E1' }}>Anthropic Claude API</span>
-                          <span style={{ color: '#10B981', fontWeight: 700 }}>✓ Connecté (Fichier .env)</span>
+                          <span style={{ color: 'var(--txt-secondary)' }}>Anthropic Claude API</span>
+                          <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>[OK] Connecté (Fichier .env)</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
-                          <span style={{ color: '#CBD5E1' }}>Groq API (LPU)</span>
-                          <span style={{ color: '#10B981', fontWeight: 700 }}>✓ Connecté (Fichier .env)</span>
+                          <span style={{ color: 'var(--txt-secondary)' }}>Groq API (LPU)</span>
+                          <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>[OK] Connecté (Fichier .env)</span>
                         </div>
                       </div>
                     </div>

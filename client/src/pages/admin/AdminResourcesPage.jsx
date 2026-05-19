@@ -185,11 +185,11 @@ export default function AdminResourcesPage() {
 
                 {/* File picker — uploads to Supabase */}
                 <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '2px dashed var(--brd-subtle)', borderRadius: 'var(--rd-md)', cursor: 'pointer', marginBottom: 'var(--sp-2)' }}>
-                  <span style={{ fontSize: '1.3rem' }}>📎</span>
+                  <span style={{ fontSize: '1.3rem', color: 'var(--clr-brand)' }}>[+]</span>
                   <span style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)' }}>
                     {uploadProgress === 'uploading' ? 'Envoi en cours...' :
-                     uploadProgress === 'done'      ? '✅ Fichier envoyé avec succès' :
-                     uploadProgress === 'error'     ? '❌ Erreur — essaie avec une URL' :
+                     uploadProgress === 'done'      ? '[OK] Fichier envoyé avec succès' :
+                     uploadProgress === 'error'     ? '[Erreur] — essaie avec une URL' :
                      'Choisir un fichier (PDF, image…)'}
                   </span>
                   <input type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" onChange={handleFileUpload} style={{ display: 'none' }} />
