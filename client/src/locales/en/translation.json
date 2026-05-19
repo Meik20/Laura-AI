@@ -162,6 +162,40 @@
       "major": "Major",
       "edit_profile": "✏️ Edit Profile",
       "logout": "⏻ Log Out"
+    },
+    "dashboard": {
+      "quick_actions": {
+        "chat": "Talk to LAURA",
+        "revision": "Revise a topic",
+        "quiz": "Launch a quiz",
+        "exams": "Prepare my exam",
+        "resources": "View my resources"
+      },
+      "level_info": "You are in {{level}}",
+      "exam_info": "Target Exam: {{exam}}",
+      "new_conversation": "+ New conversation",
+      "no_goal_title": "No goal set",
+      "no_goal_period": "Not defined",
+      "goal_card": {
+        "title": "Learning Goal",
+        "edit_btn": "Edit",
+        "period": "Period: {{period}}",
+        "progress": "Progress"
+      },
+      "subjects": {
+        "title": "My Progress by Subject",
+        "see_all": "See All",
+        "empty": "No subjects loaded"
+      },
+      "recommendations": {
+        "title": "Recommendations",
+        "empty": "No recommended resources"
+      },
+      "chat_cta": {
+        "title": "Ready to learn?",
+        "desc": "LAURA is available 24/7 to help you.",
+        "button": "Chat with LAURA"
+      }
     }
   },
   "tutor": {

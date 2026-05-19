@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import LearningGoalModal from '../../components/dashboard/LearningGoalModal';
 import { useAuth } from '../../hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 import { db } from '../../firebase';
 import { doc, updateDoc, collection, getDocs, getDoc } from 'firebase/firestore';
 
@@ -68,11 +69,11 @@ const SUBJECT_COLORS = [
 ];
 
 const QUICK_ACTIONS = [
-  { label: 'Parler à LAURA',     icon: '◎', to: '/learn/chat' },
-  { label: 'Réviser un chapitre',icon: '✎', to: '/learn/revision' },
-  { label: 'Lancer un quiz',     icon: '▣', to: '/learn/revision' },
-  { label: 'Préparer mon examen',icon: '✦', to: '/learn/exams' },
-  { label: 'Voir mes ressources',icon: '⊕', to: '/learn/resources' },
+  { labelKey: 'learn.dashboard.quick_actions.chat',     icon: '◎', to: '/learn/chat' },
+  { labelKey: 'learn.dashboard.quick_actions.revision', icon: '✎', to: '/learn/revision' },
+  { labelKey: 'learn.dashboard.quick_actions.quiz',     icon: '▣', to: '/learn/revision' },
+  { labelKey: 'learn.dashboard.quick_actions.exams',    icon: '✦', to: '/learn/exams' },
+  { labelKey: 'learn.dashboard.quick_actions.resources',icon: '⊕', to: '/learn/resources' },
 ];
 
 /* ─── Component ────────────────────────────────────────────────────────────── */
@@ -86,10 +87,10 @@ export default function LearnDashboardPage() {
   const [adminMatieres,   setAdminMatieres]   = useState([]);
 
   const user = {
-    prenom:    userProfile?.prenom || userProfile?.nom || 'Apprenant',
-    roleLabel: userProfile?.roleLabel || (userProfile?.role === 'student' ? 'Élève' : userProfile?.role) || 'Élève',
-    niveau:    userProfile?.niveau || userProfile?.classe || userProfile?.niveauEtude || 'Non défini',
-    examen:    userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || 'Non défini',
+    prenom:    userProfile?.prenom || userProfile?.nom || t('common.roles.learner'),
+    roleLabel: userProfile?.roleLabel || (userProfile?.role === 'student' ? t('common.roles.student_seco') : userProfile?.role) || t('common.roles.student_seco'),
+    niveau:    userProfile?.niveau || userProfile?.classe || userProfile?.niveauEtude || t('common.roles.learner'),
+    examen:    userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || t('common.roles.learner'),
     serie:     userProfile?.serie || null,
     filiere:   userProfile?.filiere || userProfile?.discipline || null,
   };
@@ -145,22 +146,22 @@ export default function LearnDashboardPage() {
       {/* ── PAGE HEADER ─────────────────────────────────────────────────── */}
       <div className="page-header">
         <div className="page-header__title">
-          <h1 className="laura-h1">Bonjour {user.prenom} 👋</h1>
+          <h1 className="laura-h1">{t('learn.header.hello')} {user.prenom} 👋</h1>
           <p style={{ marginTop: 'var(--sp-2)', color: 'var(--txt-secondary)', margin: 'var(--sp-2) 0 0' }}>
-            Vous êtes en <strong style={{ color: 'var(--txt-primary)' }}>{user.niveau}</strong>
-            {' · '}Examen préparé : <strong style={{ color: 'var(--clr-brand)' }}>{user.examen}</strong>
+            {t('learn.dashboard.level_info', { level: user.niveau })}
+            {' · '}{t('learn.dashboard.exam_info', { exam: user.examen })}
           </p>
         </div>
         <Link to="/learn/chat?new=true" className="laura-btn laura-btn-primary">
-          + Nouvelle conversation
+          {t('learn.dashboard.new_conversation')}
         </Link>
       </div>
 
       {/* ── QUICK ACTIONS ────────────────────────────────────────────────── */}
       <div className="chip-row">
-        {QUICK_ACTIONS.map(({ label, icon, to }) => (
-          <button key={label} onClick={() => navigate(to)} className="chip">
-            <span aria-hidden="true">{icon}</span> {label}
+        {QUICK_ACTIONS.map(({ labelKey, icon, to }) => (
+          <button key={labelKey} onClick={() => navigate(to)} className="chip">
+            <span aria-hidden="true">{icon}</span> {t(labelKey)}
           </button>
         ))}
       </div>
@@ -176,27 +177,27 @@ export default function LearnDashboardPage() {
             <div className="hero-panel__body">
               <div className="row row--between" style={{ marginBottom: 'var(--sp-5)' }}>
                 <span style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.75 }}>
-                  Objectif d'apprentissage
+                  {t('learn.dashboard.goal_card.title')}
                 </span>
                 <button
                   onClick={() => setIsGoalModalOpen(true)}
                   className="laura-btn"
                   style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', minHeight: '32px', padding: '0 var(--sp-4)', fontSize: 'var(--tx-xs)', borderRadius: 'var(--rd-full)' }}
                 >
-                  Modifier
+                  {t('learn.dashboard.goal_card.edit_btn')}
                 </button>
               </div>
 
               <h2 style={{ fontSize: 'var(--tx-2xl)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)', color: 'white' }}>
-                {currentGoal.title}
+                {currentGoal.title || t('learn.dashboard.no_goal_title')}
               </h2>
               <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'var(--tx-sm)', marginBottom: 'var(--sp-6)' }}>
-                Période : {currentGoal.period}
+                {t('learn.dashboard.goal_card.period', { period: currentGoal.period || t('learn.dashboard.no_goal_period') })}
               </p>
 
               <div>
                 <div className="row row--between" style={{ marginBottom: 'var(--sp-2)', fontSize: 'var(--tx-sm)', fontWeight: 'var(--fw-semibold)', color: 'white' }}>
-                  <span>Progression</span>
+                  <span>{t('learn.dashboard.goal_card.progress')}</span>
                   <span>{currentGoal.progress}%</span>
                 </div>
                 <div style={{ height: '8px', background: 'rgba(255,255,255,0.25)', borderRadius: 'var(--rd-full)', overflow: 'hidden' }}>
@@ -209,16 +210,16 @@ export default function LearnDashboardPage() {
           {/* ── SUBJECTS PROGRESS ── */}
           <div className="card" style={{ padding: 'var(--sp-6)' }}>
             <div className="section-header">
-              <h3>Ma progression par matière</h3>
+              <h3>{t('learn.dashboard.subjects.title')}</h3>
               <Link to="/learn/progress" className="laura-btn laura-btn-ghost" style={{ minHeight: '32px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                Voir tout →
+                {t('learn.dashboard.subjects.see_all')} →
               </Link>
             </div>
 
             {matieres.length === 0 ? (
               <div className="empty-state" style={{ padding: 'var(--sp-8)' }}>
                 <span className="empty-state__icon">📚</span>
-                <p className="empty-state__title">Aucune matière chargée</p>
+                <p className="empty-state__title">{t('learn.dashboard.subjects.empty')}</p>
               </div>
             ) : (
               <div className="stack stack--md">
@@ -244,13 +245,13 @@ export default function LearnDashboardPage() {
           {/* ── RECOMMENDATIONS ── */}
           <div className="card" style={{ padding: 'var(--sp-5)' }}>
             <div className="section-header" style={{ marginBottom: 'var(--sp-4)' }}>
-              <h3 style={{ fontSize: 'var(--tx-md)' }}>Recommandations</h3>
+              <h3 style={{ fontSize: 'var(--tx-md)' }}>{t('learn.dashboard.recommendations.title')}</h3>
             </div>
 
             {recommandations.length === 0 ? (
               <div className="empty-state" style={{ padding: 'var(--sp-6)', border: 'none', background: 'var(--srf-raised)' }}>
                 <span className="empty-state__icon">🔍</span>
-                <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>Aucune ressource recommandée</p>
+                <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>{t('learn.dashboard.recommendations.empty')}</p>
               </div>
             ) : (
               <div className="stack stack--sm">
@@ -275,12 +276,12 @@ export default function LearnDashboardPage() {
           {/* ── CHAT CTA ── */}
           <div className="card" style={{ padding: 'var(--sp-5)', background: 'var(--grd-ai)', border: '1px solid var(--brd-subtle)', textAlign: 'center' }}>
             <p style={{ fontSize: '2rem', marginBottom: 'var(--sp-2)' }}>✨</p>
-            <h3 style={{ fontSize: 'var(--tx-md)', marginBottom: 'var(--sp-2)' }}>Prêt à apprendre ?</h3>
+            <h3 style={{ fontSize: 'var(--tx-md)', marginBottom: 'var(--sp-2)' }}>{t('learn.dashboard.chat_cta.title')}</h3>
             <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', marginBottom: 'var(--sp-4)' }}>
-              LAURA est disponible 24h/24 pour vous aider.
+              {t('learn.dashboard.chat_cta.desc')}
             </p>
             <Link to="/learn/chat" className="laura-btn laura-btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: 'var(--tx-sm)' }}>
-              Discuter avec LAURA
+              {t('learn.dashboard.chat_cta.button')}
             </Link>
           </div>
 

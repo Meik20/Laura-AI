@@ -162,6 +162,40 @@
       "major": "Filière",
       "edit_profile": "✏️ Modifier mon profil",
       "logout": "⏻ Déconnexion"
+    },
+    "dashboard": {
+      "quick_actions": {
+        "chat": "Parler à LAURA",
+        "revision": "Réviser un chapitre",
+        "quiz": "Lancer un quiz",
+        "exams": "Préparer mon examen",
+        "resources": "Voir mes ressources"
+      },
+      "level_info": "Vous êtes en {{level}}",
+      "exam_info": "Examen préparé : {{exam}}",
+      "new_conversation": "+ Nouvelle conversation",
+      "no_goal_title": "Aucun objectif défini",
+      "no_goal_period": "Non définie",
+      "goal_card": {
+        "title": "Objectif d'apprentissage",
+        "edit_btn": "Modifier",
+        "period": "Période : {{period}}",
+        "progress": "Progression"
+      },
+      "subjects": {
+        "title": "Ma progression par matière",
+        "see_all": "Voir tout",
+        "empty": "Aucune matière chargée"
+      },
+      "recommendations": {
+        "title": "Recommandations",
+        "empty": "Aucune ressource recommandée"
+      },
+      "chat_cta": {
+        "title": "Prêt à apprendre ?",
+        "desc": "LAURA est disponible 24h/24 pour vous aider.",
+        "button": "Discuter avec LAURA"
+      }
     }
   },
   "tutor": {
