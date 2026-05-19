@@ -116,4 +116,32 @@ async function analyzeFile(buffer, mimeType, originalName) {
   return { text: null, method: 'unsupported', error: `File type ${mimeType} not supported` };
 }
 
-module.exports = { analyzeFile };
+/**
+ * Perform OCR on an array of base64 images using Gemini Vision
+ */
+async function analyzeBase64Images(inlineDataArray) {
+  if (!genAI) return { text: null, method: 'gemini-missing-key', note: 'Backend lacks GOOGLE_AI_API_KEY' };
+
+  try {
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const prompt = 'Transcris intégralement et fidèlement tout le texte visible dans ce document/cette image. Si c\'est un exercice scolaire ou un document mathématique, retranscris chaque question, formule, chiffre et instruction avec précision. Ne reformule pas, transcris simplement.';
+    
+    const result = await model.generateContent([
+      ...inlineDataArray.map(item => ({
+        inlineData: { data: item.base64, mimeType: item.mimeType || 'image/jpeg' }
+      })),
+      prompt
+    ]);
+
+    const text = result.response.text()?.trim();
+    if (text && text.length > 10) {
+      return { text, method: 'gemini-vision-backend' };
+    }
+    return { text: null, method: 'gemini-vision-backend', note: 'Aucun texte n\'a pu être identifié.' };
+  } catch (err) {
+    console.error('[fileParser] Gemini analyzeBase64Images error:', err);
+    return { text: null, method: 'gemini-error', note: err.message };
+  }
+}
+
+module.exports = { analyzeFile, analyzeBase64Images };

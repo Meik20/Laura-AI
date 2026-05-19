@@ -98,6 +98,27 @@ app.post('/api/analyze-file', upload.single('file'), async (req, res) => {
   }
 });
 
+// Base64 OCR Route — for client-side rendered PDF pages
+app.post('/api/analyze-base64', async (req, res) => {
+  const { inlineDataArray } = req.body;
+  if (!inlineDataArray || !Array.isArray(inlineDataArray)) {
+    return res.status(400).json({ error: 'Données invalides.' });
+  }
+
+  console.log(`[LAURA] Analyzing ${inlineDataArray.length} base64 images via Gemini Vision`);
+
+  try {
+    const result = await fileParser.analyzeBase64Images(inlineDataArray);
+    if (result.text) {
+      return res.json({ success: true, extractedText: result.text, method: result.method });
+    }
+    return res.json({ success: false, extractedText: null, method: result.method, note: result.note || 'Impossible d\'extraire le texte.' });
+  } catch (err) {
+    console.error('[analyze-base64] Error:', err);
+    res.status(500).json({ error: 'Erreur lors de l\'analyse des images.' });
+  }
+});
+
 // AI Orchestration Route
 app.post('/api/chat', async (req, res) => {
   const { message, mode, userContext, history } = req.body;

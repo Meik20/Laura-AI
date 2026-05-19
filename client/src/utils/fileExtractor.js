@@ -7,7 +7,6 @@
  */
 
 import * as pdfjsLib from 'pdfjs-dist';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Point to the PDF.js worker bundled with the package
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
@@ -32,31 +31,29 @@ async function renderPdfPageToBase64(page) {
   return canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
 }
 
-async function extractViaGeminiVision(inlineDataArray) {
-  const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
-  if (!apiKey) return { text: null, method: 'gemini-missing-key', note: "La clé API Gemini n'est pas configurée côté client." };
-
+async function extractViaBackendBase64(inlineDataArray, apiBase = '') {
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const response = await fetch(`${apiBase}/api/analyze-base64`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ inlineDataArray })
+    });
 
-    const prompt = 'Transcris intégralement et fidèlement tout le texte visible dans cette image/ce document. Si c\'est un exercice scolaire ou un document mathématique, retranscris chaque question, formule, chiffre et instruction avec précision. Ne reformule pas, transcris simplement.';
-
-    const result = await model.generateContent([
-      ...inlineDataArray.map(data => ({
-        inlineData: { data: data.base64, mimeType: data.mimeType }
-      })),
-      prompt
-    ]);
-
-    const text = result.response.text()?.trim();
-    if (text && text.length > 10) {
-      return { text, method: 'gemini-vision-client' };
+    // Check we actually got JSON and not an HTML page
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      console.warn('[fileExtractor] Backend not reachable — non-JSON response');
+      return { text: null, method: 'backend-unavailable', note: "Le serveur d'analyse est injoignable." };
     }
-    return { text: null, method: 'gemini-vision-client', note: 'Texte introuvable dans le document.' };
+
+    const data = await response.json();
+    if (data.success && data.extractedText) {
+      return { text: data.extractedText, method: data.method || 'backend-base64' };
+    }
+    return { text: null, method: 'backend-base64', note: data.note || data.error };
   } catch (err) {
-    console.error('[Gemini Vision Client Error]', err);
-    return { text: null, method: 'gemini-vision-error', error: err.message };
+    console.warn('[fileExtractor] Backend request failed:', err.message);
+    return { text: null, method: 'backend-error', note: err.message };
   }
 }
 
@@ -100,7 +97,7 @@ export async function extractFileContent(file, apiBase = '') {
         inlineDataArray.push({ base64, mimeType: 'image/jpeg' });
       }
 
-      const geminiResult = await extractViaGeminiVision(inlineDataArray);
+      const geminiResult = await extractViaBackendBase64(inlineDataArray, apiBase);
       if (geminiResult.text) {
         return { status: 'ready', text: geminiResult.text, pages: numPages, method: geminiResult.method };
       }
@@ -109,7 +106,7 @@ export async function extractFileContent(file, apiBase = '') {
         status: 'no-text',
         text: null,
         method: 'pdf-scanned-ocr-failed',
-        note: 'Impossible de lire le document scanné. Veuillez prendre une photo claire ou copier le texte.',
+        note: geminiResult.note || 'Impossible de lire le document scanné. Veuillez prendre une photo claire ou copier le texte.',
       };
     } catch (err) {
       console.error('[fileExtractor] PDF error:', err);
@@ -121,7 +118,7 @@ export async function extractFileContent(file, apiBase = '') {
   if (type.startsWith('image/')) {
     try {
       const base64 = await fileToBase64(file);
-      const geminiResult = await extractViaGeminiVision([{ base64, mimeType: type }]);
+      const geminiResult = await extractViaBackendBase64([{ base64, mimeType: type }], apiBase);
       
       if (geminiResult.text) {
         return { status: 'ready', text: geminiResult.text, method: geminiResult.method };
