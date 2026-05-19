@@ -113,35 +113,40 @@ export default function AdminSettingsPage() {
 
   const tabs = ['Général', 'Programmes & Matières', "Modèles d'IA (LLM)", 'Sécurité & Anti-Spam', 'Intégrations'];
 
-  const inputStyle = { width: '100%', padding: '0.8rem 1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'white', outline: 'none', boxSizing: 'border-box', marginTop: '0.4rem' };
-  const labelStyle = { display: 'block', color: '#94A3B8', fontSize: '0.9rem', fontWeight: 600 };
-  const sectionCardStyle = { background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem' };
+  const inputStyle = { width: '100%', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-md)', color: 'var(--txt-primary)', outline: 'none', boxSizing: 'border-box', marginTop: 'var(--sp-2)' };
+  const labelStyle = { display: 'block', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', textTransform: 'uppercase', letterSpacing: '0.04em' };
+  const sectionCardStyle = { background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-lg)', padding: 'var(--sp-6)', marginBottom: 'var(--sp-6)' };
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-      <div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Paramètres Système</h1>
-        <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>Configuration globale de l'intelligence artificielle, des programmes et de la plateforme.</p>
+    <div className="stack stack--lg animate-in">
+      <div className="page-header">
+        <div className="page-header__title">
+          <h1 className="laura-h1">Paramètres Système</h1>
+          <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>Configuration globale de l'intelligence artificielle, des programmes et de la plateforme.</p>
+        </div>
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '2.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 'var(--sp-8)' }}>
         
         {/* Navigation Sidebar */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div className="stack stack--xs">
           {tabs.map((tab) => (
             <button 
               key={tab} 
               onClick={() => setActiveTab(tab)}
               style={{ 
                 textAlign: 'left', 
-                padding: '1rem 1.5rem', 
-                background: activeTab === tab ? '#3B82F6' : 'transparent', 
-                color: activeTab === tab ? 'white' : '#94A3B8', 
-                border: 'none', 
-                borderRadius: '0.8rem', 
-                fontWeight: 600, 
+                padding: 'var(--sp-3) var(--sp-5)', 
+                background: activeTab === tab ? 'var(--clr-brand-lt)' : 'transparent', 
+                color: activeTab === tab ? 'var(--clr-brand)' : 'var(--txt-secondary)', 
+                border: 'none',
+                borderLeft: activeTab === tab ? '3px solid var(--clr-brand)' : '3px solid transparent',
+                borderRadius: 'var(--rd-md)', 
+                fontWeight: activeTab === tab ? 'var(--fw-bold)' : 'var(--fw-medium)', 
                 cursor: 'pointer',
-                transition: 'all 0.2s'
+                transition: 'all var(--dur-fast)',
+                fontSize: 'var(--tx-sm)',
+                width: '100%'
               }}
             >
               {tab}
@@ -150,10 +155,10 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* Content Area */}
-        <div style={{ background: '#0F1520', borderRadius: '1.2rem', border: '1px solid rgba(255,255,255,0.05)', padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div className="card card__body stack stack--md">
           
           {isLoading ? (
-            <div style={{ padding: '4rem', textAlign: 'center', color: '#94A3B8' }}>Chargement des paramètres de la plateforme...</div>
+            <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Chargement des paramètres de la plateforme...</div>
           ) : (
             <>
               {/* TAB 1 : GÉNÉRAL */}
@@ -443,26 +448,17 @@ export default function AdminSettingsPage() {
               )}
 
               {/* BARRE D'ACTION ET DE SAUVEGARDE */}
-              <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '1.5rem' }}>
+              <div className="row" style={{ justifyContent: 'flex-end', gap: 'var(--sp-4)', marginTop: 'var(--sp-4)' }}>
                 {saveMessage && (
-                  <span style={{ color: '#10B981', fontWeight: 700, background: '#10B98120', padding: '0.5rem 1rem', borderRadius: '0.5rem', animation: 'fadeIn 0.3s' }}>
+                  <span className="badge badge--green" style={{ padding: 'var(--sp-2) var(--sp-4)', fontSize: 'var(--tx-sm)' }}>
                     {saveMessage}
                   </span>
                 )}
                 <button 
                   onClick={handleSave} 
                   disabled={isSaving}
-                  style={{ 
-                    background: isSaving ? '#64748B' : '#3B82F6', 
-                    color: 'white', 
-                    border: 'none', 
-                    padding: '0.8rem 2.5rem', 
-                    borderRadius: '0.8rem', 
-                    fontWeight: 700, 
-                    cursor: isSaving ? 'not-allowed' : 'pointer',
-                    transition: 'background 0.2s',
-                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)'
-                  }}
+                  className="btn btn--primary"
+                  style={{ opacity: isSaving ? 0.6 : 1, cursor: isSaving ? 'not-allowed' : 'pointer' }}
                 >
                   {isSaving ? 'Enregistrement...' : 'Enregistrer les modifications'}
                 </button>

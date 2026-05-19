@@ -43,56 +43,52 @@ export default function TutorSettingsPage() {
     }
   };
 
-  const inputStyle = { width: '100%', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', background: '#F9F9F8', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' };
-  const labelStyle = { display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600, color: '#444' };
-  const cardStyle = { background: 'white', padding: '2.5rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' };
-
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+    <div className="stack stack--lg animate-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
       
       {/* HEADER */}
       <div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Paramètres Tuteur</h1>
-        <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
+        <h1 className="laura-h1">Paramètres Tuteur</h1>
+        <p style={{ margin: 'var(--sp-1) 0 0', color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>
           Personnalisez votre espace pédagogique et vos préférences de notification.
         </p>
       </div>
 
-      <div style={cardStyle}>
+      <div className="card" style={{ padding: 'var(--sp-6)' }}>
         {successMsg && (
-          <div style={{ padding: '1rem', background: '#D1FAE5', color: '#065F46', borderRadius: '0.75rem', fontWeight: 600, marginBottom: '2rem', border: '1px solid #A7F3D0' }}>
+          <div className="badge badge--green" style={{ padding: 'var(--sp-3)', width: '100%', boxSizing: 'border-box', marginBottom: 'var(--sp-5)', justifyContent: 'center', fontSize: 'var(--tx-sm)' }}>
             {successMsg}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
+        <form onSubmit={handleSubmit} className="stack stack--lg">
           
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #F0F0EE', paddingBottom: '1.5rem' }}>
-            <div>
-              <div style={{ fontWeight: 700, color: '#1A1A1A', fontSize: '1.1rem', marginBottom: '0.2rem' }}>Notifications de révision</div>
-              <div style={{ fontSize: '0.9rem', color: '#6E6E6B' }}>Recevoir un email lorsque l'administration commente ou valide vos soumissions.</div>
+          <div className="row row--between" style={{ alignItems: 'center', borderBottom: '1px solid var(--brd-subtle)', paddingBottom: 'var(--sp-4)', gap: 'var(--sp-4)' }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 'var(--fw-bold)', color: 'var(--txt-primary)', fontSize: 'var(--tx-base)', marginBottom: 'var(--sp-1)' }}>Notifications de révision</div>
+              <div style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)' }}>Recevoir un email lorsque l'administration commente ou valide vos soumissions.</div>
             </div>
-            <input type="checkbox" name="notifications" checked={settings.notifications} onChange={handleChange} style={{ width: '24px', height: '24px', accentColor: '#00D4AA', cursor: 'pointer' }} />
+            <input type="checkbox" name="notifications" checked={settings.notifications} onChange={handleChange} style={{ width: '22px', height: '22px', accentColor: 'var(--clr-brand)', cursor: 'pointer' }} />
           </div>
 
-          <div style={{ borderBottom: '1px solid #F0F0EE', paddingBottom: '1.5rem' }}>
-            <label style={labelStyle}>Thème de l'interface</label>
-            <select name="theme" value={settings.theme} onChange={handleChange} style={inputStyle}>
+          <div style={{ borderBottom: '1px solid var(--brd-subtle)', paddingBottom: 'var(--sp-4)' }}>
+            <label style={{ display: 'block', marginBottom: 'var(--sp-2)' }}>Thème de l'interface</label>
+            <select name="theme" value={settings.theme} onChange={handleChange}>
               <option value="clair">Thème Clair (Par défaut)</option>
               <option value="sombre">Thème Sombre</option>
             </select>
           </div>
 
           <div>
-            <label style={labelStyle}>Rythme de soumission souhaité</label>
-            <select name="rythmeSoumission" value={settings.rythmeSoumission} onChange={handleChange} style={inputStyle}>
+            <label style={{ display: 'block', marginBottom: 'var(--sp-2)' }}>Rythme de soumission souhaité</label>
+            <select name="rythmeSoumission" value={settings.rythmeSoumission} onChange={handleChange}>
               <option value="occasionnel">Occasionnel (1-2 ressources par mois)</option>
               <option value="hebdomadaire">Hebdomadaire (1 ressource par semaine)</option>
               <option value="intensif">Intensif (Plusieurs ressources par semaine)</option>
             </select>
           </div>
 
-          <button type="submit" disabled={isSaving} style={{ padding: '1rem', background: isSaving ? '#6E6E6B' : '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontSize: '1.1rem', fontWeight: 700, cursor: isSaving ? 'not-allowed' : 'pointer', marginTop: '1rem', transition: 'background 0.2s' }} onMouseEnter={e => !isSaving && (e.currentTarget.style.background = '#333')} onMouseLeave={e => !isSaving && (e.currentTarget.style.background = '#1A1A1A')}>
+          <button type="submit" disabled={isSaving} className="laura-btn laura-btn-primary" style={{ width: '100%', justifyContent: 'center', minHeight: '44px', marginTop: 'var(--sp-4)', fontSize: 'var(--tx-base)' }}>
             {isSaving ? 'Enregistrement...' : 'Enregistrer les préférences'}
           </button>
 

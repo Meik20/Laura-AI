@@ -48,92 +48,98 @@ export default function AdminTutorApplicationsPage() {
   };
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-      
+    <div className="stack stack--lg animate-in">
       {/* MODAL OUVRIR LE DOSSIER */}
       {selectedApp && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
-          <div style={{ background: '#0F1520', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1.5rem', padding: '2.5rem', maxWidth: '600px', width: '100%', color: 'white', display: 'flex', flexDirection: 'column', gap: '1.5rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>
-              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Dossier de Candidature</h2>
-              <button onClick={() => setSelectedApp(null)} style={{ background: 'transparent', border: 'none', color: '#94A3B8', fontSize: '1.5rem', cursor: 'pointer' }}>×</button>
+        <div className="modal-backdrop" onClick={() => setSelectedApp(null)}>
+          <div className="modal-panel" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
+            <div className="modal-header">
+              <h2 className="modal-title">Dossier de Candidature</h2>
+              <button onClick={() => setSelectedApp(null)} className="modal-close" aria-label="Fermer">✕</button>
             </div>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.95rem' }}>
-              <div><strong style={{ color: '#94A3B8' }}>Candidat :</strong> {selectedApp.prenom} {selectedApp.nom}</div>
-              <div><strong style={{ color: '#94A3B8' }}>Email :</strong> {selectedApp.email}</div>
-              <div><strong style={{ color: '#94A3B8' }}>Téléphone :</strong> {selectedApp.telephone || 'Non renseigné'}</div>
-              <div><strong style={{ color: '#94A3B8' }}>Discipline :</strong> {selectedApp.discipline} ({selectedApp.niveau})</div>
-              <div><strong style={{ color: '#94A3B8' }}>Établissement :</strong> {selectedApp.etablissement || 'Non renseigné'}</div>
-              <div><strong style={{ color: '#94A3B8' }}>Diplôme :</strong> {selectedApp.diplome || 'Non renseigné'}</div>
-              <div><strong style={{ color: '#94A3B8' }}>Compétences :</strong> {selectedApp.competences || 'Non renseignées'}</div>
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <strong style={{ display: 'block', marginBottom: '0.5rem', color: '#94A3B8' }}>Motivation :</strong>
-                <p style={{ margin: 0, lineHeight: 1.5 }}>{selectedApp.motivation || 'Aucune motivation fournie.'}</p>
+            <div className="modal-panel__body stack stack--md">
+              <div className="stack stack--sm" style={{ fontSize: 'var(--tx-sm)' }}>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>Candidat :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedApp.prenom} {selectedApp.nom}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>Email :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedApp.email}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>Téléphone :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedApp.telephone || 'Non renseigné'}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>Discipline :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedApp.discipline} ({selectedApp.niveau})</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>Établissement :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedApp.etablissement || 'Non renseigné'}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>Diplôme :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedApp.diplome || 'Non renseigné'}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>Compétences :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedApp.competences || 'Non renseignées'}</span></div>
+              </div>
+              <div style={{ background: 'var(--srf-raised)', padding: 'var(--sp-4)', borderRadius: 'var(--rd-lg)', border: '1px solid var(--brd-subtle)' }}>
+                <strong style={{ display: 'block', marginBottom: 'var(--sp-2)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)' }}>Motivation :</strong>
+                <p style={{ margin: 0, lineHeight: 'var(--lh-relaxed)', color: 'var(--txt-primary)', fontSize: 'var(--tx-sm)' }}>{selectedApp.motivation || 'Aucune motivation fournie.'}</p>
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
-              <button onClick={() => setSelectedApp(null)} style={{ padding: '0.8rem 1.5rem', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>Fermer</button>
-              <button onClick={() => { handleValidate(selectedApp.id); setSelectedApp(null); }} style={{ padding: '0.8rem 1.5rem', background: '#10B981', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>Valider ce tuteur</button>
+            <div className="row" style={{ justifyContent: 'flex-end', padding: 'var(--sp-4)', borderTop: '1px solid var(--brd-subtle)', gap: 'var(--sp-4)' }}>
+              <button onClick={() => setSelectedApp(null)} className="btn btn--secondary">Fermer</button>
+              <button onClick={() => { handleValidate(selectedApp.id); setSelectedApp(null); }} className="btn btn--primary" style={{ background: 'var(--clr-success)', color: 'white' }}>Valider ce tuteur</button>
             </div>
           </div>
         </div>
       )}
 
-      <div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Candidatures Tuteurs</h1>
-        <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>
-          Gérez et validez les accès enseignants.
-        </p>
+      <div className="page-header">
+        <div className="page-header__title">
+          <h1 className="laura-h1">Candidatures Tuteurs</h1>
+          <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>
+            Gérez et validez les accès enseignants.
+          </p>
+        </div>
       </div>
 
-      <div style={{ background: '#0F1520', borderRadius: '1.2rem', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-          <thead style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-            <tr>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Candidat</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Discipline</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Expérience</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Statut</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8', textAlign: 'right' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Chargement des candidatures...</td></tr>
-            ) : applications.length === 0 ? (
-              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Aucune candidature en attente.</td></tr>
-            ) : (
-              applications.map((app, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <td style={{ padding: '1.5rem' }}>
-                    <div style={{ fontWeight: 700, color: 'white' }}>{`${app.prenom || ''} ${app.nom || ''}`.trim() || 'Sans nom'}</div>
-                    <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Inscrit le {app.createdAt ? new Date(app.createdAt).toLocaleDateString('fr-FR') : 'N/A'}</div>
-                  </td>
-                  <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>
-                    <div style={{ fontWeight: 600 }}>{app.discipline || 'Non précisé'}</div>
-                    <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Niveau: {app.niveau || 'N/A'}</div>
-                  </td>
-                  <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{app.experience || 'Non précisée'}</td>
-                  <td style={{ padding: '1.5rem' }}>{getStatusBadge('en_attente')}</td>
-                  <td style={{ padding: '1.5rem', textAlign: 'right' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                      <button onClick={() => setSelectedApp(app)} style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
-                        Ouvrir le dossier
-                      </button>
-                      <button onClick={() => handleValidate(app.id)} style={{ background: '#10B981', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>
-                        Valider
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="card" style={{ overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--tx-sm)' }}>
+            <thead>
+              <tr style={{ background: 'var(--srf-raised)', borderBottom: '2px solid var(--brd-subtle)' }}>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Candidat</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Discipline</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Expérience</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Statut</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'right' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr><td colSpan="5" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Chargement des candidatures...</td></tr>
+              ) : applications.length === 0 ? (
+                <tr><td colSpan="5" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Aucune candidature en attente.</td></tr>
+              ) : (
+                applications.map((app, i) => (
+                  <tr key={i} style={{ borderBottom: '1px solid var(--brd-subtle)', background: i % 2 === 1 ? 'var(--srf-raised)' : '' }}>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
+                      <strong style={{ display: 'block', color: 'var(--txt-primary)', fontWeight: 'var(--fw-semibold)' }}>{`${app.prenom || ''} ${app.nom || ''}`.trim() || 'Sans nom'}</strong>
+                      <span style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-xs)' }}>Inscrit le {app.createdAt ? new Date(app.createdAt).toLocaleDateString('fr-FR') : 'N/A'}</span>
+                    </td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
+                      <span style={{ color: 'var(--txt-primary)', fontWeight: 'var(--fw-medium)', display: 'block' }}>{app.discipline || 'Non précisé'}</span>
+                      <span style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-xs)' }}>Niveau: {app.niveau || 'N/A'}</span>
+                    </td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-secondary)' }}>{app.experience || 'Non précisée'}</td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
+                      {getStatusBadge('en_attente')}
+                    </td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)', textAlign: 'right' }}>
+                      <div className="row" style={{ justifyContent: 'flex-end', gap: 'var(--sp-2)' }}>
+                        <button onClick={() => setSelectedApp(app)} className="btn btn--secondary btn--sm">
+                          Ouvrir le dossier
+                        </button>
+                        <button onClick={() => handleValidate(app.id)} className="btn btn--primary btn--sm" style={{ background: 'var(--clr-success)', color: 'white' }}>
+                          Valider
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-
     </div>
   );
 }

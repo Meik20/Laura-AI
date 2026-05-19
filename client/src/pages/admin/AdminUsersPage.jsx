@@ -54,61 +54,70 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+    <div className="stack stack--lg animate-in">
       
       {/* MODAL GÉRER UTILISATEUR */}
       {selectedUser && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
-          <div style={{ background: '#0F1520', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1.5rem', padding: '2.5rem', maxWidth: '500px', width: '100%', color: 'white', display: 'flex', flexDirection: 'column', gap: '1.5rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>
-              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Gestion de l'utilisateur</h2>
-              <button onClick={() => setSelectedUser(null)} style={{ background: 'transparent', border: 'none', color: '#94A3B8', fontSize: '1.5rem', cursor: 'pointer' }}>×</button>
+        <div className="modal-backdrop" onClick={() => setSelectedUser(null)}>
+          <div className="modal-panel" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">Gestion de l'utilisateur</h2>
+              <button onClick={() => setSelectedUser(null)} className="modal-close" aria-label="Fermer">✕</button>
             </div>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.95rem' }}>
-              <div><strong style={{ color: '#94A3B8' }}>Nom :</strong> {selectedUser.nom}</div>
-              <div><strong style={{ color: '#94A3B8' }}>Email :</strong> {selectedUser.email}</div>
-              <div><strong style={{ color: '#94A3B8' }}>Rôle actuel :</strong> {selectedUser.role}</div>
-              <div><strong style={{ color: '#94A3B8' }}>Détail / Discipline :</strong> {selectedUser.detail}</div>
-              <div><strong style={{ color: '#94A3B8' }}>Statut :</strong> <span style={{ color: selectedUser.statut === 'En attente de contribution' ? '#F59E0B' : '#10B981', fontWeight: 700 }}>{selectedUser.statut}</span></div>
-            </div>
-
-            {selectedUser.statut === 'En attente de contribution' && (
-              <div style={{ background: '#FEF3C7', color: '#92400E', padding: '1rem', borderRadius: '0.75rem', fontSize: '0.9rem', lineHeight: 1.4 }}>
-                Cet utilisateur a demandé à devenir <strong>Tuteur Contributeur</strong> pour soumettre des contenus à la communauté.
+            <div className="modal-panel__body stack stack--md">
+              <div className="stack stack--sm" style={{ fontSize: 'var(--tx-sm)' }}>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>Nom :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedUser.nom}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>Email :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedUser.email}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>Rôle actuel :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedUser.role}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>Détail / Discipline :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedUser.detail}</span></div>
+                <div>
+                  <strong style={{ color: 'var(--txt-secondary)' }}>Statut :</strong>{' '}
+                  <span className={`badge ${selectedUser.statut === 'En attente de contribution' ? 'badge--warning' : 'badge--green'}`}>
+                    {selectedUser.statut}
+                  </span>
+                </div>
               </div>
-            )}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
-              <button onClick={() => setSelectedUser(null)} style={{ padding: '0.8rem 1.5rem', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>Fermer</button>
               {selectedUser.statut === 'En attente de contribution' && (
-                <button onClick={() => handleGrantContributor(selectedUser.id)} style={{ padding: '0.8rem 1.5rem', background: '#10B981', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>Accorder droits Contributeur</button>
+                <div className="alert alert--warning">
+                  <span>Cet utilisateur a demandé à devenir <strong>Tuteur Contributeur</strong> pour soumettre des contenus à la communauté.</span>
+                </div>
               )}
+
+              <div className="row" style={{ justifyContent: 'flex-end', marginTop: 'var(--sp-2)' }}>
+                <button onClick={() => setSelectedUser(null)} className="btn btn--secondary">Fermer</button>
+                {selectedUser.statut === 'En attente de contribution' && (
+                  <button onClick={() => handleGrantContributor(selectedUser.id)} className="btn btn--primary" style={{ background: 'var(--clr-success)', color: 'white' }}>
+                    Accorder droits Contributeur
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      <div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Utilisateurs</h1>
-        <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>
-          Gestion globale des comptes de la plateforme.
-        </p>
+      <div className="page-header">
+        <div className="page-header__title">
+          <h1 className="laura-h1">Utilisateurs</h1>
+          <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>
+            Gestion globale des comptes de la plateforme.
+          </p>
+        </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '1rem' }}>
+      <div className="chip-row">
         {['Tous', 'Élèves', 'Étudiants', 'Tuteurs', 'Suspendus'].map((f, i) => (
           <button 
             key={i} 
             onClick={() => setFilter(f)}
+            className="chip"
             style={{ 
-              background: filter === f ? '#3B82F6' : 'rgba(255,255,255,0.05)', 
-              color: filter === f ? 'white' : '#94A3B8', 
-              border: 'none', 
-              padding: '0.6rem 1.2rem', 
-              borderRadius: '2rem', 
-              fontWeight: 600, 
-              cursor: 'pointer' 
+              background: filter === f ? 'var(--clr-brand-lt)' : '', 
+              color: filter === f ? 'var(--clr-brand)' : '', 
+              borderColor: filter === f ? 'var(--clr-brand)' : '', 
+              fontWeight: filter === f ? 'var(--fw-bold)' : '' 
             }}
           >
             {f}
@@ -116,53 +125,58 @@ export default function AdminUsersPage() {
         ))}
       </div>
 
-      <div style={{ background: '#0F1520', borderRadius: '1.2rem', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-          <thead style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-            <tr>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Utilisateur</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Rôle & Détail</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Date d'inscription</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Statut</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8', textAlign: 'right' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Chargement des utilisateurs...</td></tr>
-            ) : users.length === 0 ? (
-              <tr><td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Aucun utilisateur trouvé.</td></tr>
-            ) : (
-              users
-                .filter(u => {
-                  if (filter === 'Tous') return true;
-                  if (filter === 'Élèves') return u.role === 'Élève';
-                  if (filter === 'Étudiants') return u.role === 'Étudiant';
-                  if (filter === 'Tuteurs') return u.role.includes('Tuteur');
-                  if (filter === 'Suspendus') return u.statut === 'suspendu';
-                  return true;
-                })
-                .map((usr) => (
-                  <tr key={usr.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <td style={{ padding: '1.5rem', fontWeight: 700, color: 'white' }}>{usr.nom}</td>
-                  <td style={{ padding: '1.5rem' }}>
-                    <span style={{ color: '#E2E8F0', fontWeight: 600 }}>{usr.role}</span>
-                    <span style={{ color: '#64748B', display: 'block', fontSize: '0.85rem' }}>{usr.detail}</span>
-                  </td>
-                  <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{usr.date}</td>
-                  <td style={{ padding: '1.5rem' }}>
-                    <span style={{ background: usr.statut === 'Contributeur' ? '#10B98120' : usr.statut === 'En attente de contribution' ? '#F59E0B20' : '#3B82F620', color: usr.statut === 'Contributeur' ? '#10B981' : usr.statut === 'En attente de contribution' ? '#F59E0B' : '#3B82F6', padding: '0.3rem 0.8rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700 }}>
-                      {usr.statut.toUpperCase()}
-                    </span>
-                  </td>
-                  <td style={{ padding: '1.5rem', textAlign: 'right' }}>
-                    <button onClick={() => setSelectedUser(usr)} style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>Gérer</button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="card" style={{ overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--tx-sm)' }}>
+            <thead>
+              <tr style={{ background: 'var(--srf-raised)', borderBottom: '2px solid var(--brd-subtle)' }}>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Utilisateur</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rôle & Détail</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Date d'inscription</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Statut</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'right' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr><td colSpan="5" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Chargement des utilisateurs...</td></tr>
+              ) : users.length === 0 ? (
+                <tr><td colSpan="5" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Aucun utilisateur trouvé.</td></tr>
+              ) : (
+                users
+                  .filter(u => {
+                    if (filter === 'Tous') return true;
+                    if (filter === 'Élèves') return u.role === 'Élève';
+                    if (filter === 'Étudiants') return u.role === 'Étudiant';
+                    if (filter === 'Tuteurs') return u.role.includes('Tuteur');
+                    if (filter === 'Suspendus') return u.statut === 'suspendu';
+                    return true;
+                  })
+                  .map((usr, idx) => (
+                    <tr key={usr.id} style={{ borderBottom: '1px solid var(--brd-subtle)', background: idx % 2 === 1 ? 'var(--srf-raised)' : '' }}>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
+                      <strong style={{ display: 'block', color: 'var(--txt-primary)', fontWeight: 'var(--fw-semibold)' }}>{usr.nom}</strong>
+                      <span style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-xs)' }}>{usr.email}</span>
+                    </td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
+                      <span style={{ color: 'var(--txt-primary)', fontWeight: 'var(--fw-medium)' }}>{usr.role}</span>
+                      <span style={{ color: 'var(--txt-tertiary)', display: 'block', fontSize: 'var(--tx-xs)' }}>{usr.detail}</span>
+                    </td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-secondary)' }}>{usr.date}</td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
+                      <span className={`badge ${usr.statut === 'Contributeur' ? 'badge--green' : usr.statut === 'En attente de contribution' ? 'badge--warning' : 'badge--brand'}`}>
+                        {usr.statut.toUpperCase()}
+                      </span>
+                    </td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)', textAlign: 'right' }}>
+                      <button onClick={() => setSelectedUser(usr)} className="btn btn--secondary btn--sm">Gérer</button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

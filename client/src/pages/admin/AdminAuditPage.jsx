@@ -21,40 +21,44 @@ export default function AdminAuditPage() {
   }, []);
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+    <div className="stack stack--lg animate-in">
       
-      <div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Logs & Audit</h1>
-        <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>Traçabilité des actions critiques d'administration.</p>
+      <div className="page-header">
+        <div className="page-header__title">
+          <h1 className="laura-h1">Logs & Audit</h1>
+          <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>Traçabilité des actions critiques d'administration.</p>
+        </div>
       </div>
 
-      <div style={{ background: '#0F1520', borderRadius: '1.2rem', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-          <thead style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-            <tr>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Date et Heure</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Action</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Détail</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#94A3B8' }}>Auteur</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr><td colSpan="4" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Chargement des logs...</td></tr>
-            ) : logs.length === 0 ? (
-              <tr><td colSpan="4" style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8' }}>Aucun log d'audit.</td></tr>
-            ) : (
-              logs.map((log) => (
-                <tr key={log.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <td style={{ padding: '1.5rem', color: '#94A3B8' }}>{log.date || 'N/A'}</td>
-                  <td style={{ padding: '1.5rem', fontWeight: 700, color: 'white' }}>{log.action || 'Action inconnue'}</td>
-                  <td style={{ padding: '1.5rem', color: '#CBD5E1' }}>{log.detail || 'N/A'}</td>
-                  <td style={{ padding: '1.5rem', color: '#3B82F6', fontWeight: 600 }}>{log.admin || 'Système'}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="card" style={{ overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--tx-sm)' }}>
+            <thead>
+              <tr style={{ background: 'var(--srf-raised)', borderBottom: '2px solid var(--brd-subtle)' }}>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Date et Heure</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Action</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Détail</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Auteur</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr><td colSpan="4" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Chargement des logs...</td></tr>
+              ) : logs.length === 0 ? (
+                <tr><td colSpan="4" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Aucun log d'audit.</td></tr>
+              ) : (
+                logs.map((log, idx) => (
+                  <tr key={log.id} style={{ borderBottom: '1px solid var(--brd-subtle)', background: idx % 2 === 1 ? 'var(--srf-raised)' : '' }}>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-secondary)' }}>{log.date || 'N/A'}</td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-semibold)', color: 'var(--txt-primary)' }}>{log.action || 'Action inconnue'}</td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-secondary)' }}>{log.detail || 'N/A'}</td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--clr-brand)', fontWeight: 'var(--fw-medium)' }}>{log.admin || 'Système'}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

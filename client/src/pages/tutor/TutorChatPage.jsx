@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
@@ -9,6 +9,7 @@ export default function TutorChatPage() {
   const [messages, setMessages] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const { currentUser, userProfile } = useAuth();
+  const chatEndRef = useRef(null);
   
   const uid = currentUser?.uid || userProfile?.uid;
 
@@ -31,11 +32,16 @@ export default function TutorChatPage() {
 
   const suggestions = [
     "Générer un plan de cours",
-    "Créer un exercice",
-    "Préparer un support visuel",
-    "Reformuler cette leçon",
-    "Produire un brouillon"
+    "Créer une fiche d'exercices d'application",
+    "Concevoir un sujet d'examen",
+    "Reformuler cette leçon de manière simple",
+    "Produire un quiz d'évaluation rapide"
   ];
+
+  // Scroll to bottom helper
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   useEffect(() => {
     async function loadHistory() {
@@ -99,7 +105,6 @@ export default function TutorChatPage() {
       });
       
       const data = await response.json();
-      
       const lauraText = data.response || data.error || "Désolée, je n'ai pas pu formuler une réponse.";
       const lauraMsgObj = { role: 'laura', text: lauraText, timestamp: new Date().toISOString() };
       
@@ -138,7 +143,7 @@ export default function TutorChatPage() {
     try {
       const newRes = {
         titre: `Support généré par IA - ${new Date().toLocaleDateString()}`,
-        type: 'Support',
+        type: 'Fiche',
         statut: 'brouillon',
         contenu: lastLauraMsg.text,
         auteurId: uid,
@@ -155,14 +160,16 @@ export default function TutorChatPage() {
     }
   };
 
+  const initials = (userProfile?.prenom?.[0] || '') + (userProfile?.nom?.[0] || 'T');
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className="chat-wrapper">
       
       {/* HEADER */}
-      <div className="chat-page-header">
+      <div className="row row--between desktop-only" style={{ marginBottom: 'var(--sp-4)', flexShrink: 0 }}>
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Chat Pédagogique</h1>
-          <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1rem' }}>
+          <h1 className="laura-h2" style={{ margin: 0 }}>Chat Pédagogique</h1>
+          <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', margin: 0 }}>
             Utilisez l'IA pour générer et structurer vos contenus avant de les soumettre.
           </p>
         </div>
@@ -178,75 +185,79 @@ export default function TutorChatPage() {
               await setDoc(doc(db, 'chats', uid), { messages: [welcomeMsg] });
             }
           }} 
-          style={{ padding: '0.8rem 1.5rem', background: '#00A37A', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'background 0.2s' }}
-          onMouseEnter={e => e.currentTarget.style.background = '#008563'} 
-          onMouseLeave={e => e.currentTarget.style.background = '#00A37A'}
+          className="laura-btn laura-btn-ghost"
+          style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)' }}
         >
-          <span>+</span> Nouvelle conversation
+          🗑️ Nouveau Chat
         </button>
       </div>
 
-      <div className="chat-layout-wrapper">
+      <div style={{ display: 'flex', gap: 'var(--sp-5)', flex: 1, overflow: 'hidden' }}>
         
         {/* CHAT AREA */}
-        <div className="chat-main-area">
+        <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
           
           {/* Messages */}
-          <div style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <div className="chat-messages no-scrollbar" style={{ padding: 'var(--sp-5)' }}>
             {isInitializing ? (
-              <div style={{ textAlign: 'center', color: '#6E6E6B', padding: '2rem' }}>Chargement du chat pédagogique...</div>
+              <div className="empty-state" style={{ margin: 'auto' }}>
+                <span className="empty-state__icon">⏳</span>
+                <p className="empty-state__title">Chargement de la session...</p>
+              </div>
             ) : (
-              messages.map((m, i) => (
-                <div key={i} style={{ display: 'flex', gap: '1.5rem' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', flexShrink: 0, background: m.role === 'user' ? '#00A37A' : 'white', border: m.role === 'user' ? 'none' : '1px solid #E5E5E2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1.2rem', overflow: 'hidden', boxShadow: m.role === 'user' ? 'none' : '0 2px 4px rgba(0,0,0,0.05)' }}>
-                    {m.role === 'user' ? 'Vous' : (
-                      <img src="/icon.png" alt="LAURA" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
-                    )}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#1A1A1A' }}>
-                      {m.role === 'user' ? 'Vous' : 'LAURA Pédagogie'}
+              messages.map((m, i) => {
+                const isUser = m.role === 'user';
+                return (
+                  <div key={i} className={`chat-msg ${isUser ? 'chat-msg--user' : 'chat-msg--ai'}`}>
+                    <div className="chat-msg__avatar" style={{ background: isUser ? 'var(--grd-brand)' : 'var(--clr-green-lt)', color: isUser ? 'white' : 'var(--clr-green)', border: isUser ? 'none' : '1px solid var(--brd-subtle)', fontWeight: 700 }}>
+                      {isUser ? initials : 'L'}
                     </div>
-                    <div style={{ fontSize: '1.05rem', lineHeight: 1.7, color: '#333', whiteSpace: 'pre-wrap' }}>
-                      {m.text}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-1)', maxWidth: '100%' }}>
+                      <div style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-tertiary)' }}>
+                        {isUser ? 'Vous' : 'LAURA Pédagogie'}
+                      </div>
+                      <div className="chat-msg__bubble" style={{ background: isUser ? 'var(--grd-brand)' : 'var(--srf-raised)', color: isUser ? 'white' : 'var(--txt-primary)' }}>
+                        {m.text}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
+            <div ref={chatEndRef} />
           </div>
 
-          {/* Input */}
-          <div style={{ padding: '1.5rem', borderTop: '1px solid #E5E5E2', background: '#FAFAFA' }}>
+          {/* Input Area */}
+          <div style={{ padding: 'var(--sp-4) var(--sp-5)', borderTop: '1px solid var(--brd-subtle)', background: 'var(--srf-raised)' }}>
             
             {attachedFile && (
-              <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '1rem', borderRadius: '0.75rem', marginBottom: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#065F46', fontWeight: 700, fontSize: '0.95rem' }}>
-                    <span>📎 Fichier joint :</span>
-                    <span style={{ background: 'white', padding: '0.2rem 0.6rem', borderRadius: '0.4rem', border: '1px solid #D1FAE5' }}>{attachedFile.name}</span>
+              <div className="card card--glass" style={{ padding: 'var(--sp-3)', marginBottom: 'var(--sp-3)', display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+                <div className="row row--between" style={{ alignItems: 'center' }}>
+                  <div className="row" style={{ alignItems: 'center', gap: 'var(--sp-2)', fontSize: 'var(--tx-xs)' }}>
+                    <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>📎 Document :</span>
+                    <span className="badge badge--brand">{attachedFile.name}</span>
                   </div>
-                  <button onClick={() => setAttachedFile(null)} style={{ background: 'transparent', border: 'none', color: '#065F46', fontWeight: 700, cursor: 'pointer', fontSize: '1.1rem' }}>✕</button>
+                  <button onClick={() => setAttachedFile(null)} className="laura-btn laura-btn-ghost" style={{ padding: 0, minHeight: 'auto', minWidth: 'auto', color: 'var(--clr-error)' }}>✕</button>
                 </div>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div className="row" style={{ gap: 'var(--sp-2)', flexWrap: 'wrap' }}>
                   <button 
                     onClick={() => {
                       const prompt = `[📎 Document joint : ${attachedFile.name}] J'ai partagé ce document pédagogique avec toi. Peux-tu l'analyser et m'aider à concevoir une fiche d'exercices d'application complète avec corrigé ?`;
                       setAttachedFile(null);
                       handleSend(prompt);
                     }}
-                    style={{ background: '#059669', color: 'white', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '0.6rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 2px 4px rgba(5, 150, 105, 0.2)' }}
+                    className="laura-btn laura-btn-primary"
+                    style={{ minHeight: '32px', fontSize: 'var(--tx-xs)', padding: '0 var(--sp-4)' }}
                   >
-                    <span>✨</span> Concevoir des exercices à partir de ce cours
+                    ✨ Concevoir des exercices à partir de ce cours
                   </button>
-                  <span style={{ fontSize: '0.85rem', color: '#047857' }}>Ou posez une question personnalisée ci-dessous ↓</span>
                 </div>
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '1rem', alignItems: 'center' }}>
-              <label style={{ background: '#00A37A', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', boxShadow: '0 2px 4px rgba(0, 163, 122, 0.2)' }}>
-                <span>📎</span> Importer un cours / fichier
+            <div className="row" style={{ gap: 'var(--sp-2)', marginBottom: 'var(--sp-3)', alignItems: 'center' }}>
+              <label className="chip" style={{ cursor: 'pointer', margin: 0, background: 'var(--srf-base)' }}>
+                <span>📎</span> Joindre un fichier / cours
                 <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
               </label>
             </div>
@@ -263,12 +274,13 @@ export default function TutorChatPage() {
                     handleSend();
                   }
                 }}
-                style={{ width: '100%', padding: '1rem 4.5rem 1rem 1rem', borderRadius: '1rem', border: '1px solid #E5E5E2', fontSize: '1.05rem', outline: 'none', resize: 'none', boxSizing: 'border-box', fontFamily: 'inherit' }}
+                style={{ width: '100%', padding: 'var(--sp-4) 4.5rem var(--sp-4) var(--sp-4)', borderRadius: 'var(--rd-lg)', border: '1px solid var(--brd-input)', background: 'var(--srf-base)', fontSize: 'var(--tx-base)', outline: 'none', resize: 'none', boxSizing: 'border-box', fontFamily: 'inherit', color: 'var(--txt-primary)' }}
               />
               <button 
                 onClick={() => handleSend()}
                 disabled={isLoading}
-                style={{ position: 'absolute', right: '1rem', bottom: '1rem', background: isLoading ? '#6E6E6B' : '#1A1A1A', color: 'white', border: 'none', width: '40px', height: '40px', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: isLoading ? 'not-allowed' : 'pointer' }}
+                className="laura-btn laura-btn-primary"
+                style={{ position: 'absolute', right: '12px', bottom: '12px', minHeight: '38px', minWidth: '38px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 {isLoading ? '...' : '→'}
               </button>
@@ -277,26 +289,26 @@ export default function TutorChatPage() {
 
         </div>
 
-        {/* SIDEBAR SUGGESTIONS */}
-        <div className="chat-sidebar">
+        {/* SIDEBAR SUGGESTIONS (Desktop only) */}
+        <div className="desktop-only" style={{ width: '300px', display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
           
-          <div style={{ background: '#1A1A1A', padding: '1.5rem', borderRadius: '1.5rem', color: 'white' }}>
-            <h3 style={{ fontSize: '1.1rem', margin: '0 0 1rem 0', fontWeight: 700 }}>Suggestions rapides</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+          <div className="card" style={{ padding: 'var(--sp-5)', background: 'var(--grd-brand)', color: 'white', border: 'none' }}>
+            <h3 style={{ fontSize: 'var(--tx-base)', margin: '0 0 var(--sp-3) 0', fontWeight: 'var(--fw-bold)' }}>Suggestions rapides</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
               {suggestions.map((s, i) => (
-                <button key={i} onClick={() => handleSend(s)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', padding: '0.8rem 1rem', borderRadius: '0.5rem', color: 'white', textAlign: 'left', cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
+                <button key={i} onClick={() => handleSend(s)} style={{ background: 'rgba(255,255,255,0.12)', border: 'none', padding: 'var(--sp-3)', borderRadius: 'var(--rd-sm)', color: 'white', textAlign: 'left', cursor: 'pointer', transition: 'all var(--dur-fast) var(--ease-std)', fontSize: 'var(--tx-xs)' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.22)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.12)'}>
                   {s}
                 </button>
               ))}
             </div>
           </div>
 
-          <div style={{ background: 'white', padding: '1.5rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2' }}>
-            <h3 style={{ fontSize: '1rem', margin: '0 0 1rem 0', color: '#6E6E6B', textTransform: 'uppercase', letterSpacing: '1px' }}>Export & Soumission</h3>
-            <p style={{ fontSize: '0.9rem', color: '#444', lineHeight: 1.5, marginBottom: '1.5rem' }}>
-              Une fois votre contenu généré et affiné, vous pourrez l'exporter directement comme brouillon dans vos soumissions.
+          <div className="card" style={{ padding: 'var(--sp-5)' }}>
+            <h3 style={{ fontSize: 'var(--tx-sm)', margin: '0 0 var(--sp-2) 0', color: 'var(--txt-primary)', fontWeight: 'var(--fw-bold)' }}>Export & Soumission</h3>
+            <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', lineHeight: 'var(--lh-relaxed)', marginBottom: 'var(--sp-4)' }}>
+              Une fois votre contenu généré et affiné, vous pouvez l'exporter directement comme brouillon dans vos soumissions.
             </p>
-            <button onClick={handleConvertToSubmission} style={{ width: '100%', padding: '0.8rem', background: '#00A37A', color: 'white', border: 'none', borderRadius: '0.5rem', fontWeight: 700, cursor: 'pointer' }}>
+            <button onClick={handleConvertToSubmission} className="laura-btn laura-btn-secondary" style={{ width: '100%', justifyContent: 'center', minHeight: '36px', fontSize: 'var(--tx-xs)' }}>
               Convertir en soumission
             </button>
           </div>

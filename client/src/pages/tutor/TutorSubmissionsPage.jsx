@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function TutorSubmissionsPage() {
   const { currentUser, userProfile } = useAuth();
@@ -40,26 +40,27 @@ export default function TutorSubmissionsPage() {
 
   const getStatusStyle = (statut) => {
     switch (statut) {
-      case 'brouillon': return { label: 'Brouillon', bg: '#F5F4EF', color: '#6E6E6B' };
+      case 'brouillon': return { label: 'Brouillon', cls: '' };
       case 'soumis': 
-      case 'en_attente': return { label: 'Soumis', bg: '#E0F2FE', color: '#0369A1' };
-      case 'en_revue': return { label: 'En revue', bg: '#FEF3C7', color: '#92400E' };
-      case 'a_corriger': return { label: 'À corriger', bg: '#FEE2E2', color: '#B91C1C' };
+      case 'en_attente': return { label: 'Soumis', cls: 'badge--pending' };
+      case 'en_revue': return { label: 'En revue', cls: 'badge--warning' };
+      case 'a_corriger': return { label: 'À corriger', cls: 'badge--error' };
       case 'publie': 
-      case 'valide': return { label: 'Validé (Publié)', bg: '#D1FAE5', color: '#065F46' };
-      case 'rejete': return { label: 'Rejeté', bg: '#F3F4F6', color: '#374151' };
-      default: return { label: statut || 'Brouillon', bg: '#F5F4EF', color: '#6E6E6B' };
+      case 'valide': return { label: 'Validé (Publié)', cls: 'badge--green' };
+      case 'rejete': return { label: 'Rejeté', cls: 'badge--error' };
+      default: return { label: statut || 'Brouillon', cls: '' };
     }
   };
 
   if (!isContributor) {
     return (
-      <div style={{ maxWidth: '800px', margin: '4rem auto', textAlign: 'center', background: 'white', padding: '4rem 2rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '1rem' }}>Espace Soumission RESTREINT</h1>
-        <p style={{ color: '#6E6E6B', fontSize: '1.1rem', marginBottom: '2rem' }}>
+      <div className="empty-state animate-in" style={{ maxWidth: '600px', margin: '4rem auto' }}>
+        <span className="empty-state__icon">🔒</span>
+        <h2 className="empty-state__title">Espace Soumission Restreint</h2>
+        <p style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', marginBottom: 'var(--sp-6)' }}>
           Vous devez avoir le statut <strong>Tuteur Contributeur</strong> pour proposer et gérer du contenu sur la plateforme.
         </p>
-        <button onClick={() => alert("Demande transmise à l'administration.")} style={{ padding: '1rem 2rem', background: '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', fontSize: '1.05rem' }}>
+        <button onClick={() => alert("Demande transmise à l'administration.")} className="laura-btn laura-btn-primary" style={{ minHeight: '44px', padding: '0 var(--sp-6)' }}>
           Faire la demande d'accès
         </button>
       </div>
@@ -76,71 +77,90 @@ export default function TutorSubmissionsPage() {
   });
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+    <div className="stack stack--lg animate-in">
       
       {/* HEADER */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="row row--between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 'var(--sp-4)' }}>
         <div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Vos Soumissions</h1>
-          <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
+          <h1 className="laura-h1">Vos Soumissions</h1>
+          <p style={{ margin: 'var(--sp-1) 0 0', color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>
             Gérez le contenu que vous proposez à la communauté LAURA.
           </p>
         </div>
-        <button onClick={() => alert("Utilisez le Chat Pédagogique pour générer et affiner vos contenus avant soumission.")} style={{ padding: '0.8rem 1.5rem', background: '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span>+</span> Nouvelle soumission
+        <button onClick={() => alert("Utilisez le Chat Pédagogique pour générer et affiner vos contenus avant soumission.")} className="laura-btn laura-btn-primary" style={{ minHeight: '42px', padding: '0 var(--sp-6)' }}>
+          + Nouvelle soumission
         </button>
       </div>
 
       {/* FILTRES RAPIDES */}
-      <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid #E5E5E2', paddingBottom: '1rem' }}>
+      <div className="chip-row">
         {['Toutes', 'Brouillons', 'En attente', 'À corriger', 'Validées'].map((f, i) => (
-          <button key={i} onClick={() => setFilter(f)} style={{ background: filter === f ? '#1A1A1A' : 'transparent', color: filter === f ? 'white' : '#6E6E6B', border: 'none', padding: '0.5rem 1rem', borderRadius: '2rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }}>
+          <button key={i} onClick={() => setFilter(f)} className="chip" style={{ background: filter === f ? 'var(--clr-brand-lt)' : '', color: filter === f ? 'var(--clr-brand)' : '', borderColor: filter === f ? 'var(--clr-brand)' : '', fontWeight: filter === f ? 'var(--fw-bold)' : '' }}>
             {f}
           </button>
         ))}
       </div>
 
       {/* TABLEAU DES SOUMISSIONS */}
-      <div style={{ background: 'white', borderRadius: '1.2rem', border: '1px solid #E5E5E2', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-          <thead style={{ background: '#FAFAFA', borderBottom: '1px solid #E5E5E2' }}>
-            <tr>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#6E6E6B' }}>Titre de la ressource</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#6E6E6B' }}>Type</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#6E6E6B' }}>Niveau Cible</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#6E6E6B' }}>Date</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#6E6E6B' }}>Statut</th>
-              <th style={{ padding: '1.5rem', fontWeight: 600, color: '#6E6E6B', textAlign: 'right' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr><td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: '#6E6E6B' }}>Chargement de vos soumissions...</td></tr>
-            ) : filteredSubmissions.length === 0 ? (
-              <tr><td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: '#6E6E6B' }}>Aucune soumission trouvée.</td></tr>
-            ) : (
-              filteredSubmissions.map((sub) => {
-                const statusStyle = getStatusStyle(sub.statut);
-                return (
-                  <tr key={sub.id} style={{ borderBottom: '1px solid #F0F0EE', transition: 'background 0.2s', ':hover': { background: '#FAFAFA' } }}>
-                    <td style={{ padding: '1.5rem', fontWeight: 600, color: '#1A1A1A' }}>{sub.titre || 'Sans titre'}</td>
-                    <td style={{ padding: '1.5rem', color: '#444' }}>{sub.type || 'Général'}</td>
-                    <td style={{ padding: '1.5rem', color: '#444' }}>{sub.cible || sub.niveau || 'Général'}</td>
-                    <td style={{ padding: '1.5rem', color: '#6E6E6B' }}>{sub.createdAt ? new Date(sub.createdAt).toLocaleDateString() : 'N/A'}</td>
-                    <td style={{ padding: '1.5rem' }}>
-                      <span style={{ background: statusStyle.bg, color: statusStyle.color, padding: '0.4rem 0.8rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 700 }}>
-                        {statusStyle.label}
-                      </span>
-                    </td>
-                    <td style={{ padding: '1.5rem', textAlign: 'right' }}>
-                      <button onClick={() => alert(`Gestion de la ressource : ${sub.titre}`)} style={{ background: 'transparent', border: '1px solid #E5E5E2', padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer', color: '#1A1A1A' }}>Gérer</button>
-                    </td>
-                  </tr>
-                )
-              })
-            )}
-          </tbody>
-        </table>
+      <div className="card" style={{ overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--tx-sm)' }}>
+            <thead>
+              <tr style={{ background: 'var(--srf-raised)', borderBottom: '2px solid var(--brd-subtle)' }}>
+                {['Titre de la ressource', 'Type', 'Niveau Cible', 'Date', 'Statut', 'Actions'].map(h => (
+                  <th key={h} style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>
+                    Chargement de vos soumissions...
+                  </td>
+                </tr>
+              ) : filteredSubmissions.length === 0 ? (
+                <tr>
+                  <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>
+                    Aucune soumission trouvée.
+                  </td>
+                </tr>
+              ) : (
+                filteredSubmissions.map((sub, idx) => {
+                  const statusStyle = getStatusStyle(sub.statut);
+                  return (
+                    <tr key={sub.id} style={{ borderBottom: '1px solid var(--brd-subtle)', background: idx % 2 === 1 ? 'var(--srf-raised)' : '' }}>
+                      <td style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-semibold)', color: 'var(--txt-primary)' }}>
+                        {sub.titre || 'Sans titre'}
+                      </td>
+                      <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-secondary)' }}>
+                        {sub.type || 'Général'}
+                      </td>
+                      <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-secondary)' }}>
+                        {sub.cible || sub.niveau || 'Général'}
+                      </td>
+                      <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-tertiary)' }}>
+                        {sub.createdAt ? new Date(sub.createdAt).toLocaleDateString('fr-FR') : 'N/A'}
+                      </td>
+                      <td style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
+                        <span className={`badge ${statusStyle.cls}`}>
+                          {statusStyle.label}
+                        </span>
+                      </td>
+                      <td style={{ padding: 'var(--sp-4) var(--sp-5)', textAlign: 'right' }}>
+                        <button onClick={() => alert(`Gestion de la ressource : ${sub.titre}`)} className="laura-btn laura-btn-secondary" style={{ minHeight: '30px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
+                          Gérer
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>

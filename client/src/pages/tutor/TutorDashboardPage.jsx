@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 
 export default function TutorDashboardPage() {
+  const navigate = useNavigate();
   const { currentUser, userProfile } = useAuth();
   const [submissionCounts, setSubmissionCounts] = useState({ brouillons: 0, enRevue: 0, valides: 0 });
   const [adminMessages, setAdminMessages] = useState([]);
@@ -64,23 +65,23 @@ export default function TutorDashboardPage() {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
+    <div className="stack stack--lg animate-in">
       
       {/* HEADER */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="row row--between" style={{ alignItems: 'center', flexWrap: 'wrap', gap: 'var(--sp-4)' }}>
         <div>
           <h1 className="laura-h1">Bonjour Pr. {tutorData.nom}</h1>
-          <p className="laura-body" style={{ color: 'var(--laura-text-2)' }}>
-            Espace de préparation pédagogique · <strong>{tutorData.discipline}</strong>
+          <p style={{ margin: 'var(--sp-1) 0 0', color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>
+            Espace de préparation pédagogique · <strong style={{ color: 'var(--txt-primary)' }}>{tutorData.discipline}</strong>
           </p>
         </div>
-        <Link to="/tutor/chat" className="laura-btn laura-btn-primary">
-          <span>💬</span> Chat Pédagogique
+        <Link to="/tutor/chat" className="laura-btn laura-btn-primary" style={{ minHeight: '42px', padding: '0 var(--sp-6)' }}>
+          💬 Chat Pédagogique
         </Link>
       </div>
 
       {/* TABS NAVBAR */}
-      <div className="no-scrollbar" style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--laura-border-soft)', overflowX: 'auto' }}>
+      <div className="no-scrollbar" style={{ display: 'flex', gap: 'var(--sp-2)', borderBottom: '1px solid var(--brd-subtle)', overflowX: 'auto', paddingBottom: '2px' }}>
         {tabs.map(tab => {
           const isActive = activeTab === tab.id;
           return (
@@ -90,21 +91,21 @@ export default function TutorDashboardPage() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                padding: '12px 16px',
+                gap: 'var(--sp-2)',
+                padding: 'var(--sp-3) var(--sp-4)',
                 background: 'none',
                 border: 'none',
-                borderBottom: isActive ? '3px solid var(--laura-primary)' : '3px solid transparent',
-                color: isActive ? 'var(--laura-primary)' : 'var(--laura-text-2)',
-                fontWeight: isActive ? 700 : 600,
-                fontSize: '14px',
+                borderBottom: isActive ? '3px solid var(--clr-brand)' : '3px solid transparent',
+                color: isActive ? 'var(--clr-brand)' : 'var(--txt-secondary)',
+                fontWeight: isActive ? 'var(--fw-bold)' : 'var(--fw-semibold)',
+                fontSize: 'var(--tx-sm)',
                 cursor: 'pointer',
-                transition: 'all 0.2s',
+                transition: 'all var(--dur-fast) var(--ease-std)',
                 whiteSpace: 'nowrap',
                 marginBottom: '-1px'
               }}
             >
-              <span style={{ fontSize: '16px' }}>{tab.icon}</span>
+              <span style={{ fontSize: 'var(--tx-md)' }}>{tab.icon}</span>
               {tab.label}
             </button>
           );
@@ -112,56 +113,56 @@ export default function TutorDashboardPage() {
       </div>
 
       {/* TAB CONTENTS */}
-      <div style={{ minHeight: '300px' }}>
+      <div style={{ minHeight: '340px' }}>
         
         {/* TAB 1: OVERVIEW */}
         {activeTab === 'overview' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
+          <div className="stack stack--lg">
             {/* STATUT ET DROITS */}
-            <div className={`laura-card ${tutorData.statut === 'Contributeur' ? 'laura-alert-success' : tutorData.statut === 'En attente de contribution' ? 'laura-alert-warning' : 'laura-alert-info'}`} style={{ border: 'none' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '8px' }}>
-                <h2 className="laura-h2" style={{ margin: 0 }}>Statut de votre compte</h2>
-                <span className={`laura-badge laura-badge-${tutorData.statut === 'Contributeur' ? 'success' : tutorData.statut === 'En attente de contribution' ? 'warning' : 'info'}`}>
+            <div className={`card ${tutorData.statut === 'Contributeur' ? 'card--tint' : 'card--soft'}`} style={{ padding: 'var(--sp-6)', borderLeft: `6px solid ${tutorData.statut === 'Contributeur' ? 'var(--clr-success)' : tutorData.statut === 'En attente de contribution' ? 'var(--clr-warning)' : 'var(--clr-brand)'}` }}>
+              <div className="row row--between" style={{ marginBottom: 'var(--sp-4)', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--sp-2)' }}>
+                <h2 className="laura-h3" style={{ margin: 0 }}>Statut du compte</h2>
+                <span className={`badge ${tutorData.statut === 'Contributeur' ? 'badge--green' : tutorData.statut === 'En attente de contribution' ? 'badge--warning' : 'badge--brand'}`}>
                   {tutorData.statut}
                 </span>
               </div>
               {tutorData.statut === 'Contributeur' ? (
-                <p className="laura-body">
-                  Vous disposez des droits complets. Vous pouvez concevoir, soumettre et modifier des contenus pédagogiques sur la plateforme.
+                <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>
+                  Vous disposez des droits complets de contribution. Vous pouvez concevoir, soumettre et publier des fiches, quiz, et annales directement dans le catalogue de LAURA.
                 </p>
               ) : tutorData.statut === 'En attente de contribution' ? (
-                <p className="laura-body">
+                <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>
                   Votre demande de statut Contributeur est en cours d'examen par l'équipe administrative. Vous serez notifié dès son approbation.
                 </p>
               ) : (
-                <p className="laura-body">
-                  Votre compte est validé pour l'usage personnel. <strong>Demandez le statut Contributeur</strong> pour soumettre vos propres exercices à la communauté.
+                <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>
+                  Votre compte est actuellement configuré en accès standard. Vous pouvez soumettre vos propres documents de cours pour validation par l'administration.
                 </p>
               )}
               {tutorData.statut !== 'Contributeur' && tutorData.statut !== 'En attente de contribution' && (
-                <button onClick={handleRequestContributor} className="laura-btn laura-btn-primary" style={{ marginTop: '1rem' }}>
+                <button onClick={handleRequestContributor} className="laura-btn laura-btn-primary" style={{ marginTop: 'var(--sp-4)', minHeight: '38px' }}>
                   Demander les droits contributeur
                 </button>
               )}
             </div>
 
             {/* ACTILINE SUMMARY GRID */}
-            <div className="laura-card" style={{ background: 'var(--laura-bg-soft)' }}>
-              <h3 className="laura-h3" style={{ marginBottom: '4px' }}>Résumé d'Activité</h3>
-              <p className="laura-body" style={{ color: 'var(--laura-text-2)', marginBottom: 'var(--sp-5)' }}>Vos statistiques clés en tant que tuteur LAURA.</p>
+            <div className="card" style={{ padding: 'var(--sp-6)', background: 'var(--srf-raised)' }}>
+              <h3 className="laura-h3" style={{ marginBottom: 'var(--sp-1)' }}>Résumé d'Activité</h3>
+              <p style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-sm)', margin: '0 0 var(--sp-6)' }}>Vos statistiques clés en tant que tuteur LAURA.</p>
               
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--sp-4)' }}>
-                <div className="laura-card" style={{ textAlign: 'center', padding: 'var(--sp-5)' }}>
-                  <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--laura-text-1)' }}>{submissionCounts.valides}</div>
-                  <div style={{ fontSize: '13px', color: 'var(--laura-success)', fontWeight: 700, marginTop: '8px' }}>Validées & Publiées</div>
+                <div className="card card--hoverable" style={{ textAlign: 'center', padding: 'var(--sp-6)' }}>
+                  <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--txt-primary)' }}>{submissionCounts.valides}</div>
+                  <div className="badge badge--green" style={{ marginTop: 'var(--sp-3)' }}>Validées & Publiées</div>
                 </div>
-                <div className="laura-card" style={{ textAlign: 'center', padding: 'var(--sp-5)' }}>
-                  <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--laura-text-1)' }}>{submissionCounts.enRevue}</div>
-                  <div style={{ fontSize: '13px', color: 'var(--laura-warning)', fontWeight: 700, marginTop: '8px' }}>En cours de revue</div>
+                <div className="card card--hoverable" style={{ textAlign: 'center', padding: 'var(--sp-6)' }}>
+                  <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--txt-primary)' }}>{submissionCounts.enRevue}</div>
+                  <div className="badge badge--warning" style={{ marginTop: 'var(--sp-3)' }}>En cours de revue</div>
                 </div>
-                <div className="laura-card" style={{ textAlign: 'center', padding: 'var(--sp-5)' }}>
-                  <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--laura-text-1)' }}>{submissionCounts.brouillons}</div>
-                  <div style={{ fontSize: '13px', color: 'var(--laura-text-3)', fontWeight: 700, marginTop: '8px' }}>Brouillons</div>
+                <div className="card card--hoverable" style={{ textAlign: 'center', padding: 'var(--sp-6)' }}>
+                  <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--txt-primary)' }}>{submissionCounts.brouillons}</div>
+                  <div className="badge" style={{ marginTop: 'var(--sp-3)' }}>Brouillons</div>
                 </div>
               </div>
             </div>
@@ -170,21 +171,21 @@ export default function TutorDashboardPage() {
 
         {/* TAB 2: TOOLS */}
         {activeTab === 'tools' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
-            <div className="laura-card">
-              <h2 className="laura-h2" style={{ marginBottom: '8px' }}>Boîte à outils pédagogique</h2>
-              <p className="laura-body" style={{ color: 'var(--laura-text-2)', marginBottom: 'var(--sp-6)' }}>Accédez à vos outils de création assistée par IA et de partage.</p>
+          <div className="stack stack--lg">
+            <div className="card" style={{ padding: 'var(--sp-6)' }}>
+              <h2 className="laura-h3" style={{ marginBottom: 'var(--sp-1)' }}>Boîte à outils pédagogique</h2>
+              <p style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', marginBottom: 'var(--sp-6)' }}>Accédez à vos outils de création assistée par IA et de partage.</p>
               
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--sp-5)' }}>
-                <Link to="/tutor/chat" className="laura-card-soft" style={{ padding: 'var(--sp-6)', textDecoration: 'none', transition: 'transform 0.2s, box-shadow 0.2s', display: 'flex', flexDirection: 'column', gap: '8px' }} onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; }} onMouseLeave={e => { e.currentTarget.style.transform = 'none'; }}>
-                  <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '8px' }}>📝</span>
-                  <strong className="laura-h3" style={{ display: 'block', color: 'var(--laura-text-1)' }}>Générer un plan de cours</strong>
-                  <span className="laura-body" style={{ color: 'var(--laura-text-2)' }}>Utilisez l'intelligence artificielle pour structurer vos leçons et formuler des exercices pertinents.</span>
+                <Link to="/tutor/chat" className="card card--hoverable" style={{ padding: 'var(--sp-6)', textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+                  <span style={{ fontSize: '2.2rem', marginBottom: 'var(--sp-2)' }}>📝</span>
+                  <strong className="laura-h3" style={{ color: 'var(--txt-primary)' }}>Générer un plan de cours</strong>
+                  <span style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-snug)' }}>Utilisez l'intelligence artificielle pour structurer vos leçons et formuler des exercices pertinents.</span>
                 </Link>
-                <Link to="/tutor/submissions" className="laura-card-soft" style={{ padding: 'var(--sp-6)', textDecoration: 'none', transition: 'transform 0.2s, box-shadow 0.2s', display: 'flex', flexDirection: 'column', gap: '8px' }} onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; }} onMouseLeave={e => { e.currentTarget.style.transform = 'none'; }}>
-                  <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '8px' }}>📤</span>
-                  <strong className="laura-h3" style={{ display: 'block', color: 'var(--laura-text-1)' }}>Soumettre un contenu</strong>
-                  <span className="laura-body" style={{ color: 'var(--laura-text-2)' }}>Téléversez et cataloguez vos quiz, épreuves et autres ressources d'apprentissage validées.</span>
+                <Link to="/tutor/submissions" className="card card--hoverable" style={{ padding: 'var(--sp-6)', textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+                  <span style={{ fontSize: '2.2rem', marginBottom: 'var(--sp-2)' }}>📤</span>
+                  <strong className="laura-h3" style={{ color: 'var(--txt-primary)' }}>Soumettre un contenu</strong>
+                  <span style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-snug)' }}>Téléversez et cataloguez vos quiz, épreuves et autres ressources d'apprentissage validées.</span>
                 </Link>
               </div>
             </div>
@@ -193,22 +194,23 @@ export default function TutorDashboardPage() {
 
         {/* TAB 3: MESSAGES */}
         {activeTab === 'messages' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
-            <div className="laura-card" style={{ background: 'var(--laura-text-1)', color: 'white' }}>
-              <h2 className="laura-h2" style={{ marginBottom: 'var(--sp-6)', color: 'white' }}>Centre de communication administrative</h2>
+          <div className="stack stack--lg">
+            <div className="card" style={{ padding: 'var(--sp-6)' }}>
+              <h2 className="laura-h3" style={{ marginBottom: 'var(--sp-6)' }}>Centre de communication administrative</h2>
               {adminMessages.length > 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+                <div className="stack stack--md">
                   {adminMessages.map(msg => (
-                    <div key={msg.id} style={{ background: 'rgba(255,255,255,0.06)', padding: 'var(--sp-5)', borderRadius: 'var(--r-md)', borderLeft: '4px solid var(--laura-primary)' }}>
-                      <strong style={{ display: 'block', fontSize: '15px', marginBottom: '8px', color: 'var(--laura-primary)' }}>{msg.title || 'Message Admin'}</strong>
-                      <span className="laura-body" style={{ color: 'rgba(255,255,255,0.8)' }}>{msg.content || msg.message}</span>
+                    <div key={msg.id} className="card card--soft" style={{ padding: 'var(--sp-5)', borderLeft: '4px solid var(--clr-brand)' }}>
+                      <strong style={{ display: 'block', fontSize: 'var(--tx-base)', marginBottom: 'var(--sp-2)', color: 'var(--clr-brand)' }}>{msg.title || 'Message Admin'}</strong>
+                      <span style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>{msg.content || msg.message}</span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="laura-empty" style={{ background: 'transparent' }}>
-                  <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>✉️</span>
-                  <p style={{ margin: 0, color: 'rgba(255,255,255,0.6)' }}>Aucun nouveau message de l'administration pour le moment.</p>
+                <div className="empty-state">
+                  <span className="empty-state__icon">✉️</span>
+                  <p className="empty-state__title">Aucun message</p>
+                  <p style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-xs)' }}>Aucun message de l'administration pour le moment.</p>
                 </div>
               )}
             </div>
@@ -217,48 +219,48 @@ export default function TutorDashboardPage() {
 
         {/* TAB 4: SUBMISSIONS */}
         {activeTab === 'submissions' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
-            <div className="laura-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-6)', flexWrap: 'wrap', gap: '1rem' }}>
+          <div className="stack stack--lg">
+            <div className="card" style={{ padding: 'var(--sp-6)' }}>
+              <div className="row row--between" style={{ marginBottom: 'var(--sp-6)', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--sp-4)' }}>
                 <div>
-                  <h2 className="laura-h2" style={{ margin: 0 }}>Mes Contributions & Soumissions</h2>
-                  <p className="laura-body" style={{ margin: '4px 0 0 0', color: 'var(--laura-text-2)' }}>État d'approbation et statut de vos contenus.</p>
+                  <h2 className="laura-h3" style={{ margin: 0 }}>Mes Contributions & Soumissions</h2>
+                  <p style={{ margin: 'var(--sp-1) 0 0 0', color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)' }}>État d'approbation et statut de vos contenus.</p>
                 </div>
-                <Link to="/tutor/submissions" className="laura-btn laura-btn-ghost">Gérer mes fichiers</Link>
+                <Link to="/tutor/submissions" className="laura-btn laura-btn-secondary" style={{ minHeight: '36px', fontSize: 'var(--tx-xs)' }}>Gérer mes fichiers</Link>
               </div>
               
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '16px', borderBottom: '1px solid var(--laura-border-soft)', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div className="stack stack--md">
+                <div className="row row--between" style={{ paddingBottom: 'var(--sp-4)', borderBottom: '1px solid var(--brd-subtle)', alignItems: 'center' }}>
+                  <div className="row" style={{ alignItems: 'center', gap: 'var(--sp-3)' }}>
                     <span style={{ fontSize: '1.5rem' }}>📝</span>
                     <div>
-                      <span style={{ fontWeight: 600, display: 'block', color: 'var(--laura-text-1)' }}>Brouillons en attente</span>
-                      <span style={{ fontSize: '13px', color: 'var(--laura-text-2)' }}>Contenus non finalisés et non soumis.</span>
+                      <span style={{ fontWeight: 'var(--fw-semibold)', display: 'block', color: 'var(--txt-primary)', fontSize: 'var(--tx-sm)' }}>Brouillons en attente</span>
+                      <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>Contenus non finalisés et non soumis.</span>
                     </div>
                   </div>
-                  <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--laura-text-3)' }}>{submissionCounts.brouillons}</span>
+                  <span style={{ fontSize: 'var(--tx-xl)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)' }}>{submissionCounts.brouillons}</span>
                 </div>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '16px', borderBottom: '1px solid var(--laura-border-soft)', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div className="row row--between" style={{ paddingBottom: 'var(--sp-4)', borderBottom: '1px solid var(--brd-subtle)', alignItems: 'center' }}>
+                  <div className="row" style={{ alignItems: 'center', gap: 'var(--sp-3)' }}>
                     <span style={{ fontSize: '1.5rem' }}>⏳</span>
                     <div>
-                      <span style={{ fontWeight: 600, display: 'block', color: 'var(--laura-text-1)' }}>En cours de revue</span>
-                      <span style={{ fontSize: '13px', color: 'var(--laura-text-2)' }}>En attente de validation par l'administration.</span>
+                      <span style={{ fontWeight: 'var(--fw-semibold)', display: 'block', color: 'var(--txt-primary)', fontSize: 'var(--tx-sm)' }}>En cours de revue</span>
+                      <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>En attente de validation par l'administration.</span>
                     </div>
                   </div>
-                  <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--laura-warning)' }}>{submissionCounts.enRevue}</span>
+                  <span style={{ fontSize: 'var(--tx-xl)', fontWeight: 'var(--fw-bold)', color: 'var(--clr-warning)' }}>{submissionCounts.enRevue}</span>
                 </div>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '16px', borderBottom: '1px solid var(--laura-border-soft)', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div className="row row--between" style={{ paddingBottom: 'var(--sp-4)', alignItems: 'center' }}>
+                  <div className="row" style={{ alignItems: 'center', gap: 'var(--sp-3)' }}>
                     <span style={{ fontSize: '1.5rem' }}>✅</span>
                     <div>
-                      <span style={{ fontWeight: 600, display: 'block', color: 'var(--laura-text-1)' }}>Validés & Publiés</span>
-                      <span style={{ fontSize: '13px', color: 'var(--laura-text-2)' }}>Contenus disponibles pour l'ensemble des élèves.</span>
+                      <span style={{ fontWeight: 'var(--fw-semibold)', display: 'block', color: 'var(--txt-primary)', fontSize: 'var(--tx-sm)' }}>Validés & Publiés</span>
+                      <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>Contenus disponibles pour l'ensemble des élèves.</span>
                     </div>
                   </div>
-                  <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--laura-success)' }}>{submissionCounts.valides}</span>
+                  <span style={{ fontSize: 'var(--tx-xl)', fontWeight: 'var(--fw-bold)', color: 'var(--clr-success)' }}>{submissionCounts.valides}</span>
                 </div>
               </div>
             </div>

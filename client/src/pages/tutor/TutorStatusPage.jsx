@@ -39,27 +39,33 @@ export default function TutorStatusPage() {
 
   const getStatusColor = (status) => {
     switch(status) {
-      case 'recu': return { bg: '#E5E7EB', text: '#374151', label: 'Reçu' };
-      case 'en_examen': return { bg: '#FEF3C7', text: '#92400E', label: 'En examen' };
-      case 'test_requis': return { bg: '#E0E7FF', text: '#3730A3', label: 'Test requis' };
-      case 'valide': return { bg: '#D1FAE5', text: '#065F46', label: 'Validé' };
-      case 'active': return { bg: '#10B981', text: '#FFFFFF', label: 'Compte Activé' };
-      case 'refuse': return { bg: '#FEE2E2', text: '#B91C1C', label: 'Refusé' };
-      default: return { bg: '#E5E7EB', text: '#374151', label: 'En attente' };
+      case 'recu': return { cls: '', label: 'Reçu' };
+      case 'en_examen': return { cls: 'badge--warning', label: 'En examen' };
+      case 'test_requis': return { cls: 'badge--brand', label: 'Test requis' };
+      case 'valide': return { cls: 'badge--green', label: 'Validé' };
+      case 'active': return { cls: 'badge--green', label: 'Compte Activé' };
+      case 'refuse': return { cls: 'badge--error', label: 'Refusé' };
+      default: return { cls: '', label: 'En attente' };
     }
   };
 
   if (isLoading) {
-    return <div style={{ padding: '4rem', textAlign: 'center', background: '#F9F9F8', minHeight: '100vh', color: '#6E6E6B' }}>Chargement du statut...</div>;
+    return (
+      <div className="empty-state" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span className="empty-state__icon">⏳</span>
+        <p className="empty-state__title">Chargement du statut...</p>
+      </div>
+    );
   }
 
   if (!applicationData) {
     return (
-      <div style={{ padding: '4rem 2rem', background: '#F9F9F8', minHeight: '100vh', textAlign: 'center' }}>
-        <div style={{ maxWidth: '600px', margin: '0 auto', background: 'white', padding: '3.5rem', borderRadius: '1.5rem', boxShadow: '0 20px 60px rgba(0,0,0,0.05)', border: '1px solid #E5E5E2' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '1rem' }}>Aucune candidature trouvée</h1>
-          <p style={{ color: '#6E6E6B', marginBottom: '2rem' }}>Vous n'avez pas encore soumis de dossier de candidature pour devenir tuteur.</p>
-          <Link to="/become-tutor" style={{ padding: '1rem 2rem', background: '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>Postuler maintenant</Link>
+      <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', background: 'var(--srf-page)', padding: 'var(--sp-4)' }}>
+        <div className="card animate-in" style={{ maxWidth: '600px', width: '100%', padding: 'var(--sp-8)', textAlign: 'center' }}>
+          <span style={{ fontSize: '3rem', display: 'block', marginBottom: 'var(--sp-4)' }}>🔒</span>
+          <h1 className="laura-h2" style={{ marginBottom: 'var(--sp-2)' }}>Aucune candidature trouvée</h1>
+          <p style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', marginBottom: 'var(--sp-6)' }}>Vous n'avez pas encore soumis de dossier de candidature pour devenir tuteur.</p>
+          <Link to="/become-tutor" className="laura-btn laura-btn-primary" style={{ display: 'inline-flex', minHeight: '44px', padding: '0 var(--sp-6)', textDecoration: 'none' }}>Postuler maintenant</Link>
         </div>
       </div>
     );
@@ -68,51 +74,51 @@ export default function TutorStatusPage() {
   const statusStyle = getStatusColor(applicationData.status);
 
   return (
-    <div style={{ padding: '4rem 2rem', background: '#F9F9F8', minHeight: '100vh' }}>
-      <div style={{ maxWidth: '600px', margin: '0 auto', background: 'white', padding: '3.5rem', borderRadius: '1.5rem', boxShadow: '0 20px 60px rgba(0,0,0,0.05)', border: '1px solid #E5E5E2', textAlign: 'center' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', background: 'var(--srf-page)', padding: 'var(--sp-4)' }}>
+      <div className="card animate-in" style={{ maxWidth: '600px', width: '100%', padding: 'var(--sp-8)', textAlign: 'center' }}>
         
-        <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem' }}>Suivi de candidature</h1>
+        <h1 className="laura-h2" style={{ marginBottom: 'var(--sp-6)' }}>Suivi de candidature</h1>
 
-        <div style={{ background: '#F5F4EF', padding: '2rem', borderRadius: '1rem', marginBottom: '2rem', textAlign: 'left' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid #E5E5E2', paddingBottom: '1rem' }}>
-            <span style={{ color: '#6E6E6B', fontWeight: 600 }}>Candidat</span>
-            <span style={{ fontWeight: 700 }}>M. {applicationData.nom}</span>
+        <div className="card card--soft" style={{ padding: 'var(--sp-5)', marginBottom: 'var(--sp-6)', textAlign: 'left' }}>
+          <div className="row row--between" style={{ marginBottom: 'var(--sp-3)', borderBottom: '1px solid var(--brd-subtle)', paddingBottom: 'var(--sp-3)' }}>
+            <span style={{ color: 'var(--txt-secondary)', fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)' }}>Candidat</span>
+            <span style={{ fontWeight: 'var(--fw-bold)', color: 'var(--txt-primary)', fontSize: 'var(--tx-sm)' }}>M. {applicationData.nom}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid #E5E5E2', paddingBottom: '1rem' }}>
-            <span style={{ color: '#6E6E6B', fontWeight: 600 }}>Discipline</span>
-            <span style={{ fontWeight: 700 }}>{applicationData.discipline}</span>
+          <div className="row row--between" style={{ marginBottom: 'var(--sp-3)', borderBottom: '1px solid var(--brd-subtle)', paddingBottom: 'var(--sp-3)' }}>
+            <span style={{ color: 'var(--txt-secondary)', fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)' }}>Discipline</span>
+            <span style={{ fontWeight: 'var(--fw-bold)', color: 'var(--txt-primary)', fontSize: 'var(--tx-sm)' }}>{applicationData.discipline}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid #E5E5E2', paddingBottom: '1rem' }}>
-            <span style={{ color: '#6E6E6B', fontWeight: 600 }}>Date de soumission</span>
-            <span style={{ fontWeight: 700 }}>{applicationData.date}</span>
+          <div className="row row--between" style={{ marginBottom: 'var(--sp-3)', borderBottom: '1px solid var(--brd-subtle)', paddingBottom: 'var(--sp-3)' }}>
+            <span style={{ color: 'var(--txt-secondary)', fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)' }}>Date de soumission</span>
+            <span style={{ fontWeight: 'var(--fw-bold)', color: 'var(--txt-primary)', fontSize: 'var(--tx-sm)' }}>{applicationData.date}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: '#6E6E6B', fontWeight: 600 }}>Statut actuel</span>
-            <span style={{ background: statusStyle.bg, color: statusStyle.text, padding: '0.4rem 1rem', borderRadius: '2rem', fontWeight: 700, fontSize: '0.9rem' }}>
+          <div className="row row--between" style={{ alignItems: 'center' }}>
+            <span style={{ color: 'var(--txt-secondary)', fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)' }}>Statut actuel</span>
+            <span className={`badge ${statusStyle.cls}`}>
               {statusStyle.label}
             </span>
           </div>
         </div>
 
         {applicationData.messageAdmin && (
-          <div style={{ background: '#E0F2FE', color: '#0369A1', padding: '1.5rem', borderRadius: '1rem', marginBottom: '2rem', textAlign: 'left', border: '1px solid #BAE6FD' }}>
-            <strong style={{ display: 'block', marginBottom: '0.5rem' }}>Message de l'administration :</strong>
-            {applicationData.messageAdmin}
+          <div className="card card--tint" style={{ padding: 'var(--sp-4)', marginBottom: 'var(--sp-6)', textAlign: 'left', borderLeft: '4px solid var(--clr-brand)' }}>
+            <strong style={{ display: 'block', marginBottom: 'var(--sp-2)', fontSize: 'var(--tx-sm)', color: 'var(--txt-primary)' }}>Message de l'administration :</strong>
+            <p style={{ margin: 0, fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', lineHeight: 'var(--lh-relaxed)' }}>{applicationData.messageAdmin}</p>
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+        <div className="row" style={{ gap: 'var(--sp-3)', justifyContent: 'center', flexWrap: 'wrap' }}>
           {applicationData.status === 'test_requis' && (
-            <button style={{ padding: '1rem 2rem', background: '#3730A3', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>
+            <button className="laura-btn laura-btn-primary" style={{ minHeight: '44px', padding: '0 var(--sp-6)' }}>
               Commencer le test d'évaluation
             </button>
           )}
           {applicationData.status === 'active' && (
-            <Link to="/tutor/dashboard" style={{ padding: '1rem 2rem', background: '#10B981', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', textDecoration: 'none' }}>
+            <Link to="/tutor/dashboard" className="laura-btn laura-btn-primary" style={{ minHeight: '44px', padding: '0 var(--sp-6)', textDecoration: 'none' }}>
               Accéder à mon espace
             </Link>
           )}
-          <Link to="/" style={{ padding: '1rem 2rem', background: '#F5F4EF', color: '#1A1A1A', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', textDecoration: 'none' }}>
+          <Link to="/" className="laura-btn laura-btn-secondary" style={{ minHeight: '44px', padding: '0 var(--sp-6)', textDecoration: 'none' }}>
             Retour à l'accueil
           </Link>
         </div>

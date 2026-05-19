@@ -61,46 +61,51 @@ export default function TutorHistoryPage() {
     fetchHistory();
   }, [uid]);
 
-  const cardStyle = { background: 'white', padding: '2rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2' };
-
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+    <div className="stack stack--lg animate-in" style={{ maxWidth: '1000px', margin: '0 auto' }}>
       
       {/* HEADER */}
       <div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Historique Pédagogique</h1>
-        <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
+        <h1 className="laura-h1">Historique Pédagogique</h1>
+        <p style={{ margin: 'var(--sp-1) 0 0', color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>
           Retrouvez vos anciennes conversations avec l'IA et vos soumissions de ressources.
         </p>
       </div>
 
-      <div style={cardStyle}>
+      <div className="card" style={{ padding: 'var(--sp-6)' }}>
         {isLoading ? (
-          <div style={{ textAlign: 'center', padding: '3rem', color: '#6E6E6B', fontSize: '1.1rem' }}>Chargement de l'historique...</div>
+          <div className="empty-state">
+            <span className="empty-state__icon">⏳</span>
+            <p className="empty-state__title">Chargement de l'historique...</p>
+          </div>
         ) : historyItems.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem', color: '#6E6E6B', fontSize: '1.1rem' }}>Aucun historique disponible. Démarrez un chat ou une soumission !</div>
+          <div className="empty-state">
+            <span className="empty-state__icon">📭</span>
+            <p className="empty-state__title">Aucun historique disponible</p>
+            <p style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-tertiary)' }}>Démarrez un chat ou une soumission !</p>
+          </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div className="stack stack--md">
             {historyItems.map(item => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', background: '#FAFAFA', borderRadius: '1.2rem', border: '1px solid #F0F0EE', transition: 'box-shadow 0.2s' }} onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.03)'} onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}>
-                <div style={{ flex: 1, marginRight: '2rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.5rem' }}>
-                    <span style={{ background: item.typeDoc === 'submission' ? '#E0F2FE' : '#FEF3C7', color: item.typeDoc === 'submission' ? '#0369A1' : '#D97706', padding: '0.2rem 0.6rem', borderRadius: '1rem', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase' }}>
+              <div key={item.id} className="row row--between" style={{ padding: 'var(--sp-4)', background: 'var(--srf-raised)', borderRadius: 'var(--rd-lg)', border: '1px solid var(--brd-subtle)', alignItems: 'center', gap: 'var(--sp-4)' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="row" style={{ alignItems: 'center', gap: 'var(--sp-2)', marginBottom: 'var(--sp-2)', flexWrap: 'wrap' }}>
+                    <span className={`badge ${item.typeDoc === 'submission' ? 'badge--brand' : 'badge--warning'}`}>
                       {item.typeDoc === 'submission' ? 'Soumission' : 'Chat Pédagogique'}
                     </span>
-                    <span style={{ fontSize: '0.85rem', color: '#6E6E6B' }}>
-                      {new Date(item.createdAt).toLocaleDateString()} à {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>
+                      {new Date(item.createdAt).toLocaleDateString('fr-FR')} à {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <h3 style={{ margin: '0 0 0.4rem 0', fontSize: '1.2rem', fontWeight: 700, color: '#1A1A1A' }}>
+                  <h3 className="truncate" style={{ margin: '0 0 var(--sp-1) 0', fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-primary)' }}>
                     {item.title}
                   </h3>
-                  <p style={{ margin: 0, fontSize: '0.95rem', color: '#6E6E6B', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <p className="truncate" style={{ margin: 0, fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)' }}>
                     {item.preview}
                   </p>
                 </div>
 
-                <button onClick={() => item.typeDoc === 'submission' ? navigate('/tutor/submissions') : navigate('/tutor/chat')} style={{ padding: '0.8rem 1.5rem', background: '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#333'} onMouseLeave={e => e.currentTarget.style.background = '#1A1A1A'}>
+                <button onClick={() => item.typeDoc === 'submission' ? navigate('/tutor/submissions') : navigate('/tutor/chat')} className="laura-btn laura-btn-secondary" style={{ minHeight: '34px', fontSize: 'var(--tx-xs)', whiteSpace: 'nowrap' }}>
                   {item.typeDoc === 'submission' ? 'Gérer' : 'Reprendre'}
                 </button>
               </div>

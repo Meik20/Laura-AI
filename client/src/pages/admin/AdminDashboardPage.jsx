@@ -89,38 +89,40 @@ export default function AdminDashboardPage() {
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
+    <div className="stack stack--lg animate-in">
       
       {/* HEADER */}
-      <div>
-        <h1 className="laura-h1">Vue Globale</h1>
-        <p className="laura-body" style={{ color: 'var(--laura-text-2)' }}>
-          Supervision de l'activité sur LAURA.
-        </p>
+      <div className="page-header">
+        <div className="page-header__title">
+          <h1 className="laura-h1">Vue Globale</h1>
+          <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>
+            Supervision de l'activité sur LAURA.
+          </p>
+        </div>
       </div>
 
       {/* KPI CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--sp-5)' }}>
         {stats.map((s, i) => (
-          <div key={i} className="laura-card" style={{ padding: 'var(--sp-5)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-4)' }}>
+          <div key={i} className="card card--hoverable card__body" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+            <div className="row row--between" style={{ marginBottom: 'var(--sp-2)' }}>
               <span style={{ fontSize: '2rem' }}>{s.icon}</span>
-              <span className="laura-badge" style={{ background: `color-mix(in srgb, ${s.color} 10%, transparent)`, color: s.color }}>Actifs</span>
+              <span className="badge" style={{ background: `color-mix(in srgb, ${s.color} 10%, transparent)`, color: s.color }}>Actifs</span>
             </div>
-            <h3 className="laura-h2" style={{ marginBottom: '4px' }}>{s.value}</h3>
-            <span className="laura-small" style={{ fontWeight: 600 }}>{s.label}</span>
+            <h3 style={{ fontSize: '2rem', fontWeight: 800, margin: 0 }}>{s.value}</h3>
+            <span style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', fontWeight: 600 }}>{s.label}</span>
           </div>
         ))}
       </div>
 
-      <div className="laura-page-grid">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--sp-6)' }}>
         
         {/* GRAPHIQUE ACTIVITÉ */}
-        <div className="laura-page-main laura-card" style={{ padding: 'var(--sp-6)' }}>
-          <h2 className="laura-h3" style={{ marginBottom: 'var(--sp-6)' }}>Activité Chat (7 derniers jours)</h2>
-          <div style={{ width: '100%', height: '300px', background: 'var(--laura-bg-soft)', borderRadius: 'var(--r-md)', display: 'flex', alignItems: 'flex-end', gap: '1rem', padding: '1rem' }}>
+        <div className="card card__body" style={{ flex: 2 }}>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 'var(--sp-6)' }}>Activité Chat (7 derniers jours)</h2>
+          <div style={{ width: '100%', height: '300px', background: 'var(--srf-raised)', borderRadius: 'var(--rd-lg)', display: 'flex', alignItems: 'flex-end', gap: 'var(--sp-3)', padding: 'var(--sp-4)' }}>
             {chatActivity.map((h, i) => (
-              <div key={i} style={{ flex: 1, height: `${Math.max(h, 4)}%`, background: h > 0 ? 'var(--laura-gradient)' : 'var(--laura-border-strong)', borderRadius: 'var(--r-xs) var(--r-xs) 0 0', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '8px', color: h > 0 ? 'white' : 'transparent', fontSize: 'var(--fs-xs)', fontWeight: 700 }}>
+              <div key={i} style={{ flex: 1, height: `${Math.max(h, 4)}%`, background: h > 0 ? 'var(--grd-brand)' : 'var(--brd-subtle)', borderRadius: 'var(--rd-sm) var(--rd-sm) 0 0', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '8px', color: h > 0 ? 'white' : 'transparent', fontSize: 'var(--tx-xs)', fontWeight: 700, transition: 'height var(--dur-slow) var(--ease-spring)' }}>
                 {h > 0 ? `${h}%` : '0'}
               </div>
             ))}
@@ -128,16 +130,20 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* ALERTES ET ACTIONS À PRENDRE */}
-        <div className="laura-page-aside laura-card" style={{ padding: 'var(--sp-6)' }}>
-          <h2 className="laura-h3" style={{ marginBottom: 'var(--sp-6)' }}>Centre d'action</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+        <div className="card card__body" style={{ flex: 1 }}>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 'var(--sp-6)' }}>Centre d'action</h2>
+          <div className="stack stack--md">
             {alerts.length === 0 ? (
-              <div className="laura-empty">Aucune action requise pour le moment.</div>
+              <div className="empty-state">
+                <span className="empty-state__icon">🎉</span>
+                <p className="empty-state__title">Tout est à jour</p>
+                <p className="empty-state__text">Aucune action requise pour le moment.</p>
+              </div>
             ) : (
               alerts.map((a, i) => (
-                <div key={i} className={`laura-alert laura-alert-${a.type}`} style={{ flexDirection: 'column', gap: '8px' }}>
+                <div key={i} className={`alert alert--${a.type}`} style={{ flexDirection: 'column', gap: '8px' }}>
                   <span style={{ fontWeight: 600 }}>{a.msg}</span>
-                  <Link to={a.link} style={{ fontSize: 'var(--fs-sm)', fontWeight: 700, textDecoration: 'underline' }}>Traiter l'action</Link>
+                  <Link to={a.link} style={{ fontSize: 'var(--tx-sm)', fontWeight: 700, textDecoration: 'underline' }}>Traiter l'action</Link>
                 </div>
               ))
             )}

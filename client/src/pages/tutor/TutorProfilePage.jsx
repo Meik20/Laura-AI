@@ -46,74 +46,70 @@ export default function TutorProfilePage() {
     }
   };
 
-  const inputStyle = { width: '100%', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #E5E5E2', background: '#F9F9F8', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' };
-  const labelStyle = { display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600, color: '#444' };
-  const cardStyle = { background: 'white', padding: '2.5rem', borderRadius: '1.5rem', border: '1px solid #E5E5E2', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' };
-
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+    <div className="stack stack--lg animate-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
       
       {/* HEADER */}
       <div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>Profil Tuteur</h1>
-        <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
+        <h1 className="laura-h1">Profil Tuteur</h1>
+        <p style={{ margin: 'var(--sp-1) 0 0', color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>
           Gérez vos informations professionnelles et académiques.
         </p>
       </div>
 
-      <div style={cardStyle}>
+      <div className="card" style={{ padding: 'var(--sp-6)' }}>
         {successMsg && (
-          <div style={{ padding: '1rem', background: '#D1FAE5', color: '#065F46', borderRadius: '0.75rem', fontWeight: 600, marginBottom: '2rem', border: '1px solid #A7F3D0' }}>
+          <div className="badge badge--green" style={{ padding: 'var(--sp-3)', width: '100%', boxSizing: 'border-box', marginBottom: 'var(--sp-5)', justifyContent: 'center', fontSize: 'var(--tx-sm)' }}>
             {successMsg}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <form onSubmit={handleSubmit} className="stack stack--md">
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--sp-4)' }}>
             <div>
-              <label style={labelStyle}>Prénom *</label>
-              <input type="text" name="prenom" required value={formData.prenom} onChange={handleChange} style={inputStyle} />
+              <label>Prénom *</label>
+              <input type="text" name="prenom" required value={formData.prenom} onChange={handleChange} />
             </div>
             <div>
-              <label style={labelStyle}>Nom *</label>
-              <input type="text" name="nom" required value={formData.nom} onChange={handleChange} style={inputStyle} />
+              <label>Nom *</label>
+              <input type="text" name="nom" required value={formData.nom} onChange={handleChange} />
             </div>
           </div>
 
           <div>
-            <label style={labelStyle}>Adresse Email</label>
-            <input type="email" name="email" disabled value={formData.email} style={{ ...inputStyle, background: '#E5E5E2', cursor: 'not-allowed', color: '#6E6E6B' }} />
-            <span style={{ fontSize: '0.8rem', color: '#6E6E6B', marginTop: '0.3rem', display: 'block' }}>L'adresse email ne peut pas être modifiée.</span>
+            <label>Adresse Email</label>
+            <input type="email" name="email" disabled value={formData.email} style={{ cursor: 'not-allowed', opacity: 0.7 }} />
+            <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', marginTop: 'var(--sp-1)', display: 'block' }}>L'adresse email ne peut pas être modifiée.</span>
           </div>
 
-          <hr style={{ border: 'none', borderTop: '1px solid #F0F0EE', margin: '1rem 0' }} />
+          <hr style={{ border: 'none', borderTop: '1px solid var(--brd-subtle)', margin: 'var(--sp-3) 0' }} />
 
-          <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: '#1A1A1A' }}>Informations Pédagogiques</h3>
+          <h3 style={{ margin: 0, fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-primary)' }}>Informations Pédagogiques</h3>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--sp-4)' }}>
             <div>
-              <label style={labelStyle}>Discipline d'enseignement *</label>
-              <input type="text" name="discipline" placeholder="ex: Mathématiques" required value={formData.discipline} onChange={handleChange} style={inputStyle} />
+              <label>Discipline d'enseignement *</label>
+              <input type="text" name="discipline" placeholder="ex: Mathématiques" required value={formData.discipline} onChange={handleChange} />
             </div>
             <div>
-              <label style={labelStyle}>Établissement / Structure</label>
-              <input type="text" name="etablissement" placeholder="ex: Lycée Leclerc" value={formData.etablissement} onChange={handleChange} style={inputStyle} />
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-            <div>
-              <label style={labelStyle}>Années d'expérience</label>
-              <input type="number" name="experience" placeholder="ex: 5" value={formData.experience} onChange={handleChange} style={inputStyle} />
-            </div>
-            <div>
-              <label style={labelStyle}>Diplôme principal</label>
-              <input type="text" name="diplome" placeholder="ex: CAPES, Master" value={formData.diplome} onChange={handleChange} style={inputStyle} />
+              <label>Établissement / Structure</label>
+              <input type="text" name="etablissement" placeholder="ex: Lycée Leclerc" value={formData.etablissement} onChange={handleChange} />
             </div>
           </div>
 
-          <button type="submit" disabled={isSaving} style={{ padding: '1rem', background: isSaving ? '#6E6E6B' : '#1A1A1A', color: 'white', border: 'none', borderRadius: '0.75rem', fontSize: '1.1rem', fontWeight: 700, cursor: isSaving ? 'not-allowed' : 'pointer', marginTop: '1rem', transition: 'background 0.2s' }} onMouseEnter={e => !isSaving && (e.currentTarget.style.background = '#333')} onMouseLeave={e => !isSaving && (e.currentTarget.style.background = '#1A1A1A')}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--sp-4)' }}>
+            <div>
+              <label>Années d'expérience</label>
+              <input type="number" name="experience" placeholder="ex: 5" value={formData.experience} onChange={handleChange} />
+            </div>
+            <div>
+              <label>Diplôme principal</label>
+              <input type="text" name="diplome" placeholder="ex: CAPES, Master" value={formData.diplome} onChange={handleChange} />
+            </div>
+          </div>
+
+          <button type="submit" disabled={isSaving} className="laura-btn laura-btn-primary" style={{ width: '100%', justifyContent: 'center', minHeight: '44px', marginTop: 'var(--sp-4)', fontSize: 'var(--tx-base)' }}>
             {isSaving ? 'Enregistrement...' : 'Enregistrer les modifications'}
           </button>
 
