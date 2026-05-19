@@ -243,13 +243,27 @@ export default function AdminSubmissionsPage() {
         </button>
       </div>
 
-      {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 'var(--sp-3)' }}>
-        {stats.map(({ label, val, color }) => (
-          <div key={label} className="card" style={{ padding: 'var(--sp-4)', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color, lineHeight: 1 }}>{val}</div>
-            <div style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', marginTop: '4px' }}>{label}</div>
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '3px', background: color, opacity: 0.7 }} />
+      {/* STATS — same KPI card pattern as AdminDashboard */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--sp-5)' }}>
+        {[
+          { label: 'En attente',  val: counts.pending,     iconClass: 'hourglass-low', color: 'var(--clr-warning)', badgeClass: 'warning', badge: 'Urgents' },
+          { label: 'Validées',    val: counts.publie,      iconClass: 'circle-check',  color: 'var(--clr-green)',   badgeClass: 'green',   badge: 'Publiés' },
+          { label: 'À corriger',  val: counts.a_corriger,  iconClass: 'pencil',        color: 'var(--clr-brand)',   badgeClass: 'brand',   badge: 'Retour' },
+          { label: 'Rejetées',   val: counts.rejete,      iconClass: 'circle-x',     color: 'var(--clr-error)',   badgeClass: 'error',   badge: 'Rejetés' },
+        ].map(({ label, val, iconClass, color, badgeClass, badge }) => (
+          <div key={label} className="card card--hoverable card__body"
+            style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)', background: 'var(--srf-base)', boxShadow: 'var(--shd-sm)', position: 'relative', overflow: 'hidden' }}>
+            <div className="row row--between" style={{ alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '46px', height: '46px', borderRadius: '12px', background: `color-mix(in srgb, ${color} 10%, transparent)`, color }}>
+                <i className={`ti ti-${iconClass}`} style={{ fontSize: '1.4rem' }} />
+              </div>
+              <span className={`badge badge--${badgeClass}`}>{badge}</span>
+            </div>
+            <div>
+              <h3 style={{ fontSize: '2.4rem', fontWeight: 800, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)', letterSpacing: '-0.02em' }}>{val}</h3>
+              <span style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', fontWeight: 600 }}>{label}</span>
+            </div>
+            <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '4px', background: color, opacity: 0.8 }} />
           </div>
         ))}
       </div>

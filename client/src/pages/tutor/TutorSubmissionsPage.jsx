@@ -272,12 +272,27 @@ export default function TutorSubmissionsPage() {
         </button>
       </div>
 
-      {/* STATS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 'var(--sp-3)' }}>
-        {stats.map(({ label, val, color }) => (
-          <div key={label} className="card" style={{ padding: 'var(--sp-4)', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.6rem', fontWeight: 800, color }}>{val}</div>
-            <div style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', marginTop: '2px' }}>{label}</div>
+      {/* STATS — same KPI card style as AdminDashboard */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--sp-5)' }}>
+        {[
+          { label: 'Total',      val: submissions.length,                                                                     iconClass: 'files',         color: 'var(--clr-brand)',   badgeClass: 'brand',   badge: 'Soumissions' },
+          { label: 'En attente', val: submissions.filter(s => ['soumis','en_attente','en_revue'].includes(s.statut)).length,  iconClass: 'hourglass-low', color: 'var(--clr-warning)', badgeClass: 'warning', badge: 'En cours' },
+          { label: 'Validés',    val: submissions.filter(s => ['publie','valide'].includes(s.statut)).length,                iconClass: 'circle-check',  color: 'var(--clr-green)',   badgeClass: 'green',   badge: 'Publiés' },
+          { label: 'Brouillons', val: submissions.filter(s => s.statut === 'brouillon').length,                               iconClass: 'file-pencil',   color: 'var(--txt-tertiary)',badgeClass: '',        badge: 'Draft' },
+        ].map(({ label, val, iconClass, color, badgeClass, badge }) => (
+          <div key={label} className="card card--hoverable card__body"
+            style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)', background: 'var(--srf-base)', boxShadow: 'var(--shd-sm)', position: 'relative', overflow: 'hidden' }}>
+            <div className="row row--between" style={{ alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '46px', height: '46px', borderRadius: '12px', background: `color-mix(in srgb, ${color} 10%, transparent)`, color }}>
+                <i className={`ti ti-${iconClass}`} style={{ fontSize: '1.4rem' }} />
+              </div>
+              {badgeClass ? <span className={`badge badge--${badgeClass}`}>{badge}</span> : <span className="badge">{badge}</span>}
+            </div>
+            <div>
+              <h3 style={{ fontSize: '2.4rem', fontWeight: 800, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)', letterSpacing: '-0.02em' }}>{val}</h3>
+              <span style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', fontWeight: 600 }}>{label}</span>
+            </div>
+            <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '4px', background: color, opacity: 0.8 }} />
           </div>
         ))}
       </div>
