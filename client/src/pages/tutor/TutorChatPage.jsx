@@ -95,7 +95,7 @@ export default function TutorChatPage() {
       const response = await fetch(`${API_BASE}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: fullUserText, mode: 'simple', userContext: profileContext })
+        body: JSON.stringify({ message: fullUserText, mode: 'simple', userContext: profileContext, history: messages })
       });
       
       const data = await response.json();
