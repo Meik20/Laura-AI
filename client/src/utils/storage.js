@@ -24,10 +24,20 @@ function sanitizeFileName(name) {
     .toLowerCase();
 }
 
+function sanitizeFolderName(folder) {
+  if (!folder) return '';
+  return folder
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')   // remove accents
+    .replace(/[^a-zA-Z0-9/_-]/g, '_') // replace special chars except /
+    .toLowerCase();
+}
+
 function buildPath(folder, file) {
   const ts   = Date.now();
-  const safe = sanitizeFileName(file.name);
-  return `${folder}/${ts}_${safe}`;
+  const safeFile   = sanitizeFileName(file.name);
+  const safeFolder = sanitizeFolderName(folder);
+  return safeFolder ? `${safeFolder}/${ts}_${safeFile}` : `${ts}_${safeFile}`;
 }
 
 /* ── uploadFile ───────────────────────────────────────────────────────────── */
