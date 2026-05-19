@@ -8,17 +8,18 @@ const NAV_ITEMS = [
   { to: '/admin/tutor-applications', label: 'Candidatures',   icon: '▣' },
   { to: '/admin/resources',          label: 'Catalogue',      icon: '⊕' },
   { to: '/admin/contributions',      label: 'Contributions',  icon: '⬆' },
+  { to: '/admin/submissions',        label: 'Soumissions',    icon: '📤' },
   { to: '/admin/access-rules',       label: 'Accès',          icon: '◈' },
   { to: '/admin/audit',              label: 'Logs',           icon: '↺' },
   { to: '/admin/settings',           label: 'Réglages',       icon: '⊛' },
 ];
 
 const BOTTOM_NAV = [
-  { to: '/admin/dashboard',          label: 'Vue',          icon: '⊞' },
-  { to: '/admin/users',              label: 'Membres',      icon: '◉' },
-  { to: '/admin/contributions',      label: 'Contrib.',     icon: '⬆' },
-  { to: '/admin/resources',          label: 'Ressources',   icon: '⊕' },
-  { to: '/admin/settings',           label: 'Réglages',     icon: '⊛' },
+  { to: '/admin/dashboard',   label: 'Vue',         icon: '⊞' },
+  { to: '/admin/users',       label: 'Membres',     icon: '◉' },
+  { to: '/admin/submissions', label: 'Soumissions', icon: '📤' },
+  { to: '/admin/resources',   label: 'Ressources',  icon: '⊕' },
+  { to: '/admin/settings',    label: 'Réglages',    icon: '⊛' },
 ];
 
 export default function AdminLayout() {
