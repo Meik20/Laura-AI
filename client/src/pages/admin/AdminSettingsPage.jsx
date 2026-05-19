@@ -152,7 +152,7 @@ export default function AdminSettingsPage() {
               {activeTab === 'Général' && (
                 <>
                   <div style={sectionCardStyle}>
-                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'white' }}>Informations de la plateforme</h2>
+                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Informations de la plateforme</h2>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                       <div>
                         <label style={labelStyle}>Nom de la plateforme</label>
@@ -166,33 +166,33 @@ export default function AdminSettingsPage() {
                   </div>
 
                   <div style={sectionCardStyle}>
-                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'white' }}>Maintenance & Accès</h2>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '0.8rem', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '1rem' }}>
+                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Maintenance & Accès</h2>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'var(--srf-base)', borderRadius: '0.8rem', border: '1px solid var(--brd-subtle)', marginBottom: '1rem' }}>
                       <div>
-                        <div style={{ fontWeight: 600, color: 'white' }}>Mode Maintenance</div>
-                        <div style={{ fontSize: '0.85rem', customColor: '#64748B' }}>Désactiver l'accès à la plateforme pour les apprenants (maintenance en cours).</div>
+                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>Mode Maintenance</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Désactiver l'accès à la plateforme pour les apprenants (maintenance en cours).</div>
                       </div>
                       <button 
                         onClick={toggleMaintenance}
                         style={{ 
-                          background: settings.maintenanceMode ? '#EF4444' : 'rgba(255,255,255,0.1)', 
-                          color: 'white', 
-                          border: 'none', 
+                          background: settings.maintenanceMode ? '#EF4444' : 'var(--srf-raised)', 
+                          color: settings.maintenanceMode ? 'white' : 'var(--txt-primary)', 
+                          border: settings.maintenanceMode ? 'none' : '1px solid var(--brd-default)', 
                           padding: '0.6rem 1.5rem', 
                           borderRadius: '2rem', 
                           fontWeight: 700, 
                           cursor: 'pointer',
-                          transition: 'background 0.2s'
+                          transition: 'all 0.2s'
                         }}
                       >
                         {settings.maintenanceMode ? 'Désactiver (Actif)' : 'Activer'}
                       </button>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '0.8rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'var(--srf-base)', borderRadius: '0.8rem', border: '1px solid var(--brd-subtle)' }}>
                       <div>
-                        <div style={{ fontWeight: 600, color: 'white' }}>Inscriptions Ouvertes</div>
-                        <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Autoriser la création de nouveaux comptes sur la page d'inscription.</div>
+                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>Inscriptions Ouvertes</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Autoriser la création de nouveaux comptes sur la page d'inscription.</div>
                       </div>
                       <input 
                         type="checkbox" 
@@ -210,13 +210,13 @@ export default function AdminSettingsPage() {
               {activeTab === 'Programmes & Matières' && (
                 <>
                   <div style={sectionCardStyle}>
-                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 0.5rem 0', fontWeight: 700, color: 'white' }}>Gestion du Programme Local (Matières, Séries, Filières)</h2>
-                    <p style={{ color: '#94A3B8', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
+                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 0.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Gestion du Programme Local (Matières, Séries, Filières)</h2>
+                    <p style={{ color: 'var(--txt-secondary)', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
                       Définissez les matières officielles disponibles pour les apprenants selon leur niveau, série et filière.
                     </p>
 
                     {/* FORMULAIRE D'AJOUT */}
-                    <form onSubmit={handleAddMatiere} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '1rem', alignItems: 'end', background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '2rem' }}>
+                    <form onSubmit={handleAddMatiere} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '1rem', alignItems: 'end', background: 'var(--srf-base)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid var(--brd-subtle)', marginBottom: '2rem' }}>
                       <div>
                         <label style={labelStyle}>Nom de la matière *</label>
                         <input type="text" placeholder="ex: Mathématiques" value={newMatiere.nom} onChange={e => setNewMatiere({...newMatiere, nom: e.target.value})} style={inputStyle} required />
@@ -239,9 +239,9 @@ export default function AdminSettingsPage() {
                     </form>
 
                     {/* TABLEAU DES MATIÈRES */}
-                    <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '0.8rem', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', color: 'white' }}>
-                        <thead style={{ background: 'rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.1)', fontSize: '0.9rem', color: '#94A3B8' }}>
+                    <div style={{ background: 'var(--srf-base)', borderRadius: '0.8rem', border: '1px solid var(--brd-subtle)', overflow: 'hidden' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', color: 'var(--txt-primary)' }}>
+                        <thead style={{ background: 'var(--srf-raised)', borderBottom: '1px solid var(--brd-subtle)', fontSize: '0.9rem', color: 'var(--txt-secondary)' }}>
                           <tr>
                             <th style={{ padding: '1rem 1.2rem' }}>Matière</th>
                             <th style={{ padding: '1rem 1.2rem' }}>Niveau</th>
@@ -252,11 +252,11 @@ export default function AdminSettingsPage() {
                         </thead>
                         <tbody>
                           {(settings.matieres || defaultMatieres).map(item => (
-                            <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                            <tr key={item.id} style={{ borderBottom: '1px solid var(--brd-subtle)' }}>
                               <td style={{ padding: '1rem 1.2rem', fontWeight: 700 }}>{item.nom}</td>
-                              <td style={{ padding: '1rem 1.2rem', color: '#CBD5E1' }}>{item.niveau}</td>
-                              <td style={{ padding: '1rem 1.2rem', color: '#CBD5E1' }}>{item.serie}</td>
-                              <td style={{ padding: '1rem 1.2rem', color: '#CBD5E1' }}>{item.filiere}</td>
+                              <td style={{ padding: '1rem 1.2rem', color: 'var(--txt-secondary)' }}>{item.niveau}</td>
+                              <td style={{ padding: '1rem 1.2rem', color: 'var(--txt-secondary)' }}>{item.serie}</td>
+                              <td style={{ padding: '1rem 1.2rem', color: 'var(--txt-secondary)' }}>{item.filiere}</td>
                               <td style={{ padding: '1rem 1.2rem', textAlign: 'right' }}>
                                 <button onClick={() => handleDeleteMatiere(item.id)} style={{ background: '#EF444420', color: '#EF4444', border: '1px solid #EF444450', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>
                                   Supprimer
@@ -276,23 +276,23 @@ export default function AdminSettingsPage() {
               {activeTab === "Modèles d'IA (LLM)" && (
                 <>
                   <div style={sectionCardStyle}>
-                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'white' }}>Sélection des Modèles de Langage (Orchestrateur)</h2>
+                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Sélection des Modèles de Langage (Orchestrateur)</h2>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                      <div>
+                       <div>
                         <label style={labelStyle}>Modèle principal (Chat Apprenant & Explications complexes)</label>
                         <select name="mainModel" value={settings.mainModel} onChange={handleChange} style={inputStyle}>
-                          <optgroup label="Google Gemini" style={{ background: '#0F1520', color: 'white' }}>
-                            <option value="gemini-1.5-pro" style={{ background: '#0F1520', color: 'white' }}>Google Gemini 1.5 Pro (Recommandé pour le raisonnement)</option>
-                            <option value="gemini-1.5-flash" style={{ background: '#0F1520', color: 'white' }}>Google Gemini 1.5 Flash (Rapide)</option>
+                          <optgroup label="Google Gemini">
+                            <option value="gemini-1.5-pro">Google Gemini 1.5 Pro (Recommandé pour le raisonnement)</option>
+                            <option value="gemini-1.5-flash">Google Gemini 1.5 Flash (Rapide)</option>
                           </optgroup>
-                          <optgroup label="Anthropic Claude" style={{ background: '#0F1520', color: 'white' }}>
-                            <option value="claude-3-5-sonnet" style={{ background: '#0F1520', color: 'white' }}>Anthropic Claude 3.5 Sonnet (Excellent en littérature/synthèse)</option>
-                            <option value="claude-3-opus" style={{ background: '#0F1520', color: 'white' }}>Anthropic Claude 3 Opus</option>
+                          <optgroup label="Anthropic Claude">
+                            <option value="claude-3-5-sonnet">Anthropic Claude 3.5 Sonnet (Excellent en littérature/synthèse)</option>
+                            <option value="claude-3-opus">Anthropic Claude 3 Opus</option>
                           </optgroup>
-                          <optgroup label="Groq (LPU) & Autres" style={{ background: '#0F1520', color: 'white' }}>
-                            <option value="groq-llama-3" style={{ background: '#0F1520', color: 'white' }}>Groq - Meta Llama 3.3 70B</option>
-                            <option value="groq-mixtral" style={{ background: '#0F1520', color: 'white' }}>Groq - Mixtral 8x7B</option>
-                            <option value="mistral-large" style={{ background: '#0F1520', color: 'white' }}>Mistral Large 2</option>
+                          <optgroup label="Groq (LPU) & Autres">
+                            <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
+                            <option value="groq-mixtral">Groq - Mixtral 8x7B</option>
+                            <option value="mistral-large">Mistral Large 2</option>
                           </optgroup>
                         </select>
                       </div>
@@ -300,16 +300,16 @@ export default function AdminSettingsPage() {
                       <div>
                         <label style={labelStyle}>Modèle secondaire (Correction de copies & Évaluation tuteur)</label>
                         <select name="secondaryModel" value={settings.secondaryModel} onChange={handleChange} style={inputStyle}>
-                          <optgroup label="Anthropic Claude" style={{ background: '#0F1520', color: 'white' }}>
-                            <option value="claude-3-5-sonnet" style={{ background: '#0F1520', color: 'white' }}>Anthropic Claude 3.5 Sonnet</option>
+                          <optgroup label="Anthropic Claude">
+                            <option value="claude-3-5-sonnet">Anthropic Claude 3.5 Sonnet</option>
                           </optgroup>
-                          <optgroup label="Google Gemini" style={{ background: '#0F1520', color: 'white' }}>
-                            <option value="gemini-1.5-pro" style={{ background: '#0F1520', color: 'white' }}>Google Gemini 1.5 Pro</option>
-                            <option value="gemini-1.5-flash" style={{ background: '#0F1520', color: 'white' }}>Google Gemini 1.5 Flash</option>
+                          <optgroup label="Google Gemini">
+                            <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
+                            <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
                           </optgroup>
-                          <optgroup label="Groq (LPU) & Autres" style={{ background: '#0F1520', color: 'white' }}>
-                            <option value="groq-llama-3" style={{ background: '#0F1520', color: 'white' }}>Groq - Meta Llama 3.3 70B</option>
-                            <option value="mistral-large" style={{ background: '#0F1520', color: 'white' }}>Mistral Large 2</option>
+                          <optgroup label="Groq (LPU) & Autres">
+                            <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
+                            <option value="mistral-large">Mistral Large 2</option>
                           </optgroup>
                         </select>
                       </div>
@@ -317,21 +317,21 @@ export default function AdminSettingsPage() {
                       <div>
                         <label style={labelStyle}>Modèle de secours (Fallback en cas de panne d'API)</label>
                         <select name="fallbackModel" value={settings.fallbackModel} onChange={handleChange} style={inputStyle}>
-                          <option value="groq-llama-3" style={{ background: '#0F1520', color: 'white' }}>Groq - Meta Llama 3.3 70B</option>
-                          <option value="gemini-1.5-flash" style={{ background: '#0F1520', color: 'white' }}>Google Gemini 1.5 Flash</option>
-                          <option value="ollama-local" style={{ background: '#0F1520', color: 'white' }}>Ollama Local (Mistral 7B - Auto-hébergé)</option>
+                          <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
+                          <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
+                          <option value="ollama-local">Ollama Local (Mistral 7B - Auto-hébergé)</option>
                         </select>
                       </div>
                     </div>
                   </div>
 
                   <div style={sectionCardStyle}>
-                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'white' }}>Paramètres d'Échantillonnage (Sampling)</h2>
+                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Paramètres d'Échantillonnage (Sampling)</h2>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                           <label style={labelStyle}>Température (Créativité vs Précision)</label>
-                          <span style={{ color: '#3B82F6', fontWeight: 700 }}>{settings.temperature}</span>
+                          <span style={{ color: 'var(--clr-brand)', fontWeight: 700 }}>{settings.temperature}</span>
                         </div>
                         <input 
                           type="range" 
@@ -341,9 +341,9 @@ export default function AdminSettingsPage() {
                           step="0.1" 
                           value={settings.temperature} 
                           onChange={handleChange} 
-                          style={{ width: '100%', accentColor: '#3B82F6', cursor: 'pointer' }} 
+                          style={{ width: '100%', accentColor: 'var(--clr-brand)', cursor: 'pointer' }} 
                         />
-                        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748B', fontSize: '0.8rem', marginTop: '0.3rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--txt-tertiary)', fontSize: '0.8rem', marginTop: '0.3rem' }}>
                           <span>0.0 (Strict / QCM)</span>
                           <span>0.7 (Équilibré)</span>
                           <span>1.0 (Créatif / Dissertations)</span>
@@ -362,30 +362,30 @@ export default function AdminSettingsPage() {
               {/* TAB 4 : SÉCURITÉ & ANTI-SPAM */}
               {activeTab === 'Sécurité & Anti-Spam' && (
                 <div style={sectionCardStyle}>
-                  <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'white' }}>Pare-feu & Limitation de débit (Rate Limiting)</h2>
+                  <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Pare-feu & Limitation de débit (Rate Limiting)</h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div>
                       <label style={labelStyle}>Requêtes maximales par minute (par utilisateur)</label>
                       <input type="number" name="rateLimit" value={settings.rateLimit} onChange={handleChange} style={inputStyle} />
-                      <span style={{ color: '#64748B', fontSize: '0.8rem', marginTop: '0.3rem', display: 'block' }}>Évite les attaques DDoS et la surconsommation des quotas d'API LLM.</span>
+                      <span style={{ color: 'var(--txt-tertiary)', fontSize: '0.8rem', marginTop: '0.3rem', display: 'block' }}>Évite les attaques DDoS et la surconsommation des quotas d'API LLM.</span>
                     </div>
 
-                    <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.05)', margin: '0.5rem 0' }} />
+                    <hr style={{ border: 'none', borderTop: '1px solid var(--brd-subtle)', margin: '0.5rem 0' }} />
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div>
-                        <div style={{ fontWeight: 600, color: 'white' }}>Blocage des VPN & Tor</div>
-                        <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Restreindre l'accès aux adresses IP résidentielles camerounaises.</div>
+                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>Blocage des VPN & Tor</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Restreindre l'accès aux adresses IP résidentielles camerounaises.</div>
                       </div>
-                      <input type="checkbox" name="blockVPN" checked={settings.blockVPN} onChange={handleChange} style={{ width: '20px', height: '20px', accentColor: '#3B82F6', cursor: 'pointer' }} />
+                      <input type="checkbox" name="blockVPN" checked={settings.blockVPN} onChange={handleChange} style={{ width: '20px', height: '20px', accentColor: 'var(--clr-brand)', cursor: 'pointer' }} />
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div>
-                        <div style={{ fontWeight: 600, color: 'white' }}>Modération IA automatique (Prompt Injection)</div>
-                        <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Filtrer les tentatives de jailbreak et les propos inappropriés avant l'envoi au LLM.</div>
+                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>Modération IA automatique (Prompt Injection)</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Filtrer les tentatives de jailbreak et les propos inappropriés avant l'envoi au LLM.</div>
                       </div>
-                      <input type="checkbox" name="autoModerate" checked={settings.autoModerate} onChange={handleChange} style={{ width: '20px', height: '20px', accentColor: '#3B82F6', cursor: 'pointer' }} />
+                      <input type="checkbox" name="autoModerate" checked={settings.autoModerate} onChange={handleChange} style={{ width: '20px', height: '20px', accentColor: 'var(--clr-brand)', cursor: 'pointer' }} />
                     </div>
                   </div>
                 </div>
@@ -394,28 +394,28 @@ export default function AdminSettingsPage() {
               {/* TAB 5 : INTÉGRATIONS */}
               {activeTab === 'Intégrations' && (
                 <div style={sectionCardStyle}>
-                  <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'white' }}>Bases de données & Services Tiers</h2>
+                  <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Bases de données & Services Tiers</h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div>
                       <label style={labelStyle}>Base de données Vectorielle (RAG / Recherche sémantique)</label>
                       <select name="vectorDb" value={settings.vectorDb} onChange={handleChange} style={inputStyle}>
-                        <option value="pinecone" style={{ background: '#0F1520', color: 'white' }}>Pinecone Vector Database (Actif)</option>
-                        <option value="milvus" style={{ background: '#0F1520', color: 'white' }}>Milvus / Zilliz</option>
-                        <option value="qdrant" style={{ background: '#0F1520', color: 'white' }}>Qdrant Cloud</option>
+                        <option value="pinecone">Pinecone Vector Database (Actif)</option>
+                        <option value="milvus">Milvus / Zilliz</option>
+                        <option value="qdrant">Qdrant Cloud</option>
                       </select>
                     </div>
 
                     <div>
                       <label style={labelStyle}>Taille des segments RAG (Chunk Size en caractères)</label>
                       <input type="number" name="ragChunkSize" value={settings.ragChunkSize} onChange={handleChange} style={inputStyle} />
-                      <span style={{ color: '#64748B', fontSize: '0.8rem', marginTop: '0.3rem', display: 'block' }}>Taille de découpage des PDF du programme scolaire camerounais.</span>
+                      <span style={{ color: 'var(--txt-tertiary)', fontSize: '0.8rem', marginTop: '0.3rem', display: 'block' }}>Taille de découpage des PDF du programme scolaire camerounais.</span>
                     </div>
 
-                    <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.05)', margin: '0.5rem 0' }} />
+                    <hr style={{ border: 'none', borderTop: '1px solid var(--brd-subtle)', margin: '0.5rem 0' }} />
 
                     <div>
-                      <div style={{ fontWeight: 600, color: 'white', marginBottom: '0.5rem' }}>Statut des clés d'API (Environnement)</div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '0.8rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <div style={{ fontWeight: 600, color: 'var(--txt-primary)', marginBottom: '0.5rem' }}>Statut des clés d'API (Environnement)</div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', background: 'var(--srf-base)', padding: '1rem', borderRadius: '0.8rem', border: '1px solid var(--brd-subtle)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                           <span style={{ color: 'var(--txt-secondary)' }}>Google Gemini API</span>
                           <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>[OK] Connecté (Fichier .env)</span>
