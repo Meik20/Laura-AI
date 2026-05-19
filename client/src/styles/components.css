@@ -568,3 +568,159 @@
 .animate-in {
   animation: slideIn var(--dur-slow) var(--ease-out) both;
 }
+
+/* ─────────────────────────────────────────────
+   BADGES
+───────────────────────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: var(--rd-full);
+  font-size: var(--tx-xs);
+  font-weight: var(--fw-semibold);
+  background: var(--srf-raised);
+  color: var(--txt-secondary);
+  border: 1px solid var(--brd-subtle);
+  white-space: nowrap;
+}
+
+.badge--brand {
+  background: var(--clr-brand-lt);
+  color: var(--clr-brand);
+  border-color: transparent;
+}
+
+.badge--green {
+  background: var(--clr-green-lt);
+  color: var(--clr-green);
+  border-color: transparent;
+}
+
+.badge--warning {
+  background: var(--clr-warning-lt);
+  color: var(--clr-warning);
+  border-color: transparent;
+}
+
+.badge--error {
+  background: var(--clr-error-lt);
+  color: var(--clr-error);
+  border-color: transparent;
+}
+
+.badge--pending {
+  background: var(--clr-warning-lt);
+  color: var(--clr-warning);
+  border-color: transparent;
+}
+
+/* ─────────────────────────────────────────────
+   UPLOAD DROPZONE
+───────────────────────────────────────────── */
+
+.upload-dropzone {
+  border: 2px dashed var(--brd-default);
+  border-radius: var(--rd-xl);
+  padding: var(--sp-8) var(--sp-6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--srf-raised);
+  transition: all var(--dur-fast) var(--ease-std);
+  user-select: none;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone:focus {
+  border-color: var(--clr-brand);
+  background: var(--clr-brand-lt);
+  outline: none;
+}
+
+/* ─────────────────────────────────────────────
+   MODAL HEADER / CLOSE
+───────────────────────────────────────────── */
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-6) var(--sp-6) var(--sp-4);
+  border-bottom: 1px solid var(--brd-subtle);
+}
+
+.modal-title {
+  font-size: var(--tx-xl);
+  font-weight: var(--fw-bold);
+  color: var(--txt-primary);
+  margin: 0;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--rd-full);
+  border: 1px solid var(--brd-default);
+  background: var(--srf-raised);
+  color: var(--txt-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-std);
+  font-size: var(--tx-sm);
+  line-height: 1;
+}
+
+.modal-close:hover {
+  background: var(--clr-error-lt);
+  color: var(--clr-error);
+  border-color: transparent;
+}
+
+/* ─────────────────────────────────────────────
+   POPOVER Z-INDEX
+───────────────────────────────────────────── */
+
+:root {
+  --z-popover: 500;
+}
+
+/* ─────────────────────────────────────────────
+   CHIP ROW (quick actions)
+───────────────────────────────────────────── */
+
+.chip-row {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--rd-full);
+  border: 1px solid var(--brd-default);
+  background: var(--srf-base);
+  color: var(--txt-secondary);
+  font-size: var(--tx-xs);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-std);
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background: var(--clr-brand-lt);
+  color: var(--clr-brand);
+  border-color: var(--brd-strong);
+  transform: translateY(-1px);
+}
+

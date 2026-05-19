@@ -241,27 +241,6 @@ export default function LearnDashboardPage() {
         {/* ASIDE COL */}
         <div className="stack stack--lg l-page-aside">
 
-          {/* ── ACADEMIC PROFILE ── */}
-          <div className="card" style={{ padding: 'var(--sp-5)' }}>
-            <h3 style={{ marginBottom: 'var(--sp-5)', fontSize: 'var(--tx-md)' }}>Profil Académique</h3>
-            <div className="stack stack--sm">
-              {[
-                { label: 'Profil',  value: user.roleLabel },
-                { label: 'Niveau',  value: `${user.niveau}${user.serie ? ` (${user.serie})` : ''}` },
-                { label: 'Examen',  value: user.examen },
-                ...(user.filiere ? [{ label: 'Filière', value: user.filiere }] : []),
-              ].map(({ label, value }) => (
-                <div key={label} className="row row--between" style={{ padding: 'var(--sp-3) 0', borderBottom: '1px solid var(--brd-subtle)', fontSize: 'var(--tx-sm)' }}>
-                  <span style={{ color: 'var(--txt-tertiary)' }}>{label}</span>
-                  <span style={{ fontWeight: 'var(--fw-semibold)', color: 'var(--txt-primary)' }}>{value}</span>
-                </div>
-              ))}
-            </div>
-            <button onClick={() => navigate('/learn/profile')} className="laura-btn laura-btn-ghost" style={{ width: '100%', marginTop: 'var(--sp-4)', justifyContent: 'center', fontSize: 'var(--tx-sm)' }}>
-              Modifier mon profil
-            </button>
-          </div>
-
           {/* ── RECOMMENDATIONS ── */}
           <div className="card" style={{ padding: 'var(--sp-5)' }}>
             <div className="section-header" style={{ marginBottom: 'var(--sp-4)' }}>

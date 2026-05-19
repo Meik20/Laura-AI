@@ -38,6 +38,7 @@ import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
 import AdminUsersPage from '../pages/admin/AdminUsersPage';
 import AdminTutorApplicationsPage from '../pages/admin/AdminTutorApplicationsPage';
 import AdminResourcesPage from '../pages/admin/AdminResourcesPage';
+import AdminContributionsPage from '../pages/admin/AdminContributionsPage';
 import AdminAccessRulesPage from '../pages/admin/AdminAccessRulesPage';
 import AdminAuditPage from '../pages/admin/AdminAuditPage';
 import AdminSettingsPage from '../pages/admin/AdminSettingsPage';
@@ -95,6 +96,7 @@ export const router = createBrowserRouter([
       { path: 'users', element: <AdminUsersPage /> },
       { path: 'tutor-applications', element: <AdminTutorApplicationsPage /> },
       { path: 'resources', element: <AdminResourcesPage /> },
+      { path: 'contributions', element: <AdminContributionsPage /> },
       { path: 'access-rules', element: <AdminAccessRulesPage /> },
       { path: 'audit', element: <AdminAuditPage /> },
       { path: 'settings', element: <AdminSettingsPage /> },
