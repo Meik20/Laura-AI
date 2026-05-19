@@ -252,6 +252,7 @@ self.addEventListener('notificationclick', (event) => {
 // ========================================
 
 self.addEventListener('message', (event) => {
+  if (!event.data) return;
   const { type, payload } = event.data;
   
   console.log('[SW] Message received:', type);
