@@ -189,7 +189,7 @@ export default function LearnChatPage() {
         </button>
       </div>
 
-      <div className="laura-page-grid" style={{ flex: 1, minHeight: 0 }}>
+      <div className="laura-page-grid" style={{ flex: 1, minHeight: 0, gridTemplateColumns: '1fr' }}>
         
         {/* ZONE CENTRALE : CHAT */}
         <div className="laura-page-main laura-card" style={{ display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
@@ -237,7 +237,7 @@ export default function LearnChatPage() {
               ))
             )}
           </div>
-
+ 
           {/* Zone de Saisie */}
           <div style={{ padding: 'var(--sp-5)', borderTop: '1px solid var(--laura-border-soft)', background: 'var(--laura-bg-soft)' }}>
             
@@ -263,7 +263,7 @@ export default function LearnChatPage() {
                 </button>
               </div>
             )}
-
+ 
             {/* Actions rapides de saisie */}
             <div style={{ display: 'flex', gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)', overflowX: 'auto', paddingBottom: '4px' }}>
               <label className="laura-btn laura-btn-secondary" style={{ padding: '6px 12px', minHeight: '32px', fontSize: '13px', cursor: 'pointer' }}>
@@ -276,7 +276,7 @@ export default function LearnChatPage() {
               <button onClick={() => handleActionPrompt("Voici mon exercice, peux-tu le corriger : ")} className="laura-btn laura-btn-ghost" style={{ padding: '6px 12px', minHeight: '32px', fontSize: '13px' }}>Corriger</button>
               <button onClick={() => handleActionPrompt("Génère un quiz de 5 questions sur : ")} className="laura-btn laura-btn-ghost" style={{ padding: '6px 12px', minHeight: '32px', fontSize: '13px' }}>Quiz</button>
             </div>
-
+ 
             <div style={{ position: 'relative' }}>
               <textarea 
                 id="chat-textarea"
@@ -313,41 +313,9 @@ export default function LearnChatPage() {
               </button>
             </div>
           </div>
-
+ 
         </div>
-
-        {/* ZONE LATÉRALE : CONTEXTE */}
-        <div className="laura-page-aside" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)', overflowY: 'auto' }}>
-          
-          {/* Contexte Profil */}
-          <div className="laura-card-soft">
-            <h3 className="laura-small" style={{ marginBottom: 'var(--sp-4)', color: 'var(--laura-text-2)', textTransform: 'uppercase', letterSpacing: '1px' }}>Contexte Profil</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--laura-text-2)' }}>Profil</span><span style={{ fontWeight: 600 }}>{profileContext.role}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--laura-text-2)' }}>Niveau</span><span style={{ fontWeight: 600 }}>{profileContext.niveau}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--laura-text-2)' }}>Série</span><span style={{ fontWeight: 600 }}>{profileContext.serie}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--laura-text-2)' }}>Examen</span><span style={{ fontWeight: 600 }}>{profileContext.examen}</span></div>
-            </div>
-          </div>
-
-          {/* Ressources Liées */}
-          <div className="laura-card-soft">
-            <h3 className="laura-small" style={{ marginBottom: 'var(--sp-4)', color: 'var(--laura-text-2)', textTransform: 'uppercase', letterSpacing: '1px' }}>Ressources liées</h3>
-            <div className="laura-empty" style={{ padding: 'var(--sp-3)' }}>Aucune ressource pour l'instant</div>
-          </div>
-
-          {/* Suggestions */}
-          <div className="laura-card-soft">
-            <h3 className="laura-small" style={{ marginBottom: 'var(--sp-4)', color: 'var(--laura-text-2)', textTransform: 'uppercase', letterSpacing: '1px' }}>Suggestions</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <button onClick={() => handleSend("Donne-moi un quiz rapide de 3 questions sur mon programme actuel.")} className="laura-btn laura-btn-ghost" style={{ textAlign: 'left', justifyContent: 'flex-start' }}>Donne un quiz</button>
-              <button onClick={() => handleSend("Donne-moi un exercice type d'examen avec son corrigé détaillé.")} className="laura-btn laura-btn-ghost" style={{ textAlign: 'left', justifyContent: 'flex-start' }}>Exercice type</button>
-              <button onClick={() => handleSend("Peux-tu simplifier les concepts clés de mon programme actuel ?")} className="laura-btn laura-btn-ghost" style={{ textAlign: 'left', justifyContent: 'flex-start' }}>Simplifie ce concept</button>
-            </div>
-          </div>
-
-        </div>
-
+ 
       </div>
     </div>
   );

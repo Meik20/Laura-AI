@@ -328,13 +328,19 @@ hr {
 
 /* ============================================================
    11. LAYOUT PRINCIPAL
-   Structure 3 colonnes : sidebar | contenu | panneau droit
+   Structure Grid fluide : sidebar rétractable | contenu principal
    ============================================================ */
 
 .laura-app {
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--rail-w) 1fr;
   min-height: 100vh;
   background: var(--laura-bg-page);
+  transition: grid-template-columns var(--laura-transition-base);
+}
+
+.laura-app.is-collapsed {
+  grid-template-columns: var(--rail-w-compact) 1fr;
 }
 
 .laura-main {
@@ -342,9 +348,7 @@ hr {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  margin-left: var(--laura-sidebar-width);
-  margin-right: var(--laura-right-panel-width);
-  transition: margin var(--laura-transition-slow);
+  transition: all var(--laura-transition-base);
 }
 
 .laura-content {
@@ -352,6 +356,7 @@ hr {
   padding: var(--laura-space-6);
   max-width: var(--laura-content-max);
   width: 100%;
+  margin: 0 auto;
 }
 
 /* ============================================================
