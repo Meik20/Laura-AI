@@ -1,33 +1,37 @@
 import { Outlet, NavLink, useNavigate, Navigate } from 'react-router-dom';
 import { useContext, useState, useCallback, useRef, useEffect } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const NAV_ITEMS = [
-  { to: '/learn/dashboard', label: 'Tableau de bord', icon: '⊞' },
-  { to: '/learn/chat',      label: 'Chat LAURA',       icon: '◎' },
-  { to: '/learn/revision',  label: 'Révision',          icon: '✎' },
-  { to: '/learn/exams',     label: 'Examens',           icon: '✦' },
-  { to: '/learn/resources', label: 'Ressources',        icon: '⊕' },
-  { to: '/learn/progress',  label: 'Progression',       icon: '▲' },
-  { to: '/learn/history',   label: 'Historique',        icon: '↺' },
-  { to: '/learn/profile',   label: 'Mon Profil',        icon: '◉' },
-  { to: '/learn/settings',  label: 'Réglages',          icon: '⊛' },
+  { to: '/learn/dashboard', labelKey: 'learn.nav.dashboard', icon: '⊞' },
+  { to: '/learn/chat',      labelKey: 'learn.nav.chat',       icon: '◎' },
+  { to: '/learn/revision',  labelKey: 'learn.nav.revision',   icon: '✎' },
+  { to: '/learn/exams',     labelKey: 'learn.nav.exams',      icon: '✦' },
+  { to: '/learn/resources', labelKey: 'learn.nav.resources',  icon: '⊕' },
+  { to: '/learn/progress',  labelKey: 'learn.nav.progress',   icon: '▲' },
+  { to: '/learn/history',   labelKey: 'learn.nav.history',    icon: '↺' },
+  { to: '/learn/profile',   labelKey: 'learn.nav.profile',    icon: '◉' },
+  { to: '/learn/settings',  labelKey: 'learn.nav.settings',   icon: '⊛' },
 ];
 
 const BOTTOM_NAV = [
-  { to: '/learn/dashboard', label: 'Accueil', icon: '⊞' },
-  { to: '/learn/chat',      label: 'Chat IA',  icon: '◎' },
-  { to: '/learn/revision',  label: 'Cours',    icon: '✎' },
-  { to: '/learn/progress',  label: 'Stats',    icon: '▲' },
-  { to: '/learn/profile',   label: 'Profil',   icon: '◉' },
+  { to: '/learn/dashboard', labelKey: 'learn.nav.home',       icon: '⊞' },
+  { to: '/learn/chat',      labelKey: 'learn.nav.chat_ia',    icon: '◎' },
+  { to: '/learn/revision',  labelKey: 'learn.nav.courses',    icon: '✎' },
+  { to: '/learn/progress',  labelKey: 'learn.nav.stats',      icon: '▲' },
+  { to: '/learn/profile',   labelKey: 'learn.nav.profile_short', icon: '◉' },
 ];
 
-function getRoleLabel(profile) {
+function getRoleLabel(profile, t) {
   const label = profile?.roleLabel || '';
+  if (label === 'Élève') return t('common.roles.student_seco');
+  if (label === 'Étudiant') return t('common.roles.student_univ');
   if (label) return label;
   const role = profile?.role || '';
-  if (role === 'student') return profile?.classe ? 'Élève' : 'Étudiant';
-  return 'Apprenant';
+  if (role === 'student') return profile?.classe ? t('common.roles.student_seco') : t('common.roles.student_univ');
+  return t('common.roles.learner');
 }
 
 function getInitials(profile) {
@@ -39,7 +43,7 @@ function getInitials(profile) {
 }
 
 /* ─── Profile Popover ───────────────────────────────────────────────────── */
-function ProfilePopover({ isOpen, onClose, userProfile, displayName, roleLabel, initials, navigate, handleLogout }) {
+function ProfilePopover({ isOpen, onClose, userProfile, displayName, roleLabel, initials, navigate, handleLogout, t }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -93,14 +97,14 @@ function ProfilePopover({ isOpen, onClose, userProfile, displayName, roleLabel, 
       {/* Academic profile rows */}
       <div style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
         <p style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 'var(--sp-3)', margin: '0 0 var(--sp-3)' }}>
-          Profil Académique
+          {t('learn.popover.academic_profile')}
         </p>
         {[
-          { label: 'Niveau',   value: profile.niveau  || profile.classe       || profile.niveauEtude || '—' },
-          { label: 'Examen',   value: profile.examen  || profile.examenEleve  || '—' },
-          { label: 'Série',    value: profile.serie   || '—' },
-          { label: 'Filière',  value: profile.filiere || profile.discipline   || null },
-        ].filter(r => r.value && r.value !== '—' || r.label === 'Niveau' || r.label === 'Examen')
+          { label: t('learn.popover.level'),   value: profile.niveau  || profile.classe       || profile.niveauEtude || '—' },
+          { label: t('learn.popover.exam'),   value: profile.examen  || profile.examenEleve  || '—' },
+          { label: t('learn.popover.stream'),    value: profile.serie   || '—' },
+          { label: t('learn.popover.major'),  value: profile.filiere || profile.discipline   || null },
+        ].filter(r => r.value && r.value !== '—' || r.label === t('learn.popover.level') || r.label === t('learn.popover.exam'))
           .map(({ label, value }) => value && (
           <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--sp-2) 0', borderBottom: '1px solid var(--brd-subtle)', fontSize: 'var(--tx-xs)' }}>
             <span style={{ color: 'var(--txt-tertiary)' }}>{label}</span>
@@ -116,14 +120,14 @@ function ProfilePopover({ isOpen, onClose, userProfile, displayName, roleLabel, 
           className="laura-btn laura-btn-secondary"
           style={{ width: '100%', justifyContent: 'center', minHeight: '36px', fontSize: 'var(--tx-xs)' }}
         >
-          ✏️ Modifier mon profil
+          {t('learn.popover.edit_profile')}
         </button>
         <button
           onClick={handleLogout}
           className="laura-btn laura-btn-ghost"
           style={{ width: '100%', justifyContent: 'center', minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)' }}
         >
-          ⏻ Déconnexion
+          {t('learn.popover.logout')}
         </button>
       </div>
     </div>
@@ -133,6 +137,7 @@ function ProfilePopover({ isOpen, onClose, userProfile, displayName, roleLabel, 
 /* ─── Component ─────────────────────────────────────────────────────────── */
 export default function LearnLayout() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { currentUser, logout, userProfile } = useContext(AuthContext);
   const [drawerOpen,    setDrawerOpen]    = useState(false);
   const [collapsed,     setCollapsed]     = useState(false);
@@ -149,8 +154,8 @@ export default function LearnLayout() {
 
   const closeDrawer = () => setDrawerOpen(false);
   const initials    = getInitials(userProfile);
-  const roleLabel   = getRoleLabel(userProfile);
-  const displayName = userProfile?.prenom || currentUser?.displayName || 'Apprenant';
+  const roleLabel   = getRoleLabel(userProfile, t);
+  const displayName = userProfile?.prenom || currentUser?.displayName || t('common.roles.learner');
 
   return (
     <div className="l-app">
@@ -166,20 +171,20 @@ export default function LearnLayout() {
             <img src="/icon.png" alt="LAURA" className="l-sidebar__logo" />
             <span className="l-sidebar__name">laura ai</span>
           </NavLink>
-          <button className="l-sidebar__toggle desktop-only" onClick={() => setCollapsed(c => !c)} title={collapsed ? 'Développer' : 'Réduire'} aria-label="Toggle sidebar">
+          <button className="l-sidebar__toggle desktop-only" onClick={() => setCollapsed(c => !c)} title={collapsed ? t('common.actions.expand') : t('common.actions.collapse')} aria-label="Toggle sidebar">
             {collapsed ? '›' : '‹'}
           </button>
-          <button className="l-sidebar__toggle mobile-only" onClick={closeDrawer} aria-label="Fermer">✕</button>
+          <button className="l-sidebar__toggle mobile-only" onClick={closeDrawer} aria-label={t('common.actions.close')}>✕</button>
         </div>
 
         <nav className="l-sidebar__nav no-scrollbar" aria-label="Navigation principale">
-          {NAV_ITEMS.map(({ to, label, icon }) => (
+          {NAV_ITEMS.map(({ to, labelKey, icon }) => (
             <NavLink key={to} to={to} onClick={closeDrawer}
               className={({ isActive }) => `l-nav-item${isActive ? ' active' : ''}`}
-              title={collapsed ? label : undefined}
+              title={collapsed ? t(labelKey) : undefined}
             >
               <span className="l-nav-item__icon" aria-hidden="true">{icon}</span>
-              <span className="l-nav-item__label">{label}</span>
+              <span className="l-nav-item__label">{t(labelKey)}</span>
             </NavLink>
           ))}
         </nav>
@@ -197,11 +202,11 @@ export default function LearnLayout() {
           <button onClick={() => { closeDrawer(); navigate('/learn/chat?new=true'); }}
             className="laura-btn laura-btn-primary"
             style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', padding: '0 var(--sp-3)', justifyContent: 'center' }}>
-            {collapsed ? '+' : '+ Nouveau Chat'}
+            {collapsed ? '+' : `+ ${t('learn.nav.new_chat')}`}
           </button>
           <button onClick={handleLogout} className="laura-btn laura-btn-ghost"
             style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', padding: '0 var(--sp-3)', color: 'var(--clr-error)', justifyContent: 'center' }}>
-            {collapsed ? '⏻' : '⏻ Déconnexion'}
+            {collapsed ? '⏻' : `⏻ ${t('learn.popover.logout')}`}
           </button>
         </div>
       </aside>
@@ -212,7 +217,7 @@ export default function LearnLayout() {
         {/* Topbar */}
         <header className="l-topbar">
           <div className="l-topbar__left">
-            <button className="l-topbar__menu-btn mobile-only" onClick={() => setDrawerOpen(true)} aria-label="Ouvrir le menu">☰</button>
+            <button className="l-topbar__menu-btn mobile-only" onClick={() => setDrawerOpen(true)} aria-label={t('common.actions.open_menu')}>☰</button>
 
             <NavLink to="/learn/dashboard" className="mobile-only"
               style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', textDecoration: 'none' }}>
@@ -223,11 +228,12 @@ export default function LearnLayout() {
             </NavLink>
 
             <p className="desktop-only" style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', margin: 0 }}>
-              Bonjour <strong style={{ color: 'var(--txt-primary)' }}>{displayName}</strong> 👋
+              {t('learn.header.hello')} <strong style={{ color: 'var(--txt-primary)' }}>{displayName}</strong> 👋
             </p>
           </div>
 
-          <div className="l-topbar__right">
+          <div className="l-topbar__right" style={{ gap: '16px', alignItems: 'center' }}>
+            <LanguageSwitcher />
             <span className="desktop-only" style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>
               {roleLabel}
             </span>
@@ -237,7 +243,7 @@ export default function LearnLayout() {
               <button
                 className="avatar avatar--sm"
                 onClick={() => setProfileOpen(o => !o)}
-                aria-label="Mon profil académique"
+                aria-label={t('learn.popover.academic_profile')}
                 aria-expanded={profileOpen}
                 style={{ cursor: 'pointer', border: profileOpen ? '2px solid var(--clr-brand)' : '2px solid transparent', transition: 'border-color var(--dur-fast)' }}
               >
@@ -253,6 +259,7 @@ export default function LearnLayout() {
                 initials={initials}
                 navigate={navigate}
                 handleLogout={handleLogout}
+                t={t}
               />
             </div>
           </div>
@@ -266,11 +273,11 @@ export default function LearnLayout() {
 
       {/* ── Mobile Bottom Nav ── */}
       <nav className="l-bottom-nav" aria-label="Navigation mobile">
-        {BOTTOM_NAV.map(({ to, label, icon }) => (
+        {BOTTOM_NAV.map(({ to, labelKey, icon }) => (
           <NavLink key={to} to={to}
             className={({ isActive }) => `l-bottom-nav__item${isActive ? ' active' : ''}`}>
             <span className="l-bottom-nav__icon" aria-hidden="true">{icon}</span>
-            <span>{label}</span>
+            <span>{t(labelKey)}</span>
           </NavLink>
         ))}
       </nav>

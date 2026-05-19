@@ -82,5 +82,128 @@
       "sub": "Rejoignez la communauté LAURA. Partagez votre expertise, proposez vos ressources et aidez des milliers d'élèves à réussir.",
       "cta": "Découvrir le programme Tuteur →"
     }
+  },
+  "signup": {
+    "title": "Créer un compte apprenant",
+    "subtitle": "Prêt à booster vos résultats scolaires ?",
+    "name": "Nom",
+    "firstname": "Prénom",
+    "email": "Adresse mail",
+    "password": "Mot de passe",
+    "confirm_password": "Confirmation du mot de passe",
+    "profile_question": "Quel est votre profil ?",
+    "profile_student": "Élève (Secondaire)",
+    "profile_college": "Étudiant (Supérieur)",
+    "class_label": "Classe / niveau",
+    "class_placeholder": "Sélectionner",
+    "stream_label": "Série",
+    "exam_label": "Examen préparé *",
+    "lang_label": "Langue préférée",
+    "lang_fr": "Français",
+    "lang_en": "Anglais",
+    "school_label": "Établissement",
+    "level_label": "Niveau d'étude *",
+    "major_label": "Filière / domaine *",
+    "exam_optional_label": "Examen préparé (Optionnel)",
+    "exam_optional_placeholder": "ex: Partiels S2",
+    "button": "Créer mon compte",
+    "button_loading": "Création en cours...",
+    "already_registered": "Déjà inscrit ?",
+    "login_link": "Se connecter",
+    "error_required": "Veuillez remplir tous les champs obligatoires.",
+    "error_password_match": "Les mots de passe ne correspondent pas.",
+    "error_exam_required": "Veuillez sélectionner un examen préparé.",
+    "error_college_required": "Le niveau d'étude et la filière sont obligatoires.",
+    "error_signup_failed": "Une erreur est survenue lors de l'inscription."
+  },
+  "common": {
+    "roles": {
+      "student_seco": "Élève",
+      "student_univ": "Étudiant",
+      "learner": "Apprenant",
+      "tutor": "Tuteur",
+      "admin": "Admin"
+    },
+    "actions": {
+      "toggle_sidebar": "Réduire/Développer la barre latérale",
+      "expand": "Développer",
+      "collapse": "Réduire",
+      "close": "Fermer",
+      "open_menu": "Ouvrir le menu",
+      "logout": "Déconnexion"
+    }
+  },
+  "learn": {
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "chat": "Chat LAURA",
+      "revision": "Révision",
+      "exams": "Examens",
+      "resources": "Ressources",
+      "progress": "Progression",
+      "history": "Historique",
+      "profile": "Mon Profil",
+      "settings": "Réglages",
+      "home": "Accueil",
+      "chat_ia": "Chat IA",
+      "courses": "Cours",
+      "stats": "Stats",
+      "profile_short": "Profil",
+      "new_chat": "Nouveau Chat"
+    },
+    "header": {
+      "hello": "Bonjour"
+    },
+    "popover": {
+      "academic_profile": "Profil Académique",
+      "level": "Niveau",
+      "exam": "Examen",
+      "stream": "Série",
+      "major": "Filière",
+      "edit_profile": "✏️ Modifier mon profil",
+      "logout": "⏻ Déconnexion"
+    }
+  },
+  "tutor": {
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "chat": "Chat IA",
+      "resources": "Ressources",
+      "submissions": "Soumissions",
+      "history": "Historique",
+      "profile": "Profil & Droits",
+      "settings": "Réglages",
+      "overview_short": "Tableau",
+      "catalogue": "Catalogue",
+      "activity": "Activité",
+      "profile_short": "Profil"
+    },
+    "header": {
+      "title": "Espace Tuteur LAURA"
+    }
+  },
+  "admin": {
+    "nav": {
+      "overview": "Vue Globale",
+      "users": "Utilisateurs",
+      "applications": "Candidatures",
+      "catalogue": "Catalogue",
+      "contributions": "Contributions",
+      "submissions": "Soumissions",
+      "access": "Accès",
+      "logs": "Logs",
+      "settings": "Réglages",
+      "overview_short": "Vue",
+      "members": "Membres",
+      "submissions_short": "Soumissions",
+      "resources": "Ressources",
+      "settings_short": "Réglages"
+    },
+    "role_badge": "ADMINISTRATION",
+    "role_label": "Admin",
+    "logout": "Déconnexion",
+    "header": {
+      "title": "Console d'Administration LAURA"
+    }
   }
 }
