@@ -29,7 +29,7 @@ export default function PublicLayout() {
 
           {/* Brand */}
           <Link to="/" className="public-topbar__brand">
-            <img src="/logo.png" alt="LAURA" style={{ height: '36px' }} />
+            <img src="/icon.png" alt="LAURA" style={{ height: '36px' }} />
             <span className="public-topbar__name">laura ai</span>
           </Link>
 

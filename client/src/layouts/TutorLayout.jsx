@@ -57,7 +57,7 @@ export default function TutorLayout() {
       <aside className={`l-sidebar${drawerOpen ? ' is-open' : ''}${collapsed ? ' is-collapsed' : ''}`}>
         <div className="l-sidebar__header">
           <NavLink to="/tutor/dashboard" className="l-sidebar__brand" onClick={closeDrawer}>
-            <img src="/logo.png" alt="LAURA" className="l-sidebar__logo" />
+            <img src="/icon.png" alt="LAURA" className="l-sidebar__logo" />
             <span className="l-sidebar__name">laura ai</span>
           </NavLink>
           <button className="l-sidebar__toggle desktop-only" onClick={() => setCollapsed(c => !c)} aria-label="Toggle">

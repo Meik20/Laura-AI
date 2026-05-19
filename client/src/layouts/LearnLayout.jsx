@@ -82,7 +82,7 @@ export default function LearnLayout() {
         {/* Header */}
         <div className="l-sidebar__header">
           <NavLink to="/learn/dashboard" className="l-sidebar__brand" onClick={closeDrawer}>
-            <img src="/logo.png" alt="LAURA" className="l-sidebar__logo" />
+            <img src="/icon.png" alt="LAURA" className="l-sidebar__logo" />
             <span className="l-sidebar__name">laura ai</span>
           </NavLink>
 
