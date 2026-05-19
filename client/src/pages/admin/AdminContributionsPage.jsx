@@ -12,9 +12,13 @@ const STATUS_MAP = {
 };
 
 const TYPE_ICONS = {
-  Quiz: '🎲', Annale: '📝', Épreuve: '📜', Fiche: '📋', Livre: '📖'
+  Quiz: 'device-gamepad-2',
+  Annale: 'file-text',
+  Épreuve: 'certificate',
+  Fiche: 'clipboard-list',
+  Livre: 'book',
 };
-const getIcon = (type) => TYPE_ICONS[type] || '📚';
+const getIconClass = (type) => TYPE_ICONS[type] || 'file';
 
 function formatDate(ts) {
   if (!ts) return '—';
@@ -59,9 +63,10 @@ function ContribDrawer({ contrib, onClose, onValidate, onReject }) {
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="row row--between" style={{ marginBottom: 'var(--sp-6)' }}>
-          <h2 style={{ fontSize: 'var(--tx-xl)', fontWeight: 'var(--fw-bold)', margin: 0 }}>
-            {getIcon(contrib.type)} {contrib.titre || 'Sans titre'}
+        <div className="row row--between" style={{ marginBottom: 'var(--sp-6)', alignItems: 'center' }}>
+          <h2 style={{ fontSize: 'var(--tx-xl)', fontWeight: 'var(--fw-bold)', margin: 0, display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+            <i className={`ti ti-${getIconClass(contrib.type)}`} style={{ color: 'var(--clr-brand)', fontSize: '1.5rem' }}></i>
+            {contrib.titre || 'Sans titre'}
           </h2>
           <button onClick={onClose} className="modal-close" aria-label="Fermer">✕</button>
         </div>
@@ -105,9 +110,9 @@ function ContribDrawer({ contrib, onClose, onValidate, onReject }) {
             target="_blank"
             rel="noopener noreferrer"
             className="laura-btn laura-btn-secondary"
-            style={{ width: '100%', justifyContent: 'center', marginBottom: 'var(--sp-4)' }}
+            style={{ width: '100%', justifyContent: 'center', marginBottom: 'var(--sp-4)', gap: 'var(--sp-2)' }}
           >
-            📎 Prévisualiser le fichier
+            <i className="ti ti-paperclip" style={{ fontSize: '1.2rem' }}></i> Prévisualiser le fichier
           </a>
         )}
 
@@ -117,16 +122,16 @@ function ContribDrawer({ contrib, onClose, onValidate, onReject }) {
             <button
               onClick={() => onReject(contrib.id)}
               className="laura-btn laura-btn-ghost"
-              style={{ flex: 1, justifyContent: 'center', color: 'var(--clr-error)', minHeight: '44px' }}
+              style={{ flex: 1, justifyContent: 'center', color: 'var(--clr-error)', minHeight: '44px', gap: 'var(--sp-2)' }}
             >
-              ✕ Rejeter
+              <i className="ti ti-circle-x" style={{ fontSize: '1.2rem' }}></i> Rejeter
             </button>
             <button
               onClick={() => onValidate(contrib.id, contrib)}
               className="laura-btn laura-btn-primary"
-              style={{ flex: 2, justifyContent: 'center', minHeight: '44px' }}
+              style={{ flex: 2, justifyContent: 'center', minHeight: '44px', gap: 'var(--sp-2)' }}
             >
-              ✓ Valider et publier
+              <i className="ti ti-circle-check" style={{ fontSize: '1.2rem' }}></i> Valider et publier
             </button>
           </div>
         )}
@@ -226,42 +231,83 @@ export default function AdminContributionsPage() {
     rejete:     contributions.filter(c => c.statut === 'rejete').length,
   };
 
+  const statsItems = [
+    { label: 'En attente',  value: counts.en_attente, cls: 'badge--pending', iconClass: 'hourglass-low', color: 'var(--clr-warning)' },
+    { label: 'Validés',     value: counts.valide,     cls: 'badge--green',   iconClass: 'circle-check',  color: 'var(--clr-green)' },
+    { label: 'Rejetés',     value: counts.rejete,     cls: 'badge--error',   iconClass: 'circle-x',      color: 'var(--clr-error)' },
+    { label: 'Total',       value: contributions.length, cls: '',            iconClass: 'archive',       color: 'var(--clr-brand)' },
+  ];
+
   return (
     <div className="stack stack--lg animate-in">
 
       {/* Header */}
-      <div className="row row--between">
+      <div className="row row--between" style={{ alignItems: 'center' }}>
         <div>
           <h1 className="laura-h1">Contributions</h1>
           <p style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', margin: 'var(--sp-2) 0 0' }}>
             Validez ou rejetez les ressources soumises par les apprenants
           </p>
         </div>
-        <button onClick={fetchAll} className="laura-btn laura-btn-ghost" style={{ minHeight: '38px' }}>
-          ↺ Actualiser
+        <button onClick={fetchAll} className="laura-btn laura-btn-secondary" style={{ minHeight: '38px', gap: 'var(--sp-2)' }}>
+          <i className="ti ti-refresh" style={{ fontSize: '1.1rem' }}></i> Actualiser
         </button>
       </div>
 
       {/* Feedback toast */}
       {feedback && (
-        <div className="auth-info-alert">
+        <div className="auth-info-alert" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <span>ℹ️</span>
           <p style={{ margin: 0, fontSize: 'var(--tx-sm)' }}>{feedback}</p>
         </div>
       )}
 
       {/* Stats strip */}
-      <div className="stats-grid">
-        {[
-          { label: 'En attente',  value: counts.en_attente, cls: 'badge--pending', icon: '⏳' },
-          { label: 'Validés',     value: counts.valide,     cls: 'badge--green',   icon: '✅' },
-          { label: 'Rejetés',     value: counts.rejete,     cls: 'badge--error',   icon: '✕'  },
-          { label: 'Total',       value: contributions.length, cls: '',            icon: '📦' },
-        ].map(({ label, value, cls, icon }) => (
-          <div key={label} className="card" style={{ padding: 'var(--sp-5)', textAlign: 'center' }}>
-            <p style={{ fontSize: '1.75rem', margin: '0 0 var(--sp-2)' }}>{icon}</p>
-            <p style={{ fontSize: 'var(--tx-2xl)', fontWeight: 'var(--fw-bold)', margin: '0 0 var(--sp-1)' }}>{value}</p>
-            <span className={`badge ${cls}`}>{label}</span>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--sp-5)' }}>
+        {statsItems.map((s, i) => (
+          <div 
+            key={i} 
+            className="card card--hoverable card__body" 
+            style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: 'var(--sp-3)',
+              background: 'var(--srf-base)',
+              boxShadow: 'var(--shd-sm)',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+          >
+            <div className="row row--between" style={{ alignItems: 'center' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '46px',
+                height: '46px',
+                borderRadius: '12px',
+                background: `color-mix(in srgb, ${s.color} 10%, transparent)`,
+                color: s.color
+              }}>
+                <i className={`ti ti-${s.iconClass}`} style={{ fontSize: '1.4rem' }}></i>
+              </div>
+              <span className={`badge ${s.cls ? s.cls : 'badge--brand'}`}>{s.label}</span>
+            </div>
+            <div>
+              <h3 style={{ fontSize: '2.4rem', fontWeight: 800, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)', letterSpacing: '-0.02em' }}>{s.value}</h3>
+              <span style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', fontWeight: 600 }}>Total {s.label.toLowerCase()}</span>
+            </div>
+            
+            {/* Soft background glow line */}
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              height: '4px',
+              background: s.color,
+              opacity: 0.8
+            }}></div>
           </div>
         ))}
       </div>
@@ -297,12 +343,15 @@ export default function AdminContributionsPage() {
           <p className="empty-state__title">Chargement des contributions...</p>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="empty-state">
-          <span className="empty-state__icon">📭</span>
-          <p className="empty-state__title">Aucune contribution dans cette catégorie</p>
+        <div className="stack" style={{ padding: '3.5rem var(--sp-4)', textAlign: 'center', background: 'var(--srf-base)', borderRadius: 'var(--rd-lg)', border: '1px dashed var(--brd-strong)', maxWidth: '480px', margin: '2rem auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '50%', background: 'var(--clr-brand-lt)', color: 'var(--clr-brand)', margin: '0 auto var(--sp-4) auto' }}>
+            <i className="ti ti-mailbox" style={{ fontSize: '2.2rem' }}></i>
+          </div>
+          <h4 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)' }}>Aucune contribution</h4>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Il n'y a aucune contribution dans cette catégorie pour le moment.</p>
         </div>
       ) : (
-        <div className="card" style={{ overflow: 'hidden' }}>
+        <div className="card" style={{ overflow: 'hidden', background: 'var(--srf-base)', boxShadow: 'var(--shd-sm)' }}>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--tx-sm)' }}>
               <thead>
@@ -318,16 +367,28 @@ export default function AdminContributionsPage() {
                 {filtered.map((c, i) => (
                   <tr key={c.id} style={{ borderBottom: '1px solid var(--brd-subtle)', background: i % 2 === 1 ? 'var(--srf-raised)' : '' }}>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
-                      <div className="row" style={{ gap: 'var(--sp-3)' }}>
-                        <span style={{ fontSize: '1.3rem', flexShrink: 0 }}>{getIcon(c.type)}</span>
+                      <div className="row" style={{ gap: 'var(--sp-3)', alignItems: 'center' }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: '34px',
+                          height: '34px',
+                          borderRadius: '8px',
+                          background: 'var(--srf-raised)',
+                          color: 'var(--clr-brand)',
+                          flexShrink: 0
+                        }}>
+                          <i className={`ti ti-${getIconClass(c.type)}`} style={{ fontSize: '1.1rem' }}></i>
+                        </div>
                         <div style={{ minWidth: 0 }}>
-                          <p className="truncate" style={{ fontWeight: 'var(--fw-semibold)', margin: 0, maxWidth: '200px' }}>{c.titre || 'Sans titre'}</p>
+                          <p className="truncate" style={{ fontWeight: 'var(--fw-semibold)', margin: 0, maxWidth: '200px', color: 'var(--txt-primary)' }}>{c.titre || 'Sans titre'}</p>
                           {c.matiere && <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', margin: 0 }}>{c.matiere}</p>}
                         </div>
                       </div>
                     </td>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)', whiteSpace: 'nowrap' }}>
-                      <span className="badge">{c.type || '—'}</span>
+                      <span className="badge badge--brand">{c.type || '—'}</span>
                     </td>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-secondary)', maxWidth: '160px' }}>
                       <p className="truncate" style={{ margin: 0 }}>{c.contributorName || c.contributorEmail || '—'}</p>
@@ -341,13 +402,13 @@ export default function AdminContributionsPage() {
                       </span>
                     </td>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
-                      <div className="row" style={{ gap: 'var(--sp-2)', flexWrap: 'nowrap' }}>
+                      <div className="row" style={{ gap: 'var(--sp-2)', flexWrap: 'nowrap', alignItems: 'center' }}>
                         <button
                           onClick={() => setSelected(c)}
                           className="laura-btn laura-btn-secondary"
-                          style={{ minHeight: '30px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)', whiteSpace: 'nowrap' }}
+                          style={{ minHeight: '30px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}
                         >
-                          Examiner
+                          <i className="ti ti-eye" style={{ fontSize: '0.9rem' }}></i> Examiner
                         </button>
                         {c.statut === 'en_attente' && (
                           <>
@@ -356,13 +417,17 @@ export default function AdminContributionsPage() {
                               className="laura-btn laura-btn-ghost"
                               style={{ minHeight: '30px', padding: '0 var(--sp-2)', fontSize: 'var(--tx-xs)', color: 'var(--clr-green)' }}
                               title="Valider"
-                            >✓</button>
+                            >
+                              <i className="ti ti-check" style={{ fontSize: '1rem' }}></i>
+                            </button>
                             <button
                               onClick={() => handleReject(c.id)}
                               className="laura-btn laura-btn-ghost"
                               style={{ minHeight: '30px', padding: '0 var(--sp-2)', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)' }}
                               title="Rejeter"
-                            >✕</button>
+                            >
+                              <i className="ti ti-x" style={{ fontSize: '1rem' }}></i>
+                            </button>
                           </>
                         )}
                         <button
@@ -370,7 +435,9 @@ export default function AdminContributionsPage() {
                           className="laura-btn laura-btn-ghost"
                           style={{ minHeight: '30px', padding: '0 var(--sp-2)', fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}
                           title="Supprimer"
-                        >🗑</button>
+                        >
+                          <i className="ti ti-trash" style={{ fontSize: '1rem' }}></i>
+                        </button>
                       </div>
                     </td>
                   </tr>
