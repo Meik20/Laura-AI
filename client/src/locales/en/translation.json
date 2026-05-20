@@ -376,6 +376,67 @@
     },
     "header": {
       "title": "LAURA Tutor Workspace"
+    },
+    "status": {
+      "Contributeur": "Contributor",
+      "En attente de contribution": "Pending validation",
+      "Membre": "Member"
+    },
+    "dashboard": {
+      "hello": "Hello, {{name}}",
+      "subtitle": "Tutor Workspace",
+      "buttons": {
+        "pedagogical_chat": "Pedagogical Chat"
+      },
+      "tabs": {
+        "overview": "Overview",
+        "tools": "Contribution Tools",
+        "messages": "Admin Messages",
+        "submissions": "My Submissions"
+      },
+      "alerts": {
+        "request_sent": "Request sent successfully!",
+        "request_error": "An error occurred during the request."
+      },
+      "status_card": {
+        "title": "Status and Rights",
+        "desc_contributor": "You are officially a contributor. You can submit courses and past papers to LAURA's catalog.",
+        "desc_pending": "Your request to become a contributor is being validated by an administrator.",
+        "desc_standard": "You have standard tutor access. You can request contributor rights to submit your own documents.",
+        "request_rights": "Request Contributor Rights"
+      },
+      "activity": {
+        "title": "My Contribution Activity",
+        "desc": "Track the validation status of your shared resources.",
+        "published": "Published",
+        "in_review": "In Review",
+        "drafts": "Drafts"
+      },
+      "tools": {
+        "title": "Contribution Tools",
+        "desc": "Use our tools to create or submit high-quality pedagogical content.",
+        "generate_plan": "Create a lesson plan",
+        "generate_plan_desc": "Generate chapter structures aligned with official curricula.",
+        "submit_content": "Submit a resource",
+        "submit_content_desc": "Publish a revision sheet, a course, or a solved exam paper."
+      },
+      "messages": {
+        "title": "Admin Messages",
+        "default_title": "LAURA Announcement",
+        "empty_title": "No messages",
+        "empty_desc": "The admin team has not sent you any direct messages yet."
+      },
+      "submissions": {
+        "title": "My Shared Resources",
+        "desc": "View the history and status of your submissions.",
+        "manage": "Manage submissions",
+        "drafts_title": "Drafts",
+        "drafts_desc": "Sheets and topics currently being drafted",
+        "review_title": "In review",
+        "review_desc": "Resources awaiting review by administrators",
+        "published_title": "Published resources",
+        "published_desc": "Validated content visible to all learners"
+      }
     }
   },
   "admin": {

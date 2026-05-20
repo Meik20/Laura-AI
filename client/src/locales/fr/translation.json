@@ -376,6 +376,67 @@
     },
     "header": {
       "title": "Espace Tuteur LAURA"
+    },
+    "status": {
+      "Contributeur": "Contributeur",
+      "En attente de contribution": "En attente de contribution",
+      "Membre": "Membre"
+    },
+    "dashboard": {
+      "hello": "Bonjour, {{name}}",
+      "subtitle": "Espace de travail Tuteur",
+      "buttons": {
+        "pedagogical_chat": "Chat Pédagogique"
+      },
+      "tabs": {
+        "overview": "Vue d'ensemble",
+        "tools": "Outils de contribution",
+        "messages": "Messages de l'administration",
+        "submissions": "Mes soumissions"
+      },
+      "alerts": {
+        "request_sent": "Demande envoyée avec succès !",
+        "request_error": "Une erreur est survenue lors de la demande."
+      },
+      "status_card": {
+        "title": "Statut et Droits",
+        "desc_contributor": "Vous êtes officiellement contributeur. Vous pouvez soumettre des cours et annales au catalogue de LAURA.",
+        "desc_pending": "Votre demande pour devenir contributeur est en cours de validation par un administrateur.",
+        "desc_standard": "Vous avez un accès tuteur standard. Vous pouvez demander des droits de contributeur pour soumettre vos propres documents.",
+        "request_rights": "Demander les droits de contributeur"
+      },
+      "activity": {
+        "title": "Mon activité de contribution",
+        "desc": "Suivez l'état de validation de vos ressources partagées.",
+        "published": "Publiés",
+        "in_review": "En cours de validation",
+        "drafts": "Brouillons"
+      },
+      "tools": {
+        "title": "Outils de contribution",
+        "desc": "Utilisez nos outils pour créer ou proposer du contenu pédagogique de qualité.",
+        "generate_plan": "Créer un plan de cours",
+        "generate_plan_desc": "Générez des structures de chapitres conformes aux programmes officiels.",
+        "submit_content": "Soumettre une ressource",
+        "submit_content_desc": "Publiez une fiche de révision, un cours ou un sujet d'examen corrigé."
+      },
+      "messages": {
+        "title": "Messages de l'administration",
+        "default_title": "Annonce LAURA",
+        "empty_title": "Aucun message",
+        "empty_desc": "L'administration ne vous a pas encore envoyé de message direct."
+      },
+      "submissions": {
+        "title": "Mes ressources partagées",
+        "desc": "Consultez l'historique et l'état de vos soumissions.",
+        "manage": "Gérer les soumissions",
+        "drafts_title": "Brouillons",
+        "drafts_desc": "Fiches et sujets en cours de rédaction",
+        "review_title": "En cours de revue",
+        "review_desc": "Ressources en attente de relecture par les administrateurs",
+        "published_title": "Ressources publiées",
+        "published_desc": "Contenus validés et visibles par tous les apprenants"
+      }
     }
   },
   "admin": {
