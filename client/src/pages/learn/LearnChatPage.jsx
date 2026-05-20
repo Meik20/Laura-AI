@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { doc, getDoc, setDoc, arrayUnion, collection, addDoc } from 'firebase/firestore';
 import { extractFileContent } from '../../utils/fileExtractor';
+import { useTranslation } from 'react-i18next';
 
 function getInitials(profile) {
   const prenom = profile?.prenom || '';
@@ -100,6 +101,7 @@ function RenderMessage({ text }) {
 }
 
 export default function LearnChatPage() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
@@ -107,11 +109,11 @@ export default function LearnChatPage() {
   const messagesEndRef = useRef(null);
 
   const profileContext = {
-    prenom: userProfile?.prenom || 'Apprenant',
-    role: userProfile?.roleLabel || 'Non défini',
-    niveau: userProfile?.niveau || 'Non défini',
+    prenom: userProfile?.prenom || t('common.roles.learner'),
+    role: userProfile?.roleLabel || t('common.roles.learner'),
+    niveau: userProfile?.niveau || t('common.roles.learner'),
     serie: userProfile?.serie || 'Général',
-    examen: userProfile?.examen || 'Non défini'
+    examen: userProfile?.examen || t('common.roles.learner')
   };
 
   const [isLoading, setIsLoading] = useState(false);
@@ -157,21 +159,20 @@ export default function LearnChatPage() {
 
     const promptKey = searchParams.get('prompt');
     const resourceTitle = searchParams.get('resourceTitle');
-
     if (promptKey || resourceTitle) {
       let promptText = '';
       if (promptKey === 'sujets_frequents') {
-        promptText = `Quels sont les sujets et chapitres qui tombent le plus fréquemment à l'examen de mon niveau (${profileContext.examen}), et comment bien m'y préparer ?`;
+        promptText = t('learn.chat.prompts.frequent_subjects', { exam: profileContext.examen });
       } else if (promptKey === 'corriges_types') {
-        promptText = `Peux-tu me donner un exemple d'épreuve ou d'annale type pour mon examen (${profileContext.examen}) avec son corrigé détaillé et des conseils méthodologiques ?`;
+        promptText = t('learn.chat.prompts.sample_exams', { exam: profileContext.examen });
       } else if (promptKey === 'simulation_examen') {
-        promptText = `Je souhaite faire une simulation d'examen en condition réelle pour mon niveau (${profileContext.examen}). Donne-moi un sujet complet à traiter en temps limité.`;
+        promptText = t('learn.chat.prompts.exam_simulation', { exam: profileContext.examen });
       } else if (promptKey === 'plan_preparation') {
-        promptText = `Élabore un plan de préparation complet et structuré pour mon examen (${profileContext.examen}), en ciblant les notions prioritaires à maîtriser.`;
+        promptText = t('learn.chat.prompts.prep_plan', { exam: profileContext.examen });
       } else if (promptKey === 'programme_revision') {
-        promptText = `Élabore un programme de révision sur mesure pour mon niveau (${profileContext.niveau}) et mon examen (${profileContext.examen}), en tenant compte de ma filière/série.`;
+        promptText = t('learn.chat.prompts.revision_program', { level: profileContext.niveau, exam: profileContext.examen });
       } else if (resourceTitle) {
-        promptText = `Peux-tu m'aider à réviser et m'expliquer en détail l'annale/épreuve suivante : "${resourceTitle}" ?`;
+        promptText = t('learn.chat.prompts.revise_resource', { title: resourceTitle });
       }
 
       if (promptText) {
@@ -215,9 +216,9 @@ export default function LearnChatPage() {
     if (attachedFile) {
       if (attachedFile.text) {
         // Include extracted content so the AI can actually read and analyze it
-        fullUserText = `${fullUserText}\n\n[📎 Document joint : "${attachedFile.name}"${attachedFile.pages ? ` (${attachedFile.pages} page${attachedFile.pages > 1 ? 's' : ''})` : ''}]\n\n--- CONTENU EXTRAIT DU DOCUMENT ---\n${attachedFile.text}\n--- FIN DU DOCUMENT ---`;
+        fullUserText = `${fullUserText}\n\n[📎 ${t('learn.chat.file.attachment_label', { name: attachedFile.name })}${attachedFile.pages ? ` (${attachedFile.pages} page${attachedFile.pages > 1 ? 's' : ''})` : ''}]\n\n--- ${t('learn.chat.file.extracted_header')} ---\n${attachedFile.text}\n--- ${t('learn.chat.file.extracted_footer')} ---`;
       } else {
-        fullUserText = `[📎 Fichier joint : ${attachedFile.name}] ${fullUserText}`;
+        fullUserText = `[📎 ${t('learn.chat.file.attachment_label', { name: attachedFile.name })}] ${fullUserText}`;
       }
       setAttachedFile(null);
     }
@@ -241,7 +242,7 @@ export default function LearnChatPage() {
       });
 
       const data = await response.json();
-      const lauraText = data.response || data.error || "Désolée, je n'ai pas pu formuler une réponse.";
+      const lauraText = data.response || data.error || t('learn.chat.errors.no_response');
       const lauraMsgObj = { role: 'laura', text: lauraText, timestamp: new Date().toISOString() };
 
       setMessages(prev => [...prev, lauraMsgObj]);
@@ -252,7 +253,7 @@ export default function LearnChatPage() {
       }
     } catch (error) {
       console.error("Chat error:", error);
-      const errorMsgObj = { role: 'laura', text: "⚠️ Oups ! Je n'arrive pas à joindre le serveur pour le moment. Vérifiez votre connexion internet ou réessayez dans quelques instants.", timestamp: new Date().toISOString() };
+      const errorMsgObj = { role: 'laura', text: t('learn.chat.errors.server_unreachable'), timestamp: new Date().toISOString() };
       setMessages(prev => [...prev, errorMsgObj]);
 
       if (userProfile?.uid) {
@@ -272,7 +273,7 @@ export default function LearnChatPage() {
 
   const handleSaveMessage = async (textToSave) => {
     if (!userProfile?.uid) {
-      alert("Veuillez vous connecter pour sauvegarder des explications.");
+      alert(t('learn.chat.alerts.login_required'));
       return;
     }
     try {
@@ -280,10 +281,10 @@ export default function LearnChatPage() {
         text: textToSave,
         createdAt: new Date().toISOString()
       });
-      alert("Explication sauvegardée dans vos notes !");
+      alert(t('learn.chat.alerts.saved'));
     } catch (err) {
       console.error("Erreur de sauvegarde:", err);
-      alert("Erreur lors de la sauvegarde.");
+      alert(t('learn.chat.alerts.save_error'));
     }
   };
 
@@ -295,22 +296,22 @@ export default function LearnChatPage() {
       {/* ── HEADER (Compact & Desktop only to save space on mobile) ── */}
       <div className="row row--between desktop-only" style={{ marginBottom: 'var(--sp-4)', flexShrink: 0 }}>
         <div>
-          <h1 className="laura-h2" style={{ margin: 0 }}>Préparation {profileContext.examen}</h1>
+          <h1 className="laura-h2" style={{ margin: 0 }}>{t('learn.chat.header.prep_exam', { exam: profileContext.examen })}</h1>
           <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', margin: 0 }}>
-            Session d'études active avec votre tuteur LAURA
+            {t('learn.chat.header.subtitle')}
           </p>
         </div>
         <button
           onClick={async () => {
             setMessages([]);
             if (userProfile?.uid) {
-              await setDoc(doc(db, 'chats', userProfile.uid), { messages: [] });
+              await setDoc(doc(doc(db, 'chats', userProfile.uid)), { messages: [] });
             }
           }}
           className="laura-btn laura-btn-ghost"
           style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)' }}
         >
-          🗑️ Effacer l'historique
+          🗑️ {t('learn.chat.header.clear_history')}
         </button>
       </div>
 
@@ -322,14 +323,14 @@ export default function LearnChatPage() {
           {isInitializing ? (
             <div className="empty-state" style={{ margin: 'auto' }}>
               <span className="empty-state__icon">⏳</span>
-              <p className="empty-state__title">Chargement de la session...</p>
+              <p className="empty-state__title">{t('learn.chat.loading_session')}</p>
             </div>
           ) : messages.length === 0 ? (
             <div className="empty-state" style={{ margin: 'auto', maxWidth: '360px' }}>
               <span className="empty-state__icon">✨</span>
-              <p className="empty-state__title">Bienvenue dans votre espace d'étude</p>
+              <p className="empty-state__title">{t('learn.chat.welcome.title')}</p>
               <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', textAlign: 'center', marginTop: 'var(--sp-2)' }}>
-                Posez vos questions de cours, soumettez des exercices ou partagez un fichier pour démarrer.
+                {t('learn.chat.welcome.desc')}
               </p>
             </div>
           ) : (
@@ -350,19 +351,19 @@ export default function LearnChatPage() {
                       <div className="row" style={{ flexWrap: 'wrap', gap: 'var(--sp-2)', paddingLeft: '2px' }}>
                         <button onClick={() => handleSend("suite")}
                           className="laura-btn laura-btn-primary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                          ▶ Suite
+                          ▶ {t('learn.chat.actions.continue')}
                         </button>
                         <button onClick={() => handleSend("Explique cette réponse de manière plus simple.")}
                           className="laura-btn laura-btn-ghost" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                          Simplifier
+                          {t('learn.chat.actions.simplify')}
                         </button>
                         <button onClick={() => handleSend("Peux-tu approfondir ce concept ?")}
                           className="laura-btn laura-btn-ghost" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                          Approfondir
+                          {t('learn.chat.actions.deepen')}
                         </button>
                         <button onClick={() => handleSaveMessage(m.text)}
                           className="laura-btn laura-btn-secondary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                          💾 Sauvegarder
+                          💾 {t('learn.chat.actions.save')}
                         </button>
                       </div>
                     )}
@@ -422,11 +423,11 @@ export default function LearnChatPage() {
                       {attachedFile.name}
                     </p>
                     <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', margin: 0 }}>
-                      {attachedFile.status === 'analyzing' && 'Extraction du contenu en cours...'}
-                      {attachedFile.status === 'ready' && `✓ Contenu extrait${attachedFile.pages ? ` · ${attachedFile.pages} page${attachedFile.pages > 1 ? 's' : ''}` : ''} · prêt pour analyse`}
-                      {attachedFile.status === 'no-text' && (attachedFile.note || 'Texte non lisible — LAURA le verra quand même')}
-                      {attachedFile.status === 'error' && 'Erreur d\'analyse — LAURA le verra quand même'}
-                      {!attachedFile.status && 'Fichier prêt à l\'envoi'}
+                      {attachedFile.status === 'analyzing' && t('learn.chat.file.extracting')}
+                      {attachedFile.status === 'ready' && t('learn.chat.file.extracted', { count: attachedFile.pages })}
+                      {attachedFile.status === 'no-text' && (attachedFile.note || t('learn.chat.file.no_text'))}
+                      {attachedFile.status === 'error' && t('learn.chat.file.error')}
+                      {!attachedFile.status && t('learn.chat.file.ready')}
                     </p>
                   </div>
                 </div>
@@ -434,7 +435,7 @@ export default function LearnChatPage() {
                   onClick={() => setAttachedFile(null)}
                   className="laura-btn laura-btn-ghost"
                   style={{ minHeight: '28px', width: '28px', padding: 0, borderRadius: 'var(--rd-full)', color: 'var(--txt-secondary)' }}
-                  aria-label="Supprimer le fichier"
+                  aria-label={t('learn.chat.file.remove')}
                 >
                   ✕
                 </button>
@@ -451,7 +452,7 @@ export default function LearnChatPage() {
                     className="laura-btn laura-btn-primary"
                     style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
                   >
-                    ✨ Créer un Quiz
+                    ✨ {t('learn.chat.doc_actions.quiz')}
                   </button>
                   <button
                     onClick={() => {
@@ -462,7 +463,7 @@ export default function LearnChatPage() {
                     className="laura-btn laura-btn-secondary"
                     style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
                   >
-                    📝 Résumer
+                    📝 {t('learn.chat.doc_actions.summarize')}
                   </button>
                   <button
                     onClick={() => {
@@ -473,7 +474,7 @@ export default function LearnChatPage() {
                     className="laura-btn laura-btn-secondary"
                     style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
                   >
-                    ✏️ Corriger
+                    ✏️ {t('learn.chat.doc_actions.correct')}
                   </button>
                 </div>
               )}
@@ -496,7 +497,7 @@ export default function LearnChatPage() {
               onMouseEnter={e => e.currentTarget.style.background = 'var(--srf-raised)'}
               onMouseLeave={e => e.currentTarget.style.background = 'var(--srf-base)'}
             >
-              📎 <span>Joindre un fichier</span>
+              📎 <span>{t('learn.chat.input.attach_file')}</span>
               <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
             </label>
 
@@ -505,14 +506,14 @@ export default function LearnChatPage() {
 
             {/* Quick action chips */}
             {[
-              { label: '💡 Expliquer',  prompt: "Peux-tu m'expliquer en détail le concept suivant : " },
-              { label: '📖 Réviser',    prompt: "Je souhaite faire une session de révision complète sur : " },
-              { label: '✏️ Corriger',   prompt: "Voici mon exercice, peux-tu le corriger étape par étape : " },
-              { label: '🧠 Quiz',       prompt: "Génère un quiz de 5 questions sur : " },
-              { label: '📄 Résoudre',   prompt: "Voici une épreuve complète, analyse-la et traite tous les exercices un par un : " },
-            ].map(({ label, prompt }) => (
+              { labelKey: 'learn.chat.input.explain',  prompt: "Peux-tu m'expliquer en détail le concept suivant : " },
+              { labelKey: 'learn.chat.input.revise',    prompt: "Je souhaite faire une session de révision complète sur : " },
+              { labelKey: 'learn.chat.input.correct',   prompt: "Voici mon exercice, peux-tu le corriger étape par étape : " },
+              { labelKey: 'learn.chat.input.quiz',       prompt: "Génère un quiz de 5 questions sur : " },
+              { labelKey: 'learn.chat.input.resolve',   prompt: "Voici une épreuve complète, analyse-la et traite tous les exercices un par un : " },
+            ].map(({ labelKey, prompt }) => (
               <button
-                key={label}
+                key={labelKey}
                 onClick={() => handleActionPrompt(prompt)}
                 style={{
                   display: 'inline-flex', alignItems: 'center',
@@ -526,7 +527,7 @@ export default function LearnChatPage() {
                 onMouseEnter={e => { e.currentTarget.style.background = 'var(--clr-brand-lt)'; e.currentTarget.style.color = 'var(--clr-brand)'; e.currentTarget.style.borderColor = 'var(--clr-brand)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--txt-secondary)'; e.currentTarget.style.borderColor = 'var(--brd-subtle)'; }}
               >
-                {label}
+                {t(labelKey)}
               </button>
             ))}
           </div>
@@ -536,7 +537,7 @@ export default function LearnChatPage() {
             <textarea
               id="chat-textarea"
               rows="2"
-              placeholder="Écrivez votre question ici..."
+              placeholder={t('learn.chat.input.placeholder')}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
@@ -573,7 +574,7 @@ export default function LearnChatPage() {
                 justifyContent: 'center',
                 boxShadow: 'none'
               }}
-              aria-label="Envoyer"
+              aria-label={t('learn.chat.input.send')}
             >
               {isLoading ? '...' : '→'}
             </button>

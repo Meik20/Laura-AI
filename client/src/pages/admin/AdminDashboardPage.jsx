@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from '../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminDashboardPage() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState([
-    { label: 'Élèves', value: '...', iconClass: 'backpack', color: 'var(--clr-brand)', badgeClass: 'brand' },
-    { label: 'Étudiants', value: '...', iconClass: 'school', color: 'var(--clr-brand)', badgeClass: 'brand' },
-    { label: 'Tuteurs (Total)', value: '...', iconClass: 'presentation', color: 'var(--clr-green)', badgeClass: 'green' },
-    { label: 'Contributeurs', value: '...', iconClass: 'award', color: 'var(--clr-warning)', badgeClass: 'warning' }
+    { labelKey: 'admin.dashboard.kpis.students', value: '...', iconClass: 'backpack', color: 'var(--clr-brand)', badgeClass: 'brand' },
+    { labelKey: 'admin.dashboard.kpis.college_students', value: '...', iconClass: 'school', color: 'var(--clr-brand)', badgeClass: 'brand' },
+    { labelKey: 'admin.dashboard.kpis.tutors', value: '...', iconClass: 'presentation', color: 'var(--clr-green)', badgeClass: 'green' },
+    { labelKey: 'admin.dashboard.kpis.contributors', value: '...', iconClass: 'award', color: 'var(--clr-warning)', badgeClass: 'warning' }
   ]);
   const [alerts, setAlerts] = useState([]);
   const [chatActivity, setChatActivity] = useState([
@@ -22,7 +24,15 @@ export default function AdminDashboardPage() {
   ]);
 
   const getDayLabels = () => {
-    const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+    const days = [
+      t('common.days.sun'),
+      t('common.days.mon'),
+      t('common.days.tue'),
+      t('common.days.wed'),
+      t('common.days.thu'),
+      t('common.days.fri'),
+      t('common.days.sat')
+    ];
     const labels = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
@@ -50,18 +60,18 @@ export default function AdminDashboardPage() {
         });
 
         setStats([
-          { label: 'Élèves', value: eleves.toString(), iconClass: 'backpack', color: 'var(--clr-brand)', badgeClass: 'brand' },
-          { label: 'Étudiants', value: etudiants.toString(), iconClass: 'school', color: 'var(--clr-brand)', badgeClass: 'brand' },
-          { label: 'Tuteurs (Total)', value: tuteurs.toString(), iconClass: 'presentation', color: 'var(--clr-green)', badgeClass: 'green' },
-          { label: 'Contributeurs', value: '0', iconClass: 'award', color: 'var(--clr-warning)', badgeClass: 'warning' }
+          { labelKey: 'admin.dashboard.kpis.students', value: eleves.toString(), iconClass: 'backpack', color: 'var(--clr-brand)', badgeClass: 'brand' },
+          { labelKey: 'admin.dashboard.kpis.college_students', value: etudiants.toString(), iconClass: 'school', color: 'var(--clr-brand)', badgeClass: 'brand' },
+          { labelKey: 'admin.dashboard.kpis.tutors', value: tuteurs.toString(), iconClass: 'presentation', color: 'var(--clr-green)', badgeClass: 'green' },
+          { labelKey: 'admin.dashboard.kpis.contributors', value: '0', iconClass: 'award', color: 'var(--clr-warning)', badgeClass: 'warning' }
         ]);
 
         const dynamicAlerts = [];
         if (pendingTutors > 0) {
-          dynamicAlerts.push({ type: 'warning', msg: `${pendingTutors} candidature(s) tuteur(s) en attente de révision.`, link: '/admin/tutor-applications' });
+          dynamicAlerts.push({ type: 'warning', msg: t('admin.dashboard.alerts.pending_tutors', { count: pendingTutors }), link: '/admin/tutor-applications' });
         }
         if (pendingContributors > 0) {
-          dynamicAlerts.push({ type: 'warning', msg: `${pendingContributors} demande(s) de droit Contributeur en attente.`, link: '/admin/users' });
+          dynamicAlerts.push({ type: 'warning', msg: t('admin.dashboard.alerts.pending_contributors', { count: pendingContributors }), link: '/admin/users' });
         }
         
         try {
@@ -69,7 +79,7 @@ export default function AdminDashboardPage() {
           let pendingRes = 0;
           resSnap.forEach(doc => { if (doc.data().statut === 'brouillon' || doc.data().statut === 'en_attente') pendingRes++; });
           if (pendingRes > 0) {
-            dynamicAlerts.push({ type: 'info', msg: `${pendingRes} nouvelle(s) soumission(s) de ressources à valider.`, link: '/admin/resources' });
+            dynamicAlerts.push({ type: 'info', msg: t('admin.dashboard.alerts.pending_resources', { count: pendingRes }), link: '/admin/resources' });
           }
         } catch (e) {
           console.error(e);
@@ -119,10 +129,10 @@ export default function AdminDashboardPage() {
       <div className="hero-panel" style={{ marginBottom: 'var(--sp-2)' }}>
         <div className="hero-panel__body stack stack--xs">
           <h1 style={{ color: 'var(--txt-inverse)', margin: 0, fontSize: 'var(--tx-2xl)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
-            Bonjour, Administrateur 👋
+            {t('admin.dashboard.hello')}
           </h1>
           <p style={{ margin: 0, opacity: 0.95, fontSize: 'var(--tx-base)', color: 'var(--txt-inverse)' }}>
-            Bienvenue sur votre console de supervision éducative. Suivez l'activité des élèves, étudiants et enseignants de LAURA en temps réel.
+            {t('admin.dashboard.welcome_msg')}
           </p>
         </div>
       </div>
@@ -156,11 +166,11 @@ export default function AdminDashboardPage() {
               }}>
                 <i className={`ti ti-${s.iconClass}`} style={{ fontSize: '1.4rem' }}></i>
               </div>
-              <span className={`badge badge--${s.badgeClass}`}>Actifs</span>
+              <span className={`badge badge--${s.badgeClass}`}>{t('admin.dashboard.kpis.active')}</span>
             </div>
             <div>
               <h3 style={{ fontSize: '2.4rem', fontWeight: 800, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)', letterSpacing: '-0.02em' }}>{s.value}</h3>
-              <span style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', fontWeight: 600 }}>{s.label}</span>
+              <span style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', fontWeight: 600 }}>{t(s.labelKey)}</span>
             </div>
             
             {/* Soft background glow line */}
@@ -183,7 +193,7 @@ export default function AdminDashboardPage() {
         <div className="card card__body" style={{ flex: 2, display: 'flex', flexDirection: 'column', background: 'var(--srf-base)' }}>
           <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 'var(--sp-6)', display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', color: 'var(--txt-primary)' }}>
             <i className="ti ti-chart-bar" style={{ color: 'var(--clr-brand)', fontSize: '1.4rem' }}></i>
-            Activité Chat (7 derniers jours)
+            {t('admin.dashboard.chat_activity')}
           </h2>
           <div style={{ 
             width: '100%', 
@@ -230,7 +240,7 @@ export default function AdminDashboardPage() {
         <div className="card card__body" style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--srf-base)' }}>
           <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 'var(--sp-6)', display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', color: 'var(--txt-primary)' }}>
             <i className="ti ti-bell-ringing" style={{ color: 'var(--clr-warning)', fontSize: '1.4rem' }}></i>
-            Centre d'action
+            {t('admin.dashboard.action_center.title')}
           </h2>
           <div className="stack stack--md" style={{ flex: 1, justifyContent: 'center' }}>
             {alerts.length === 0 ? (
@@ -238,8 +248,8 @@ export default function AdminDashboardPage() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '50%', background: 'var(--clr-success-lt)', color: 'var(--clr-success)', margin: '0 auto var(--sp-4) auto' }}>
                   <i className="ti ti-circle-check" style={{ fontSize: '2.2rem' }}></i>
                 </div>
-                <h4 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)' }}>Tout est en ordre</h4>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Aucune action requise pour le moment.</p>
+                <h4 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)' }}>{t('admin.dashboard.action_center.all_good')}</h4>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>{t('admin.dashboard.action_center.no_action')}</p>
               </div>
             ) : (
               <div className="stack stack--sm" style={{ width: '100%' }}>
@@ -250,7 +260,7 @@ export default function AdminDashboardPage() {
                       <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{a.msg}</span>
                     </div>
                     <Link to={a.link} className="btn btn--ghost btn--sm" style={{ paddingLeft: 0, height: 'auto', textDecoration: 'underline', color: 'var(--clr-brand)', fontWeight: 700 }}>
-                      Traiter l'action <i className="ti ti-arrow-right" style={{ fontSize: '1rem', marginLeft: '4px' }}></i>
+                      {t('admin.dashboard.action_center.process_action')} <i className="ti ti-arrow-right" style={{ fontSize: '1rem', marginLeft: '4px' }}></i>
                     </Link>
                   </div>
                 ))}
