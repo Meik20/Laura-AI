@@ -150,7 +150,8 @@ export default function AdminDashboardPage() {
               background: 'var(--srf-base)',
               boxShadow: 'var(--shd-sm)',
               position: 'relative',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              height: '100%'
             }}
           >
             <div className="row row--between" style={{ alignItems: 'center' }}>

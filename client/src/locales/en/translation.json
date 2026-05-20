@@ -540,6 +540,42 @@
         "pending_resources": "{{count}} resource(s) pending validation."
       }
     },
+    "users": {
+      "title": "Users",
+      "subtitle": "Global management of platform accounts.",
+      "filters": {
+        "all": "All",
+        "pupils": "Students",
+        "students": "College Students",
+        "tutors": "Tutors",
+        "suspended": "Suspended"
+      },
+      "table": {
+        "user": "User",
+        "role": "Role & Details",
+        "date": "Registration Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "loading": "Loading users...",
+      "empty": "No users found.",
+      "actions": {
+        "manage": "Manage"
+      },
+      "modal": {
+        "title": "User Management",
+        "name": "Name:",
+        "email": "Email:",
+        "current_role": "Current Role:",
+        "detail": "Details / Discipline:",
+        "status": "Status:",
+        "pending_contrib_alert": "This user has applied to become a Contributor Tutor to submit content to the community.",
+        "close": "Close",
+        "grant": "Grant Contributor Rights",
+        "success": "Contributor rights granted successfully!",
+        "error": "Error granting contributor rights."
+      }
+    },
     "nav": {
       "overview": "Overview",
       "users": "Users",

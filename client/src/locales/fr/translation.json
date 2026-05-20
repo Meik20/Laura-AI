@@ -540,6 +540,42 @@
         "pending_resources": "{{count}} ressource(s) en attente de validation."
       }
     },
+    "users": {
+      "title": "Utilisateurs",
+      "subtitle": "Gestion globale des comptes de la plateforme.",
+      "filters": {
+        "all": "Tous",
+        "pupils": "Élèves",
+        "students": "Étudiants",
+        "tutors": "Tuteurs",
+        "suspended": "Suspendus"
+      },
+      "table": {
+        "user": "Utilisateur",
+        "role": "Rôle & Détail",
+        "date": "Date d'inscription",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "loading": "Chargement des utilisateurs...",
+      "empty": "Aucun utilisateur trouvé.",
+      "actions": {
+        "manage": "Gérer"
+      },
+      "modal": {
+        "title": "Gestion de l'utilisateur",
+        "name": "Nom :",
+        "email": "Email :",
+        "current_role": "Rôle actuel :",
+        "detail": "Détail / Discipline :",
+        "status": "Statut :",
+        "pending_contrib_alert": "Cet utilisateur a demandé à devenir Tuteur Contributeur pour soumettre des contenus à la communauté.",
+        "close": "Fermer",
+        "grant": "Accorder droits Contributeur",
+        "success": "Droits de contributeur accordés avec succès !",
+        "error": "Erreur lors de l'attribution des droits."
+      }
+    },
     "nav": {
       "overview": "Vue Globale",
       "users": "Utilisateurs",

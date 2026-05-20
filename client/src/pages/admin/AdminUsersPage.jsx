@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { db } from '../../firebase';
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminUsersPage() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState('Tous');
+  const [filter, setFilter] = useState('all');
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
@@ -15,10 +17,12 @@ export default function AdminUsersPage() {
         const usersList = [];
         querySnapshot.forEach((docItem) => {
           const data = docItem.data();
+          const roleVal = data.roleLabel || (data.role === 'teacher' ? 'Tuteur' : 'Apprenant');
           usersList.push({
             id: docItem.id,
             nom: `${data.prenom || ''} ${data.nom || ''}`.trim() || 'Sans nom',
-            role: data.roleLabel || (data.role === 'teacher' ? 'Tuteur' : 'Apprenant'),
+            role: roleVal,
+            rawRole: roleVal.toLowerCase(),
             detail: data.discipline || data.niveau || data.filiere || 'N/A',
             statut: data.statut || (data.isTutorPending ? 'en attente' : 'actif'),
             date: data.createdAt ? new Date(data.createdAt).toLocaleDateString('fr-FR') : 'N/A',
@@ -44,13 +48,24 @@ export default function AdminUsersPage() {
         adminMessage: 'Félicitations, vos droits de Tuteur Contributeur ont été validés avec succès !'
       }, { merge: true });
       
-      setUsers(prev => prev.map(u => u.id === userId ? { ...u, statut: 'Contributeur', role: 'Tuteur Contributeur' } : u));
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, statut: 'Contributeur', role: 'Tuteur Contributeur', rawRole: 'tuteur contributeur' } : u));
       setSelectedUser(null);
-      alert("Droits de contributeur accordés avec succès !");
+      alert(t('admin.users.modal.success'));
     } catch (err) {
       console.error("Erreur lors de l'attribution des droits :", err);
-      alert("Erreur lors de l'attribution des droits.");
+      alert(t('admin.users.modal.error'));
     }
+  };
+
+  const getTranslatedRole = (roleStr) => {
+    if (!roleStr) return '';
+    const r = roleStr.toLowerCase();
+    if (r === 'élève' || r === 'eleve' || r === 'apprenant') return t('common.roles.learner');
+    if (r === 'tuteur') return t('common.roles.tutor');
+    if (r === 'admin') return t('common.roles.admin');
+    if (r === 'étudiant' || r === 'etudiant') return t('admin.users.filters.students');
+    if (r === 'tuteur contributeur') return `${t('common.roles.tutor')} Contributor`;
+    return roleStr;
   };
 
   return (
@@ -61,18 +76,18 @@ export default function AdminUsersPage() {
         <div className="modal-backdrop" onClick={() => setSelectedUser(null)}>
           <div className="modal-panel" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2 className="modal-title">Gestion de l'utilisateur</h2>
-              <button onClick={() => setSelectedUser(null)} className="modal-close" aria-label="Fermer">✕</button>
+              <h2 className="modal-title">{t('admin.users.modal.title')}</h2>
+              <button onClick={() => setSelectedUser(null)} className="modal-close" aria-label="Close">✕</button>
             </div>
             
             <div className="modal-panel__body stack stack--md">
               <div className="stack stack--sm" style={{ fontSize: 'var(--tx-sm)' }}>
-                <div><strong style={{ color: 'var(--txt-secondary)' }}>Nom :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedUser.nom}</span></div>
-                <div><strong style={{ color: 'var(--txt-secondary)' }}>Email :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedUser.email}</span></div>
-                <div><strong style={{ color: 'var(--txt-secondary)' }}>Rôle actuel :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedUser.role}</span></div>
-                <div><strong style={{ color: 'var(--txt-secondary)' }}>Détail / Discipline :</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedUser.detail}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>{t('admin.users.modal.name')}</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedUser.nom}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>{t('admin.users.modal.email')}</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedUser.email}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>{t('admin.users.modal.current_role')}</strong> <span style={{ color: 'var(--txt-primary)' }}>{getTranslatedRole(selectedUser.role)}</span></div>
+                <div><strong style={{ color: 'var(--txt-secondary)' }}>{t('admin.users.modal.detail')}</strong> <span style={{ color: 'var(--txt-primary)' }}>{selectedUser.detail}</span></div>
                 <div>
-                  <strong style={{ color: 'var(--txt-secondary)' }}>Statut :</strong>{' '}
+                  <strong style={{ color: 'var(--txt-secondary)' }}>{t('admin.users.modal.status')}</strong>{' '}
                   <span className={`badge ${selectedUser.statut === 'En attente de contribution' ? 'badge--warning' : 'badge--green'}`}>
                     {selectedUser.statut}
                   </span>
@@ -81,15 +96,15 @@ export default function AdminUsersPage() {
 
               {selectedUser.statut === 'En attente de contribution' && (
                 <div className="alert alert--warning">
-                  <span>Cet utilisateur a demandé à devenir <strong>Tuteur Contributeur</strong> pour soumettre des contenus à la communauté.</span>
+                  <span>{t('admin.users.modal.pending_contrib_alert')}</span>
                 </div>
               )}
 
               <div className="row" style={{ justifyContent: 'flex-end', marginTop: 'var(--sp-2)' }}>
-                <button onClick={() => setSelectedUser(null)} className="btn btn--secondary">Fermer</button>
+                <button onClick={() => setSelectedUser(null)} className="btn btn--secondary">{t('admin.users.modal.close')}</button>
                 {selectedUser.statut === 'En attente de contribution' && (
                   <button onClick={() => handleGrantContributor(selectedUser.id)} className="btn btn--primary" style={{ background: 'var(--clr-success)', color: 'white' }}>
-                    Accorder droits Contributeur
+                    {t('admin.users.modal.grant')}
                   </button>
                 )}
               </div>
@@ -100,27 +115,33 @@ export default function AdminUsersPage() {
 
       <div className="page-header">
         <div className="page-header__title">
-          <h1 className="laura-h1">Utilisateurs</h1>
+          <h1 className="laura-h1">{t('admin.users.title')}</h1>
           <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>
-            Gestion globale des comptes de la plateforme.
+            {t('admin.users.subtitle')}
           </p>
         </div>
       </div>
 
       <div className="chip-row">
-        {['Tous', 'Élèves', 'Étudiants', 'Tuteurs', 'Suspendus'].map((f, i) => (
+        {[
+          { key: 'all', label: t('admin.users.filters.all') },
+          { key: 'pupils', label: t('admin.users.filters.pupils') },
+          { key: 'students', label: t('admin.users.filters.students') },
+          { key: 'tutors', label: t('admin.users.filters.tutors') },
+          { key: 'suspended', label: t('admin.users.filters.suspended') }
+        ].map((f, i) => (
           <button 
             key={i} 
-            onClick={() => setFilter(f)}
+            onClick={() => setFilter(f.key)}
             className="chip"
             style={{ 
-              background: filter === f ? 'var(--clr-brand-lt)' : '', 
-              color: filter === f ? 'var(--clr-brand)' : '', 
-              borderColor: filter === f ? 'var(--clr-brand)' : '', 
-              fontWeight: filter === f ? 'var(--fw-bold)' : '' 
+              background: filter === f.key ? 'var(--clr-brand-lt)' : '', 
+              color: filter === f.key ? 'var(--clr-brand)' : '', 
+              borderColor: filter === f.key ? 'var(--clr-brand)' : '', 
+              fontWeight: filter === f.key ? 'var(--fw-bold)' : '' 
             }}
           >
-            {f}
+            {f.label}
           </button>
         ))}
       </div>
@@ -130,26 +151,26 @@ export default function AdminUsersPage() {
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--tx-sm)' }}>
             <thead>
               <tr style={{ background: 'var(--srf-raised)', borderBottom: '2px solid var(--brd-subtle)' }}>
-                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Utilisateur</th>
-                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rôle & Détail</th>
-                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Date d'inscription</th>
-                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Statut</th>
-                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'right' }}>Actions</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('admin.users.table.user')}</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('admin.users.table.role')}</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('admin.users.table.date')}</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('admin.users.table.status')}</th>
+                <th style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'right' }}>{t('admin.users.table.actions')}</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan="5" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Chargement des utilisateurs...</td></tr>
+                <tr><td colSpan="5" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>{t('admin.users.loading')}</td></tr>
               ) : users.length === 0 ? (
-                <tr><td colSpan="5" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Aucun utilisateur trouvé.</td></tr>
+                <tr><td colSpan="5" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>{t('admin.users.empty')}</td></tr>
               ) : (
                 users
                   .filter(u => {
-                    if (filter === 'Tous') return true;
-                    if (filter === 'Élèves') return u.role === 'Élève';
-                    if (filter === 'Étudiants') return u.role === 'Étudiant';
-                    if (filter === 'Tuteurs') return u.role.includes('Tuteur');
-                    if (filter === 'Suspendus') return u.statut === 'suspendu';
+                    if (filter === 'all') return true;
+                    if (filter === 'pupils') return u.rawRole === 'élève' || u.rawRole === 'eleve' || u.rawRole === 'apprenant';
+                    if (filter === 'students') return u.rawRole === 'étudiant' || u.rawRole === 'etudiant';
+                    if (filter === 'tutors') return u.rawRole.includes('tuteur') || u.rawRole.includes('teacher');
+                    if (filter === 'suspended') return u.statut === 'suspendu' || u.statut === 'suspended';
                     return true;
                   })
                   .map((usr, idx) => (
@@ -159,7 +180,7 @@ export default function AdminUsersPage() {
                       <span style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-xs)' }}>{usr.email}</span>
                     </td>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
-                      <span style={{ color: 'var(--txt-primary)', fontWeight: 'var(--fw-medium)' }}>{usr.role}</span>
+                      <span style={{ color: 'var(--txt-primary)', fontWeight: 'var(--fw-medium)' }}>{getTranslatedRole(usr.role)}</span>
                       <span style={{ color: 'var(--txt-tertiary)', display: 'block', fontSize: 'var(--tx-xs)' }}>{usr.detail}</span>
                     </td>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-secondary)' }}>{usr.date}</td>
@@ -169,7 +190,7 @@ export default function AdminUsersPage() {
                       </span>
                     </td>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)', textAlign: 'right' }}>
-                      <button onClick={() => setSelectedUser(usr)} className="btn btn--secondary btn--sm">Gérer</button>
+                      <button onClick={() => setSelectedUser(usr)} className="btn btn--secondary btn--sm">{t('admin.users.actions.manage')}</button>
                     </td>
                   </tr>
                 ))
