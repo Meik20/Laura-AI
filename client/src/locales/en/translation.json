@@ -300,6 +300,35 @@
         }
       }
     },
+    "resources": {
+      "title": "Pedagogical Resources",
+      "subtitle": "Learning documents selected by your tutors",
+      "add_btn": "Share a document",
+      "banner": {
+        "strong": "Tip:",
+        "text": "Filter by subject or type to quickly find what you need."
+      },
+      "filters": {
+        "search": "Search a resource...",
+        "all_subjects": "All subjects",
+        "all_types": "All types",
+        "all_exams": "All exams"
+      },
+      "results": {
+        "count": "{{count}} resource(s) available",
+        "loading": "Loading resources...",
+        "empty_title": "No resources found",
+        "empty_desc": "Try modifying your filters or performing a different search."
+      },
+      "card": {
+        "untitled": "Untitled",
+        "general": "General",
+        "open": "Open",
+        "laura": "Revise with LAURA",
+        "add_bookmark": "Add to bookmarks",
+        "remove_bookmark": "Remove from bookmarks"
+      }
+    },
     "history": {
       "title": "Learning History",
       "subtitle": "Find your previous conversations and revision sessions with LAURA.",

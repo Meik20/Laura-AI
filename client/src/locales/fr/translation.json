@@ -300,6 +300,35 @@
         }
       }
     },
+    "resources": {
+      "title": "Ressources Pédagogiques",
+      "subtitle": "Documents d'apprentissage sélectionnés par vos tuteurs",
+      "add_btn": "Partager un document",
+      "banner": {
+        "strong": "Conseil :",
+        "text": "Filtrez par matière ou type pour trouver rapidement ce dont vous avez besoin."
+      },
+      "filters": {
+        "search": "Rechercher une ressource...",
+        "all_subjects": "Toutes les matières",
+        "all_types": "Tous les types",
+        "all_exams": "Tous les examens"
+      },
+      "results": {
+        "count": "{{count}} ressource(s) disponible(s)",
+        "loading": "Chargement des ressources...",
+        "empty_title": "Aucune ressource trouvée",
+        "empty_desc": "Essayez de modifier vos filtres ou de faire une recherche différente."
+      },
+      "card": {
+        "untitled": "Sans titre",
+        "general": "Général",
+        "open": "Ouvrir",
+        "laura": "Réviser avec LAURA",
+        "add_bookmark": "Ajouter aux favoris",
+        "remove_bookmark": "Retirer des favoris"
+      }
+    },
     "history": {
       "title": "Historique d'apprentissage",
       "subtitle": "Retrouvez vos anciennes conversations et sessions de révision avec LAURA.",
