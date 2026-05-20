@@ -500,7 +500,46 @@
       }
     }
   },
+  "common": {
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "roles": {
+      "learner": "Learner",
+      "tutor": "Tutor",
+      "admin": "Admin"
+    }
+  },
   "admin": {
+    "dashboard": {
+      "hello": "Hello",
+      "welcome_msg": "Welcome to your administrator dashboard.",
+      "chat_activity": "Chat Activity",
+      "action_center": {
+        "title": "Action Center",
+        "all_good": "Everything is in order!",
+        "no_action": "No action required at the moment.",
+        "process_action": "Process"
+      },
+      "kpis": {
+        "active": "Active",
+        "students": "Students",
+        "college_students": "College Students",
+        "tutors": "Tutors",
+        "contributors": "Contributors"
+      },
+      "alerts": {
+        "pending_tutors": "{{count}} pending tutor application(s).",
+        "pending_contributors": "{{count}} pending contributor application(s).",
+        "pending_resources": "{{count}} resource(s) pending validation."
+      }
+    },
     "nav": {
       "overview": "Overview",
       "users": "Users",

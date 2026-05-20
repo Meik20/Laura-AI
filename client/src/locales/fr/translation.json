@@ -500,7 +500,46 @@
       }
     }
   },
+  "common": {
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam",
+      "sun": "Dim"
+    },
+    "roles": {
+      "learner": "Apprenant",
+      "tutor": "Tuteur",
+      "admin": "Administrateur"
+    }
+  },
   "admin": {
+    "dashboard": {
+      "hello": "Bonjour",
+      "welcome_msg": "Bienvenue sur votre tableau de bord administrateur.",
+      "chat_activity": "Activité du Chat",
+      "action_center": {
+        "title": "Centre d'actions",
+        "all_good": "Tout est en ordre !",
+        "no_action": "Aucune action requise pour le moment.",
+        "process_action": "Traiter"
+      },
+      "kpis": {
+        "active": "Actif",
+        "students": "Élèves",
+        "college_students": "Étudiants",
+        "tutors": "Tuteurs",
+        "contributors": "Contributeurs"
+      },
+      "alerts": {
+        "pending_tutors": "{{count}} demande(s) de tuteur en attente.",
+        "pending_contributors": "{{count}} inscription(s) contributeur en attente.",
+        "pending_resources": "{{count}} ressource(s) en attente de validation."
+      }
+    },
     "nav": {
       "overview": "Vue Globale",
       "users": "Utilisateurs",
