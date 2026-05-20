@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { collection, getDocs, addDoc, doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
-import { extractFileContent } from '../../utils/fileExtractor';
+import { uploadContribution } from '../../utils/storage';
 
 const TYPES = ['Épreuve', 'Annale', 'Fiche', 'Quiz', 'Livre', 'Correction'];
 
@@ -12,7 +12,7 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
     niveau: '', description: '', contenu: ''
   });
   const [file, setFile] = useState(null);
-  const [fileStatus, setFileStatus] = useState(null); // null | 'analyzing' | 'ready' | 'error'
+  const [fileStatus, setFileStatus] = useState(null); // null | 'ready' | 'error'
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [suggestions, setSuggestions] = useState({ niveaux: [], matieres: [] });
@@ -38,29 +38,15 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  const handleFile = async (e) => {
+  const handleFile = (e) => {
     const f = e.target.files[0];
     if (!f) return;
     setFile(f);
-    setFileStatus('analyzing');
-    try {
-      const API_BASE = import.meta.env.VITE_BACKEND_URL || '';
-      const result = await extractFileContent(f, API_BASE);
-      
-      if (result.status === 'ready' && result.text) {
-        setForm(prev => ({
-          ...prev,
-          contenu: result.text,
-          titre: prev.titre || f.name.replace(/\.[^.]+$/, '')
-        }));
-        setFileStatus('ready');
-      } else {
-        setFileStatus('error');
-      }
-    } catch (err) {
-      console.error("Erreur d'extraction :", err);
-      setFileStatus('error');
-    }
+    setFileStatus('ready');
+    setForm(prev => ({
+      ...prev,
+      titre: prev.titre || f.name.replace(/\.[^.]+$/, '')
+    }));
   };
 
   const handleSubmit = async (statut) => {
@@ -70,6 +56,12 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
     setIsSaving(true);
     setError('');
     try {
+      let fileUrl = '';
+      if (file) {
+        const uploadRes = await uploadContribution(file, uid);
+        fileUrl = uploadRes.url;
+      }
+
       const newRes = {
         titre: form.titre.trim(),
         type: form.type,
@@ -78,12 +70,17 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
         cible: form.niveau.trim(),
         description: form.description.trim(),
         contenu: form.contenu.trim(),
+        url: fileUrl,
         statut,
         auteurId: uid,
         auteur: userProfile?.prenom || userProfile?.nom || 'Tuteur',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        ...(file ? { fileName: file.name } : {})
+        ...(file ? {
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type
+        } : {})
       };
       await addDoc(collection(db, 'resources'), newRes);
 
@@ -133,11 +130,13 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
 
         {/* File upload zone */}
         <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--sp-2)', padding: 'var(--sp-5)', border: `2px dashed ${fileStatus === 'ready' ? 'var(--clr-green)' : fileStatus === 'error' ? 'var(--clr-error)' : 'var(--brd-input)'}`, borderRadius: 'var(--rd-lg)', background: fileStatus === 'ready' ? 'color-mix(in srgb, var(--clr-green) 6%, var(--srf-base))' : 'var(--srf-raised)', cursor: 'pointer', transition: 'all 0.2s' }}>
-          <span style={{ fontSize: '2rem' }}>{fileStatus === 'analyzing' ? '⏳' : fileStatus === 'ready' ? '✅' : fileStatus === 'error' ? '⚠️' : '📎'}</span>
+          <span style={{ fontSize: '2rem' }}>{fileStatus === 'ready' ? '✅' : '📎'}</span>
           <span style={{ fontSize: 'var(--tx-sm)', fontWeight: 600, color: 'var(--txt-primary)' }}>
-            {fileStatus === 'analyzing' ? 'Extraction en cours...' : fileStatus === 'ready' ? `Contenu extrait : ${file?.name}` : fileStatus === 'error' ? 'Extraction échouée — saisissez le contenu manuellement' : 'Joindre un fichier (PDF, image, texte)'}
+            {fileStatus === 'ready' ? `Fichier joint : ${file?.name}` : 'Joindre un document (PDF, image, texte)'}
           </span>
-          {!fileStatus && <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>Le contenu sera extrait automatiquement</span>}
+          <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>
+            Le document sera téléchargeable par les élèves après validation
+          </span>
           <input type="file" onChange={handleFile} style={{ display: 'none' }} accept=".pdf,.png,.jpg,.jpeg,.txt" />
         </label>
 
@@ -188,8 +187,8 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
             <input style={inputStyle} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Contexte, objectifs pédagogiques..." />
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={labelStyle}>Contenu de la ressource {fileStatus === 'ready' && <span style={{ color: 'var(--clr-green)', fontWeight: 400 }}>✓ extrait automatiquement</span>}</label>
-            <textarea style={{ ...inputStyle, minHeight: '120px', resize: 'vertical' }} value={form.contenu} onChange={e => set('contenu', e.target.value)} placeholder="Collez ou saisissez le contenu ici..." />
+            <label style={labelStyle}>Description ou contenu textuel (optionnel)</label>
+            <textarea style={{ ...inputStyle, minHeight: '120px', resize: 'vertical' }} value={form.contenu} onChange={e => set('contenu', e.target.value)} placeholder="Vous pouvez ajouter des notes pédagogiques, consignes ou texte additionnel ici..." />
           </div>
         </div>
 
