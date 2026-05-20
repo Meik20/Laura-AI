@@ -72,7 +72,7 @@ app.use(cors({
 }));
 
 // Explicit preflight handler — required for multipart/form-data (file uploads)
-app.options('*', cors({
+app.options(/.*/, cors({
   origin: (origin, callback) => {
     if (!origin || ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
     callback(new Error(`CORS preflight: origin ${origin} not allowed`));
