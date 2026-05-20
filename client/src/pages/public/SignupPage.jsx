@@ -121,24 +121,62 @@ export default function SignupPage() {
               <div className="form-grid">
                 <div className="form-group">
                   <label>{t('signup.class_label')}</label>
-                  <select name="classe" value={formData.classe} onChange={handleChange}>
-                    <option value="">{t('signup.class_placeholder')}</option><option value="6eme">6ème</option><option value="5eme">5ème</option><option value="4eme">4ème</option><option value="3eme">3ème</option><option value="2nde">2nde</option><option value="1ere">1ère</option><option value="Tle">Terminale</option>
-                  </select>
+                  <input 
+                    type="text" 
+                    name="classe" 
+                    value={formData.classe} 
+                    onChange={handleChange} 
+                    list="signup-classe-suggestions"
+                    placeholder={t('signup.class_placeholder')}
+                  />
+                  <datalist id="signup-classe-suggestions">
+                    <option value="6ème" />
+                    <option value="5ème" />
+                    <option value="4ème" />
+                    <option value="3ème" />
+                    <option value="2nde" />
+                    <option value="1ère" />
+                    <option value="Terminale" />
+                  </datalist>
                 </div>
-                {['2nde', '1ere', 'Tle'].includes(formData.classe) && (
-                  <div className="form-group">
-                    <label>{t('signup.stream_label')}</label>
-                    <select name="serie" value={formData.serie} onChange={handleChange}>
-                      <option value="">{t('signup.class_placeholder')}</option><option value="A1">A1</option><option value="A2">A2</option><option value="A3">A3</option><option value="A4">A4</option><option value="C">C</option><option value="D">D</option><option value="SES">SES / ES</option>
-                    </select>
-                  </div>
-                )}
+                <div className="form-group">
+                  <label>{t('signup.stream_label')}</label>
+                  <input 
+                    type="text" 
+                    name="serie" 
+                    value={formData.serie} 
+                    onChange={handleChange} 
+                    list="signup-serie-suggestions"
+                    placeholder={t('signup.class_placeholder')}
+                  />
+                  <datalist id="signup-serie-suggestions">
+                    <option value="A1" />
+                    <option value="A2" />
+                    <option value="A3" />
+                    <option value="A4" />
+                    <option value="C" />
+                    <option value="D" />
+                    <option value="SES / ES" />
+                  </datalist>
+                </div>
               </div>
               <div className="form-group">
                 <label>{t('signup.exam_label')}</label>
-                <select name="examenEleve" value={formData.examenEleve} onChange={handleChange}>
-                  <option value="">{t('signup.class_placeholder')}</option><option value="BEPC">BEPC</option><option value="Probatoire">Probatoire</option><option value="BAC">BAC</option><option value="GCE O-Level">GCE O-Level</option><option value="GCE A-Level">GCE A-Level</option>
-                </select>
+                <input 
+                  type="text" 
+                  name="examenEleve" 
+                  value={formData.examenEleve} 
+                  onChange={handleChange} 
+                  list="signup-examen-suggestions"
+                  placeholder={t('signup.class_placeholder')}
+                />
+                <datalist id="signup-examen-suggestions">
+                  <option value="BEPC" />
+                  <option value="Probatoire" />
+                  <option value="BAC" />
+                  <option value="GCE O-Level" />
+                  <option value="GCE A-Level" />
+                </datalist>
               </div>
               <div className="form-grid">
                 <div className="form-group">
@@ -162,9 +200,23 @@ export default function SignupPage() {
               <div className="form-grid">
                 <div className="form-group">
                   <label>{t('signup.level_label')}</label>
-                  <select name="niveauEtude" value={formData.niveauEtude} onChange={handleChange}>
-                    <option value="">{t('signup.class_placeholder')}</option><option value="BTS">BTS / HND</option><option value="L1">L1</option><option value="L2">L2</option><option value="L3">L3</option><option value="M1">M1</option><option value="M2">M2</option><option value="Doctorat">Doctorat</option>
-                  </select>
+                  <input 
+                    type="text" 
+                    name="niveauEtude" 
+                    value={formData.niveauEtude} 
+                    onChange={handleChange} 
+                    list="signup-niveau-suggestions"
+                    placeholder={t('signup.class_placeholder')}
+                  />
+                  <datalist id="signup-niveau-suggestions">
+                    <option value="BTS / HND" />
+                    <option value="L1" />
+                    <option value="L2" />
+                    <option value="L3" />
+                    <option value="M1" />
+                    <option value="M2" />
+                    <option value="Doctorat" />
+                  </datalist>
                 </div>
                 <div className="form-group">
                   <label>{t('signup.major_label')}</label>

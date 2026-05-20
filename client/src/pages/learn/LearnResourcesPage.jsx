@@ -162,21 +162,41 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
               <div className="form-grid">
                 <div className="form-group">
                   <label>{t('contribution_modal.form.type_label')}</label>
-                  <select name="type" value={form.type} onChange={handleChange}>
+                  <input 
+                    type="text" 
+                    name="type" 
+                    value={form.type} 
+                    onChange={handleChange} 
+                    list="learn-type-suggestions"
+                    placeholder="Ex: Épreuve, Fiche, Quiz..."
+                  />
+                  <datalist id="learn-type-suggestions">
                     <option value="Fiche">{t('contribution_modal.form.type_options.fiche')}</option>
                     <option value="Annale">{t('contribution_modal.form.type_options.annale')}</option>
                     <option value="Épreuve">{t('contribution_modal.form.type_options.epreuve')}</option>
                     <option value="Quiz">{t('contribution_modal.form.type_options.quiz')}</option>
                     <option value="Livre">{t('contribution_modal.form.type_options.livre')}</option>
-                  </select>
+                  </datalist>
+                  <span style={{ fontSize: '10px', color: 'var(--txt-tertiary)', marginTop: '2px', display: 'block' }}>
+                    Choisissez ou saisissez librement un type
+                  </span>
                 </div>
                 <div className="form-group">
                   <label>{t('contribution_modal.form.subject_label')}</label>
-                  <select name="matiere" value={form.matiere} onChange={handleChange}>
-                    <option value="">{t('contribution_modal.form.subject_placeholder')}</option>
-                    {matieresList.map(m => <option key={m.id} value={m.nom}>{m.nom}</option>)}
-                    <option value="Autre">{t('contribution_modal.form.subject_other')}</option>
-                  </select>
+                  <input 
+                    type="text" 
+                    name="matiere" 
+                    value={form.matiere} 
+                    onChange={handleChange} 
+                    list="learn-matiere-suggestions"
+                    placeholder={t('contribution_modal.form.subject_placeholder')}
+                  />
+                  <datalist id="learn-matiere-suggestions">
+                    {matieresList.map(m => <option key={m.id} value={m.nom} />)}
+                  </datalist>
+                  <span style={{ fontSize: '10px', color: 'var(--txt-tertiary)', marginTop: '2px', display: 'block' }}>
+                    Choisissez ou saisissez librement une matière
+                  </span>
                 </div>
               </div>
 
@@ -184,15 +204,25 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
               <div className="form-grid">
                 <div className="form-group">
                   <label>{t('contribution_modal.form.exam_label')}</label>
-                  <select name="examen" value={form.examen} onChange={handleChange}>
-                    <option value="">{t('contribution_modal.form.subject_placeholder')}</option>
+                  <input 
+                    type="text" 
+                    name="examen" 
+                    value={form.examen} 
+                    onChange={handleChange} 
+                    list="learn-exam-suggestions"
+                    placeholder={t('contribution_modal.form.subject_placeholder')}
+                  />
+                  <datalist id="learn-exam-suggestions">
                     <option value="BEPC">BEPC</option>
                     <option value="Probatoire">Probatoire</option>
                     <option value="BAC">BAC</option>
                     <option value="BTS">BTS</option>
                     <option value="Licence">Licence</option>
                     <option value="Tous">{t('contribution_modal.form.exam_options.all')}</option>
-                  </select>
+                  </datalist>
+                  <span style={{ fontSize: '10px', color: 'var(--txt-tertiary)', marginTop: '2px', display: 'block' }}>
+                    Choisissez ou saisissez librement un examen
+                  </span>
                 </div>
                 <div className="form-group">
                   <label>{t('contribution_modal.form.level_label')}</label>
