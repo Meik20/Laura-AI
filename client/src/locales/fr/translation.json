@@ -163,6 +163,62 @@
       "edit_profile": "✏️ Modifier mon profil",
       "logout": "⏻ Déconnexion"
     },
+    "chat": {
+      "prompts": {
+        "frequent_subjects": "Propose-moi les sujets les plus fréquemment abordés à l'examen du {{exam}}.",
+        "sample_exams": "Donne-moi des exemples de corrigés types pour l'examen du {{exam}}.",
+        "exam_simulation": "Lance une simulation d'examen chronométrée pour le {{exam}}.",
+        "prep_plan": "Propose-moi un plan de préparation sur mesure pour l'examen du {{exam}}.",
+        "revision_program": "Crée-moi un programme de révision complet et personnalisé pour le niveau {{level}} préparant l'examen {{exam}}.",
+        "revise_resource": "Aide-moi à réviser la ressource intitulée : {{title}}."
+      },
+      "file": {
+        "attachment_label": "Fichier joint : {{name}}",
+        "extracted_header": "CONTENU DU FICHIER EXTRAIT",
+        "extracted_footer": "FIN DU CONTENU DU FICHIER",
+        "extracting": "Analyse du document en cours...",
+        "extracted": "Document extrait ({{count}} pages)",
+        "no_text": "Aucun texte extractible dans ce fichier.",
+        "error": "Erreur lors de l'extraction du document.",
+        "ready": "Document prêt à l'envoi",
+        "remove": "Supprimer le document"
+      },
+      "errors": {
+        "no_response": "Aucune réponse générée par l'IA.",
+        "server_unreachable": "Impossible de contacter LAURA. Veuillez vérifier votre connexion."
+      },
+      "alerts": {
+        "login_required": "Veuillez vous connecter pour sauvegarder ou interagir.",
+        "saved": "Historique sauvegardé avec succès !",
+        "save_error": "Erreur lors de la sauvegarde de l'historique."
+      },
+      "header": {
+        "prep_exam": "Préparation {{exam}}",
+        "subtitle": "Votre tuteur personnel d'IA",
+        "clear_history": "Effacer"
+      },
+      "loading_session": "Chargement de la session...",
+      "welcome": {
+        "title": "Discuter avec LAURA",
+        "desc": "Posez vos questions, demandez des explications de cours, des quiz ou des exercices corrigés. Je suis là pour vous aider !"
+      },
+      "actions": {
+        "continue": "Continuer",
+        "simplify": "Simplifier",
+        "deepen": "Approfondir",
+        "save": "Sauvegarder"
+      },
+      "doc_actions": {
+        "quiz": "Générer un Quiz",
+        "summarize": "Résumer",
+        "correct": "Corriger"
+      },
+      "input": {
+        "attach_file": "Joindre un document (PDF/Image)",
+        "placeholder": "Écrivez votre message ici...",
+        "send": "Envoyer"
+      }
+    },
     "dashboard": {
       "quick_actions": {
         "chat": "Parler à LAURA",
