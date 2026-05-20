@@ -15,6 +15,17 @@
     "error_empty": "Veuillez remplir tous les champs.",
     "error_invalid": "Identifiants invalides. Veuillez réessayer."
   },
+  "contribution_modal": {
+    "form": {
+      "type_options": {
+        "fiche": "Fiche",
+        "annale": "Annale",
+        "epreuve": "Épreuve",
+        "quiz": "Quiz",
+        "livre": "Livre"
+      }
+    }
+  },
   "nav": {
     "how_it_works": "Comment ça marche",
     "become_tutor": "Devenez tuteur",
