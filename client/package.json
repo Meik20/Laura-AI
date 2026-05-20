@@ -25,6 +25,7 @@
     "pdfjs-dist": "^5.7.284",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-hot-toast": "^2.6.0",
     "react-i18next": "^17.0.8",
     "react-router-dom": "^7.15.1"
   }

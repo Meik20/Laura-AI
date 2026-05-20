@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { db } from '../../firebase';
-import { collection, query, orderBy, onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, updateDoc, getDoc, deleteDoc, getDocs, where, writeBatch } from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 export default function AdminCommunityPage() {
   const { t } = useTranslation();
@@ -32,6 +33,35 @@ export default function AdminCommunityPage() {
     return () => unsub();
   }, []);
 
+  // Admin actions to delete or suspend a forum
+  const handleDeleteForum = async (forumId) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce forum ? Cette action est irréversible.')) return;
+    try {
+      // Delete forum document
+      await deleteDoc(doc(db, 'forums', forumId));
+      // Delete related memberships
+      const membershipsSnap = await getDocs(query(collection(db, 'forum_memberships'), where('forumId', '==', forumId)));
+      const batch = writeBatch(db);
+      membershipsSnap.forEach((docSnap) => batch.delete(doc(db, 'forum_memberships', docSnap.id)));
+      await batch.commit();
+      toast.success('Forum supprimé avec succès');
+    } catch (e) {
+      console.error('Erreur suppression forum:', e);
+      toast.error('Erreur lors de la suppression du forum');
+    }
+  };
+
+  const handleSuspendForum = async (forumId) => {
+    if (!window.confirm('Suspendre ce forum ? Les membres ne pourront plus y accéder.')) return;
+    try {
+      await updateDoc(doc(db, 'forums', forumId), { statut: 'suspendu' });
+      toast.success('Forum suspendu');
+    } catch (e) {
+      console.error('Erreur suspension forum:', e);
+      toast.error('Erreur lors de la suspension du forum');
+    }
+  };
+
   const handleAction = async (reqId, newStatus) => {
     try {
       await updateDoc(doc(db, 'forum_memberships', reqId), { statut: newStatus });
@@ -41,7 +71,6 @@ export default function AdminCommunityPage() {
       alert(t('admin.community.error_update'));
     }
   };
-
   return (
     <div className="stack stack--lg">
       <div className="page-header">
