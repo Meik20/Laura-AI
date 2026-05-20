@@ -117,12 +117,21 @@
     "error_signup_failed": "Une erreur est survenue lors de l'inscription."
   },
   "common": {
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam",
+      "sun": "Dim"
+    },
     "roles": {
       "student_seco": "Élève",
       "student_univ": "Étudiant",
       "learner": "Apprenant",
       "tutor": "Tuteur",
-      "admin": "Admin"
+      "admin": "Administrateur"
     },
     "actions": {
       "toggle_sidebar": "Réduire/Développer la barre latérale",
@@ -527,22 +536,6 @@
         "published_title": "Ressources publiées",
         "published_desc": "Contenus validés et visibles par tous les apprenants"
       }
-    }
-  },
-  "common": {
-    "days": {
-      "mon": "Lun",
-      "tue": "Mar",
-      "wed": "Mer",
-      "thu": "Jeu",
-      "fri": "Ven",
-      "sat": "Sam",
-      "sun": "Dim"
-    },
-    "roles": {
-      "learner": "Apprenant",
-      "tutor": "Tuteur",
-      "admin": "Administrateur"
     }
   },
   "admin": {

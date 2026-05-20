@@ -117,6 +117,15 @@
     "error_signup_failed": "An error occurred during registration."
   },
   "common": {
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
     "roles": {
       "student_seco": "Student",
       "student_univ": "College Student",
@@ -527,22 +536,6 @@
         "published_title": "Published resources",
         "published_desc": "Validated content visible to all learners"
       }
-    }
-  },
-  "common": {
-    "days": {
-      "mon": "Mon",
-      "tue": "Tue",
-      "wed": "Wed",
-      "thu": "Thu",
-      "fri": "Fri",
-      "sat": "Sat",
-      "sun": "Sun"
-    },
-    "roles": {
-      "learner": "Learner",
-      "tutor": "Tutor",
-      "admin": "Admin"
     }
   },
   "admin": {

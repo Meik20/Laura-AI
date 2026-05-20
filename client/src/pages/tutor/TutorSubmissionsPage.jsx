@@ -148,9 +148,19 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
           </div>
           <div>
             <label style={labelStyle}>Type</label>
-            <select style={inputStyle} value={form.type} onChange={e => set('type', e.target.value)}>
-              {TYPES.map(t => <option key={t}>{t}</option>)}
-            </select>
+            <input 
+              style={inputStyle} 
+              value={form.type} 
+              list="submissions-type-suggestions"
+              onChange={e => set('type', e.target.value)} 
+              placeholder="Ex: Épreuve, Fiche, Quiz..." 
+            />
+            <datalist id="submissions-type-suggestions">
+              {TYPES.map(t => <option key={t} value={t} />)}
+            </datalist>
+            <span style={{ fontSize: '10px', color: 'var(--txt-tertiary)', marginTop: '2px', display: 'block' }}>
+              Choisissez ou saisissez librement un type
+            </span>
           </div>
           <div>
             <label style={labelStyle}>Matière *</label>
@@ -166,6 +176,9 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
                 <option key={i} value={m} />
               ))}
             </datalist>
+            <span style={{ fontSize: '10px', color: 'var(--txt-tertiary)', marginTop: '2px', display: 'block' }}>
+              Choisissez ou saisissez librement une matière
+            </span>
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
             <label style={labelStyle}>Niveau cible *</label>
@@ -181,6 +194,9 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
                 <option key={i} value={n} />
               ))}
             </datalist>
+            <span style={{ fontSize: '10px', color: 'var(--txt-tertiary)', marginTop: '2px', display: 'block' }}>
+              Choisissez ou saisissez librement un niveau
+            </span>
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
             <label style={labelStyle}>Description courte</label>
