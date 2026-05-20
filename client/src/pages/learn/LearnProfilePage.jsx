@@ -199,11 +199,20 @@ export default function LearnProfilePage() {
           <div className="form-grid">
             <div>
               <label>{t('learn.profile.form.status', 'Statut / Profil')}</label>
-              <select name="roleLabel" value={formData.roleLabel} onChange={handleChange} style={{ width: '100%' }}>
+              <input
+                type="text"
+                name="roleLabel"
+                value={formData.roleLabel}
+                onChange={handleChange}
+                list="profile-role-suggestions"
+                placeholder={t('learn.profile.form.status_eleve', 'Eleve (Lycee / College)')}
+                style={{ width: '100%' }}
+              />
+              <datalist id="profile-role-suggestions">
                 <option value="Eleve">{t('learn.profile.form.status_eleve', 'Eleve (Lycee / College)')}</option>
                 <option value="Etudiant">{t('learn.profile.form.status_etudiant', 'Etudiant (Superieur)')}</option>
                 <option value="Autre">{t('learn.profile.form.status_autre', 'Autre')}</option>
-              </select>
+              </datalist>
             </div>
             <div>
               <label>{t('learn.profile.form.level', 'Classe / Niveau *')}</label>

@@ -48,18 +48,39 @@ export default function LearningGoalModal({ isOpen, onClose, onSave }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
               <label style={labelStyle}>Matière *</label>
-              <select name="matiere" required value={formData.matiere} onChange={handleChange} style={inputStyle}>
-                <option value="">Sélectionner</option>
+              <input
+                type="text"
+                name="matiere"
+                required
+                value={formData.matiere}
+                onChange={handleChange}
+                list="goal-matiere-suggestions"
+                placeholder="Sélectionner ou saisir une matière"
+                style={inputStyle}
+              />
+              <datalist id="goal-matiere-suggestions">
                 {matieresList.map(m => (
-                  <option key={m.id} value={m.nom}>{m.nom}</option>
+                  <option key={m.id} value={m.nom} />
                 ))}
-              </select>
+              </datalist>
             </div>
             <div>
               <label style={labelStyle}>Type</label>
-              <select name="type" value={formData.type} onChange={handleChange} style={inputStyle}>
-                <option value="Revision">Révision</option><option value="Quiz">Quiz</option><option value="Exercices">Exercices</option><option value="Examen">Examen blanc</option>
-              </select>
+              <input
+                type="text"
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                list="goal-type-suggestions"
+                placeholder="Révision"
+                style={inputStyle}
+              />
+              <datalist id="goal-type-suggestions">
+                <option value="Revision">Révision</option>
+                <option value="Quiz">Quiz</option>
+                <option value="Exercices">Exercices</option>
+                <option value="Examen">Examen blanc</option>
+              </datalist>
             </div>
           </div>
 
@@ -70,9 +91,20 @@ export default function LearningGoalModal({ isOpen, onClose, onSave }) {
 
           <div>
             <label style={labelStyle}>Cible (Optionnel)</label>
-            <select name="cible" value={formData.cible} onChange={handleChange} style={inputStyle}>
-              <option value="Chapitres">Nombre de chapitres</option><option value="Exercices">Nombre d'exercices</option><option value="Quiz">Nombre de quiz</option>
-            </select>
+            <input
+              type="text"
+              name="cible"
+              value={formData.cible}
+              onChange={handleChange}
+              list="goal-cible-suggestions"
+              placeholder="Nombre de chapitres"
+              style={inputStyle}
+            />
+            <datalist id="goal-cible-suggestions">
+              <option value="Chapitres">Nombre de chapitres</option>
+              <option value="Exercices">Nombre d'exercices</option>
+              <option value="Quiz">Nombre de quiz</option>
+            </datalist>
           </div>
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>

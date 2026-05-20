@@ -143,10 +143,19 @@ export default function AdminAccessRulesPage() {
 
               <div className="form-group">
                 <label className="form-label" style={{ display: 'block', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)' }}>Statut</label>
-                <select value={formData.statut} onChange={e => setFormData({...formData, statut: e.target.value})} className="form-select" style={{ width: '100%', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-md)', color: 'var(--txt-primary)' }}>
+                <input
+                  type="text"
+                  value={formData.statut}
+                  onChange={e => setFormData({...formData, statut: e.target.value})}
+                  list="access-rule-status-suggestions"
+                  placeholder="actif"
+                  className="form-input"
+                  style={{ width: '100%', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-md)', color: 'var(--txt-primary)' }}
+                />
+                <datalist id="access-rule-status-suggestions">
                   <option value="actif">Actif</option>
                   <option value="inactif">Inactif</option>
-                </select>
+                </datalist>
               </div>
 
               <div className="row" style={{ justifyContent: 'flex-end', gap: 'var(--sp-4)', marginTop: 'var(--sp-4)' }}>

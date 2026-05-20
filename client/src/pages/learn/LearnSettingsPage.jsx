@@ -98,21 +98,39 @@ export default function LearnSettingsPage() {
 
           <div style={{ padding: '0.875rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
             <label>{t('learn.settings.theme.title', "Thème de l'interface")}</label>
-            <select name="theme" value={settings.theme} onChange={handleChange} style={{ width: '100%' }}>
+            <input
+              type="text"
+              name="theme"
+              value={settings.theme}
+              onChange={handleChange}
+              list="learn-theme-suggestions"
+              placeholder={t('learn.settings.theme.light', 'Thème Clair (Par défaut)')}
+              style={{ width: '100%' }}
+            />
+            <datalist id="learn-theme-suggestions">
               <option value="clair">{t('learn.settings.theme.light', 'Thème Clair (Par défaut)')}</option>
               <option value="sombre">{t('learn.settings.theme.dark', 'Thème Sombre')}</option>
-            </select>
+            </datalist>
           </div>
 
           <div className="divider" />
 
           <div style={{ padding: '0.875rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
             <label>{t('learn.settings.pace.title', 'Rythme de travail souhaité')}</label>
-            <select name="rythme" value={settings.rythme} onChange={handleChange} style={{ width: '100%' }}>
+            <input
+              type="text"
+              name="rythme"
+              value={settings.rythme}
+              onChange={handleChange}
+              list="learn-rythme-suggestions"
+              placeholder={t('learn.settings.pace.regular', 'Régulier (1h par jour - Recommandé)')}
+              style={{ width: '100%' }}
+            />
+            <datalist id="learn-rythme-suggestions">
               <option value="modere">{t('learn.settings.pace.moderate', 'Modéré (15-30 min par jour)')}</option>
               <option value="regulier">{t('learn.settings.pace.regular', 'Régulier (1h par jour - Recommandé)')}</option>
               <option value="intensif">{t('learn.settings.pace.intensive', 'Intensif (2h+ par jour - Préparation examen)')}</option>
-            </select>
+            </datalist>
           </div>
 
           <div className="divider" />

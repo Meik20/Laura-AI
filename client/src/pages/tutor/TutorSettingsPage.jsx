@@ -73,19 +73,35 @@ export default function TutorSettingsPage() {
 
           <div style={{ borderBottom: '1px solid var(--brd-subtle)', paddingBottom: 'var(--sp-4)' }}>
             <label style={{ display: 'block', marginBottom: 'var(--sp-2)' }}>Thème de l'interface</label>
-            <select name="theme" value={settings.theme} onChange={handleChange}>
+            <input
+              type="text"
+              name="theme"
+              value={settings.theme}
+              onChange={handleChange}
+              list="tutor-theme-suggestions"
+              placeholder="Thème Clair (Par défaut)"
+            />
+            <datalist id="tutor-theme-suggestions">
               <option value="clair">Thème Clair (Par défaut)</option>
               <option value="sombre">Thème Sombre</option>
-            </select>
+            </datalist>
           </div>
 
           <div>
             <label style={{ display: 'block', marginBottom: 'var(--sp-2)' }}>Rythme de soumission souhaité</label>
-            <select name="rythmeSoumission" value={settings.rythmeSoumission} onChange={handleChange}>
+            <input
+              type="text"
+              name="rythmeSoumission"
+              value={settings.rythmeSoumission}
+              onChange={handleChange}
+              list="tutor-rythme-suggestions"
+              placeholder="Hebdomadaire (1 ressource par semaine)"
+            />
+            <datalist id="tutor-rythme-suggestions">
               <option value="occasionnel">Occasionnel (1-2 ressources par mois)</option>
               <option value="hebdomadaire">Hebdomadaire (1 ressource par semaine)</option>
               <option value="intensif">Intensif (Plusieurs ressources par semaine)</option>
-            </select>
+            </datalist>
           </div>
 
           <button type="submit" disabled={isSaving} className="laura-btn laura-btn-primary" style={{ width: '100%', justifyContent: 'center', minHeight: '44px', marginTop: 'var(--sp-4)', fontSize: 'var(--tx-base)' }}>

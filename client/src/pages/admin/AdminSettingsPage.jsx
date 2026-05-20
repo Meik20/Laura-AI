@@ -280,47 +280,62 @@ export default function AdminSettingsPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                        <div>
                         <label style={labelStyle}>Modèle principal (Chat Apprenant & Explications complexes)</label>
-                        <select name="mainModel" value={settings.mainModel} onChange={handleChange} style={inputStyle}>
-                          <optgroup label="Google Gemini">
-                            <option value="gemini-1.5-pro">Google Gemini 1.5 Pro (Recommandé pour le raisonnement)</option>
-                            <option value="gemini-1.5-flash">Google Gemini 1.5 Flash (Rapide)</option>
-                          </optgroup>
-                          <optgroup label="Anthropic Claude">
-                            <option value="claude-3-5-sonnet">Anthropic Claude 3.5 Sonnet (Excellent en littérature/synthèse)</option>
-                            <option value="claude-3-opus">Anthropic Claude 3 Opus</option>
-                          </optgroup>
-                          <optgroup label="Groq (LPU) & Autres">
-                            <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
-                            <option value="groq-mixtral">Groq - Mixtral 8x7B</option>
-                            <option value="mistral-large">Mistral Large 2</option>
-                          </optgroup>
-                        </select>
+                        <input
+                          type="text"
+                          name="mainModel"
+                          value={settings.mainModel}
+                          onChange={handleChange}
+                          list="admin-main-model-suggestions"
+                          placeholder="gemini-1.5-pro"
+                          style={inputStyle}
+                        />
+                        <datalist id="admin-main-model-suggestions">
+                          <option value="gemini-1.5-pro">Google Gemini 1.5 Pro (Recommandé pour le raisonnement)</option>
+                          <option value="gemini-1.5-flash">Google Gemini 1.5 Flash (Rapide)</option>
+                          <option value="claude-3-5-sonnet">Anthropic Claude 3.5 Sonnet (Excellent en littérature/synthèse)</option>
+                          <option value="claude-3-opus">Anthropic Claude 3 Opus</option>
+                          <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
+                          <option value="groq-mixtral">Groq - Mixtral 8x7B</option>
+                          <option value="mistral-large">Mistral Large 2</option>
+                        </datalist>
                       </div>
 
                       <div>
                         <label style={labelStyle}>Modèle secondaire (Correction de copies & Évaluation tuteur)</label>
-                        <select name="secondaryModel" value={settings.secondaryModel} onChange={handleChange} style={inputStyle}>
-                          <optgroup label="Anthropic Claude">
-                            <option value="claude-3-5-sonnet">Anthropic Claude 3.5 Sonnet</option>
-                          </optgroup>
-                          <optgroup label="Google Gemini">
-                            <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
-                            <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
-                          </optgroup>
-                          <optgroup label="Groq (LPU) & Autres">
-                            <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
-                            <option value="mistral-large">Mistral Large 2</option>
-                          </optgroup>
-                        </select>
+                        <input
+                           type="text"
+                           name="secondaryModel"
+                           value={settings.secondaryModel}
+                           onChange={handleChange}
+                           list="admin-secondary-model-suggestions"
+                           placeholder="claude-3-5-sonnet"
+                           style={inputStyle}
+                         />
+                         <datalist id="admin-secondary-model-suggestions">
+                           <option value="claude-3-5-sonnet">Anthropic Claude 3.5 Sonnet</option>
+                           <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
+                           <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
+                           <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
+                           <option value="mistral-large">Mistral Large 2</option>
+                         </datalist>
                       </div>
 
                       <div>
                         <label style={labelStyle}>Modèle de secours (Fallback en cas de panne d'API)</label>
-                        <select name="fallbackModel" value={settings.fallbackModel} onChange={handleChange} style={inputStyle}>
-                          <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
-                          <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
-                          <option value="ollama-local">Ollama Local (Mistral 7B - Auto-hébergé)</option>
-                        </select>
+                         <input
+                           type="text"
+                           name="fallbackModel"
+                           value={settings.fallbackModel}
+                           onChange={handleChange}
+                           list="admin-fallback-model-suggestions"
+                           placeholder="groq-llama-3"
+                           style={inputStyle}
+                         />
+                         <datalist id="admin-fallback-model-suggestions">
+                           <option value="groq-llama-3">Groq - Meta Llama 3.3 70B</option>
+                           <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
+                           <option value="ollama-local">Ollama Local (Mistral 7B - Auto-hébergé)</option>
+                         </datalist>
                       </div>
                     </div>
                   </div>
@@ -398,11 +413,20 @@ export default function AdminSettingsPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div>
                       <label style={labelStyle}>Base de données Vectorielle (RAG / Recherche sémantique)</label>
-                      <select name="vectorDb" value={settings.vectorDb} onChange={handleChange} style={inputStyle}>
+                      <input
+                        type="text"
+                        name="vectorDb"
+                        value={settings.vectorDb}
+                        onChange={handleChange}
+                        list="admin-vectordb-suggestions"
+                        placeholder="pinecone"
+                        style={inputStyle}
+                      />
+                      <datalist id="admin-vectordb-suggestions">
                         <option value="pinecone">Pinecone Vector Database (Actif)</option>
                         <option value="milvus">Milvus / Zilliz</option>
                         <option value="qdrant">Qdrant Cloud</option>
-                      </select>
+                      </datalist>
                     </div>
 
                     <div>

@@ -181,10 +181,18 @@ export default function SignupPage() {
               <div className="form-grid">
                 <div className="form-group">
                   <label>{t('signup.lang_label')}</label>
-                  <select name="langueEleve" value={formData.langueEleve} onChange={handleChange}>
-                    <option value="Français">{t('signup.lang_fr')}</option>
-                    <option value="Anglais">{t('signup.lang_en')}</option>
-                  </select>
+                  <input
+                    type="text"
+                    name="langueEleve"
+                    value={formData.langueEleve}
+                    onChange={handleChange}
+                    list="signup-langue-eleve-suggestions"
+                    placeholder={t('signup.lang_fr')}
+                  />
+                  <datalist id="signup-langue-eleve-suggestions">
+                    <option value="Français" />
+                    <option value="Anglais" />
+                  </datalist>
                 </div>
                 <div className="form-group">
                   <label>{t('signup.school_label')}</label>
@@ -234,10 +242,18 @@ export default function SignupPage() {
                 </div>
                 <div className="form-group">
                   <label>{t('signup.lang_label')}</label>
-                  <select name="langueEtudiant" value={formData.langueEtudiant} onChange={handleChange}>
-                    <option value="Français">{t('signup.lang_fr')}</option>
-                    <option value="Anglais">{t('signup.lang_en')}</option>
-                  </select>
+                  <input
+                    type="text"
+                    name="langueEtudiant"
+                    value={formData.langueEtudiant}
+                    onChange={handleChange}
+                    list="signup-langue-etudiant-suggestions"
+                    placeholder={t('signup.lang_fr')}
+                  />
+                  <datalist id="signup-langue-etudiant-suggestions">
+                    <option value="Français" />
+                    <option value="Anglais" />
+                  </datalist>
                 </div>
               </div>
             </div>

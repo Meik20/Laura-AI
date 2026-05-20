@@ -114,14 +114,21 @@ export default function LearnRevisionPage() {
             <div className="form-grid">
               <div>
                 <label>{t('learn.revision.new_session.subject', 'Matière (Programme Officiel) *')}</label>
-                <select name="matiere" required value={sessionConfig.matiere} onChange={handleChange} style={{ width: '100%' }}>
-                  <option value="">{t('learn.revision.new_session.subject_placeholder', 'Sélectionner')}</option>
+                <input
+                  type="text"
+                  name="matiere"
+                  required
+                  value={sessionConfig.matiere}
+                  onChange={handleChange}
+                  list="revision-matiere-suggestions"
+                  placeholder={t('learn.revision.new_session.subject_placeholder', 'Sélectionner ou saisir une matière')}
+                  style={{ width: '100%' }}
+                />
+                <datalist id="revision-matiere-suggestions">
                   {matieresList.map(m => (
-                    <option key={m.id} value={m.nom}>
-                      {m.nom} ({m.niveau || 'Lycée'} - Série {m.serie || 'Toutes'})
-                    </option>
+                    <option key={m.id} value={m.nom} />
                   ))}
-                </select>
+                </datalist>
               </div>
               <div>
                 <label>{t('learn.revision.new_session.chapter', 'Chapitre *')}</label>
@@ -132,18 +139,40 @@ export default function LearnRevisionPage() {
             <div className="form-grid">
               <div>
                 <label>{t('learn.revision.new_session.type', 'Type de session')}</label>
-                <select name="type" value={sessionConfig.type} onChange={handleChange} style={{ width: '100%' }}>
+                <input
+                  type="text"
+                  name="type"
+                  value={sessionConfig.type}
+                  onChange={handleChange}
+                  list="revision-type-suggestions"
+                  placeholder={t('learn.revision.new_session.type_summary', 'Résumé de cours')}
+                  style={{ width: '100%' }}
+                />
+                <datalist id="revision-type-suggestions">
                   <option value="Resume">{t('learn.revision.new_session.type_summary', 'Résumé de cours')}</option>
                   <option value="Quiz">{t('learn.revision.new_session.type_quiz', 'Générer un Quiz')}</option>
                   <option value="Exercice">{t('learn.revision.new_session.type_exercise', "Résolution d'exercice")}</option>
                   <option value="Examen">{t('learn.revision.new_session.type_exam', 'Préparation Examen')}</option>
-                </select>
+                </datalist>
               </div>
               <div>
                 <label>{t('learn.revision.new_session.duration', 'Durée souhaitée (minutes)')}</label>
-                <select name="duree" value={sessionConfig.duree} onChange={handleChange} style={{ width: '100%' }}>
-                  <option value="15">{t('learn.revision.new_session.duration_15', '15 min (Rapide)')}</option><option value="30">{t('learn.revision.new_session.duration_30', '30 min (Standard)')}</option><option value="60">{t('learn.revision.new_session.duration_60', '1h (Approfondi)')}</option>
-                </select>
+                <input
+                  type="text"
+                  name="duree"
+                  value={sessionConfig.duree}
+                  onChange={handleChange}
+                  list="revision-duree-suggestions"
+                  placeholder={t('learn.revision.new_session.duration_30', '30 min (Standard)')}
+                  style={{ width: '100%' }}
+                />
+                <datalist id="revision-duree-suggestions">
+                  <option value="15">{t('learn.revision.new_session.duration_15', '15 min (Rapide)')}</option>
+                  <option value="30">{t('learn.revision.new_session.duration_30', '30 min (Standard)')}</option>
+                  <option value="60">{t('learn.revision.new_session.duration_60', '1h (Approfondi)')}</option>
+                  <option value="90">90 min</option>
+                  <option value="120">2h</option>
+                </datalist>
               </div>
             </div>
 

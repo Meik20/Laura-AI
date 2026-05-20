@@ -158,13 +158,22 @@ export default function AdminResourcesPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
                 <div className="form-group">
                   <label className="form-label" style={{ display: 'block', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)' }}>Type</label>
-                  <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} className="form-select" style={{ width: '100%', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-md)', color: 'var(--txt-primary)' }}>
+                  <input
+                    type="text"
+                    value={formData.type}
+                    onChange={e => setFormData({...formData, type: e.target.value})}
+                    list="admin-res-type-suggestions"
+                    placeholder="ex: Annale, Épreuve, Fiche..."
+                    className="form-input"
+                    style={{ width: '100%', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-md)', color: 'var(--txt-primary)' }}
+                  />
+                  <datalist id="admin-res-type-suggestions">
                     <option value="Épreuve">Épreuve</option>
                     <option value="Annale">Annale</option>
                     <option value="Fiche">Fiche de cours</option>
                     <option value="Quiz">Quiz</option>
                     <option value="Livre">Livre / PDF</option>
-                  </select>
+                  </datalist>
                 </div>
                 <div className="form-group">
                   <label className="form-label" style={{ display: 'block', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)' }}>Cible</label>
@@ -174,10 +183,19 @@ export default function AdminResourcesPage() {
 
               <div className="form-group">
                 <label className="form-label" style={{ display: 'block', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)' }}>Statut</label>
-                <select value={formData.statut} onChange={e => setFormData({...formData, statut: e.target.value})} className="form-select" style={{ width: '100%', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-md)', color: 'var(--txt-primary)' }}>
-                  <option value="publie">Publié</option>
-                  <option value="brouillon">Brouillon</option>
-                </select>
+                    <input
+                      type="text"
+                      value={formData.statut}
+                      onChange={e => setFormData({...formData, statut: e.target.value})}
+                      list="admin-resource-status-suggestions"
+                      placeholder="publie"
+                      className="form-input"
+                      style={{ width: '100%', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-md)', color: 'var(--txt-primary)' }}
+                    />
+                    <datalist id="admin-resource-status-suggestions">
+                      <option value="publie">Publié</option>
+                      <option value="brouillon">Brouillon</option>
+                    </datalist>
               </div>
 
               <div className="form-group">
