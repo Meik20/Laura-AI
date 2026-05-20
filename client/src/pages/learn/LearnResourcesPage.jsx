@@ -331,7 +331,6 @@ export default function LearnResourcesPage() {
 
   useEffect(() => {
     if (userProfile?.bookmarks) setBookmarks(userProfile.bookmarks);
-    if (userProfile) setFilters(p => ({ ...p, examen: userProfile.examen || '' }));
   }, [userProfile]);
 
   useEffect(() => {
@@ -367,7 +366,7 @@ export default function LearnResourcesPage() {
   const filteredResources = resources.filter(r => {
     const m = !filters.matiere || r.cible?.toLowerCase().includes(filters.matiere.toLowerCase()) || r.matiere?.toLowerCase().includes(filters.matiere.toLowerCase());
     const t = !filters.type   || r.type === filters.type;
-    const x = !filters.examen || r.cible?.toLowerCase().includes(filters.examen.toLowerCase()) || r.titre?.toLowerCase().includes(filters.examen.toLowerCase());
+    const x = !filters.examen || r.cible?.toLowerCase().includes(filters.examen.toLowerCase()) || r.titre?.toLowerCase().includes(filters.examen.toLowerCase()) || r.examen?.toLowerCase().includes(filters.examen.toLowerCase());
     const s = !filters.search || r.titre?.toLowerCase().includes(filters.search.toLowerCase()) || r.cible?.toLowerCase().includes(filters.search.toLowerCase());
     return m && t && x && s;
   });
