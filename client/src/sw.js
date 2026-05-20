@@ -47,7 +47,8 @@ self.addEventListener('activate', (event) => {
           if (
             cacheName !== CACHE_ASSETS &&
             cacheName !== CACHE_API &&
-            cacheName !== CACHE_VERSION
+            cacheName !== CACHE_VERSION &&
+            !cacheName.startsWith('workbox-')
           ) {
             console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
