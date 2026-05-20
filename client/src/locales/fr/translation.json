@@ -16,7 +16,32 @@
     "error_invalid": "Identifiants invalides. Veuillez réessayer."
   },
   "contribution_modal": {
+    "title": "Proposer une ressource",
+    "subtitle": "Partagez un document pédagogique avec la communauté.",
+    "success_title": "Merci pour votre contribution !",
+    "success_desc": "Votre document a été soumis pour relecture. Il sera publié dans le catalogue après validation par un modérateur.",
+    "success_btn": "Fermer",
+    "errors": {
+      "file_size": "Le fichier dépasse la taille maximale autorisée (30 Mo).",
+      "title_required": "Veuillez renseigner un titre.",
+      "file_required": "Veuillez sélectionner un fichier à soumettre.",
+      "login_required": "Vous devez être connecté pour contribuer.",
+      "general": "Une erreur est survenue lors de la soumission de votre document."
+    },
     "form": {
+      "title_label": "Titre du document",
+      "title_placeholder": "Ex : Cours sur les limites de fonctions",
+      "type_label": "Type de document",
+      "subject_label": "Matière",
+      "subject_placeholder": "Sélectionnez ou saisissez la matière",
+      "exam_label": "Examen concerné",
+      "exam_options": {
+        "all": "Tous les examens"
+      },
+      "level_label": "Classe / Niveau",
+      "level_placeholder": "Ex : Terminale D, Licence 2...",
+      "desc_label": "Description / Instructions",
+      "desc_placeholder": "Décrivez brièvement le contenu ou donnez des consignes d'utilisation...",
       "type_options": {
         "fiche": "Fiche",
         "annale": "Annale",
@@ -24,6 +49,11 @@
         "quiz": "Quiz",
         "livre": "Livre"
       }
+    },
+    "upload": {
+      "click_to_change": "cliquez pour changer de fichier",
+      "click_to_select": "Cliquez pour sélectionner un fichier",
+      "limits": "PDF, Office ou Images, max 30 MB"
     }
   },
   "nav": {
@@ -35,18 +65,28 @@
   },
   "common": {
     "days": {
-      "sun": "Dim",
       "mon": "Lun",
       "tue": "Mar",
       "wed": "Mer",
       "thu": "Jeu",
       "fri": "Ven",
-      "sat": "Sam"
+      "sat": "Sam",
+      "sun": "Dim"
     },
     "roles": {
+      "student_seco": "Élève",
+      "student_univ": "Étudiant",
       "learner": "Apprenant",
       "tutor": "Tuteur",
-      "admin": "Admin"
+      "admin": "Administrateur"
+    },
+    "actions": {
+      "toggle_sidebar": "Réduire/Développer la barre latérale",
+      "expand": "Développer",
+      "collapse": "Réduire",
+      "close": "Fermer",
+      "open_menu": "Ouvrir le menu",
+      "logout": "Déconnexion"
     }
   },
   "home": {
@@ -142,32 +182,6 @@
     "error_exam_required": "Veuillez sélectionner un examen préparé.",
     "error_college_required": "Le niveau d'étude et la filière sont obligatoires.",
     "error_signup_failed": "Une erreur est survenue lors de l'inscription."
-  },
-  "common": {
-    "days": {
-      "mon": "Lun",
-      "tue": "Mar",
-      "wed": "Mer",
-      "thu": "Jeu",
-      "fri": "Ven",
-      "sat": "Sam",
-      "sun": "Dim"
-    },
-    "roles": {
-      "student_seco": "Élève",
-      "student_univ": "Étudiant",
-      "learner": "Apprenant",
-      "tutor": "Tuteur",
-      "admin": "Administrateur"
-    },
-    "actions": {
-      "toggle_sidebar": "Réduire/Développer la barre latérale",
-      "expand": "Développer",
-      "collapse": "Réduire",
-      "close": "Fermer",
-      "open_menu": "Ouvrir le menu",
-      "logout": "Déconnexion"
-    }
   },
   "learn": {
     "nav": {
@@ -403,7 +417,12 @@
         "exam": "Examen prepare *",
         "exam_placeholder": "ex: BAC, BTS, Licence",
         "saving": "Enregistrement...",
-        "save_btn": "Enregistrer les modifications"
+        "save_btn": "Enregistrer les modifications",
+        "matieres_title": "Mes matières à réviser",
+        "matieres_subtitle": "Ajoutez les matières que vous étudiez. Ce sont elles qui composeront votre plan de révision.",
+        "matiere_placeholder": "ex: Mathématiques, Physique-Chimie",
+        "add_btn": "Ajouter",
+        "no_matieres": "Aucune matière ajoutée. Veuillez en ajouter au moins une."
       }
     },
     "progress": {
@@ -417,7 +436,7 @@
       "goals": {
         "title": "Objectifs en cours",
         "new_btn": "+ Nouveau",
-        "empty": "Aucun objectif en cours. Cliquez sur \"+ Nouveau\" pour en créer un."
+        "empty": "Aucun objectif en cours. Cliquez sur \\\"+ Nouveau\\\" pour en créer un."
       },
       "activities": {
         "title": "Activités récentes",
@@ -505,9 +524,27 @@
       "title": "Espace Tuteur LAURA"
     },
     "status": {
-      "Contributeur": "Contributeur",
-      "En attente de contribution": "En attente de contribution",
-      "Membre": "Membre"
+      "title": "Suivi de candidature",
+      "loading": "Chargement du statut...",
+      "no_application": "Aucune candidature trouvée",
+      "no_application_desc": "Vous n'avez pas encore soumis de dossier de candidature pour devenir tuteur.",
+      "apply_btn": "Postuler maintenant",
+      "label_candidate": "Candidat",
+      "label_discipline": "Discipline",
+      "label_date": "Date de soumission",
+      "label_status": "Statut actuel",
+      "status_recu": "Reçu",
+      "status_en_examen": "En examen",
+      "status_test_requis": "Test requis",
+      "status_valide": "Validé",
+      "status_active": "Compte Activé",
+      "status_refuse": "Refusé",
+      "status_pending": "En attente",
+      "admin_message_title": "Message de l'administration :",
+      "admin_message_default": "Votre dossier est actuellement en cours d'analyse par notre équipe pédagogique.",
+      "start_test_btn": "Commencer le test d'évaluation",
+      "access_space_btn": "Accéder à mon espace",
+      "back_home_btn": "Retour à l'accueil"
     },
     "dashboard": {
       "hello": "Bonjour, {{name}}",
@@ -564,240 +601,215 @@
         "published_title": "Ressources publiées",
         "published_desc": "Contenus validés et visibles par tous les apprenants"
       }
-    }
-  },
-  
-    "dashboard": {
-      "hello": "Bonjour",
-      "welcome_msg": "Bienvenue sur votre tableau de bord administrateur.",
-      "chat_activity": "Activité du Chat",
-      "action_center": {
-        "title": "Centre d'actions",
-        "all_good": "Tout est en ordre !",
-        "no_action": "Aucune action requise pour le moment.",
-        "process_action": "Traiter"
-      },
-      "kpis": {
-        "active": "Actif",
-        "students": "Élèves",
-        "college_students": "Étudiants",
-        "tutors": "Tuteurs",
-        "contributors": "Contributeurs"
-      },
-      "alerts": {
-        "pending_tutors": "{{count}} demande(s) de tuteur en attente.",
-        "pending_contributors": "{{count}} inscription(s) contributeur en attente.",
-        "pending_resources": "{{count}} ressource(s) en attente de validation."
-      }
     },
-    "audit": {
-      "title": "Logs & Audit",
-      "subtitle": "Traçabilité des actions critiques d'administration.",
-      "table": {
-        "date": "Date et Heure",
-        "action": "Action",
-        "detail": "Détail",
-        "author": "Auteur"
+    "chat": {
+      "title": "Chat Pédagogique",
+      "subtitle": "Utilisez l'IA pour générer et structurer vos contenus avant de les soumettre.",
+      "new_chat": "🗑️ Nouveau Chat",
+      "loading_session": "Chargement de la session...",
+      "user_label": "Vous",
+      "ai_label": "LAURA Pédagogie",
+      "attach_file": "📎 Joindre un fichier / cours",
+      "placeholder": "Ex: Génère un quiz de 5 questions sur le théorème de Thalès pour des élèves de 3ème...",
+      "quick_suggestions": "Suggestions rapides",
+      "export_title": "Export & Soumission",
+      "export_desc": "Une fois votre contenu généré et affiné, vous pouvez l'exporter directement comme brouillon dans vos soumissions.",
+      "export_btn": "Convertir en soumission",
+      "welcome_message": "Bonjour Professeur {{name}}. Je suis configurée pour vous assister dans la création de matériel pédagogique en {{discipline}}. Que souhaitez-vous préparer aujourd'hui ?",
+      "alert_no_content": "Aucun contenu généré par LAURA à convertir.",
+      "alert_no_user": "Utilisateur non identifié.",
+      "alert_export_success": "Contenu exporté avec succès dans vos soumissions (Brouillon) !",
+      "alert_export_error": "Erreur lors de l'exportation.",
+      "laura_error": "Désolée, je n'ai pas pu formuler une réponse.",
+      "network_error": "⚠️ Oups ! Je n'arrive pas à joindre le serveur pour le moment. Vérifiez votre connexion internet ou réessayez dans quelques instants.",
+      "suggestions": {
+        "plan": "Générer un plan de cours",
+        "exercise": "Créer une fiche d'exercices d'application",
+        "exam": "Concevoir un sujet d'examen",
+        "simplify": "Reformuler cette leçon de manière simple",
+        "quiz": "Produire un quiz d'évaluation rapide"
       },
-      "loading": "Chargement des logs...",
-      "empty": "Aucun log d'audit."
+      "attached_doc": "📎 Document :",
+      "doc_btn_design": "✨ Concevoir des exercices à partir de ce cours"
     },
-    "tutor_apps": {
-      "title": "Candidatures Tuteurs",
-      "subtitle": "Gérez et validez les accès enseignants.",
-      "validation_message": "Félicitations, votre compte Tuteur a été validé avec succès !",
-      "validation_error": "Erreur lors de la validation.",
-      "loading": "Chargement des candidatures...",
-      "empty": "Aucune candidature en attente.",
-      "no_name": "Sans nom",
-      "registered_on": "Inscrit le",
-      "status": {
+    "submissions": {
+      "restricted_title": "Espace Soumission Restreint",
+      "restricted_desc": "Vous devez avoir le statut <strong>Tuteur Contributeur</strong> pour proposer du contenu sur la plateforme.",
+      "request_access_btn": "Faire la demande d'accès",
+      "request_access_success": "Demande transmise à l'administration.",
+      "title": "Vos Soumissions",
+      "subtitle": "Soumettez et gérez vos contenus pédagogiques.",
+      "new_submission_btn": "+ Nouvelle soumission",
+      "stats": {
+        "total": "Total",
         "pending": "En attente",
-        "test_required": "Test Requis",
-        "validated": "Validé"
+        "validated": "Validés",
+        "drafts": "Brouillons",
+        "submissions_badge": "Soumissions",
+        "pending_badge": "En cours",
+        "validated_badge": "Publiés",
+        "drafts_badge": "Brouillon"
       },
-      "table": {
-        "candidate": "Candidat",
-        "discipline": "Discipline",
-        "experience": "Expérience",
-        "status": "Statut",
-        "actions": "Actions"
-      },
-      "actions": {
-        "open": "Ouvrir le dossier",
-        "validate": "Valider"
-      },
-      "modal": {
-        "title": "Dossier de Candidature",
-        "candidate": "Candidat :",
-        "email": "Email :",
-        "phone": "Téléphone :",
-        "discipline": "Discipline :",
-        "school": "Établissement :",
-        "diploma": "Diplôme :",
-        "skills": "Compétences :",
-        "motivation": "Motivation :",
-        "no_motivation": "Aucune motivation fournie.",
-        "close": "Fermer",
-        "validate_btn": "Valider ce tuteur",
-        "not_specified": "Non renseigné",
-        "level": "Niveau:"
-      }
-    },
-    "users": {
-      "title": "Utilisateurs",
-      "subtitle": "Gestion globale des comptes de la plateforme.",
       "filters": {
-        "all": "Tous",
-        "pupils": "Élèves",
-        "students": "Étudiants",
-        "tutors": "Tuteurs",
-        "suspended": "Suspendus"
+        "all": "Toutes",
+        "drafts": "Brouillons",
+        "pending": "En attente",
+        "to_correct": "À corriger",
+        "validated": "Validées"
       },
-      "table": {
-        "user": "Utilisateur",
-        "role": "Rôle & Détail",
-        "date": "Date d'inscription",
-        "status": "Statut",
-        "actions": "Actions"
-      },
-      "loading": "Chargement des utilisateurs...",
-      "empty": "Aucun utilisateur trouvé.",
-      "actions": {
-        "manage": "Gérer"
-      },
-      "modal": {
-        "title": "Gestion de l'utilisateur",
-        "name": "Nom :",
-        "email": "Email :",
-        "current_role": "Rôle actuel :",
-        "detail": "Détail / Discipline :",
-        "status": "Statut :",
-        "pending_contrib_alert": "Cet utilisateur a demandé à devenir Tuteur Contributeur pour soumettre des contenus à la communauté.",
-        "close": "Fermer",
-        "grant": "Accorder droits Contributeur",
-        "success": "Droits de contributeur accordés avec succès !",
-        "error": "Erreur lors de l'attribution des droits."
-      }
-    },
-    "community": {
-      "title": "Gestion de la Communauté",
-      "subtitle": "Validez les demandes d'accès aux forums de classe. Vous seul pouvez voir les fiches de profil.",
-      "requests": "Demandes d'accès",
-      "loading": "Chargement...",
-      "empty": "Aucune demande pour le moment.",
-      "table": {
-        "student": "Apprenant",
-        "forum": "Forum demandé",
-        "status": "Statut",
-        "action": "Action"
-      },
-      "actions": {
-        "view_profile": "Voir le profil",
-        "reject": "Rejeter",
-        "approve": "Approuver",
-        "reset_pending": "Remettre en attente"
-      },
-      "modal": {
-        "title": "Fiche Profil",
-        "level": "Niveau :",
-        "serie": "Série :",
-        "exam": "Examen :",
-        "requested_forum": "Forum demandé :",
-        "check_profile": "Vérifiez si son profil correspond au forum demandé.",
-        "not_specified": "Non renseigné"
-      },
-      "error_update": "Erreur lors de la mise à jour.",
-      "status_already": "Cette demande a déjà été {{status}}.",
-      "select_profile_hint": "Sélectionnez une demande pour voir le profil de l'apprenant."
-    },
-    "resources": {
-      "error_save": "Erreur lors de l'enregistrement de la ressource.",
-      "confirm_delete": "Êtes-vous sûr de vouloir supprimer cette ressource ?",
-      "error_delete": "Erreur lors de la suppression de la ressource.",
-      "title": "Ressources Pédagogiques",
-      "subtitle": "Ajoutez, modifiez ou supprimez les ressources officielles disponibles pour l'ensemble des apprenants.",
-      "add_btn": "+ Nouvelle Ressource",
       "table": {
         "title": "Titre",
         "type": "Type",
-        "target": "Classe Cible",
+        "subject": "Matière",
+        "level": "Niveau",
+        "date": "Date",
         "status": "Statut",
-        "actions": "Actions"
+        "actions": "Actions",
+        "loading": "Chargement...",
+        "empty": "Aucune soumission. Créer votre première soumission →",
+        "view_btn": "Voir",
+        "status_valide": "Validé ✓",
+        "status_rejete": "Rejeté",
+        "status_brouillon": "Brouillon",
+        "untitled": "Sans titre"
       },
-      "loading": "Chargement des ressources...",
-      "empty": "Aucune ressource enregistrée pour le moment.",
-      "no_title": "Sans titre",
-      "status": {
-        "published": "Publié",
-        "draft": "Brouillon"
-      },
-      "actions": {
-        "edit": "Modifier",
-        "delete": "Supprimer"
-      },
-      "type": {
-        "exam": "Épreuve",
-        "annal": "Annale",
-        "sheet": "Fiche de révision",
-        "quiz": "Quiz",
-        "book": "Livre"
-      },
-      "modal": {
-        "edit_title": "Modifier la Ressource",
-        "add_title": "Ajouter une Ressource",
-        "close": "Fermer",
-        "title_label": "Titre de la ressource *",
-        "type_label": "Type de ressource",
-        "target_label": "Niveau / Classe cible *",
-        "status_label": "Statut de publication",
-        "file_url_label": "Fichier de la ressource (PDF, Doc, Image)",
-        "upload_progress": {
-          "uploading": "Téléversement en cours...",
-          "done": "Fichier prêt !",
-          "error": "Erreur de téléversement",
-          "choose": "Sélectionner un fichier local..."
-        },
-        "url_placeholder": "Ou collez une URL manuellement...",
-        "cancel": "Annuler",
+      "modal_new": {
+        "title": "Nouvelle Contribution",
+        "edit_title": "Modifier la Soumission",
+        "form_title": "Titre du document",
+        "form_type": "Type de document",
+        "form_subject": "Matière",
+        "form_level": "Classe / Niveau cible",
+        "form_desc": "Description / Objectifs",
+        "form_content": "Contenu (Optionnel si fichier joint)",
+        "file_label": "Fichier joint (PDF, Word, Images, max 30 Mo)",
+        "save_draft": "Enregistrer en brouillon",
+        "submit_for_review": "Soumettre pour relecture",
         "saving": "Enregistrement...",
-        "save": "Enregistrer"
+        "success_created": "Soumission créée avec succès !",
+        "success_updated": "Soumission mise à jour avec succès !",
+        "error_required": "Le titre, la matière et le niveau cible sont obligatoires.",
+        "error_general": "Une erreur est survenue lors de l'enregistrement de la ressource."
+      },
+      "modal_detail": {
+        "title": "Détails de la ressource",
+        "info": "Informations générales",
+        "author": "Auteur",
+        "created_at": "Créée le",
+        "updated_at": "Modifiée le",
+        "content_tab": "Contenu",
+        "file_tab": "Fichier joint",
+        "status": "Statut",
+        "close": "Fermer",
+        "no_content": "Aucun contenu textuel pour cette ressource.",
+        "open_file": "Ouvrir le fichier joint",
+        "not_provided": "Non fourni"
       }
     },
-    "access_rules": {
-      "error_save": "Erreur lors de l'enregistrement de la règle.",
-      "confirm_delete": "Êtes-vous sûr de vouloir supprimer cette règle d'accès ?",
-      "error_delete": "Erreur lors de la suppression de la règle.",
-      "title": "Règles d'Accès",
-      "subtitle": "Définissez des règles dynamiques pour limiter l'accès aux ressources selon le profil et le niveau des apprenants.",
-      "new_rule_btn": "+ Nouvelle Règle",
+    "history": {
+      "title": "Historique Pédagogique",
+      "subtitle": "Retrouvez vos anciennes conversations avec l'IA et vos soumissions de ressources.",
+      "loading": "Chargement de l'historique...",
+      "empty": "Aucun historique disponible",
+      "empty_hint": "Démarrez un chat ou une soumission !",
+      "chat_label": "Chat Pédagogique",
+      "submission_label": "Soumission",
+      "btn_manage": "Gérer",
+      "btn_resume": "Reprendre",
+      "waiting_reply": "En attente de réponse...",
+      "preview_submission": "Type : {{type}} · Statut : {{status}}"
+    },
+    "profile": {
+      "title": "Profil Tuteur",
+      "subtitle": "Gérez vos informations professionnelles et académiques.",
+      "success": "Profil tuteur mis à jour avec succès !",
+      "error": "Erreur lors de la mise à jour.",
+      "firstname": "Prénom *",
+      "lastname": "Nom *",
+      "email": "Adresse Email",
+      "email_disabled": "L'adresse email ne peut pas être modifiée.",
+      "academic_info": "Informations Pédagogiques",
+      "discipline": "Discipline d'enseignement *",
+      "discipline_placeholder": "ex: Mathématiques",
+      "etablissement": "Établissement / Structure",
+      "etablissement_placeholder": "ex: Lycée Leclerc",
+      "experience": "Années d'expérience",
+      "experience_placeholder": "ex: 5",
+      "diplome": "Diplôme principal",
+      "diplome_placeholder": "ex: CAPES, Master",
+      "saving": "Enregistrement...",
+      "save_btn": "Enregistrer les modifications"
+    },
+    "settings": {
+      "title": "Paramètres Tuteur",
+      "subtitle": "Personnalisez votre espace pédagogique et vos préférences de notification.",
+      "success": "Paramètres tuteur enregistrés avec succès !",
+      "error": "Erreur lors de la mise à jour.",
+      "notif_title": "Notifications de révision",
+      "notif_desc": "Recevoir un email lorsque l'administration commente ou valide vos soumissions.",
+      "theme_title": "Thème de l'interface",
+      "theme_placeholder": "Thème Clair (Par défaut)",
+      "theme_clair": "Thème Clair (Par défaut)",
+      "theme_sombre": "Thème Sombre",
+      "rythme_title": "Rythme de soumission souhaité",
+      "rythme_placeholder": "Hebdomadaire (1 ressource par semaine)",
+      "rythme_occasionnel": "Occasionnel (1-2 ressources par mois)",
+      "rythme_hebdomadaire": "Hebdomadaire (1 ressource par semaine)",
+      "rythme_intensif": "Intensif (Plusieurs ressources par semaine)",
+      "saving": "Enregistrement...",
+      "save_btn": "Enregistrer les préférences"
+    },
+    "resources": {
+      "title": "Ressources Pédagogiques",
+      "subtitle": "Consultez le catalogue partagé par les tuteurs et contributeurs de LAURA.",
+      "search_placeholder": "Rechercher par titre, matière...",
+      "filter_placeholder": "Filtrer par type...",
+      "all_types": "Tous les types",
+      "loading": "Chargement des ressources...",
+      "empty": "Aucune ressource trouvée",
+      "status_online": "✓ En Ligne",
+      "status_draft": "• Brouillon",
+      "label_subject": "Matière :",
+      "label_target": "Cible :",
+      "open_btn": "Ouvrir la ressource",
+      "untitled": "Sans titre",
+      "general": "Général"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "hello": "Bonjour Admin 👋",
+      "welcome_msg": "Bienvenue sur le centre de contrôle LAURA. Voici ce qui se passe aujourd'hui sur la plateforme.",
+      "kpis": {
+        "students": "Élèves",
+        "college_students": "Étudiants",
+        "tutors": "Tuteurs",
+        "contributors": "Contributeurs",
+        "active": "Actifs"
+      },
+      "chat_activity": "Activité des Chats (7 jours)",
+      "action_center": {
+        "title": "Centre d'Action",
+        "all_good": "Tout est à jour",
+        "no_action": "Aucune action requise pour le moment.",
+        "process_action": "Traiter"
+      },
+      "alerts": {
+        "pending_tutors": "{{count}} demandes de tuteurs en attente",
+        "pending_contributors": "{{count}} demandes de contributeurs en attente",
+        "pending_resources": "{{count}} ressources en attente de validation"
+      }
+    },
+    "audit": {
+      "title": "Journal d'Audit",
+      "subtitle": "Historique des actions administratives et de sécurité effectuées sur la plateforme.",
+      "loading": "Chargement des journaux d'audit...",
+      "empty": "Aucun log d'audit disponible.",
       "table": {
-        "name": "Nom de la règle",
-        "criteria": "Critère d'accès (Expression)",
-        "status": "Statut",
-        "actions": "Actions"
-      },
-      "loading": "Chargement des règles d'accès...",
-      "empty": "Aucune règle d'accès enregistrée pour le moment.",
-      "no_name": "Sans nom",
-      "status": {
-        "active": "Actif",
-        "inactive": "Inactif"
-      },
-      "actions": {
-        "edit": "Modifier",
-        "delete": "Supprimer"
-      },
-      "modal": {
-        "edit_title": "Modifier la règle d'accès",
-        "new_title": "Créer une règle d'accès",
-        "close": "Fermer",
-        "name_label": "Nom de la règle *",
-        "criteria_label": "Expression logique du critère *",
-        "status_label": "Statut de la règle",
-        "cancel": "Annuler",
-        "saving": "Enregistrement...",
-        "save": "Enregistrer"
+        "date": "Date",
+        "action": "Action",
+        "detail": "Détails",
+        "author": "Auteur"
       }
     },
     "tutor_apps": {
@@ -842,6 +854,42 @@
         "validate": "Valider"
       }
     },
+    "users": {
+      "title": "Gestion des Utilisateurs",
+      "subtitle": "Gérez les apprenants, tuteurs, et les rôles de contributeurs de la plateforme.",
+      "loading": "Chargement...",
+      "empty": "Aucun utilisateur trouvé.",
+      "filters": {
+        "all": "Tous",
+        "pupils": "Élèves",
+        "students": "Étudiants",
+        "tutors": "Tuteurs",
+        "suspended": "Suspendus"
+      },
+      "table": {
+        "user": "Utilisateur",
+        "role": "Rôle / Niveau",
+        "date": "Inscription",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "actions": {
+        "manage": "Gérer"
+      },
+      "modal": {
+        "title": "Gérer l'Utilisateur",
+        "name": "Nom :",
+        "email": "Email :",
+        "current_role": "Rôle actuel :",
+        "detail": "Niveau / Filière :",
+        "status": "Statut :",
+        "pending_contrib_alert": "Cet utilisateur demande à devenir Tuteur Contributeur. Veuillez vérifier ses informations avant de valider.",
+        "close": "Fermer",
+        "grant": "✓ Valider droits Contributeur",
+        "success": "Droits de contributeur attribués avec succès !",
+        "error": "Erreur lors de l'attribution des droits."
+      }
+    },
     "community": {
       "error_update": "Erreur lors de la mise à jour.",
       "title": "Gestion de la Communauté",
@@ -873,27 +921,93 @@
       "status_already": "Cette demande a déjà été {{status}}.",
       "select_profile_hint": "Sélectionnez une demande pour voir le profil de l'apprenant."
     },
-    "dashboard": {
-      "hello": "Bonjour Admin 👋",
-      "welcome_msg": "Bienvenue sur le centre de contrôle LAURA. Voici ce qui se passe aujourd'hui sur la plateforme.",
-      "kpis": {
-        "students": "Élèves",
-        "college_students": "Étudiants",
-        "tutors": "Tuteurs",
-        "contributors": "Contributeurs",
-        "active": "Actifs"
+    "resources": {
+      "title": "Catalogue Ressources",
+      "subtitle": "Gérez les contenus disponibles sur la plateforme.",
+      "add_btn": "+ Ajouter une ressource",
+      "loading": "Chargement des ressources...",
+      "empty": "Aucune ressource disponible.",
+      "no_title": "Sans titre",
+      "confirm_delete": "Voulez-vous vraiment supprimer cette ressource ?",
+      "error_delete": "Erreur lors de la suppression.",
+      "error_save": "Erreur lors de l'enregistrement de la ressource.",
+      "table": {
+        "title": "Titre",
+        "type": "Type",
+        "target": "Cible d'accès",
+        "status": "Statut",
+        "actions": "Actions"
       },
-      "chat_activity": "Activité des Chats (7 jours)",
-      "action_center": {
-        "title": "Centre d'Action",
-        "all_good": "Tout est à jour",
-        "no_action": "Aucune action requise pour le moment.",
-        "process_action": "Traiter"
+      "actions": {
+        "edit": "Éditer",
+        "delete": "Supprimer"
       },
-      "alerts": {
-        "pending_tutors": "{{count}} demandes de tuteurs en attente",
-        "pending_contributors": "{{count}} demandes de contributeurs en attente",
-        "pending_resources": "{{count}} ressources en attente de validation"
+      "modal": {
+        "edit_title": "Modifier la ressource",
+        "add_title": "Ajouter une ressource",
+        "close": "Fermer",
+        "title_label": "Titre de la ressource",
+        "type_label": "Type",
+        "target_label": "Cible",
+        "status_label": "Statut",
+        "file_url_label": "Fichier ou URL",
+        "upload_progress": {
+          "uploading": "Envoi en cours...",
+          "done": "[OK] Fichier envoyé avec succès",
+          "error": "[Erreur] — essaie avec une URL",
+          "choose": "Choisir un fichier (PDF, image…)"
+        },
+        "url_placeholder": "ou coller une URL directement",
+        "cancel": "Annuler",
+        "saving": "Enregistrement...",
+        "save": "Enregistrer"
+      },
+      "status": {
+        "published": "Publié",
+        "draft": "Brouillon"
+      },
+      "type": {
+        "exam": "Épreuve",
+        "annal": "Annale",
+        "sheet": "Fiche de cours",
+        "quiz": "Quiz",
+        "book": "Livre / PDF"
+      }
+    },
+    "access_rules": {
+      "title": "Règles d'accès",
+      "subtitle": "Configurez la logique d'accès aux ressources.",
+      "new_rule_btn": "+ Nouvelle Règle",
+      "loading": "Chargement des règles...",
+      "empty": "Aucune règle définie.",
+      "no_name": "Sans nom",
+      "confirm_delete": "Voulez-vous vraiment supprimer cette règle ?",
+      "error_delete": "Erreur lors de la suppression.",
+      "error_save": "Erreur lors de l'enregistrement de la règle.",
+      "table": {
+        "name": "Nom de la règle",
+        "criteria": "Critères Logiques",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Éditer",
+        "delete": "Supprimer"
+      },
+      "modal": {
+        "edit_title": "Modifier la règle",
+        "new_title": "Nouvelle règle d'accès",
+        "close": "Fermer",
+        "name_label": "Nom de la règle",
+        "criteria_label": "Critères Logiques",
+        "status_label": "Statut",
+        "cancel": "Annuler",
+        "saving": "Enregistrement...",
+        "save": "Enregistrer"
+      },
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif"
       }
     },
     "settings": {
@@ -1098,95 +1212,6 @@
         "reject_btn": "Rejeter"
       }
     },
-    "resources": {
-      "title": "Catalogue Ressources",
-      "subtitle": "Gérez les contenus disponibles sur la plateforme.",
-      "add_btn": "+ Ajouter une ressource",
-      "loading": "Chargement des ressources...",
-      "empty": "Aucune ressource disponible.",
-      "no_title": "Sans titre",
-      "confirm_delete": "Voulez-vous vraiment supprimer cette ressource ?",
-      "error_delete": "Erreur lors de la suppression.",
-      "error_save": "Erreur lors de l'enregistrement de la ressource.",
-      "table": {
-        "title": "Titre",
-        "type": "Type",
-        "target": "Cible d'accès",
-        "status": "Statut",
-        "actions": "Actions"
-      },
-      "actions": {
-        "edit": "Éditer",
-        "delete": "Supprimer"
-      },
-      "modal": {
-        "edit_title": "Modifier la ressource",
-        "add_title": "Ajouter une ressource",
-        "close": "Fermer",
-        "title_label": "Titre de la ressource",
-        "type_label": "Type",
-        "target_label": "Cible",
-        "status_label": "Statut",
-        "file_url_label": "Fichier ou URL",
-        "upload_progress": {
-          "uploading": "Envoi en cours...",
-          "done": "[OK] Fichier envoyé avec succès",
-          "error": "[Erreur] — essaie avec une URL",
-          "choose": "Choisir un fichier (PDF, image…)"
-        },
-        "url_placeholder": "ou coller une URL directement",
-        "cancel": "Annuler",
-        "saving": "Enregistrement...",
-        "save": "Enregistrer"
-      },
-      "status": {
-        "published": "Publié",
-        "draft": "Brouillon"
-      },
-      "type": {
-        "exam": "Épreuve",
-        "annal": "Annale",
-        "sheet": "Fiche de cours",
-        "quiz": "Quiz",
-        "book": "Livre / PDF"
-      }
-    },
-    "access_rules": {
-      "title": "Règles d'accès",
-      "subtitle": "Configurez la logique d'accès aux ressources.",
-      "new_rule_btn": "+ Nouvelle Règle",
-      "loading": "Chargement des règles...",
-      "empty": "Aucune règle définie.",
-      "no_name": "Sans nom",
-      "confirm_delete": "Voulez-vous vraiment supprimer cette règle ?",
-      "error_delete": "Erreur lors de la suppression.",
-      "error_save": "Erreur lors de l'enregistrement de la règle.",
-      "table": {
-        "name": "Nom de la règle",
-        "criteria": "Critères Logiques",
-        "status": "Statut",
-        "actions": "Actions"
-      },
-      "actions": {
-        "edit": "Éditer",
-        "delete": "Supprimer"
-      },
-      "modal": {
-        "edit_title": "Modifier la règle",
-        "new_title": "Nouvelle règle d'accès",
-        "close": "Fermer",
-        "name_label": "Nom de la règle",
-        "criteria_label": "Critères Logiques",
-        "status_label": "Statut",
-        "cancel": "Annuler",
-        "saving": "Enregistrement...",
-        "save": "Enregistrer"
-      },
-      "status": {
-        "active": "Actif",
-        "inactive": "Inactif"
-      }
-    },
     "nav": {
       "overview": "Vue Globale",
       "users": "Utilisateurs",
@@ -1207,56 +1232,55 @@
     "role_badge": "ADMINISTRATION",
     "role_label": "Admin",
     "logout": "Déconnexion",
-    "audit": {
-      "title": "Journal d'Audit",
-      "subtitle": "Historique des actions administratives et de sécurité effectuées sur la plateforme.",
-      "loading": "Chargement des journaux d'audit...",
-      "empty": "Aucun log d'audit disponible.",
-      "table": {
-        "date": "Date",
-        "action": "Action",
-        "detail": "Détails",
-        "author": "Auteur"
-      }
-    },
     "header": {
       "title": "Console d'Administration LAURA"
+    }
+  },
+  "community": {
+    "welcome": {
+      "title": "Rejoindre la communauté",
+      "desc": "Échangez avec d'autres apprenants, partagez des ressources et progressez ensemble en rejoignant notre communauté active.",
+      "join_btn": "Rejoindre la communauté"
     },
-    "users": {
-      "title": "Gestion des Utilisateurs",
-      "subtitle": "Gérez les apprenants, tuteurs, et les rôles de contributeurs de la plateforme.",
-      "loading": "Chargement...",
-      "empty": "Aucun utilisateur trouvé.",
-      "filters": {
-        "all": "Tous",
-        "pupils": "Élèves",
-        "students": "Étudiants",
-        "tutors": "Tuteurs",
-        "suspended": "Suspendus"
-      },
-      "table": {
-        "user": "Utilisateur",
-        "role": "Rôle / Niveau",
-        "date": "Inscription",
-        "status": "Statut",
-        "actions": "Actions"
-      },
-      "actions": {
-        "manage": "Gérer"
-      },
-      "modal": {
-        "title": "Gérer l'Utilisateur",
-        "name": "Nom :",
-        "email": "Email :",
-        "current_role": "Rôle actuel :",
-        "detail": "Niveau / Filière :",
-        "status": "Statut :",
-        "pending_contrib_alert": "Cet utilisateur demande à devenir Tuteur Contributeur. Veuillez vérifier ses informations avant de valider.",
-        "close": "Fermer",
-        "grant": "✓ Valider droits Contributeur",
-        "success": "Droits de contributeur attribués avec succès !",
-        "error": "Erreur lors de l'attribution des droits."
-      }
+    "join_success": "Félicitations, tu viens de rejoindre la communauté. Intègre ta classe.",
+    "chat": {
+      "empty_title": "Bienvenue dans la classe !",
+      "empty_desc": "Soyez le premier à envoyer un message.",
+      "input_placeholder": "Écrivez un message..."
+    },
+    "status": {
+      "pending_desc": "Votre demande d'accès à ce forum est en cours de validation par un administrateur.",
+      "rejected_desc": "Votre accès à ce forum de classe a été refusé par l'équipe de modération.",
+      "unjoined_desc": "Vous devez faire une demande pour rejoindre cette classe."
+    },
+    "placeholder": {
+      "title": "Rejoignez votre classe",
+      "desc": "Sélectionnez ou recherchez un forum de classe dans la liste à droite pour commencer à échanger avec les autres apprenants."
+    },
+    "sidebar": {
+      "status_pending": "⏳ Attente",
+      "status_rejected": "✕ Refusé",
+      "status_join": "Demander à rejoindre",
+      "status_open": "✓ Ouvert",
+      "search_placeholder": "Rechercher un forum...",
+      "search_format": "Format : Niveau série/filière (ex: Terminale A)",
+      "create_btn": "+ Créer une classe",
+      "empty": "Aucun forum de classe trouvé.",
+      "participants": "participant",
+      "participants_plural": "participants"
+    },
+    "modal": {
+      "create_class_title": "Créer une classe",
+      "level": "Niveau",
+      "serie": "Série",
+      "save": "Enregistrer"
+    },
+    "alerts": {
+      "join_error": "Erreur lors de l'adhésion à la communauté.",
+      "request_error": "Erreur lors de la demande d'accès.",
+      "already_exists": "Une classe pour ce niveau/série existe déjà ! Demandez plutôt à la rejoindre.",
+      "create_error": "Erreur lors de la création.",
+      "send_error": "Erreur d'envoi."
     }
   }
-
+}

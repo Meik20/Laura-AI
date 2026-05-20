@@ -26,7 +26,7 @@ export default function LearnCommunityPage() {
   const [showJoinSuccess, setShowJoinSuccess] = useState(false);
 
   // Check if user has joined the community
-  const joinedCommunity = userProfile?.joinedCommunity || false;
+  const joinedCommunity = userProfile?.role === 'admin' || userProfile?.joinedCommunity || false;
 
   // 1. Fetch Forums & Memberships
   useEffect(() => {
@@ -58,7 +58,8 @@ export default function LearnCommunityPage() {
     if (!activeForum) return;
     
     // Check if user is approved
-    if (memberships[activeForum.id] !== 'approuve') return;
+    const isApproved = userProfile?.role === 'admin' || memberships[activeForum.id] === 'approuve';
+    if (!isApproved) return;
 
     const qMsg = query(collection(db, 'forums', activeForum.id, 'messages'), orderBy('createdAt', 'asc'));
     const unsubMsg = onSnapshot(qMsg, (snap) => {
@@ -91,7 +92,7 @@ export default function LearnCommunityPage() {
       setShowJoinSuccess(true);
     } catch (e) {
       console.error(e);
-      alert("Erreur lors de l'adhésion à la communauté.");
+      alert(t('community.alerts.join_error', "Erreur lors de l'adhésion à la communauté."));
     }
   };
 
@@ -111,7 +112,7 @@ export default function LearnCommunityPage() {
       });
     } catch (e) {
       console.error(e);
-      alert("Erreur lors de la demande d'accès.");
+      alert(t('community.alerts.request_error', "Erreur lors de la demande d'accès."));
     }
   };
 
@@ -128,7 +129,7 @@ export default function LearnCommunityPage() {
       const qCheck = query(collection(db, 'forums'), where('niveau', '==', newForumLevel.trim()), where('serie', '==', newForumSerie.trim()));
       const snap = await getDocs(qCheck);
       if (!snap.empty) {
-        alert(`Une classe pour ce niveau/série existe déjà ! Demandez plutôt à la rejoindre.`);
+        alert(t('community.alerts.already_exists', "Une classe pour ce niveau/série existe déjà ! Demandez plutôt à la rejoindre."));
         setShowCreateModal(false);
         return;
       }
@@ -160,7 +161,7 @@ export default function LearnCommunityPage() {
       setNewForumSerie('');
     } catch (err) {
       console.error(err);
-      alert("Erreur lors de la création.");
+      alert(t('community.alerts.create_error', "Erreur lors de la création."));
     }
   };
 
@@ -178,7 +179,7 @@ export default function LearnCommunityPage() {
       setNewMessage('');
     } catch (err) {
       console.error(err);
-      alert("Erreur d'envoi.");
+      alert(t('community.alerts.send_error', "Erreur d'envoi."));
     }
   };
 
@@ -272,7 +273,7 @@ export default function LearnCommunityPage() {
             background: 'var(--srf-base)'
           }}
         >
-          {activeForum && memberships[activeForum.id] === 'approuve' ? (
+          {activeForum && (userProfile?.role === 'admin' || memberships[activeForum.id] === 'approuve') ? (
             <>
               {/* Chat room header */}
               <div 
@@ -516,7 +517,11 @@ export default function LearnCommunityPage() {
                         </p>
                       </div>
                       
-                      {status === 'approuve' ? (
+                      {userProfile?.role === 'admin' ? (
+                        <span style={{ fontSize: '10px', color: 'var(--clr-success)', fontWeight: 'var(--fw-bold)' }}>
+                          {t('community.sidebar.status_open', '✓ Ouvert')}
+                        </span>
+                      ) : status === 'approuve' ? (
                         <span style={{ fontSize: '10px', color: 'var(--clr-success)', fontWeight: 'var(--fw-bold)' }}>
                           {t('community.sidebar.status_open', '✓ Ouvert')}
                         </span>
@@ -549,20 +554,20 @@ export default function LearnCommunityPage() {
         <div className="modal-backdrop">
           <div className="modal-panel" style={{ maxWidth: '400px' }}>
             <div className="modal-header">
-              <h2 className="modal-title">{t('admin.community.modal.new_title', 'Nouvelle règle d\'accès')}</h2>
+              <h2 className="modal-title">{t('community.modal.create_class_title', 'Créer une classe')}</h2>
               <button onClick={() => setShowCreateModal(false)} className="modal-close">✕</button>
             </div>
             <form onSubmit={handleCreateForum} style={{ padding: 'var(--sp-5)', display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
               <div className="form-group">
-                <label>{t('admin.community.modal.level', 'Niveau')}</label>
+                <label>{t('community.modal.level', 'Niveau')}</label>
                 <input required type="text" value={newForumLevel} onChange={e => setNewForumLevel(e.target.value)} className="form-input" placeholder="ex: Terminale" />
               </div>
               <div className="form-group">
-                <label>{t('admin.community.modal.serie', 'Série')}</label>
+                <label>{t('community.modal.serie', 'Série')}</label>
                 <input type="text" value={newForumSerie} onChange={e => setNewForumSerie(e.target.value)} className="form-input" placeholder="optionnel, ex: A, D, MCV" />
               </div>
               <button type="submit" className="laura-btn laura-btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: 'var(--sp-2)' }}>
-                {t('admin.community.modal.save', 'Enregistrer')}
+                {t('community.modal.save', 'Enregistrer')}
               </button>
             </form>
           </div>

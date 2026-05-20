@@ -3,10 +3,12 @@ import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { collection, getDocs, addDoc, doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { uploadContribution } from '../../utils/storage';
+import { useTranslation } from 'react-i18next';
 
 const TYPES = ['Épreuve', 'Annale', 'Fiche', 'Quiz', 'Livre', 'Correction'];
 
 function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     titre: '', type: 'Épreuve', matiere: '',
     niveau: '', description: '', contenu: ''
@@ -50,9 +52,9 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
   };
 
   const handleSubmit = async (statut) => {
-    if (!form.titre.trim()) { setError('Le titre est obligatoire.'); return; }
-    if (!form.matiere.trim()) { setError('La matière est obligatoire.'); return; }
-    if (!form.niveau.trim()) { setError('Le niveau cible est obligatoire.'); return; }
+    if (!form.titre.trim()) { setError(t('tutor.submissions.modal_new.error_required', 'Le titre, la matière et le niveau cible sont obligatoires.')); return; }
+    if (!form.matiere.trim()) { setError(t('tutor.submissions.modal_new.error_required', 'Le titre, la matière et le niveau cible sont obligatoires.')); return; }
+    if (!form.niveau.trim()) { setError(t('tutor.submissions.modal_new.error_required', 'Le titre, la matière et le niveau cible sont obligatoires.')); return; }
     setIsSaving(true);
     setError('');
     try {
@@ -73,7 +75,7 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
         url: fileUrl,
         statut,
         auteurId: uid,
-        auteur: userProfile?.prenom || userProfile?.nom || 'Tuteur',
+        auteur: userProfile?.prenom || userProfile?.nom || t('common.roles.tutor', 'Tuteur'),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         ...(file ? {
@@ -106,10 +108,10 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
         await setDoc(globalRef, updates, { merge: true });
       }
 
-      onSuccess(statut === 'soumis' ? 'Soumission envoyée pour validation !' : 'Brouillon sauvegardé.');
+      onSuccess(statut === 'soumis' ? t('tutor.submissions.modal_new.success_created', 'Soumission créée avec succès !') : t('tutor.submissions.modal_new.success_updated', 'Soumission mise à jour avec succès !'));
     } catch (err) {
       console.error(err);
-      setError('Erreur lors de la sauvegarde. Réessayez.');
+      setError(t('tutor.submissions.modal_new.error_general', 'Erreur lors de la sauvegarde. Réessayez.'));
     } finally {
       setIsSaving(false);
     }
@@ -124,7 +126,7 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
 
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: 'var(--tx-lg)', fontWeight: 700 }}>📤 Nouvelle Soumission</h2>
+          <h2 style={{ margin: 0, fontSize: 'var(--tx-lg)', fontWeight: 700 }}>📤 {t('tutor.submissions.modal_new.title', 'Nouvelle Contribution')}</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', color: 'var(--txt-tertiary)', lineHeight: 1 }}>✕</button>
         </div>
 
@@ -132,10 +134,10 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
         <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--sp-2)', padding: 'var(--sp-5)', border: `2px dashed ${fileStatus === 'ready' ? 'var(--clr-green)' : fileStatus === 'error' ? 'var(--clr-error)' : 'var(--brd-input)'}`, borderRadius: 'var(--rd-lg)', background: fileStatus === 'ready' ? 'color-mix(in srgb, var(--clr-green) 6%, var(--srf-base))' : 'var(--srf-raised)', cursor: 'pointer', transition: 'all 0.2s' }}>
           <span style={{ fontSize: '2rem' }}>{fileStatus === 'ready' ? '✅' : '📎'}</span>
           <span style={{ fontSize: 'var(--tx-sm)', fontWeight: 600, color: 'var(--txt-primary)' }}>
-            {fileStatus === 'ready' ? `Fichier joint : ${file?.name}` : 'Joindre un document (PDF, image, texte)'}
+            {fileStatus === 'ready' ? `${t('tutor.submissions.modal_detail.file_tab', 'Fichier joint')} : ${file?.name}` : t('contribution_modal.upload.click_to_select', 'Cliquez pour sélectionner un fichier')}
           </span>
           <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>
-            Le document sera téléchargeable par les élèves après validation
+            {t('contribution_modal.upload.limits', 'PDF, Office ou Images, max 30 MB')}
           </span>
           <input type="file" onChange={handleFile} style={{ display: 'none' }} accept=".pdf,.png,.jpg,.jpeg,.txt" />
         </label>
@@ -143,11 +145,11 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
         {/* Form fields */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-3)' }}>
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={labelStyle}>Titre de la ressource *</label>
+            <label style={labelStyle}>{t('tutor.submissions.modal_new.form_title', 'Titre du document')} *</label>
             <input style={inputStyle} value={form.titre} onChange={e => set('titre', e.target.value)} placeholder="Ex: Épreuve de Mathématiques BAC A 2024" />
           </div>
           <div>
-            <label style={labelStyle}>Type</label>
+            <label style={labelStyle}>{t('tutor.submissions.modal_new.form_type', 'Type de document')}</label>
             <input 
               style={inputStyle} 
               value={form.type} 
@@ -158,12 +160,9 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
             <datalist id="submissions-type-suggestions">
               {TYPES.map(t => <option key={t} value={t} />)}
             </datalist>
-            <span style={{ fontSize: '10px', color: 'var(--txt-tertiary)', marginTop: '2px', display: 'block' }}>
-              Choisissez ou saisissez librement un type
-            </span>
           </div>
           <div>
-            <label style={labelStyle}>Matière *</label>
+            <label style={labelStyle}>{t('tutor.submissions.modal_new.form_subject', 'Matière')} *</label>
             <input 
               style={inputStyle} 
               value={form.matiere} 
@@ -176,12 +175,9 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
                 <option key={i} value={m} />
               ))}
             </datalist>
-            <span style={{ fontSize: '10px', color: 'var(--txt-tertiary)', marginTop: '2px', display: 'block' }}>
-              Choisissez ou saisissez librement une matière
-            </span>
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={labelStyle}>Niveau cible *</label>
+            <label style={labelStyle}>{t('tutor.submissions.modal_new.form_level', 'Classe / Niveau cible')} *</label>
             <input 
               style={inputStyle} 
               value={form.niveau} 
@@ -194,16 +190,13 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
                 <option key={i} value={n} />
               ))}
             </datalist>
-            <span style={{ fontSize: '10px', color: 'var(--txt-tertiary)', marginTop: '2px', display: 'block' }}>
-              Choisissez ou saisissez librement un niveau
-            </span>
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={labelStyle}>Description courte</label>
+            <label style={labelStyle}>{t('tutor.submissions.modal_new.form_desc', 'Description / Objectifs')}</label>
             <input style={inputStyle} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Contexte, objectifs pédagogiques..." />
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={labelStyle}>Description ou contenu textuel (optionnel)</label>
+            <label style={labelStyle}>{t('tutor.submissions.modal_new.form_content', 'Contenu')}</label>
             <textarea style={{ ...inputStyle, minHeight: '120px', resize: 'vertical' }} value={form.contenu} onChange={e => set('contenu', e.target.value)} placeholder="Vous pouvez ajouter des notes pédagogiques, consignes ou texte additionnel ici..." />
           </div>
         </div>
@@ -212,12 +205,12 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
 
         {/* Actions */}
         <div style={{ display: 'flex', gap: 'var(--sp-3)', justifyContent: 'flex-end', borderTop: '1px solid var(--brd-subtle)', paddingTop: 'var(--sp-4)' }}>
-          <button onClick={onClose} className="laura-btn laura-btn-ghost" style={{ minHeight: '40px', padding: '0 var(--sp-5)' }}>Annuler</button>
+          <button onClick={onClose} className="laura-btn laura-btn-ghost" style={{ minHeight: '40px', padding: '0 var(--sp-5)' }}>{t('tutor.submissions.modal_detail.close', 'Fermer')}</button>
           <button onClick={() => handleSubmit('brouillon')} disabled={isSaving} className="laura-btn laura-btn-secondary" style={{ minHeight: '40px', padding: '0 var(--sp-5)' }}>
-            💾 Sauvegarder brouillon
+            💾 {t('tutor.submissions.modal_new.save_draft', 'Enregistrer en brouillon')}
           </button>
           <button onClick={() => handleSubmit('soumis')} disabled={isSaving || fileStatus === 'analyzing'} className="laura-btn laura-btn-primary" style={{ minHeight: '40px', padding: '0 var(--sp-5)' }}>
-            {isSaving ? 'Envoi...' : '📤 Soumettre pour validation'}
+            {isSaving ? t('tutor.submissions.modal_new.saving', 'Enregistrement...') : `📤 ${t('tutor.submissions.modal_new.submit_for_review', 'Soumettre pour relecture')}`}
           </button>
         </div>
       </div>
@@ -226,20 +219,32 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
 }
 
 function DetailModal({ sub, onClose }) {
-  const statusMap = { brouillon: { label: 'Brouillon', color: 'var(--txt-tertiary)' }, soumis: { label: 'Soumis', color: 'var(--clr-brand)' }, en_revue: { label: 'En revue', color: '#f59e0b' }, a_corriger: { label: 'À corriger', color: 'var(--clr-error)' }, publie: { label: 'Validé ✓', color: 'var(--clr-green)' }, valide: { label: 'Validé ✓', color: 'var(--clr-green)' }, rejete: { label: 'Rejeté', color: 'var(--clr-error)' } };
+  const { t, i18n } = useTranslation();
+  const statusMap = { 
+    brouillon: { label: t('tutor.submissions.table.status_brouillon', 'Brouillon'), color: 'var(--txt-tertiary)' }, 
+    soumis: { label: t('tutor.submissions.stats.pending_badge', 'En cours'), color: 'var(--clr-brand)' }, 
+    en_revue: { label: t('tutor.submissions.filters.pending', 'En attente'), color: '#f59e0b' }, 
+    a_corriger: { label: t('tutor.submissions.filters.to_correct', 'À corriger'), color: 'var(--clr-error)' }, 
+    publie: { label: t('tutor.submissions.table.status_valide', 'Validé ✓'), color: 'var(--clr-green)' }, 
+    valide: { label: t('tutor.submissions.table.status_valide', 'Validé ✓'), color: 'var(--clr-green)' }, 
+    rejete: { label: t('tutor.submissions.table.status_rejete', 'Rejeté'), color: 'var(--clr-error)' } 
+  };
   const st = statusMap[sub.statut] || { label: sub.statut, color: 'var(--txt-secondary)' };
+  
+  const locale = i18n.language === 'en' ? 'en-US' : 'fr-FR';
+
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--sp-4)' }} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="card animate-in" style={{ width: '100%', maxWidth: '580px', maxHeight: '85vh', overflowY: 'auto', padding: 'var(--sp-6)', display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <h2 style={{ margin: '0 0 4px', fontSize: 'var(--tx-lg)', fontWeight: 700 }}>{sub.titre || 'Sans titre'}</h2>
+            <h2 style={{ margin: '0 0 4px', fontSize: 'var(--tx-lg)', fontWeight: 700 }}>{sub.titre || t('tutor.resources.untitled', 'Sans titre')}</h2>
             <span style={{ fontSize: 'var(--tx-xs)', fontWeight: 700, color: st.color }}>● {st.label}</span>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', color: 'var(--txt-tertiary)' }}>✕</button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-2)', fontSize: 'var(--tx-sm)' }}>
-          {[['Type', sub.type], ['Matière', sub.matiere], ['Niveau', sub.cible || sub.niveau], ['Soumis le', sub.createdAt ? new Date(sub.createdAt).toLocaleDateString('fr-FR') : 'N/A']].map(([k, v]) => (
+          {[[t('tutor.submissions.table.type', 'Type'), sub.type], [t('tutor.submissions.table.subject', 'Matière'), sub.matiere], [t('tutor.submissions.table.level', 'Niveau'), sub.cible || sub.niveau], [t('tutor.submissions.modal_detail.created_at', 'Créée le'), sub.createdAt ? new Date(sub.createdAt).toLocaleDateString(locale) : 'N/A']].map(([k, v]) => (
             <div key={k} style={{ background: 'var(--srf-raised)', borderRadius: 'var(--rd-md)', padding: 'var(--sp-3)' }}>
               <div style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', marginBottom: '2px' }}>{k}</div>
               <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>{v || '—'}</div>
@@ -249,26 +254,27 @@ function DetailModal({ sub, onClose }) {
         {sub.description && <p style={{ margin: 0, fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', fontStyle: 'italic' }}>{sub.description}</p>}
         {sub.contenu && (
           <div style={{ background: 'var(--srf-raised)', borderRadius: 'var(--rd-md)', padding: 'var(--sp-4)', maxHeight: '200px', overflowY: 'auto' }}>
-            <p style={{ margin: '0 0 var(--sp-2)', fontSize: 'var(--tx-xs)', fontWeight: 600, color: 'var(--txt-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Contenu</p>
+            <p style={{ margin: '0 0 var(--sp-2)', fontSize: 'var(--tx-xs)', fontWeight: 600, color: 'var(--txt-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('tutor.submissions.modal_detail.content_tab', 'Contenu')}</p>
             <pre style={{ margin: 0, fontSize: 'var(--tx-xs)', color: 'var(--txt-primary)', whiteSpace: 'pre-wrap', fontFamily: 'inherit', lineHeight: 1.6 }}>{sub.contenu.slice(0, 800)}{sub.contenu.length > 800 ? '...' : ''}</pre>
           </div>
         )}
         {sub.statut === 'a_corriger' && (
           <div style={{ padding: 'var(--sp-4)', background: 'color-mix(in srgb, var(--clr-error) 8%, var(--srf-base))', borderRadius: 'var(--rd-md)', border: '1px solid rgba(239,68,68,0.2)' }}>
-            <p style={{ margin: 0, fontSize: 'var(--tx-sm)', color: 'var(--clr-error)', fontWeight: 600 }}>✏️ Des corrections sont demandées. Modifiez et resoumettez.</p>
+            <p style={{ margin: 0, fontSize: 'var(--tx-sm)', color: 'var(--clr-error)', fontWeight: 600 }}>✏️ {t('tutor.submissions.modal_detail.corrections_needed', 'Des corrections sont demandées. Modifiez et resoumettez.')}</p>
           </div>
         )}
-        <button onClick={onClose} className="laura-btn laura-btn-secondary" style={{ minHeight: '40px', alignSelf: 'flex-end', padding: '0 var(--sp-5)' }}>Fermer</button>
+        <button onClick={onClose} className="laura-btn laura-btn-secondary" style={{ minHeight: '40px', alignSelf: 'flex-end', padding: '0 var(--sp-5)' }}>{t('tutor.submissions.modal_detail.close', 'Fermer')}</button>
       </div>
     </div>
   );
 }
 
 export default function TutorSubmissionsPage() {
+  const { t, i18n } = useTranslation();
   const { currentUser, userProfile } = useAuth();
   const [submissions, setSubmissions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState('Toutes');
+  const [filter, setFilter] = useState(t('tutor.submissions.filters.all', 'Toutes'));
   const [showModal, setShowModal] = useState(false);
   const [selectedSub, setSelectedSub] = useState(null);
   const [toast, setToast] = useState('');
@@ -293,42 +299,36 @@ export default function TutorSubmissionsPage() {
 
   const getStatusStyle = (statut) => {
     switch (statut) {
-      case 'brouillon': return { label: 'Brouillon', cls: '' };
-      case 'soumis': case 'en_attente': return { label: 'Soumis', cls: 'badge--pending' };
-      case 'en_revue': return { label: 'En revue', cls: 'badge--warning' };
-      case 'a_corriger': return { label: 'À corriger', cls: 'badge--error' };
-      case 'publie': case 'valide': return { label: 'Validé ✓', cls: 'badge--green' };
-      case 'rejete': return { label: 'Rejeté', cls: 'badge--error' };
-      default: return { label: statut || 'Brouillon', cls: '' };
+      case 'brouillon': return { label: t('tutor.submissions.table.status_brouillon', 'Brouillon'), cls: '' };
+      case 'soumis': case 'en_attente': return { label: t('tutor.submissions.stats.pending_badge', 'En cours'), cls: 'badge--pending' };
+      case 'en_revue': return { label: t('tutor.submissions.filters.pending', 'En attente'), cls: 'badge--warning' };
+      case 'a_corriger': return { label: t('tutor.submissions.filters.to_correct', 'À corriger'), cls: 'badge--error' };
+      case 'publie': case 'valide': return { label: t('tutor.submissions.table.status_valide', 'Validé ✓'), cls: 'badge--green' };
+      case 'rejete': return { label: t('tutor.submissions.table.status_rejete', 'Rejeté'), cls: 'badge--error' };
+      default: return { label: statut || t('tutor.submissions.table.status_brouillon', 'Brouillon'), cls: '' };
     }
   };
 
   if (!isContributor) return (
     <div className="empty-state animate-in" style={{ maxWidth: '600px', margin: '4rem auto' }}>
       <span className="empty-state__icon">🔒</span>
-      <h2 className="empty-state__title">Espace Soumission Restreint</h2>
-      <p style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', marginBottom: 'var(--sp-6)' }}>
-        Vous devez avoir le statut <strong>Tuteur Contributeur</strong> pour proposer du contenu sur la plateforme.
+      <h2 className="empty-state__title">{t('tutor.submissions.restricted_title', 'Espace Soumission Restreint')}</h2>
+      <p style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', marginBottom: 'var(--sp-6)' }} dangerouslySetInnerHTML={{ __html: t('tutor.submissions.restricted_desc', 'Vous devez avoir le statut <strong>Tuteur Contributeur</strong> pour proposer du contenu sur la plateforme.') }}>
       </p>
-      <button onClick={() => alert("Demande transmise à l'administration.")} className="laura-btn laura-btn-primary" style={{ minHeight: '44px', padding: '0 var(--sp-6)' }}>Faire la demande d'accès</button>
+      <button onClick={() => alert(t('tutor.submissions.request_access_success', "Demande transmise à l'administration."))} className="laura-btn laura-btn-primary" style={{ minHeight: '44px', padding: '0 var(--sp-6)' }}>{t('tutor.submissions.request_access_btn', 'Faire la demande d\'accès')}</button>
     </div>
   );
 
   const filteredSubmissions = submissions.filter(sub => {
-    if (filter === 'Toutes') return true;
-    if (filter === 'Brouillons') return sub.statut === 'brouillon';
-    if (filter === 'En attente') return ['en_attente', 'soumis', 'en_revue'].includes(sub.statut);
-    if (filter === 'À corriger') return sub.statut === 'a_corriger';
-    if (filter === 'Validées') return ['publie', 'valide'].includes(sub.statut);
+    if (filter === t('tutor.submissions.filters.all', 'Toutes')) return true;
+    if (filter === t('tutor.submissions.filters.drafts', 'Brouillons')) return sub.statut === 'brouillon';
+    if (filter === t('tutor.submissions.filters.pending', 'En attente')) return ['en_attente', 'soumis', 'en_revue'].includes(sub.statut);
+    if (filter === t('tutor.submissions.filters.to_correct', 'À corriger')) return sub.statut === 'a_corriger';
+    if (filter === t('tutor.submissions.filters.validated', 'Validées')) return ['publie', 'valide'].includes(sub.statut);
     return true;
   });
 
-  const stats = [
-    { label: 'Total', val: submissions.length, color: 'var(--clr-brand)' },
-    { label: 'En attente', val: submissions.filter(s => ['soumis', 'en_attente', 'en_revue'].includes(s.statut)).length, color: '#f59e0b' },
-    { label: 'Validés', val: submissions.filter(s => ['publie', 'valide'].includes(s.statut)).length, color: 'var(--clr-green)' },
-    { label: 'Brouillons', val: submissions.filter(s => s.statut === 'brouillon').length, color: 'var(--txt-tertiary)' },
-  ];
+  const locale = i18n.language === 'en' ? 'en-US' : 'fr-FR';
 
   return (
     <div className="stack stack--lg animate-in">
@@ -343,23 +343,23 @@ export default function TutorSubmissionsPage() {
       {/* HEADER */}
       <div className="row row--between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 'var(--sp-4)' }}>
         <div>
-          <h1 className="laura-h1">Vos Soumissions</h1>
+          <h1 className="laura-h1">{t('tutor.submissions.title', 'Vos Soumissions')}</h1>
           <p style={{ margin: 'var(--sp-1) 0 0', color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>
-            Soumettez et gérez vos contenus pédagogiques.
+            {t('tutor.submissions.subtitle', 'Soumettez et gérez vos contenus pédagogiques.')}
           </p>
         </div>
         <button onClick={() => setShowModal(true)} className="laura-btn laura-btn-primary" style={{ minHeight: '42px', padding: '0 var(--sp-6)' }}>
-          + Nouvelle soumission
+          {t('tutor.submissions.new_submission_btn', '+ Nouvelle soumission')}
         </button>
       </div>
 
-      {/* STATS — same KPI card style as AdminDashboard */}
+      {/* STATS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--sp-5)' }}>
         {[
-          { label: 'Total',      val: submissions.length,                                                                     iconClass: 'files',         color: 'var(--clr-brand)',   badgeClass: 'brand',   badge: 'Soumissions' },
-          { label: 'En attente', val: submissions.filter(s => ['soumis','en_attente','en_revue'].includes(s.statut)).length,  iconClass: 'hourglass-low', color: 'var(--clr-warning)', badgeClass: 'warning', badge: 'En cours' },
-          { label: 'Validés',    val: submissions.filter(s => ['publie','valide'].includes(s.statut)).length,                iconClass: 'circle-check',  color: 'var(--clr-green)',   badgeClass: 'green',   badge: 'Publiés' },
-          { label: 'Brouillons', val: submissions.filter(s => s.statut === 'brouillon').length,                               iconClass: 'file-pencil',   color: 'var(--txt-tertiary)',badgeClass: '',        badge: 'Draft' },
+          { label: t('tutor.submissions.stats.total', 'Total'),      val: submissions.length,                                                                     iconClass: 'files',         color: 'var(--clr-brand)',   badgeClass: 'brand',   badge: t('tutor.submissions.stats.submissions_badge', 'Soumissions') },
+          { label: t('tutor.submissions.stats.pending', 'En attente'), val: submissions.filter(s => ['soumis','en_attente','en_revue'].includes(s.statut)).length,  iconClass: 'hourglass-low', color: 'var(--clr-warning)', badgeClass: 'warning', badge: t('tutor.submissions.stats.pending_badge', 'En cours') },
+          { label: t('tutor.submissions.stats.validated', 'Validés'),    val: submissions.filter(s => ['publie','valide'].includes(s.statut)).length,                iconClass: 'circle-check',  color: 'var(--clr-green)',   badgeClass: 'green',   badge: t('tutor.submissions.stats.validated_badge', 'Publiés') },
+          { label: t('tutor.submissions.stats.drafts', 'Brouillons'), val: submissions.filter(s => s.statut === 'brouillon').length,                               iconClass: 'file-pencil',   color: 'var(--txt-tertiary)',badgeClass: '',        badge: t('tutor.submissions.stats.drafts_badge', 'Brouillon') },
         ].map(({ label, val, iconClass, color, badgeClass, badge }) => (
           <div key={label} className="card card--hoverable card__body"
             style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)', background: 'var(--srf-base)', boxShadow: 'var(--shd-sm)', position: 'relative', overflow: 'hidden' }}>
@@ -380,7 +380,13 @@ export default function TutorSubmissionsPage() {
 
       {/* FILTRES */}
       <div className="chip-row">
-        {['Toutes', 'Brouillons', 'En attente', 'À corriger', 'Validées'].map((f) => (
+        {[
+          t('tutor.submissions.filters.all', 'Toutes'),
+          t('tutor.submissions.filters.drafts', 'Brouillons'),
+          t('tutor.submissions.filters.pending', 'En attente'),
+          t('tutor.submissions.filters.to_correct', 'À corriger'),
+          t('tutor.submissions.filters.validated', 'Validées')
+        ].map((f) => (
           <button key={f} onClick={() => setFilter(f)} className="chip" style={{ background: filter === f ? 'var(--clr-brand-lt)' : '', color: filter === f ? 'var(--clr-brand)' : '', borderColor: filter === f ? 'var(--clr-brand)' : '', fontWeight: filter === f ? 'var(--fw-bold)' : '' }}>
             {f}
           </button>
@@ -393,21 +399,29 @@ export default function TutorSubmissionsPage() {
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--tx-sm)' }}>
             <thead>
               <tr style={{ background: 'var(--srf-raised)', borderBottom: '2px solid var(--brd-subtle)' }}>
-                {['Titre', 'Type', 'Matière', 'Niveau', 'Date', 'Statut', 'Actions'].map(h => (
+                {[
+                  t('tutor.submissions.table.title', 'Titre'),
+                  t('tutor.submissions.table.type', 'Type'),
+                  t('tutor.submissions.table.subject', 'Matière'),
+                  t('tutor.submissions.table.level', 'Niveau'),
+                  t('tutor.submissions.table.date', 'Date'),
+                  t('tutor.submissions.table.status', 'Statut'),
+                  t('tutor.submissions.table.actions', 'Actions')
+                ].map(h => (
                   <th key={h} style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan="7" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Chargement...</td></tr>
+                <tr><td colSpan="7" style={{ padding: '3rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>{t('tutor.submissions.table.loading', 'Chargement...')}</td></tr>
               ) : filteredSubmissions.length === 0 ? (
                 <tr>
                   <td colSpan="7" style={{ padding: '3rem', textAlign: 'center' }}>
                     <div style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-sm)' }}>
-                      Aucune soumission.{' '}
+                      {t('tutor.submissions.table.empty', 'Aucune soumission.')}{' '}
                       <button onClick={() => setShowModal(true)} style={{ background: 'none', border: 'none', color: 'var(--clr-brand)', fontWeight: 600, cursor: 'pointer', fontSize: 'inherit' }}>
-                        Créer votre première soumission →
+                        {t('tutor.submissions.new_submission_btn', '+ Nouvelle soumission')} →
                       </button>
                     </div>
                   </td>
@@ -417,18 +431,18 @@ export default function TutorSubmissionsPage() {
                 return (
                   <tr key={sub.id} style={{ borderBottom: '1px solid var(--brd-subtle)', background: idx % 2 === 1 ? 'var(--srf-raised)' : '' }}>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)', fontWeight: 'var(--fw-semibold)', color: 'var(--txt-primary)', maxWidth: '220px' }}>
-                      <span className="truncate" style={{ display: 'block' }}>{sub.titre || 'Sans titre'}</span>
+                      <span className="truncate" style={{ display: 'block' }}>{sub.titre || t('tutor.resources.untitled', 'Sans titre')}</span>
                     </td>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-secondary)', whiteSpace: 'nowrap' }}>{sub.type || '—'}</td>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-secondary)', whiteSpace: 'nowrap' }}>{sub.matiere || '—'}</td>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-secondary)', whiteSpace: 'nowrap' }}>{sub.cible || sub.niveau || '—'}</td>
-                    <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-tertiary)', whiteSpace: 'nowrap' }}>{sub.createdAt ? new Date(sub.createdAt).toLocaleDateString('fr-FR') : 'N/A'}</td>
+                    <td style={{ padding: 'var(--sp-4) var(--sp-5)', color: 'var(--txt-tertiary)', whiteSpace: 'nowrap' }}>{sub.createdAt ? new Date(sub.createdAt).toLocaleDateString(locale) : 'N/A'}</td>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)', whiteSpace: 'nowrap' }}>
                       <span className={`badge ${cls}`}>{label}</span>
                     </td>
                     <td style={{ padding: 'var(--sp-4) var(--sp-5)', whiteSpace: 'nowrap' }}>
                       <button onClick={() => setSelectedSub(sub)} className="laura-btn laura-btn-secondary" style={{ minHeight: '30px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                        Voir
+                        {t('tutor.submissions.table.view_btn', 'Voir')}
                       </button>
                     </td>
                   </tr>
