@@ -101,7 +101,7 @@ function RenderMessage({ text }) {
 }
 
 export default function LearnChatPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
@@ -113,7 +113,8 @@ export default function LearnChatPage() {
     role: userProfile?.roleLabel || t('common.roles.learner'),
     niveau: userProfile?.niveau || t('common.roles.learner'),
     serie: userProfile?.serie || 'Général',
-    examen: userProfile?.examen || t('common.roles.learner')
+    examen: userProfile?.examen || t('common.roles.learner'),
+    lang: i18n.language || 'fr'
   };
 
   const [isLoading, setIsLoading] = useState(false);
