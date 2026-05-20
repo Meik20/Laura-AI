@@ -46,16 +46,8 @@ export default function LearnRevisionPage() {
 
   useEffect(() => {
     async function fetchInitialData() {
-      // Fetch matieres from adminSettings
-      try {
-        const docRef = doc(db, 'adminSettings', 'global');
-        const docSnap = await getDoc(docRef);
-        const fetchedMatieres = docSnap.exists() && docSnap.data().matieres ? docSnap.data().matieres : [];
-        const filtered = filterMatieres(fetchedMatieres, userProfile);
-        setMatieresList(filtered);
-      } catch (err) {
-        console.error("Erreur chargement matières:", err);
-      }
+      const userMatieres = userProfile?.matieres || [];
+      setMatieresList(userMatieres.map(mName => ({ id: mName, nom: mName })));
 
       // Fetch recent sessions
       if (!userProfile?.uid) return;
@@ -68,7 +60,7 @@ export default function LearnRevisionPage() {
       }
     }
     fetchInitialData();
-  }, [userProfile?.uid]);
+  }, [userProfile]);
 
   const handleChange = (e) => setSessionConfig({ ...sessionConfig, [e.target.name]: e.target.value });
 

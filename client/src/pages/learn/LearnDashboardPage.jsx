@@ -98,9 +98,9 @@ export default function LearnDashboardPage() {
     fetchData();
   }, [user.examen]);
 
-  const filteredMatieres = filterMatieres(adminMatieres, userProfile);
-  const matieres = filteredMatieres.map((m, i) => ({
-    mat: m.nom, val: userProfile?.matieresProgress?.[m.nom] || 0,
+  const userMatieres = userProfile?.matieres || [];
+  const matieres = userMatieres.map((mName, i) => ({
+    mat: mName, val: userProfile?.matieresProgress?.[mName] || 0,
     color: SUBJECT_COLORS[i % SUBJECT_COLORS.length],
   }));
 

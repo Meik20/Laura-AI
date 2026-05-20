@@ -88,11 +88,11 @@ export default function LearnProgressPage() {
     fetchInitialData();
   }, [userProfile?.uid]);
 
-  const filteredMatieres = filterMatieres(adminMatieres, userProfile);
+  const userMatieres = userProfile?.matieres || [];
 
-  const subjectProgress = filteredMatieres.map((m, i) => ({
-    matiere: m.nom,
-    val: userProfile?.matieresProgress?.[m.nom] || 0,
+  const subjectProgress = userMatieres.map((mName, i) => ({
+    matiere: mName,
+    val: userProfile?.matieresProgress?.[mName] || 0,
     color: i % 4 === 0 ? '#7C6FFF' : i % 4 === 1 ? '#00D4AA' : i % 4 === 2 ? '#F59E0B' : '#3B82F6'
   }));
 

@@ -8,11 +8,12 @@ export default function LearnProfilePage() {
   const { t } = useTranslation();
   const { userProfile } = useAuth();
   const [formData, setFormData] = useState({
-    prenom: '', nom: '', email: '', roleLabel: 'Élève', niveau: '', serie: '', filiere: '', examen: ''
+    prenom: '', nom: '', email: '', roleLabel: 'Élève', niveau: '', serie: '', filiere: '', examen: '', matieres: []
   });
+  const [newMatiere, setNewMatiere] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
-  const [suggestions, setSuggestions] = useState({ niveaux: [], series: [], filieres: [], examens: [] });
+  const [suggestions, setSuggestions] = useState({ niveaux: [], series: [], filieres: [], examens: [], matieres: [] });
 
   useEffect(() => {
     async function fetchSuggestions() {
@@ -25,7 +26,8 @@ export default function LearnProfilePage() {
             niveaux: data.niveaux || [],
             series: data.series || [],
             filieres: data.filieres || [],
-            examens: data.examens || []
+            examens: data.examens || [],
+            matieres: Array.from(new Set((data.matieres || []).map(m => m.nom))).filter(Boolean)
           });
         }
       } catch (err) {
@@ -45,12 +47,32 @@ export default function LearnProfilePage() {
         niveau: userProfile.niveau || userProfile.classe || userProfile.niveauEtude || '',
         serie: userProfile.serie || '',
         filiere: userProfile.filiere || userProfile.discipline || '',
-        examen: userProfile.examen || userProfile.examenEleve || userProfile.examenEtudiant || ''
+        examen: userProfile.examen || userProfile.examenEleve || userProfile.examenEtudiant || '',
+        matieres: userProfile.matieres || []
       });
     }
   }, [userProfile]);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleAddMatiere = (e) => {
+    e.preventDefault();
+    const clean = newMatiere.trim();
+    if (clean && !formData.matieres.includes(clean)) {
+      setFormData(prev => ({
+        ...prev,
+        matieres: [...prev.matieres, clean]
+      }));
+    }
+    setNewMatiere('');
+  };
+
+  const handleRemoveMatiere = (matiere) => {
+    setFormData(prev => ({
+      ...prev,
+      matieres: prev.matieres.filter(m => m !== matiere)
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,8 +92,25 @@ export default function LearnProfilePage() {
 
       // 2. Mettre à jour automatiquement les suggestions globales dans adminSettings/global
       const globalRef = doc(db, 'adminSettings', 'global');
+      const docSnap = await getDoc(globalRef);
+      const currentGlobalData = docSnap.exists() ? docSnap.data() : {};
+      const currentGlobalMatieres = currentGlobalData.matieres || [];
+      const currentGlobalMatNames = currentGlobalMatieres.map(m => m.nom.toLowerCase());
+
+      const newGlobalMatieres = [];
+      formData.matieres.forEach(mName => {
+        if (!currentGlobalMatNames.includes(mName.toLowerCase())) {
+          newGlobalMatieres.push({
+            id: 'mat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+            nom: mName,
+            niveau: formData.niveau || 'Général',
+            serie: formData.serie || 'Toutes',
+            filiere: formData.filiere || 'Général'
+          });
+        }
+      });
+
       const updates = {};
-      
       const cleanNiveau = formData.niveau.trim();
       const cleanSerie = formData.serie.trim();
       const cleanFiliere = formData.filiere.trim();
@@ -90,6 +129,10 @@ export default function LearnProfilePage() {
         updates.examens = arrayUnion(cleanExamen);
       }
 
+      if (newGlobalMatieres.length > 0) {
+        updates.matieres = [...currentGlobalMatieres, ...newGlobalMatieres];
+      }
+
       if (Object.keys(updates).length > 0) {
         await setDoc(globalRef, updates, { merge: true });
         // Mettre à jour l'état local
@@ -97,7 +140,8 @@ export default function LearnProfilePage() {
           niveaux: cleanNiveau && !prev.niveaux.includes(cleanNiveau) ? [...prev.niveaux, cleanNiveau] : prev.niveaux,
           series: cleanSerie && !prev.series.includes(cleanSerie) ? [...prev.series, cleanSerie] : prev.series,
           filieres: cleanFiliere && !prev.filieres.includes(cleanFiliere) ? [...prev.filieres, cleanFiliere] : prev.filieres,
-          examens: cleanExamen && !prev.examens.includes(cleanExamen) ? [...prev.examens, cleanExamen] : prev.examens
+          examens: cleanExamen && !prev.examens.includes(cleanExamen) ? [...prev.examens, cleanExamen] : prev.examens,
+          matieres: [...prev.matieres, ...newGlobalMatieres.map(m => m.nom)]
         }));
       }
 
@@ -237,7 +281,50 @@ export default function LearnProfilePage() {
             </datalist>
           </div>
 
-          <button type="submit" disabled={isSaving} className="primary" style={{ width: '100%', height: '36px', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="divider" style={{ margin: '0.5rem 0' }} />
+
+          <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 500, color: '#1A1A1A' }}>{t('learn.profile.form.matieres_title', 'Mes matieres a réviser')}</h3>
+          <p style={{ margin: 0, fontSize: '12px', color: '#6E6E6B' }}>
+            {t('learn.profile.form.matieres_subtitle', "Ajoutez les matieres que vous étudiez. Ce sont elles qui composeront votre plan de révision.")}
+          </p>
+
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+            <input 
+              type="text" 
+              value={newMatiere} 
+              onChange={e => setNewMatiere(e.target.value)} 
+              list="matieres-suggestions"
+              placeholder={t('learn.profile.form.matiere_placeholder', "ex: Mathématiques, Physique-Chimie")}
+              style={{ flex: 1 }}
+            />
+            <datalist id="matieres-suggestions">
+              {suggestions.matieres.map((m, i) => (
+                <option key={i} value={m} />
+              ))}
+            </datalist>
+            <button type="button" onClick={handleAddMatiere} className="secondary" style={{ padding: '0 1.5rem', height: '38px', borderRadius: '0.375rem' }}>
+              {t('learn.profile.form.add_btn', 'Ajouter')}
+            </button>
+          </div>
+
+          {formData.matieres.length > 0 ? (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem', padding: '0.75rem', background: '#F5F5F3', borderRadius: '0.5rem' }}>
+              {formData.matieres.map((matiere, index) => (
+                <span key={index} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', background: '#FFFFFF', border: '1px solid #E5E5E2', padding: '0.25rem 0.6rem', borderRadius: '2rem', fontSize: '13px', fontWeight: 500 }}>
+                  {matiere}
+                  <button type="button" onClick={() => handleRemoveMatiere(matiere)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', fontSize: '14px', padding: 0, display: 'flex', alignItems: 'center' }}>
+                    &times;
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p style={{ margin: 0, fontSize: '13px', color: '#EF4444', fontStyle: 'italic' }}>
+              {t('learn.profile.form.no_matieres', "Aucune matiere ajoutée. Veuillez en ajouter au moins une.")}
+            </p>
+          )}
+
+          <button type="submit" disabled={isSaving || formData.matieres.length === 0} className="primary" style={{ width: '100%', height: '36px', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {isSaving ? t('learn.profile.form.saving', 'Enregistrement...') : t('learn.profile.form.save_btn', 'Enregistrer les modifications')}
           </button>
 

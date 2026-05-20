@@ -1,35 +1,5 @@
 import { useState, useEffect } from 'react';
-import { db } from '../../firebase';
-import { doc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../../hooks/useAuth';
-
-const filterMatieres = (allMatieres, userProfile) => {
-  const examen = (userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || '').toLowerCase();
-  const niveau = (userProfile?.niveau || userProfile?.classe || userProfile?.niveauEtude || '').toLowerCase();
-  const serie = (userProfile?.serie || '').toLowerCase();
-  const filiere = (userProfile?.filiere || userProfile?.discipline || '').toLowerCase();
-
-  // If user is BTS or Superior Level
-  const isBtsOrSup = examen.includes('bts') || niveau.includes('bts') || niveau.includes('supérieur') || niveau.includes('étudiant') || niveau.includes('licence') || niveau.includes('université');
-
-  if (!allMatieres || allMatieres.length === 0) return [];
-
-  return allMatieres.filter(m => {
-    const mNiveau = (m.niveau || '').toLowerCase();
-    const mSerie = (m.serie || '').toLowerCase();
-    const mFiliere = (m.filiere || '').toLowerCase();
-
-    if (isBtsOrSup) {
-      return mNiveau.includes('bts') || mNiveau.includes('supérieur') || mNiveau.includes('étudiant') || 
-             (filiere && mFiliere.includes(filiere)) || (serie && mSerie.includes(serie));
-    } else if (examen.includes('bepc') || niveau.includes('collège') || niveau.includes('3eme') || niveau.includes('4eme') || niveau.includes('5eme') || niveau.includes('6eme')) {
-      return mNiveau.includes('collège') || mNiveau.includes('bepc');
-    } else {
-      return mNiveau.includes('lycée') || mNiveau.includes('bac') || mSerie.includes('toutes') || 
-             (serie && mSerie.includes(serie));
-    }
-  });
-};
 
 export default function LearningGoalModal({ isOpen, onClose, onSave }) {
   const { userProfile } = useAuth();
@@ -41,19 +11,9 @@ export default function LearningGoalModal({ isOpen, onClose, onSave }) {
   const [matieresList, setMatieresList] = useState([]);
 
   useEffect(() => {
-    async function fetchMatieres() {
-      try {
-        const docRef = doc(db, 'adminSettings', 'global');
-        const docSnap = await getDoc(docRef);
-        const fetchedMatieres = docSnap.exists() && docSnap.data().matieres ? docSnap.data().matieres : [];
-        const filtered = filterMatieres(fetchedMatieres, userProfile);
-        setMatieresList(filtered);
-      } catch (err) {
-        console.error("Erreur chargement matières:", err);
-      }
-    }
     if (isOpen) {
-      fetchMatieres();
+      const userMatieres = userProfile?.matieres || [];
+      setMatieresList(userMatieres.map(mName => ({ id: mName, nom: mName })));
     }
   }, [isOpen, userProfile]);
 
