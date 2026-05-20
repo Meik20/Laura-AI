@@ -216,7 +216,12 @@
       "input": {
         "attach_file": "Attach document (PDF/Image)",
         "placeholder": "Type your message here...",
-        "send": "Send"
+        "send": "Send",
+        "explain": "Explain to me",
+        "revise": "Revise",
+        "correct": "Correct",
+        "quiz": "Quiz",
+        "resolve": "Resolve Exam"
       }
     },
     "dashboard": {

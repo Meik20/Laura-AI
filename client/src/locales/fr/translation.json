@@ -216,7 +216,12 @@
       "input": {
         "attach_file": "Joindre un document (PDF/Image)",
         "placeholder": "Écrivez votre message ici...",
-        "send": "Envoyer"
+        "send": "Envoyer",
+        "explain": "Explique-moi",
+        "revise": "Réviser",
+        "correct": "Corriger",
+        "quiz": "Quiz",
+        "resolve": "Résoudre l'épreuve"
       }
     },
     "dashboard": {
