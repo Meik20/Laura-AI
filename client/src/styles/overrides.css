@@ -209,12 +209,10 @@ div[style*="background: var(--color-neutral-800)"] {
 
 /* 1. AUTHENTICATION PORTAL (Login & Signup Pages) */
 .auth-container {
-  min-height: 100vh !important;
+  width: 100% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  background: radial-gradient(circle at 10% 20%, rgba(238, 242, 255, 0.8) 0%, rgba(248, 250, 252, 1) 90%) !important;
-  padding: 40px 24px !important;
   box-sizing: border-box !important;
   font-family: var(--font-ui) !important;
 }
@@ -795,13 +793,11 @@ div[style*="background: var(--color-neutral-800)"] {
 /* 12. MOBILE COMPACT OVERRIDES FOR AUTH PAGES */
 @media (max-width: 768px) {
   .auth-container {
-    padding: 10px !important;
-    height: 100dvh !important;
-    min-height: 100dvh !important;
-    overflow: hidden !important;
+    width: 100% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    padding: 0 !important;
   }
   
   .auth-card {
