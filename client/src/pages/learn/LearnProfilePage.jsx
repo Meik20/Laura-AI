@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
 
 export default function LearnProfilePage() {
@@ -12,6 +12,28 @@ export default function LearnProfilePage() {
   });
   const [isSaving, setIsSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [suggestions, setSuggestions] = useState({ niveaux: [], series: [], filieres: [], examens: [] });
+
+  useEffect(() => {
+    async function fetchSuggestions() {
+      try {
+        const docRef = doc(db, 'adminSettings', 'global');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setSuggestions({
+            niveaux: data.niveaux || [],
+            series: data.series || [],
+            filieres: data.filieres || [],
+            examens: data.examens || []
+          });
+        }
+      } catch (err) {
+        console.error("Erreur de chargement des suggestions :", err);
+      }
+    }
+    fetchSuggestions();
+  }, []);
 
   useEffect(() => {
     if (userProfile) {
@@ -36,6 +58,7 @@ export default function LearnProfilePage() {
     setIsSaving(true);
     setSuccessMsg('');
     try {
+      // 1. Mettre à jour le profil de l'utilisateur
       await updateDoc(doc(db, 'users', userProfile.uid), {
         ...formData,
         displayName: formData.prenom,
@@ -44,6 +67,40 @@ export default function LearnProfilePage() {
         examenEleve: formData.examen,
         examenEtudiant: formData.examen
       });
+
+      // 2. Mettre à jour automatiquement les suggestions globales dans adminSettings/global
+      const globalRef = doc(db, 'adminSettings', 'global');
+      const updates = {};
+      
+      const cleanNiveau = formData.niveau.trim();
+      const cleanSerie = formData.serie.trim();
+      const cleanFiliere = formData.filiere.trim();
+      const cleanExamen = formData.examen.trim();
+
+      if (cleanNiveau && !suggestions.niveaux.includes(cleanNiveau)) {
+        updates.niveaux = arrayUnion(cleanNiveau);
+      }
+      if (cleanSerie && !suggestions.series.includes(cleanSerie)) {
+        updates.series = arrayUnion(cleanSerie);
+      }
+      if (cleanFiliere && !suggestions.filieres.includes(cleanFiliere)) {
+        updates.filieres = arrayUnion(cleanFiliere);
+      }
+      if (cleanExamen && !suggestions.examens.includes(cleanExamen)) {
+        updates.examens = arrayUnion(cleanExamen);
+      }
+
+      if (Object.keys(updates).length > 0) {
+        await setDoc(globalRef, updates, { merge: true });
+        // Mettre à jour l'état local
+        setSuggestions(prev => ({
+          niveaux: cleanNiveau && !prev.niveaux.includes(cleanNiveau) ? [...prev.niveaux, cleanNiveau] : prev.niveaux,
+          series: cleanSerie && !prev.series.includes(cleanSerie) ? [...prev.series, cleanSerie] : prev.series,
+          filieres: cleanFiliere && !prev.filieres.includes(cleanFiliere) ? [...prev.filieres, cleanFiliere] : prev.filieres,
+          examens: cleanExamen && !prev.examens.includes(cleanExamen) ? [...prev.examens, cleanExamen] : prev.examens
+        }));
+      }
+
       setSuccessMsg(t('learn.profile.success', "Profil mis à jour avec succès !"));
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err) {
@@ -106,24 +163,78 @@ export default function LearnProfilePage() {
             </div>
             <div>
               <label>{t('learn.profile.form.level', 'Classe / Niveau *')}</label>
-              <input type="text" name="niveau" placeholder={t('learn.profile.form.level_placeholder', 'ex: Terminale, Licence 1')} required value={formData.niveau} onChange={handleChange} style={{ width: '100%' }} />
+              <input 
+                type="text" 
+                name="niveau" 
+                list="niveaux-suggestions"
+                placeholder={t('learn.profile.form.level_placeholder', 'ex: Terminale, Licence 1')} 
+                required 
+                value={formData.niveau} 
+                onChange={handleChange} 
+                style={{ width: '100%' }} 
+              />
+              <datalist id="niveaux-suggestions">
+                {suggestions.niveaux.map((n, i) => (
+                  <option key={i} value={n} />
+                ))}
+              </datalist>
             </div>
           </div>
 
           <div className="form-grid">
             <div>
               <label>{t('learn.profile.form.stream', 'Serie (Lycee)')}</label>
-              <input type="text" name="serie" placeholder={t('learn.profile.form.stream_placeholder', 'ex: D, C, A4, SES')} value={formData.serie} onChange={handleChange} style={{ width: '100%' }} />
+              <input 
+                type="text" 
+                name="serie" 
+                list="series-suggestions"
+                placeholder={t('learn.profile.form.stream_placeholder', 'ex: D, C, A4, SES')} 
+                value={formData.serie} 
+                onChange={handleChange} 
+                style={{ width: '100%' }} 
+              />
+              <datalist id="series-suggestions">
+                {suggestions.series.map((s, i) => (
+                  <option key={i} value={s} />
+                ))}
+              </datalist>
             </div>
             <div>
               <label>{t('learn.profile.form.major', 'Filiere (Superieur)')}</label>
-              <input type="text" name="filiere" placeholder={t('learn.profile.form.major_placeholder', 'ex: Droit, Medecine, Informatique')} value={formData.filiere} onChange={handleChange} style={{ width: '100%' }} />
+              <input 
+                type="text" 
+                name="filiere" 
+                list="filieres-suggestions"
+                placeholder={t('learn.profile.form.major_placeholder', 'ex: Droit, Medecine, Informatique')} 
+                value={formData.filiere} 
+                onChange={handleChange} 
+                style={{ width: '100%' }} 
+              />
+              <datalist id="filieres-suggestions">
+                {suggestions.filieres.map((f, i) => (
+                  <option key={i} value={f} />
+                ))}
+              </datalist>
             </div>
           </div>
 
           <div>
             <label>{t('learn.profile.form.exam', 'Examen prepare *')}</label>
-            <input type="text" name="examen" placeholder={t('learn.profile.form.exam_placeholder', 'ex: BAC, BTS, Licence')} required value={formData.examen} onChange={handleChange} style={{ width: '100%' }} />
+            <input 
+              type="text" 
+              name="examen" 
+              list="examens-suggestions"
+              placeholder={t('learn.profile.form.exam_placeholder', 'ex: BAC, BEPC, BTS, Licence')} 
+              required 
+              value={formData.examen} 
+              onChange={handleChange} 
+              style={{ width: '100%' }} 
+            />
+            <datalist id="examens-suggestions">
+              {suggestions.examens.map((e, i) => (
+                <option key={i} value={e} />
+              ))}
+            </datalist>
           </div>
 
           <button type="submit" disabled={isSaving} className="primary" style={{ width: '100%', height: '36px', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

@@ -1,21 +1,39 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { collection, getDocs, addDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 const TYPES = ['Épreuve', 'Annale', 'Fiche', 'Quiz', 'Livre', 'Correction'];
-const NIVEAUX = ['6ème', '5ème', '4ème', '3ème', '2nde', '1ère', 'Tle A', 'Tle C', 'Tle D', 'BTS', 'Général'];
-const MATIERES = ['Mathématiques', 'Physique-Chimie', 'SVT', 'Français', 'Philosophie', 'Histoire-Géo', 'Anglais', 'Économie', 'Informatique', 'Autre'];
 
 function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
   const [form, setForm] = useState({
-    titre: '', type: 'Épreuve', matiere: 'Mathématiques',
-    niveau: 'Tle D', description: '', contenu: ''
+    titre: '', type: 'Épreuve', matiere: '',
+    niveau: '', description: '', contenu: ''
   });
   const [file, setFile] = useState(null);
   const [fileStatus, setFileStatus] = useState(null); // null | 'analyzing' | 'ready' | 'error'
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
+  const [suggestions, setSuggestions] = useState({ niveaux: [], matieres: [] });
+
+  useEffect(() => {
+    async function fetchSuggestions() {
+      try {
+        const docSnap = await getDoc(doc(db, 'adminSettings', 'global'));
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const uniqueMatNames = Array.from(new Set((data.matieres || []).map(m => m.nom))).filter(Boolean);
+          setSuggestions({
+            niveaux: data.niveaux || [],
+            matieres: uniqueMatNames
+          });
+        }
+      } catch (err) {
+        console.error("Erreur de chargement des suggestions :", err);
+      }
+    }
+    fetchSuggestions();
+  }, []);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -43,15 +61,17 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
 
   const handleSubmit = async (statut) => {
     if (!form.titre.trim()) { setError('Le titre est obligatoire.'); return; }
+    if (!form.matiere.trim()) { setError('La matière est obligatoire.'); return; }
+    if (!form.niveau.trim()) { setError('Le niveau cible est obligatoire.'); return; }
     setIsSaving(true);
     setError('');
     try {
       const newRes = {
         titre: form.titre.trim(),
         type: form.type,
-        matiere: form.matiere,
-        niveau: form.niveau,
-        cible: form.niveau,
+        matiere: form.matiere.trim(),
+        niveau: form.niveau.trim(),
+        cible: form.niveau.trim(),
         description: form.description.trim(),
         contenu: form.contenu.trim(),
         statut,
@@ -62,8 +82,32 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
         ...(file ? { fileName: file.name } : {})
       };
       await addDoc(collection(db, 'resources'), newRes);
+
+      // Enregistrer automatiquement le niveau et la matière s'ils sont nouveaux
+      const globalRef = doc(db, 'adminSettings', 'global');
+      const updates = {};
+      const cleanNiveau = form.niveau.trim();
+      const cleanMatiere = form.matiere.trim();
+
+      if (cleanNiveau && !suggestions.niveaux.includes(cleanNiveau)) {
+        updates.niveaux = arrayUnion(cleanNiveau);
+      }
+      if (cleanMatiere && !suggestions.matieres.includes(cleanMatiere)) {
+        updates.matieres = arrayUnion({
+          id: 'mat_' + Date.now(),
+          nom: cleanMatiere,
+          niveau: cleanNiveau || 'Général',
+          serie: 'Toutes',
+          filiere: 'Général'
+        });
+      }
+      if (Object.keys(updates).length > 0) {
+        await setDoc(globalRef, updates, { merge: true });
+      }
+
       onSuccess(statut === 'soumis' ? 'Soumission envoyée pour validation !' : 'Brouillon sauvegardé.');
     } catch (err) {
+      console.error(err);
       setError('Erreur lors de la sauvegarde. Réessayez.');
     } finally {
       setIsSaving(false);
@@ -106,16 +150,34 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
             </select>
           </div>
           <div>
-            <label style={labelStyle}>Matière</label>
-            <select style={inputStyle} value={form.matiere} onChange={e => set('matiere', e.target.value)}>
-              {MATIERES.map(m => <option key={m}>{m}</option>)}
-            </select>
+            <label style={labelStyle}>Matière *</label>
+            <input 
+              style={inputStyle} 
+              value={form.matiere} 
+              list="submissions-matiere-suggestions"
+              onChange={e => set('matiere', e.target.value)} 
+              placeholder="Ex: Mathématiques, Physique-Chimie..." 
+            />
+            <datalist id="submissions-matiere-suggestions">
+              {suggestions.matieres.map((m, i) => (
+                <option key={i} value={m} />
+              ))}
+            </datalist>
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={labelStyle}>Niveau cible</label>
-            <select style={inputStyle} value={form.niveau} onChange={e => set('niveau', e.target.value)}>
-              {NIVEAUX.map(n => <option key={n}>{n}</option>)}
-            </select>
+            <label style={labelStyle}>Niveau cible *</label>
+            <input 
+              style={inputStyle} 
+              value={form.niveau} 
+              list="submissions-niveau-suggestions"
+              onChange={e => set('niveau', e.target.value)} 
+              placeholder="Ex: Terminale C, 3ème, BTS..." 
+            />
+            <datalist id="submissions-niveau-suggestions">
+              {suggestions.niveaux.map((n, i) => (
+                <option key={i} value={n} />
+              ))}
+            </datalist>
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
             <label style={labelStyle}>Description courte</label>

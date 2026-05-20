@@ -19,42 +19,22 @@ const filterMatieres = (allMatieres, userProfile) => {
   const isBtsOrSup = examen.includes('bts') || niveau.includes('bts') || niveau.includes('supérieur') ||
     niveau.includes('étudiant') || niveau.includes('licence') || niveau.includes('université');
 
-  let filtered = [];
-  if (allMatieres?.length > 0) {
-    filtered = allMatieres.filter(m => {
-      const mNiveau  = (m.niveau  || '').toLowerCase();
-      const mSerie   = (m.serie   || '').toLowerCase();
-      const mFiliere = (m.filiere || '').toLowerCase();
-      if (isBtsOrSup) {
-        return mNiveau.includes('bts') || mNiveau.includes('supérieur') || mNiveau.includes('étudiant') ||
-          (filiere && mFiliere.includes(filiere)) || (serie && mSerie.includes(serie));
-      } else if (examen.includes('bepc') || niveau.includes('collège')) {
-        return mNiveau.includes('collège') || mNiveau.includes('bepc');
-      } else {
-        return mNiveau.includes('lycée') || mNiveau.includes('bac') || mSerie.includes('toutes') ||
-          (serie && mSerie.includes(serie));
-      }
-    });
-  }
-  if (filtered.length > 0) return filtered;
+  if (!allMatieres || allMatieres.length === 0) return [];
 
-  if (isBtsOrSup) {
-    return [
-      { id: 'bts_1', nom: 'Culture Générale et Expression', niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
-      { id: 'bts_2', nom: 'Économie - Droit',               niveau: 'Supérieur', serie: 'Toutes', filiere: 'Général' },
-    ];
-  } else if (examen.includes('bepc') || niveau.includes('collège')) {
-    return [
-      { id: 'col_1', nom: 'Mathématiques', niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
-      { id: 'col_2', nom: 'Français',      niveau: 'Collège', serie: 'Toutes', filiere: 'Général' },
-    ];
-  } else {
-    return [
-      { id: 'lyc_1', nom: 'Mathématiques',   niveau: 'Lycée', serie: 'Toutes',   filiere: 'Général' },
-      { id: 'lyc_2', nom: 'Français',        niveau: 'Lycée', serie: 'Toutes',   filiere: 'Général' },
-      { id: 'lyc_3', nom: 'Physique-Chimie', niveau: 'Lycée', serie: 'C, D, TI', filiere: 'Général' },
-    ];
-  }
+  return allMatieres.filter(m => {
+    const mNiveau  = (m.niveau  || '').toLowerCase();
+    const mSerie   = (m.serie   || '').toLowerCase();
+    const mFiliere = (m.filiere || '').toLowerCase();
+    if (isBtsOrSup) {
+      return mNiveau.includes('bts') || mNiveau.includes('supérieur') || mNiveau.includes('étudiant') ||
+        (filiere && mFiliere.includes(filiere)) || (serie && mSerie.includes(serie));
+    } else if (examen.includes('bepc') || niveau.includes('collège')) {
+      return mNiveau.includes('collège') || mNiveau.includes('bepc');
+    } else {
+      return mNiveau.includes('lycée') || mNiveau.includes('bac') || mSerie.includes('toutes') ||
+        (serie && mSerie.includes(serie));
+    }
+  });
 };
 
 const TYPE_ICONS = { Quiz: '🎲', Annale: '📝', Épreuve: '📜', Fiche: '📋', Livre: '📖' };

@@ -30,7 +30,7 @@ export default function TutorDashboardPage() {
           const data = docItem.data();
           if (data.auteurId === uid) {
             if (data.statut === 'brouillon') b++;
-            else if (data.statut === 'en_attente' || data.statut === 'en_revue') r++;
+            else if (data.statut === 'soumis' || data.statut === 'en_attente' || data.statut === 'en_revue') r++;
             else if (data.statut === 'publie' || data.statut === 'valide') v++;
           }
         });
