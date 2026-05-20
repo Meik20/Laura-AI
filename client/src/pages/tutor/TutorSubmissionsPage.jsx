@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { collection, getDocs, addDoc, doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { extractFileContent } from '../../utils/fileExtractor';
 
 const TYPES = ['Épreuve', 'Annale', 'Fiche', 'Quiz', 'Livre', 'Correction'];
 
@@ -44,17 +45,20 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
     setFileStatus('analyzing');
     try {
       const API_BASE = import.meta.env.VITE_BACKEND_URL || '';
-      const fd = new FormData();
-      fd.append('file', f);
-      const res = await fetch(`${API_BASE}/api/analyze-file`, { method: 'POST', body: fd });
-      const data = await res.json();
-      if (data.success && data.extractedText) {
-        setForm(prev => ({ ...prev, contenu: data.extractedText, titre: prev.titre || f.name.replace(/\.[^.]+$/, '') }));
+      const result = await extractFileContent(f, API_BASE);
+      
+      if (result.status === 'ready' && result.text) {
+        setForm(prev => ({
+          ...prev,
+          contenu: result.text,
+          titre: prev.titre || f.name.replace(/\.[^.]+$/, '')
+        }));
         setFileStatus('ready');
       } else {
         setFileStatus('error');
       }
-    } catch {
+    } catch (err) {
+      console.error("Erreur d'extraction :", err);
       setFileStatus('error');
     }
   };
