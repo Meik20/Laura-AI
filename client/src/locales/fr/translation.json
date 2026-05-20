@@ -196,6 +196,168 @@
         "desc": "LAURA est disponible 24h/24 pour vous aider.",
         "button": "Discuter avec LAURA"
       }
+    },
+    "exams": {
+      "title": "Préparation aux examens",
+      "subtitle": "Objectif actuel :",
+      "tools": {
+        "library": {
+          "title": "📚 Bibliothèque d'Annales",
+          "desc": "Accéder aux sujets officiels d'examens des années précédentes"
+        },
+        "frequent": {
+          "title": "🎯 Sujets fréquents",
+          "desc": "Consulter les thématiques qui tombent le plus souvent à l'examen"
+        },
+        "answers": {
+          "title": "✅ Corrigés types",
+          "desc": "Analyser les corrigés et critères de correction officiels"
+        },
+        "simulation": {
+          "title": "⏱️ Simulation chronométrée",
+          "desc": "S'entraîner en temps réel avec des conditions d'examen réelles"
+        }
+      },
+      "recommended": {
+        "title": "Annales recommandées",
+        "loading": "Chargement des annales...",
+        "empty": "Aucune annale spécifique trouvée. Explorez le catalogue complet."
+      },
+      "guided": {
+        "title": "Préparation Guidée",
+        "plan": {
+          "title": "🤖 Plan personnalisé",
+          "desc": "Demander un plan de préparation sur mesure à LAURA"
+        },
+        "frequent": {
+          "title": "🔍 Sujets fréquents",
+          "desc": "Réviser les sujets récurrents dans votre série"
+        },
+        "simulation": {
+          "title": "✍️ Simulation d'examen",
+          "desc": "Lancer une simulation complète en situation réelle"
+        }
+      }
+    },
+    "history": {
+      "title": "Historique d'apprentissage",
+      "subtitle": "Retrouvez vos anciennes conversations et sessions de révision avec LAURA.",
+      "loading": "Chargement de l'historique...",
+      "empty": "Aucun historique disponible. Démarrez une conversation ou une révision !",
+      "type_session": "Session de Révision",
+      "type_chat": "Chat IA",
+      "waiting_reply": "En attente de réponse...",
+      "subject": "Matière",
+      "duration": "Durée",
+      "min": "min",
+      "resume_btn": "Reprendre"
+    },
+    "profile": {
+      "title": "Mon Profil",
+      "subtitle": "Gerez vos informations personnelles et academiques.",
+      "success": "Profil mis à jour avec succès !",
+      "error": "Erreur lors de la mise à jour.",
+      "form": {
+        "firstname": "Prenom *",
+        "lastname": "Nom",
+        "email": "Adresse Email",
+        "email_disabled": "L'adresse email ne peut pas etre modifiee.",
+        "academic_info": "Informations Academiques",
+        "status": "Statut / Profil",
+        "status_eleve": "Eleve (Lycee / College)",
+        "status_etudiant": "Etudiant (Superieur)",
+        "status_autre": "Autre",
+        "level": "Classe / Niveau *",
+        "level_placeholder": "ex: Terminale, Licence 1",
+        "stream": "Serie (Lycee)",
+        "stream_placeholder": "ex: D, C, A4, SES",
+        "major": "Filiere (Superieur)",
+        "major_placeholder": "ex: Droit, Medecine, Informatique",
+        "exam": "Examen prepare *",
+        "exam_placeholder": "ex: BAC, BTS, Licence",
+        "saving": "Enregistrement...",
+        "save_btn": "Enregistrer les modifications"
+      }
+    },
+    "progress": {
+      "title": "Votre Progression",
+      "subtitle": "Examen préparé :",
+      "not_defined": "Non défini",
+      "global_prep": "Préparation globale",
+      "by_subject": {
+        "title": "Progression par matière (Programme Officiel)"
+      },
+      "goals": {
+        "title": "Objectifs en cours",
+        "new_btn": "+ Nouveau",
+        "empty": "Aucun objectif en cours. Cliquez sur \"+ Nouveau\" pour en créer un."
+      },
+      "activities": {
+        "title": "Activités récentes",
+        "loading": "Chargement des activités...",
+        "empty": "Aucune activité récente. Lancez un quiz ou une révision !",
+        "completed": "Terminé"
+      }
+    },
+    "revision": {
+      "title": "Révision Guidée",
+      "subtitle": "Configurez votre session de révision avec LAURA selon le programme officiel.",
+      "new_session": {
+        "title": "Nouvelle session",
+        "subject": "Matière (Programme Officiel) *",
+        "subject_placeholder": "Sélectionner",
+        "chapter": "Chapitre *",
+        "chapter_placeholder": "ex: Nombres complexes",
+        "type": "Type de session",
+        "type_summary": "Résumé de cours",
+        "type_quiz": "Générer un Quiz",
+        "type_exercise": "Résolution d'exercice",
+        "type_exam": "Préparation Examen",
+        "duration": "Durée souhaitée (minutes)",
+        "duration_15": "15 min (Rapide)",
+        "duration_30": "30 min (Standard)",
+        "duration_60": "1h (Approfondi)",
+        "start_loading": "Démarrage en cours...",
+        "start_btn": "Démarrer la session",
+        "alert_missing": "Veuillez renseigner la matière et le chapitre à réviser.",
+        "alert_error": "Erreur de création de la session."
+      },
+      "help": {
+        "title": "Besoin d'aide ?",
+        "desc": "Vous ne savez pas par quoi commencer ? Demandez à LAURA de créer un programme de révision sur mesure.",
+        "btn": "Demander à LAURA"
+      },
+      "resume": {
+        "title": "Reprendre une session",
+        "empty": "Aucune session récente inachevée."
+      }
+    },
+    "settings": {
+      "title": "Paramètres",
+      "subtitle": "Personnalisez votre expérience d'apprentissage sur LAURA.",
+      "success": "Paramètres enregistrés avec succès !",
+      "error": "Erreur lors de la mise à jour.",
+      "notifications": {
+        "title": "Notifications de rappel",
+        "desc": "Recevoir des rappels pour vos sessions de révision planifiées."
+      },
+      "theme": {
+        "title": "Thème de l'interface",
+        "light": "Thème Clair (Par défaut)",
+        "dark": "Thème Sombre"
+      },
+      "pace": {
+        "title": "Rythme de travail souhaité",
+        "moderate": "Modéré (15-30 min par jour)",
+        "regular": "Régulier (1h par jour - Recommandé)",
+        "intensive": "Intensif (2h+ par jour - Préparation examen)"
+      },
+      "goal": {
+        "title": "Objectif de moyenne générale (sur 20)",
+        "desc": "LAURA adaptera la difficulté de ses explications et quiz pour atteindre cet objectif."
+      },
+      "saving": "Enregistrement...",
+      "save_btn": "Enregistrer les préférences"
     }
   },
   "tutor": {

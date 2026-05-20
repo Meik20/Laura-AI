@@ -3,6 +3,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { collection, getDocs, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import LearningGoalModal from '../../components/dashboard/LearningGoalModal';
+import { useTranslation } from 'react-i18next';
 
 const filterMatieres = (allMatieres, userProfile) => {
   const examen = (userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || '').toLowerCase();
@@ -81,6 +82,7 @@ const filterMatieres = (allMatieres, userProfile) => {
 };
 
 export default function LearnProgressPage() {
+  const { t } = useTranslation();
   const { userProfile } = useAuth();
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [currentGoals, setCurrentGoals] = useState([]);
@@ -170,12 +172,12 @@ export default function LearnProgressPage() {
       {/* HEADER & GLOBAL PROGRESS */}
       <div className="learn-card progress-header" style={{ background: '#1A1A1A', color: 'white' }}>
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: 'white' }}>Votre Progression</h1>
-          <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>Examen préparé : {userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || 'Non défini'} {userProfile?.serie ? `(${userProfile.serie})` : ''}</p>
+          <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: 'white' }}>{t('learn.progress.title', 'Votre Progression')}</h1>
+          <p style={{ margin: 0, color: '#94A3B8', fontSize: '1.1rem' }}>{t('learn.progress.subtitle', 'Examen préparé :')} {userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || t('learn.progress.not_defined', 'Non défini')} {userProfile?.serie ? `(${userProfile.serie})` : ''}</p>
         </div>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '3.5rem', fontWeight: 800, color: '#00D4AA', lineHeight: 1 }}>{globalProgress}%</div>
-          <div style={{ color: '#94A3B8', fontWeight: 600, marginTop: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.9rem' }}>Préparation globale</div>
+          <div style={{ color: '#94A3B8', fontWeight: 600, marginTop: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.9rem' }}>{t('learn.progress.global_prep', 'Préparation globale')}</div>
         </div>
       </div>
 
@@ -183,7 +185,7 @@ export default function LearnProgressPage() {
         
         {/* PAR MATIÈRE */}
         <div className="learn-card">
-          <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.3rem', fontWeight: 800 }}>Progression par matière (Programme Officiel)</h2>
+          <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.3rem', fontWeight: 800 }}>{t('learn.progress.by_subject.title', 'Progression par matière (Programme Officiel)')}</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {subjectProgress.map((m, i) => (
               <div key={i}>
@@ -197,16 +199,16 @@ export default function LearnProgressPage() {
             ))}
           </div>
         </div>
-
+ 
         {/* OBJECTIFS EN COURS */}
         <div className="learn-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-            <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>Objectifs en cours</h2>
-            <button onClick={() => setIsGoalModalOpen(true)} style={{ background: '#F5F4EF', border: 'none', padding: '0.4rem 1rem', borderRadius: '2rem', cursor: 'pointer', fontWeight: 600, transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#E5E5E2'} onMouseLeave={e => e.currentTarget.style.background = '#F5F4EF'}>+ Nouveau</button>
+            <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>{t('learn.progress.goals.title', 'Objectifs en cours')}</h2>
+            <button onClick={() => setIsGoalModalOpen(true)} style={{ background: '#F5F4EF', border: 'none', padding: '0.4rem 1rem', borderRadius: '2rem', cursor: 'pointer', fontWeight: 600, transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#E5E5E2'} onMouseLeave={e => e.currentTarget.style.background = '#F5F4EF'}>{t('learn.progress.goals.new_btn', '+ Nouveau')}</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {currentGoals.length === 0 ? (
-              <div style={{ color: '#6E6E6B', fontSize: '0.95rem', padding: '1rem 0' }}>Aucun objectif en cours. Cliquez sur "+ Nouveau" pour en créer un.</div>
+              <div style={{ color: '#6E6E6B', fontSize: '0.95rem', padding: '1rem 0' }}>{t('learn.progress.goals.empty', 'Aucun objectif en cours. Cliquez sur "+ Nouveau" pour en créer un.')}</div>
             ) : (
               currentGoals.map((goal, i) => (
                 <div key={i} style={{ background: '#F9F9F8', padding: '1.5rem', borderRadius: '1rem', border: '1px solid #E5E5E2' }}>
@@ -228,11 +230,11 @@ export default function LearnProgressPage() {
 
       {/* HISTORIQUE D'ACTIVITÉS */}
       <div className="learn-card">
-        <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.3rem', fontWeight: 800 }}>Activités récentes</h2>
+        <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.3rem', fontWeight: 800 }}>{t('learn.progress.activities.title', 'Activités récentes')}</h2>
         {isLoading ? (
-          <div style={{ color: '#6E6E6B', padding: '1rem 0' }}>Chargement des activités...</div>
+          <div style={{ color: '#6E6E6B', padding: '1rem 0' }}>{t('learn.progress.activities.loading', 'Chargement des activités...')}</div>
         ) : recentActivities.length === 0 ? (
-          <div style={{ color: '#6E6E6B', padding: '1rem 0', fontSize: '0.95rem' }}>Aucune activité récente. Lancez un quiz ou une révision !</div>
+          <div style={{ color: '#6E6E6B', padding: '1rem 0', fontSize: '0.95rem' }}>{t('learn.progress.activities.empty', 'Aucune activité récente. Lancez un quiz ou une révision !')}</div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {recentActivities.map((act, i) => (
@@ -242,7 +244,7 @@ export default function LearnProgressPage() {
                   <div style={{ fontSize: '0.85rem', color: '#6E6E6B' }}>{act.time || new Date(act.createdAt).toLocaleDateString()}</div>
                 </div>
                 <div style={{ background: 'white', padding: '0.4rem 1rem', borderRadius: '2rem', border: '1px solid #E5E5E2', fontWeight: 700, fontSize: '0.9rem', color: '#00A37A' }}>
-                  {act.result || 'Terminé'}
+                  {act.result || t('learn.progress.activities.completed', 'Terminé')}
                 </div>
               </div>
             ))}

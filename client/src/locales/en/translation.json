@@ -196,6 +196,168 @@
         "desc": "LAURA is available 24/7 to help you.",
         "button": "Chat with LAURA"
       }
+    },
+    "exams": {
+      "title": "Exam Preparation",
+      "subtitle": "Current target:",
+      "tools": {
+        "library": {
+          "title": "📚 Past Papers Library",
+          "desc": "Access official exam papers from previous years"
+        },
+        "frequent": {
+          "title": "🎯 Frequent Topics",
+          "desc": "View the most common themes that appear in the exam"
+        },
+        "answers": {
+          "title": "✅ Standard Answers",
+          "desc": "Analyze official answers and grading criteria"
+        },
+        "simulation": {
+          "title": "⏱️ Timed Simulation",
+          "desc": "Practice in real-time under actual exam conditions"
+        }
+      },
+      "recommended": {
+        "title": "Recommended Past Papers",
+        "loading": "Loading past papers...",
+        "empty": "No specific past papers found. Explore the full catalog."
+      },
+      "guided": {
+        "title": "Guided Preparation",
+        "plan": {
+          "title": "🤖 Personalized Plan",
+          "desc": "Request a tailor-made preparation plan from LAURA"
+        },
+        "frequent": {
+          "title": "🔍 Frequent Topics",
+          "desc": "Revise recurring topics for your stream"
+        },
+        "simulation": {
+          "title": "✍️ Exam Simulation",
+          "desc": "Launch a complete simulation in real conditions"
+        }
+      }
+    },
+    "history": {
+      "title": "Learning History",
+      "subtitle": "Find your previous conversations and revision sessions with LAURA.",
+      "loading": "Loading history...",
+      "empty": "No history available. Start a conversation or a revision session!",
+      "type_session": "Revision Session",
+      "type_chat": "AI Chat",
+      "waiting_reply": "Waiting for reply...",
+      "subject": "Subject",
+      "duration": "Duration",
+      "min": "min",
+      "resume_btn": "Resume"
+    },
+    "profile": {
+      "title": "My Profile",
+      "subtitle": "Manage your personal and academic information.",
+      "success": "Profile updated successfully!",
+      "error": "Error during update.",
+      "form": {
+        "firstname": "First name *",
+        "lastname": "Last name",
+        "email": "Email Address",
+        "email_disabled": "The email address cannot be modified.",
+        "academic_info": "Academic Information",
+        "status": "Status / Profile",
+        "status_eleve": "Student (High School / Middle School)",
+        "status_etudiant": "College Student (Higher Ed)",
+        "status_autre": "Other",
+        "level": "Class / Level *",
+        "level_placeholder": "e.g., Terminale, Year 1",
+        "stream": "Stream (High School)",
+        "stream_placeholder": "e.g., Science, Arts",
+        "major": "Major (Higher Ed)",
+        "major_placeholder": "e.g., Law, Medicine, CS",
+        "exam": "Target Exam *",
+        "exam_placeholder": "e.g., A-Levels, SAT",
+        "saving": "Saving...",
+        "save_btn": "Save changes"
+      }
+    },
+    "progress": {
+      "title": "Your Progress",
+      "subtitle": "Target Exam:",
+      "not_defined": "Not defined",
+      "global_prep": "Global preparation",
+      "by_subject": {
+        "title": "Progress by subject (Official Curriculum)"
+      },
+      "goals": {
+        "title": "Current goals",
+        "new_btn": "+ New",
+        "empty": "No current goals. Click on '+ New' to create one."
+      },
+      "activities": {
+        "title": "Recent activities",
+        "loading": "Loading activities...",
+        "empty": "No recent activity. Start a quiz or revision!",
+        "completed": "Completed"
+      }
+    },
+    "revision": {
+      "title": "Guided Revision",
+      "subtitle": "Configure your revision session with LAURA according to the official curriculum.",
+      "new_session": {
+        "title": "New session",
+        "subject": "Subject (Official Curriculum) *",
+        "subject_placeholder": "Select",
+        "chapter": "Chapter *",
+        "chapter_placeholder": "e.g., Complex numbers",
+        "type": "Session type",
+        "type_summary": "Course summary",
+        "type_quiz": "Generate a Quiz",
+        "type_exercise": "Exercise resolution",
+        "type_exam": "Exam Preparation",
+        "duration": "Desired duration (minutes)",
+        "duration_15": "15 min (Quick)",
+        "duration_30": "30 min (Standard)",
+        "duration_60": "1h (In-depth)",
+        "start_loading": "Starting...",
+        "start_btn": "Start session",
+        "alert_missing": "Please provide the subject and chapter to revise.",
+        "alert_error": "Error creating the session."
+      },
+      "help": {
+        "title": "Need help?",
+        "desc": "Don't know where to start? Ask LAURA to create a custom revision program.",
+        "btn": "Ask LAURA"
+      },
+      "resume": {
+        "title": "Resume a session",
+        "empty": "No recent unfinished sessions."
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Customize your learning experience on LAURA.",
+      "success": "Settings saved successfully!",
+      "error": "Error during update.",
+      "notifications": {
+        "title": "Reminder notifications",
+        "desc": "Receive reminders for your scheduled revision sessions."
+      },
+      "theme": {
+        "title": "Interface Theme",
+        "light": "Light Theme (Default)",
+        "dark": "Dark Theme"
+      },
+      "pace": {
+        "title": "Desired work pace",
+        "moderate": "Moderate (15-30 min a day)",
+        "regular": "Regular (1h a day - Recommended)",
+        "intensive": "Intensive (2h+ a day - Exam Prep)"
+      },
+      "goal": {
+        "title": "Target average grade (out of 20)",
+        "desc": "LAURA will adapt the difficulty of its explanations and quizzes to reach this goal."
+      },
+      "saving": "Saving...",
+      "save_btn": "Save preferences"
     }
   },
   "tutor": {

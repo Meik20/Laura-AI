@@ -7,6 +7,7 @@ import {
   getDoc, addDoc, serverTimestamp
 } from 'firebase/firestore';
 import { uploadContribution } from '../../utils/storage';
+import { useTranslation } from 'react-i18next';
 
 /* ─── Matières filter logic (preserved) ─────────────────────────────────── */
 const filterMatieres = (allMatieres, userProfile) => {
@@ -61,6 +62,7 @@ const getIcon = (type) => TYPE_ICONS[type] || '📚';
 
 /* ─── Contribution Modal ─────────────────────────────────────────────────── */
 function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
+  const { t } = useTranslation();
   const fileInputRef = useRef(null);
   const EMPTY_FORM = { titre: '', type: 'Fiche', matiere: '', examen: '', niveau: '', description: '' };
 
@@ -78,7 +80,7 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
   const handleFileChange = (e) => {
     const f = e.target.files[0];
     if (f && f.size > 30 * 1024 * 1024) {
-      setError('Le fichier ne doit pas dépasser 30 Mo.');
+      setError(t('contribution_modal.errors.file_size'));
       return;
     }
     setFile(f);
@@ -89,9 +91,9 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
     e.preventDefault();
     setError('');
 
-    if (!form.titre.trim()) { setError('Le titre est obligatoire.'); return; }
-    if (!file) { setError('Veuillez sélectionner un fichier.'); return; }
-    if (!userProfile?.uid) { setError('Vous devez être connecté.'); return; }
+    if (!form.titre.trim()) { setError(t('contribution_modal.errors.title_required')); return; }
+    if (!file) { setError(t('contribution_modal.errors.file_required')); return; }
+    if (!userProfile?.uid) { setError(t('contribution_modal.errors.login_required')); return; }
 
     setUploading(true);
     setProgress(10); // start indicator
@@ -118,7 +120,7 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
       setSubmitted(true);
     } catch (err) {
       console.error(err);
-      setError('Une erreur est survenue. Veuillez réessayer.');
+      setError(t('contribution_modal.errors.general'));
     } finally {
       setUploading(false);
     }
@@ -142,13 +144,13 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
           <div style={{ textAlign: 'center', padding: 'var(--sp-8)' }}>
             <div style={{ fontSize: '3rem', marginBottom: 'var(--sp-4)' }}>✅</div>
             <h2 style={{ fontSize: 'var(--tx-xl)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-3)' }}>
-              Soumission envoyée !
+              {t('contribution_modal.success_title')}
             </h2>
             <p style={{ color: 'var(--txt-secondary)', lineHeight: 'var(--lh-relaxed)', marginBottom: 'var(--sp-6)' }}>
-              Votre document a été transmis à l'équipe LAURA pour vérification. Une fois validé, il sera ajouté à la banque de ressources et accessible à tous les apprenants.
+              {t('contribution_modal.success_desc')}
             </p>
             <button onClick={handleClose} className="laura-btn laura-btn-primary" style={{ minHeight: '44px', padding: '0 var(--sp-8)' }}>
-              Parfait, merci !
+              {t('contribution_modal.success_btn')}
             </button>
           </div>
         ) : (
@@ -156,12 +158,12 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
             {/* Header */}
             <div className="modal-header">
               <div>
-                <h2 className="modal-title">Contribuer à la banque</h2>
+                <h2 className="modal-title">{t('contribution_modal.title')}</h2>
                 <p style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', margin: 0 }}>
-                  Partagez une ressource pour aider toute la communauté
+                  {t('contribution_modal.subtitle')}
                 </p>
               </div>
-              <button onClick={handleClose} className="modal-close" aria-label="Fermer">✕</button>
+              <button onClick={handleClose} className="modal-close" aria-label={t('common.actions.close')}>✕</button>
             </div>
 
             {/* Body */}
@@ -171,29 +173,29 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
 
               {/* Title */}
               <div className="form-group">
-                <label>Titre de la ressource <span style={{ color: 'var(--clr-error)' }}>*</span></label>
-                <input type="text" name="titre" placeholder="Ex : Corrigé BAC Maths 2023 – Série C"
+                <label>{t('contribution_modal.form.title_label')} <span style={{ color: 'var(--clr-error)' }}>*</span></label>
+                <input type="text" name="titre" placeholder={t('contribution_modal.form.title_placeholder')}
                   value={form.titre} onChange={handleChange} required />
               </div>
 
               {/* Type + Matière */}
               <div className="form-grid">
                 <div className="form-group">
-                  <label>Type de document</label>
+                  <label>{t('contribution_modal.form.type_label')}</label>
                   <select name="type" value={form.type} onChange={handleChange}>
-                    <option value="Fiche">Fiche de cours</option>
-                    <option value="Annale">Annale</option>
-                    <option value="Épreuve">Épreuve</option>
-                    <option value="Quiz">Quiz</option>
-                    <option value="Livre">Livre / PDF</option>
+                    <option value="Fiche">{t('contribution_modal.form.type_options.fiche')}</option>
+                    <option value="Annale">{t('contribution_modal.form.type_options.annale')}</option>
+                    <option value="Épreuve">{t('contribution_modal.form.type_options.epreuve')}</option>
+                    <option value="Quiz">{t('contribution_modal.form.type_options.quiz')}</option>
+                    <option value="Livre">{t('contribution_modal.form.type_options.livre')}</option>
                   </select>
                 </div>
                 <div className="form-group">
-                  <label>Matière</label>
+                  <label>{t('contribution_modal.form.subject_label')}</label>
                   <select name="matiere" value={form.matiere} onChange={handleChange}>
-                    <option value="">-- Choisir --</option>
+                    <option value="">{t('contribution_modal.form.subject_placeholder')}</option>
                     {matieresList.map(m => <option key={m.id} value={m.nom}>{m.nom}</option>)}
-                    <option value="Autre">Autre</option>
+                    <option value="Autre">{t('contribution_modal.form.subject_other')}</option>
                   </select>
                 </div>
               </div>
@@ -201,28 +203,28 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
               {/* Examen + Niveau */}
               <div className="form-grid">
                 <div className="form-group">
-                  <label>Examen ciblé</label>
+                  <label>{t('contribution_modal.form.exam_label')}</label>
                   <select name="examen" value={form.examen} onChange={handleChange}>
-                    <option value="">-- Choisir --</option>
+                    <option value="">{t('contribution_modal.form.subject_placeholder')}</option>
                     <option value="BEPC">BEPC</option>
                     <option value="Probatoire">Probatoire</option>
                     <option value="BAC">BAC</option>
                     <option value="BTS">BTS</option>
                     <option value="Licence">Licence</option>
-                    <option value="Tous">Tous niveaux</option>
+                    <option value="Tous">{t('contribution_modal.form.exam_options.all')}</option>
                   </select>
                 </div>
                 <div className="form-group">
-                  <label>Niveau / Série</label>
-                  <input type="text" name="niveau" placeholder="Ex : Terminale C"
+                  <label>{t('contribution_modal.form.level_label')}</label>
+                  <input type="text" name="niveau" placeholder={t('contribution_modal.form.level_placeholder')}
                     value={form.niveau} onChange={handleChange} />
                 </div>
               </div>
 
               {/* Description */}
               <div className="form-group">
-                <label>Description (optionnel)</label>
-                <textarea name="description" rows="2" placeholder="Décrivez brièvement la ressource..."
+                <label>{t('contribution_modal.form.desc_label')}</label>
+                <textarea name="description" rows="2" placeholder={t('contribution_modal.form.desc_placeholder')}
                   value={form.description} onChange={handleChange}
                   style={{ minHeight: '72px', height: '72px', resize: 'vertical' }} />
               </div>
@@ -248,17 +250,17 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
                       {file.name}
                     </p>
                     <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', margin: 0 }}>
-                      {(file.size / 1024 / 1024).toFixed(2)} Mo · Cliquez pour changer
+                      {(file.size / 1024 / 1024).toFixed(2)} MB · {t('contribution_modal.upload.click_to_change')}
                     </p>
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--sp-2)' }}>
                     <span style={{ fontSize: '2rem' }}>⬆️</span>
                     <p style={{ fontSize: 'var(--tx-sm)', fontWeight: 'var(--fw-semibold)', margin: 0 }}>
-                      Cliquez pour sélectionner un fichier
+                      {t('contribution_modal.upload.click_to_select')}
                     </p>
                     <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', margin: 0 }}>
-                      PDF, Word, PowerPoint, Image · Max 30 Mo
+                      {t('contribution_modal.upload.limits')}
                     </p>
                   </div>
                 )}
@@ -298,6 +300,7 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
 
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function LearnResourcesPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { userProfile } = useAuth();
 
@@ -365,21 +368,20 @@ export default function LearnResourcesPage() {
       {/* ── Page Header ── */}
       <div className="page-header row row--between">
         <div>
-          <h1 className="laura-h1">Ressources</h1>
+          <h1 className="laura-h1">{t('learn.resources.title')}</h1>
           <p style={{ marginTop: 'var(--sp-1)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', margin: 'var(--sp-2) 0 0' }}>
-            Catalogue adapté à votre profil ·{' '}
+            {t('learn.resources.subtitle')} ·{' '}
             <strong style={{ color: 'var(--txt-primary)' }}>
               {profileContext.niveau} {profileContext.serie} · {profileContext.examen}
             </strong>
           </p>
         </div>
-
         <button
           onClick={() => setShowContrib(true)}
           className="laura-btn laura-btn-primary"
           style={{ minHeight: '42px', padding: '0 var(--sp-6)', flexShrink: 0 }}
         >
-          + Ajouter une ressource
+          {t('learn.resources.add_btn')}
         </button>
       </div>
 
@@ -387,33 +389,33 @@ export default function LearnResourcesPage() {
       <div className="auth-info-alert">
         <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>💡</span>
         <p style={{ margin: 0, fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>
-          <strong>Contribuez à la communauté !</strong> Partagez vos fiches, annales et cours. Chaque document est vérifié par notre équipe avant publication.
+          <strong>{t('learn.resources.banner.strong')}</strong> {t('learn.resources.banner.text')}
         </p>
       </div>
-
+ 
       {/* ── Filters ── */}
       <div className="card" style={{ padding: 'var(--sp-5)' }}>
         <div style={{ display: 'flex', gap: 'var(--sp-3)', flexWrap: 'wrap', alignItems: 'center' }}>
           <input
             type="text" name="search"
-            placeholder="Rechercher par titre ou mot-clé..."
+            placeholder={t('learn.resources.filters.search')}
             value={filters.search} onChange={handleFilterChange}
             style={{ flex: '2 1 220px' }}
           />
           <select name="matiere" value={filters.matiere} onChange={handleFilterChange} style={{ flex: '1 1 160px' }}>
-            <option value="">Toutes les matières</option>
+            <option value="">{t('learn.resources.filters.all_subjects')}</option>
             {matieresList.map(m => <option key={m.id} value={m.nom}>{m.nom}</option>)}
           </select>
           <select name="type" value={filters.type} onChange={handleFilterChange} style={{ flex: '1 1 140px' }}>
-            <option value="">Tous les types</option>
-            <option value="Épreuve">Épreuve</option>
-            <option value="Annale">Annale</option>
-            <option value="Fiche">Fiche de cours</option>
-            <option value="Quiz">Quiz</option>
-            <option value="Livre">Livre / PDF</option>
+            <option value="">{t('learn.resources.filters.all_types')}</option>
+            <option value="Épreuve">{t('contribution_modal.form.type_options.epreuve')}</option>
+            <option value="Annale">{t('contribution_modal.form.type_options.annale')}</option>
+            <option value="Fiche">{t('contribution_modal.form.type_options.fiche')}</option>
+            <option value="Quiz">{t('contribution_modal.form.type_options.quiz')}</option>
+            <option value="Livre">{t('contribution_modal.form.type_options.livre')}</option>
           </select>
           <select name="examen" value={filters.examen} onChange={handleFilterChange} style={{ flex: '1 1 140px' }}>
-            <option value="">Tous les examens</option>
+            <option value="">{t('learn.resources.filters.all_exams')}</option>
             <option value="BAC">BAC</option>
             <option value="Probatoire">Probatoire</option>
             <option value="BEPC">BEPC</option>
@@ -422,25 +424,25 @@ export default function LearnResourcesPage() {
           </select>
         </div>
       </div>
-
+ 
       {/* ── Results count ── */}
       {!isLoading && (
         <p style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-tertiary)', margin: 0 }}>
-          {filteredResources.length} ressource{filteredResources.length !== 1 ? 's' : ''} trouvée{filteredResources.length !== 1 ? 's' : ''}
+          {t('learn.resources.results.count', { count: filteredResources.length })}
         </p>
       )}
-
+ 
       {/* ── Resource Grid ── */}
       {isLoading ? (
         <div className="empty-state">
           <span className="empty-state__icon">⏳</span>
-          <p className="empty-state__title">Chargement des ressources...</p>
+          <p className="empty-state__title">{t('learn.resources.results.loading')}</p>
         </div>
       ) : filteredResources.length === 0 ? (
         <div className="empty-state">
           <span className="empty-state__icon">🔍</span>
-          <p className="empty-state__title">Aucune ressource trouvée</p>
-          <p style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-tertiary)' }}>Essayez d'autres filtres ou contribuez en ajoutant la première !</p>
+          <p className="empty-state__title">{t('learn.resources.results.empty_title')}</p>
+          <p style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-tertiary)' }}>{t('learn.resources.results.empty_desc')}</p>
         </div>
       ) : (
         <div className="card-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
@@ -449,42 +451,42 @@ export default function LearnResourcesPage() {
             const icon = getIcon(res.type);
             return (
               <div key={res.id} className="card card--hoverable" style={{ padding: 'var(--sp-5)', display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
-
+ 
                 <div className="row" style={{ alignItems: 'flex-start', gap: 'var(--sp-4)' }}>
                   <span style={{ fontSize: '2rem', flexShrink: 0 }}>{icon}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <h3 className="truncate" style={{ fontSize: 'var(--tx-sm)', fontWeight: 'var(--fw-bold)', margin: '0 0 var(--sp-2)', lineHeight: 'var(--lh-snug)' }}>
-                      {res.titre || 'Sans titre'}
+                      {res.titre || t('learn.resources.card.untitled')}
                     </h3>
                     <div className="row" style={{ gap: 'var(--sp-2)', flexWrap: 'wrap' }}>
-                      <span className="badge">{res.type || 'Général'}</span>
+                      <span className="badge">{t('contribution_modal.form.type_options.' + (res.type?.toLowerCase() || 'fiche'), { defaultValue: res.type || t('learn.resources.card.general') })}</span>
                       {res.cible && <span className="badge badge--brand">{res.cible}</span>}
                     </div>
                   </div>
                 </div>
-
+ 
                 <div style={{ flex: 1 }} />
-
+ 
                 <div className="row" style={{ borderTop: '1px solid var(--brd-subtle)', paddingTop: 'var(--sp-4)', gap: 'var(--sp-2)' }}>
                   <button
                     onClick={() => res.url ? window.open(res.url, '_blank') : navigate('/learn/chat')}
                     className="laura-btn laura-btn-primary"
                     style={{ flex: 1, justifyContent: 'center', minHeight: '34px', fontSize: 'var(--tx-xs)' }}
                   >
-                    Ouvrir
+                    {t('learn.resources.card.open')}
                   </button>
                   <button
                     onClick={() => navigate(`/learn/chat?resourceTitle=${encodeURIComponent(res.titre)}`)}
                     className="laura-btn laura-btn-secondary"
                     style={{ flex: 1, justifyContent: 'center', minHeight: '34px', fontSize: 'var(--tx-xs)' }}
                   >
-                    LAURA
+                    {t('learn.resources.card.laura')}
                   </button>
                   <button
                     onClick={() => toggleBookmark(res.id)}
                     className="laura-btn laura-btn-ghost"
                     style={{ minHeight: '34px', width: '34px', padding: 0, color: isBookmarked ? 'var(--clr-warning)' : 'var(--txt-tertiary)', background: isBookmarked ? 'var(--clr-warning-lt)' : '' }}
-                    aria-label={isBookmarked ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                    aria-label={isBookmarked ? t('learn.resources.card.remove_bookmark') : t('learn.resources.card.add_bookmark')}
                   >
                     {isBookmarked ? '★' : '☆'}
                   </button>
