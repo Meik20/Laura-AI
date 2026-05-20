@@ -162,16 +162,19 @@ export default function LearnChatPage() {
     const resourceTitle = searchParams.get('resourceTitle');
     if (promptKey || resourceTitle) {
       let promptText = '';
+      const defaultExam = userProfile?.examen && userProfile.examen !== 'Non défini' ? userProfile.examen : 'mon examen';
+      const fullExam = defaultExam + (userProfile?.serie && userProfile.serie !== 'Général' && userProfile.serie !== 'Non défini' ? ' ' + userProfile.serie : '');
+      
       if (promptKey === 'sujets_frequents') {
-        promptText = t('learn.chat.prompts.frequent_subjects', { exam: profileContext.examen });
+        promptText = t('learn.chat.prompts.frequent_subjects', { exam: fullExam });
       } else if (promptKey === 'corriges_types') {
-        promptText = t('learn.chat.prompts.sample_exams', { exam: profileContext.examen });
+        promptText = t('learn.chat.prompts.sample_exams', { exam: fullExam });
       } else if (promptKey === 'simulation_examen') {
-        promptText = t('learn.chat.prompts.exam_simulation', { exam: profileContext.examen });
+        promptText = t('learn.chat.prompts.exam_simulation', { exam: fullExam });
       } else if (promptKey === 'plan_preparation') {
-        promptText = t('learn.chat.prompts.prep_plan', { exam: profileContext.examen });
+        promptText = t('learn.chat.prompts.prep_plan', { exam: fullExam });
       } else if (promptKey === 'programme_revision') {
-        promptText = t('learn.chat.prompts.revision_program', { level: profileContext.niveau, exam: profileContext.examen });
+        promptText = t('learn.chat.prompts.revision_program', { level: profileContext.niveau, exam: fullExam });
       } else if (resourceTitle) {
         promptText = t('learn.chat.prompts.revise_resource', { title: resourceTitle });
       }
