@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: '/learn/revision',  labelKey: 'learn.nav.revision',   icon: '✎' },
   { to: '/learn/exams',     labelKey: 'learn.nav.exams',      icon: '✦' },
   { to: '/learn/resources', labelKey: 'learn.nav.resources',  icon: '⊕' },
+  { to: '/learn/community', labelKey: 'learn.nav.community',  icon: '🏫' },
   { to: '/learn/progress',  labelKey: 'learn.nav.progress',   icon: '▲' },
   { to: '/learn/history',   labelKey: 'learn.nav.history',    icon: '↺' },
   { to: '/learn/profile',   labelKey: 'learn.nav.profile',    icon: '◉' },

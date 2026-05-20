@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { to: '/admin/submissions',        labelKey: 'admin.nav.submissions',    icon: '📤' },
   { to: '/admin/access-rules',       labelKey: 'admin.nav.access',          icon: '◈' },
   { to: '/admin/audit',              labelKey: 'admin.nav.logs',           icon: '↺' },
+  { to: '/admin/community',          labelKey: 'admin.nav.community',      icon: '🏫' },
   { to: '/admin/settings',           labelKey: 'admin.nav.settings',       icon: '⊛' },
 ];
 

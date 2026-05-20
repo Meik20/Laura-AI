@@ -43,6 +43,8 @@ import AdminSubmissionsPage from '../pages/admin/AdminSubmissionsPage';
 import AdminAccessRulesPage from '../pages/admin/AdminAccessRulesPage';
 import AdminAuditPage from '../pages/admin/AdminAuditPage';
 import AdminSettingsPage from '../pages/admin/AdminSettingsPage';
+import AdminCommunityPage from '../pages/admin/AdminCommunityPage';
+import LearnCommunityPage from '../pages/learn/LearnCommunityPage';
 
 export const router = createBrowserRouter([
   {
@@ -72,6 +74,7 @@ export const router = createBrowserRouter([
       { path: 'profile', element: <LearnProfilePage /> },
       { path: 'history', element: <LearnHistoryPage /> },
       { path: 'settings', element: <LearnSettingsPage /> },
+      { path: 'community', element: <LearnCommunityPage /> },
     ],
   },
   {
@@ -102,6 +105,7 @@ export const router = createBrowserRouter([
       { path: 'access-rules', element: <AdminAccessRulesPage /> },
       { path: 'audit', element: <AdminAuditPage /> },
       { path: 'settings', element: <AdminSettingsPage /> },
+      { path: 'community', element: <AdminCommunityPage /> },
     ],
   },
   {
