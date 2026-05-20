@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { db } from '../../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useTranslation } from 'react-i18next';
 
 const defaultMatieres = [
   { id: 'm1', nom: 'Mathématiques', niveau: 'Lycée', serie: 'Toutes', filiere: 'Général' },
@@ -14,6 +15,7 @@ const defaultMatieres = [
 ];
 
 export default function AdminSettingsPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('Général');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -76,11 +78,11 @@ export default function AdminSettingsPage() {
     setSaveMessage('');
     try {
       await setDoc(doc(db, 'adminSettings', 'global'), settings);
-      setSaveMessage('Paramètres enregistrés avec succès !');
+      setSaveMessage(t('admin.settings.success'));
       setTimeout(() => setSaveMessage(''), 4000);
     } catch (err) {
       console.error(err);
-      alert("Erreur lors de l'enregistrement des paramètres.");
+      alert(t('admin.settings.error'));
     } finally {
       setIsSaving(false);
     }
@@ -111,7 +113,14 @@ export default function AdminSettingsPage() {
     setSettings(prev => ({ ...prev, matieres: updated }));
   };
 
-  const tabs = ['Général', 'Programmes & Matières', "Modèles d'IA (LLM)", 'Sécurité & Anti-Spam', 'Intégrations'];
+  const TABS_MAP = {
+    'Général': t('admin.settings.tabs.general'),
+    'Programmes & Matières': t('admin.settings.tabs.programs'),
+    "Modèles d'IA (LLM)": t('admin.settings.tabs.llm'),
+    'Sécurité & Anti-Spam': t('admin.settings.tabs.security'),
+    'Intégrations': t('admin.settings.tabs.integrations')
+  };
+  const tabs = Object.keys(TABS_MAP);
 
   const inputStyle = { width: '100%', padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-md)', color: 'var(--txt-primary)', outline: 'none', boxSizing: 'border-box', marginTop: 'var(--sp-2)' };
   const labelStyle = { display: 'block', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', textTransform: 'uppercase', letterSpacing: '0.04em' };
@@ -121,8 +130,8 @@ export default function AdminSettingsPage() {
     <div className="stack stack--lg animate-in">
       <div className="page-header">
         <div className="page-header__title">
-          <h1 className="laura-h1">Paramètres Système</h1>
-          <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>Configuration globale de l'intelligence artificielle, des programmes et de la plateforme.</p>
+          <h1 className="laura-h1">{t('admin.settings.title')}</h1>
+          <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: 'var(--tx-base)' }}>{t('admin.settings.subtitle')}</p>
         </div>
       </div>
       
@@ -136,7 +145,7 @@ export default function AdminSettingsPage() {
               onClick={() => setActiveTab(tab)}
               className={`settings-tab${activeTab === tab ? ' settings-tab--active' : ''}`}
             >
-              {tab}
+              {TABS_MAP[tab]}
             </button>
           ))}
         </div>
@@ -145,32 +154,32 @@ export default function AdminSettingsPage() {
         <div className="card card__body stack stack--md">
           
           {isLoading ? (
-            <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Chargement des paramètres de la plateforme...</div>
+            <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--txt-tertiary)' }}>{t('admin.settings.loading')}</div>
           ) : (
             <>
               {/* TAB 1 : GÉNÉRAL */}
               {activeTab === 'Général' && (
                 <>
                   <div style={sectionCardStyle}>
-                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Informations de la plateforme</h2>
+                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>{t('admin.settings.general.info_title')}</h2>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                       <div>
-                        <label style={labelStyle}>Nom de la plateforme</label>
+                        <label style={labelStyle}>{t('admin.settings.general.name_label')}</label>
                         <input type="text" name="platformName" value={settings.platformName} onChange={handleChange} style={inputStyle} />
                       </div>
                       <div>
-                        <label style={labelStyle}>Email du support technique</label>
+                        <label style={labelStyle}>{t('admin.settings.general.email_label')}</label>
                         <input type="email" name="supportEmail" value={settings.supportEmail} onChange={handleChange} style={inputStyle} />
                       </div>
                     </div>
                   </div>
 
                   <div style={sectionCardStyle}>
-                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Maintenance & Accès</h2>
+                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>{t('admin.settings.general.maintenance_title')}</h2>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'var(--srf-base)', borderRadius: '0.8rem', border: '1px solid var(--brd-subtle)', marginBottom: '1rem' }}>
                       <div>
-                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>Mode Maintenance</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Désactiver l'accès à la plateforme pour les apprenants (maintenance en cours).</div>
+                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>{t('admin.settings.general.maintenance_mode')}</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>{t('admin.settings.general.maintenance_desc')}</div>
                       </div>
                       <button 
                         onClick={toggleMaintenance}
@@ -185,14 +194,14 @@ export default function AdminSettingsPage() {
                           transition: 'all 0.2s'
                         }}
                       >
-                        {settings.maintenanceMode ? 'Désactiver (Actif)' : 'Activer'}
+                        {settings.maintenanceMode ? t('admin.settings.general.maintenance_btn_active') : t('admin.settings.general.maintenance_btn_inactive')}
                       </button>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'var(--srf-base)', borderRadius: '0.8rem', border: '1px solid var(--brd-subtle)' }}>
                       <div>
-                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>Inscriptions Ouvertes</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Autoriser la création de nouveaux comptes sur la page d'inscription.</div>
+                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>{t('admin.settings.general.registration_mode')}</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>{t('admin.settings.general.registration_desc')}</div>
                       </div>
                       <input 
                         type="checkbox" 
@@ -210,31 +219,31 @@ export default function AdminSettingsPage() {
               {activeTab === 'Programmes & Matières' && (
                 <>
                   <div style={sectionCardStyle}>
-                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 0.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Gestion du Programme Local (Matières, Séries, Filières)</h2>
+                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 0.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>{t('admin.settings.programs.title')}</h2>
                     <p style={{ color: 'var(--txt-secondary)', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
-                      Définissez les matières officielles disponibles pour les apprenants selon leur niveau, série et filière.
+                      {t('admin.settings.programs.desc')}
                     </p>
 
                     {/* FORMULAIRE D'AJOUT */}
                     <form onSubmit={handleAddMatiere} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '1rem', alignItems: 'end', background: 'var(--srf-base)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid var(--brd-subtle)', marginBottom: '2rem' }}>
                       <div>
-                        <label style={labelStyle}>Nom de la matière *</label>
+                        <label style={labelStyle}>{t('admin.settings.programs.name')}</label>
                         <input type="text" placeholder="ex: Mathématiques" value={newMatiere.nom} onChange={e => setNewMatiere({...newMatiere, nom: e.target.value})} style={inputStyle} required />
                       </div>
                       <div>
-                        <label style={labelStyle}>Niveau</label>
+                        <label style={labelStyle}>{t('admin.settings.programs.level')}</label>
                         <input type="text" placeholder="ex: Lycée" value={newMatiere.niveau} onChange={e => setNewMatiere({...newMatiere, niveau: e.target.value})} style={inputStyle} />
                       </div>
                       <div>
-                        <label style={labelStyle}>Série</label>
+                        <label style={labelStyle}>{t('admin.settings.programs.serie')}</label>
                         <input type="text" placeholder="ex: C, D, TI, Toutes" value={newMatiere.serie} onChange={e => setNewMatiere({...newMatiere, serie: e.target.value})} style={inputStyle} />
                       </div>
                       <div>
-                        <label style={labelStyle}>Filière</label>
+                        <label style={labelStyle}>{t('admin.settings.programs.filiere')}</label>
                         <input type="text" placeholder="ex: Général" value={newMatiere.filiere} onChange={e => setNewMatiere({...newMatiere, filiere: e.target.value})} style={inputStyle} />
                       </div>
                       <button type="submit" style={{ padding: '0.8rem 1.5rem', background: '#10B981', color: 'white', border: 'none', borderRadius: '0.5rem', fontWeight: 700, cursor: 'pointer', height: '42px' }}>
-                        + Ajouter
+                        {t('admin.settings.programs.add_btn')}
                       </button>
                     </form>
 
@@ -243,11 +252,11 @@ export default function AdminSettingsPage() {
                       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', color: 'var(--txt-primary)' }}>
                         <thead style={{ background: 'var(--srf-raised)', borderBottom: '1px solid var(--brd-subtle)', fontSize: '0.9rem', color: 'var(--txt-secondary)' }}>
                           <tr>
-                            <th style={{ padding: '1rem 1.2rem' }}>Matière</th>
-                            <th style={{ padding: '1rem 1.2rem' }}>Niveau</th>
-                            <th style={{ padding: '1rem 1.2rem' }}>Série(s)</th>
-                            <th style={{ padding: '1rem 1.2rem' }}>Filière</th>
-                            <th style={{ padding: '1rem 1.2rem', textAlign: 'right' }}>Action</th>
+                            <th style={{ padding: '1rem 1.2rem' }}>{t('admin.settings.programs.table.subject')}</th>
+                            <th style={{ padding: '1rem 1.2rem' }}>{t('admin.settings.programs.table.level')}</th>
+                            <th style={{ padding: '1rem 1.2rem' }}>{t('admin.settings.programs.table.serie')}</th>
+                            <th style={{ padding: '1rem 1.2rem' }}>{t('admin.settings.programs.table.filiere')}</th>
+                            <th style={{ padding: '1rem 1.2rem', textAlign: 'right' }}>{t('admin.settings.programs.table.action')}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -259,7 +268,7 @@ export default function AdminSettingsPage() {
                               <td style={{ padding: '1rem 1.2rem', color: 'var(--txt-secondary)' }}>{item.filiere}</td>
                               <td style={{ padding: '1rem 1.2rem', textAlign: 'right' }}>
                                 <button onClick={() => handleDeleteMatiere(item.id)} style={{ background: '#EF444420', color: '#EF4444', border: '1px solid #EF444450', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>
-                                  Supprimer
+                                  {t('admin.settings.programs.table.delete')}
                                 </button>
                               </td>
                             </tr>
@@ -276,10 +285,10 @@ export default function AdminSettingsPage() {
               {activeTab === "Modèles d'IA (LLM)" && (
                 <>
                   <div style={sectionCardStyle}>
-                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Sélection des Modèles de Langage (Orchestrateur)</h2>
+                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>{t('admin.settings.llm.title_models')}</h2>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                        <div>
-                        <label style={labelStyle}>Modèle principal (Chat Apprenant & Explications complexes)</label>
+                        <label style={labelStyle}>{t('admin.settings.llm.main_model')}</label>
                         <input
                           type="text"
                           name="mainModel"
@@ -301,7 +310,7 @@ export default function AdminSettingsPage() {
                       </div>
 
                       <div>
-                        <label style={labelStyle}>Modèle secondaire (Correction de copies & Évaluation tuteur)</label>
+                        <label style={labelStyle}>{t('admin.settings.llm.secondary_model')}</label>
                         <input
                            type="text"
                            name="secondaryModel"
@@ -321,7 +330,7 @@ export default function AdminSettingsPage() {
                       </div>
 
                       <div>
-                        <label style={labelStyle}>Modèle de secours (Fallback en cas de panne d'API)</label>
+                        <label style={labelStyle}>{t('admin.settings.llm.fallback_model')}</label>
                          <input
                            type="text"
                            name="fallbackModel"
@@ -341,11 +350,11 @@ export default function AdminSettingsPage() {
                   </div>
 
                   <div style={sectionCardStyle}>
-                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Paramètres d'Échantillonnage (Sampling)</h2>
+                    <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>{t('admin.settings.llm.title_sampling')}</h2>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                          <label style={labelStyle}>Température (Créativité vs Précision)</label>
+                          <label style={labelStyle}>{t('admin.settings.llm.temperature')}</label>
                           <span style={{ color: 'var(--clr-brand)', fontWeight: 700 }}>{settings.temperature}</span>
                         </div>
                         <input 
@@ -359,14 +368,14 @@ export default function AdminSettingsPage() {
                           style={{ width: '100%', accentColor: 'var(--clr-brand)', cursor: 'pointer' }} 
                         />
                         <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--txt-tertiary)', fontSize: '0.8rem', marginTop: '0.3rem' }}>
-                          <span>0.0 (Strict / QCM)</span>
-                          <span>0.7 (Équilibré)</span>
-                          <span>1.0 (Créatif / Dissertations)</span>
+                          <span>{t('admin.settings.llm.temp_low')}</span>
+                          <span>{t('admin.settings.llm.temp_mid')}</span>
+                          <span>{t('admin.settings.llm.temp_high')}</span>
                         </div>
                       </div>
 
                       <div>
-                        <label style={labelStyle}>Limite de tokens en sortie (Max Tokens)</label>
+                        <label style={labelStyle}>{t('admin.settings.llm.max_tokens')}</label>
                         <input type="number" name="maxTokens" value={settings.maxTokens} onChange={handleChange} style={inputStyle} />
                       </div>
                     </div>
@@ -377,28 +386,28 @@ export default function AdminSettingsPage() {
               {/* TAB 4 : SÉCURITÉ & ANTI-SPAM */}
               {activeTab === 'Sécurité & Anti-Spam' && (
                 <div style={sectionCardStyle}>
-                  <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Pare-feu & Limitation de débit (Rate Limiting)</h2>
+                  <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>{t('admin.settings.security.title_rate')}</h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div>
-                      <label style={labelStyle}>Requêtes maximales par minute (par utilisateur)</label>
+                      <label style={labelStyle}>{t('admin.settings.security.rate_limit')}</label>
                       <input type="number" name="rateLimit" value={settings.rateLimit} onChange={handleChange} style={inputStyle} />
-                      <span style={{ color: 'var(--txt-tertiary)', fontSize: '0.8rem', marginTop: '0.3rem', display: 'block' }}>Évite les attaques DDoS et la surconsommation des quotas d'API LLM.</span>
+                      <span style={{ color: 'var(--txt-tertiary)', fontSize: '0.8rem', marginTop: '0.3rem', display: 'block' }}>{t('admin.settings.security.rate_desc')}</span>
                     </div>
 
                     <hr style={{ border: 'none', borderTop: '1px solid var(--brd-subtle)', margin: '0.5rem 0' }} />
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div>
-                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>Blocage des VPN & Tor</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Restreindre l'accès aux adresses IP résidentielles camerounaises.</div>
+                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>{t('admin.settings.security.vpn_block')}</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>{t('admin.settings.security.vpn_desc')}</div>
                       </div>
                       <input type="checkbox" name="blockVPN" checked={settings.blockVPN} onChange={handleChange} style={{ width: '20px', height: '20px', accentColor: 'var(--clr-brand)', cursor: 'pointer' }} />
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div>
-                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>Modération IA automatique (Prompt Injection)</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Filtrer les tentatives de jailbreak et les propos inappropriés avant l'envoi au LLM.</div>
+                        <div style={{ fontWeight: 600, color: 'var(--txt-primary)' }}>{t('admin.settings.security.auto_mod')}</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>{t('admin.settings.security.auto_mod_desc')}</div>
                       </div>
                       <input type="checkbox" name="autoModerate" checked={settings.autoModerate} onChange={handleChange} style={{ width: '20px', height: '20px', accentColor: 'var(--clr-brand)', cursor: 'pointer' }} />
                     </div>
@@ -409,10 +418,10 @@ export default function AdminSettingsPage() {
               {/* TAB 5 : INTÉGRATIONS */}
               {activeTab === 'Intégrations' && (
                 <div style={sectionCardStyle}>
-                  <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>Bases de données & Services Tiers</h2>
+                  <h2 style={{ fontSize: '1.3rem', margin: '0 0 1.5rem 0', fontWeight: 700, color: 'var(--txt-primary)' }}>{t('admin.settings.integrations.title')}</h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div>
-                      <label style={labelStyle}>Base de données Vectorielle (RAG / Recherche sémantique)</label>
+                      <label style={labelStyle}>{t('admin.settings.integrations.vector_db')}</label>
                       <input
                         type="text"
                         name="vectorDb"
@@ -430,27 +439,27 @@ export default function AdminSettingsPage() {
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Taille des segments RAG (Chunk Size en caractères)</label>
+                      <label style={labelStyle}>{t('admin.settings.integrations.chunk_size')}</label>
                       <input type="number" name="ragChunkSize" value={settings.ragChunkSize} onChange={handleChange} style={inputStyle} />
-                      <span style={{ color: 'var(--txt-tertiary)', fontSize: '0.8rem', marginTop: '0.3rem', display: 'block' }}>Taille de découpage des PDF du programme scolaire camerounais.</span>
+                      <span style={{ color: 'var(--txt-tertiary)', fontSize: '0.8rem', marginTop: '0.3rem', display: 'block' }}>{t('admin.settings.integrations.chunk_desc')}</span>
                     </div>
 
                     <hr style={{ border: 'none', borderTop: '1px solid var(--brd-subtle)', margin: '0.5rem 0' }} />
 
                     <div>
-                      <div style={{ fontWeight: 600, color: 'var(--txt-primary)', marginBottom: '0.5rem' }}>Statut des clés d'API (Environnement)</div>
+                      <div style={{ fontWeight: 600, color: 'var(--txt-primary)', marginBottom: '0.5rem' }}>{t('admin.settings.integrations.api_status')}</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', background: 'var(--srf-base)', padding: '1rem', borderRadius: '0.8rem', border: '1px solid var(--brd-subtle)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                           <span style={{ color: 'var(--txt-secondary)' }}>Google Gemini API</span>
-                          <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>[OK] Connecté (Fichier .env)</span>
+                          <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>{t('admin.settings.integrations.api_connected')}</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                           <span style={{ color: 'var(--txt-secondary)' }}>Anthropic Claude API</span>
-                          <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>[OK] Connecté (Fichier .env)</span>
+                          <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>{t('admin.settings.integrations.api_connected')}</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                           <span style={{ color: 'var(--txt-secondary)' }}>Groq API (LPU)</span>
-                          <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>[OK] Connecté (Fichier .env)</span>
+                          <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>{t('admin.settings.integrations.api_connected')}</span>
                         </div>
                       </div>
                     </div>
@@ -471,7 +480,7 @@ export default function AdminSettingsPage() {
                   className="btn btn--primary"
                   style={{ opacity: isSaving ? 0.6 : 1, cursor: isSaving ? 'not-allowed' : 'pointer' }}
                 >
-                  {isSaving ? 'Enregistrement...' : 'Enregistrer les modifications'}
+                  {isSaving ? t('admin.settings.saving_btn') : t('admin.settings.save_btn')}
                 </button>
               </div>
             </>

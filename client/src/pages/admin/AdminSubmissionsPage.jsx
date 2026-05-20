@@ -4,17 +4,7 @@ import {
   collection, getDocs, doc, updateDoc, deleteDoc,
   query, orderBy, serverTimestamp
 } from 'firebase/firestore';
-
-const STATUS_MAP = {
-  soumis:     { label: 'Soumis',      cls: 'badge--pending' },
-  en_attente: { label: 'En attente',  cls: 'badge--pending' },
-  en_revue:   { label: 'En revue',    cls: 'badge--warning' },
-  a_corriger: { label: 'À corriger',  cls: 'badge--error'   },
-  brouillon:  { label: 'Brouillon',   cls: ''               },
-  publie:     { label: 'Validé ✓',   cls: 'badge--green'   },
-  valide:     { label: 'Validé ✓',   cls: 'badge--green'   },
-  rejete:     { label: 'Rejeté',      cls: 'badge--error'   },
-};
+import { useTranslation } from 'react-i18next';
 
 function formatDate(ts) {
   if (!ts) return '—';
@@ -23,11 +13,23 @@ function formatDate(ts) {
 }
 
 /* ── Detail / Action Drawer ─────────────────────────────────────────────── */
-function SubmissionDrawer({ sub, onClose, onAction }) {
+function SubmissionDrawer({ sub, onClose, onAction, t }) {
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
 
   if (!sub) return null;
+
+  const STATUS_MAP = {
+    soumis:     { label: t('admin.submissions.status.submitted'),      cls: 'badge--pending' },
+    en_attente: { label: t('admin.submissions.status.pending'),  cls: 'badge--pending' },
+    en_revue:   { label: t('admin.submissions.status.reviewing'),    cls: 'badge--warning' },
+    a_corriger: { label: t('admin.submissions.status.correcting'),  cls: 'badge--error'   },
+    brouillon:  { label: t('admin.submissions.status.draft'),   cls: ''               },
+    publie:     { label: t('admin.submissions.status.published'),   cls: 'badge--green'   },
+    valide:     { label: t('admin.submissions.status.published'),   cls: 'badge--green'   },
+    rejete:     { label: t('admin.submissions.status.rejected'),      cls: 'badge--error'   },
+  };
+
   const st = STATUS_MAP[sub.statut] || { label: sub.statut, cls: '' };
 
   const act = async (newStatut) => {
@@ -48,7 +50,7 @@ function SubmissionDrawer({ sub, onClose, onAction }) {
         {/* Header */}
         <div className="row row--between" style={{ marginBottom: 'var(--sp-5)', alignItems: 'flex-start' }}>
           <div>
-            <h2 style={{ margin: '0 0 4px', fontSize: 'var(--tx-xl)', fontWeight: 700 }}>{sub.titre || 'Sans titre'}</h2>
+            <h2 style={{ margin: '0 0 4px', fontSize: 'var(--tx-xl)', fontWeight: 700 }}>{sub.titre || t('admin.submissions.no_title')}</h2>
             <span className={`badge ${st.cls}`}>{st.label}</span>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', color: 'var(--txt-tertiary)' }}>✕</button>
@@ -57,9 +59,9 @@ function SubmissionDrawer({ sub, onClose, onAction }) {
         {/* Meta grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-2)', marginBottom: 'var(--sp-5)', fontSize: 'var(--tx-sm)' }}>
           {[
-            ['Type', sub.type], ['Matière', sub.matiere],
-            ['Niveau', sub.cible || sub.niveau], ['Auteur', sub.auteur],
-            ['Soumis le', formatDate(sub.createdAt)], ['Fichier', sub.fileName || '—'],
+            [t('admin.submissions.drawer.type'), sub.type], [t('admin.submissions.drawer.subject'), sub.matiere],
+            [t('admin.submissions.drawer.level'), sub.cible || sub.niveau], [t('admin.submissions.drawer.author'), sub.auteur],
+            [t('admin.submissions.drawer.date'), formatDate(sub.createdAt)], [t('admin.submissions.drawer.file'), sub.fileName || '—'],
           ].map(([k, v]) => (
             <div key={k} style={{ background: 'var(--srf-raised)', borderRadius: 'var(--rd-md)', padding: 'var(--sp-3)' }}>
               <div style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', marginBottom: '2px' }}>{k}</div>
@@ -71,7 +73,7 @@ function SubmissionDrawer({ sub, onClose, onAction }) {
         {/* Description */}
         {sub.description && (
           <div style={{ marginBottom: 'var(--sp-4)', padding: 'var(--sp-4)', background: 'var(--srf-raised)', borderRadius: 'var(--rd-md)' }}>
-            <p style={{ margin: '0 0 4px', fontSize: 'var(--tx-xs)', fontWeight: 600, color: 'var(--txt-tertiary)', textTransform: 'uppercase' }}>Description</p>
+            <p style={{ margin: '0 0 4px', fontSize: 'var(--tx-xs)', fontWeight: 600, color: 'var(--txt-tertiary)', textTransform: 'uppercase' }}>{t('admin.submissions.drawer.desc_title')}</p>
             <p style={{ margin: 0, fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', lineHeight: 1.6 }}>{sub.description}</p>
           </div>
         )}
@@ -79,7 +81,7 @@ function SubmissionDrawer({ sub, onClose, onAction }) {
         {/* Content preview */}
         {sub.contenu && (
           <div style={{ marginBottom: 'var(--sp-5)', background: 'var(--srf-raised)', borderRadius: 'var(--rd-md)', padding: 'var(--sp-4)', maxHeight: '180px', overflowY: 'auto' }}>
-            <p style={{ margin: '0 0 var(--sp-2)', fontSize: 'var(--tx-xs)', fontWeight: 600, color: 'var(--txt-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Contenu</p>
+            <p style={{ margin: '0 0 var(--sp-2)', fontSize: 'var(--tx-xs)', fontWeight: 600, color: 'var(--txt-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('admin.submissions.drawer.content_title')}</p>
             <pre style={{ margin: 0, fontSize: 'var(--tx-xs)', color: 'var(--txt-primary)', whiteSpace: 'pre-wrap', fontFamily: 'inherit', lineHeight: 1.6 }}>
               {sub.contenu.slice(0, 1000)}{sub.contenu.length > 1000 ? '\n[...]' : ''}
             </pre>
@@ -90,12 +92,12 @@ function SubmissionDrawer({ sub, onClose, onAction }) {
         {(sub.statut === 'soumis' || sub.statut === 'en_attente' || sub.statut === 'en_revue') && (
           <div style={{ marginBottom: 'var(--sp-5)' }}>
             <label style={{ display: 'block', fontSize: 'var(--tx-xs)', fontWeight: 600, color: 'var(--txt-secondary)', marginBottom: 'var(--sp-1)' }}>
-              Note pour le tuteur (optionnel)
+              {t('admin.submissions.drawer.note_label')}
             </label>
             <textarea
               value={note}
               onChange={e => setNote(e.target.value)}
-              placeholder="Ex: Merci d'ajouter les corrigés, le barème est manquant..."
+              placeholder={t('admin.submissions.drawer.note_placeholder')}
               style={{ width: '100%', minHeight: '70px', padding: 'var(--sp-3)', borderRadius: 'var(--rd-md)', border: '1px solid var(--brd-input)', background: 'var(--srf-base)', color: 'var(--txt-primary)', fontSize: 'var(--tx-sm)', fontFamily: 'inherit', boxSizing: 'border-box', resize: 'vertical' }}
             />
           </div>
@@ -110,7 +112,7 @@ function SubmissionDrawer({ sub, onClose, onAction }) {
               className="laura-btn laura-btn-ghost"
               style={{ flex: 1, justifyContent: 'center', color: 'var(--clr-error)', minHeight: '42px', borderColor: 'var(--clr-error)' }}
             >
-              ✕ Rejeter
+              {t('admin.submissions.drawer.reject_btn')}
             </button>
             <button
               onClick={() => act('a_corriger')}
@@ -118,7 +120,7 @@ function SubmissionDrawer({ sub, onClose, onAction }) {
               className="laura-btn laura-btn-secondary"
               style={{ flex: 1, justifyContent: 'center', minHeight: '42px' }}
             >
-              ✏️ À corriger
+              {t('admin.submissions.drawer.correct_btn')}
             </button>
             <button
               onClick={() => act('publie')}
@@ -126,14 +128,14 @@ function SubmissionDrawer({ sub, onClose, onAction }) {
               className="laura-btn laura-btn-primary"
               style={{ flex: 2, justifyContent: 'center', minHeight: '42px' }}
             >
-              {busy ? 'Traitement...' : '✅ Valider et publier'}
+              {busy ? t('admin.submissions.drawer.processing') : t('admin.submissions.drawer.validate_btn')}
             </button>
           </div>
         )}
 
         {sub.statut === 'a_corriger' && sub.adminNote && (
           <div style={{ padding: 'var(--sp-4)', background: 'color-mix(in srgb, var(--clr-warning) 8%, var(--srf-base))', borderRadius: 'var(--rd-md)', border: '1px solid rgba(234,179,8,0.25)', fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)' }}>
-            <strong>Note admin :</strong> {sub.adminNote}
+            <strong>{t('admin.submissions.drawer.admin_note')}</strong> {sub.adminNote}
           </div>
         )}
       </div>
@@ -143,11 +145,23 @@ function SubmissionDrawer({ sub, onClose, onAction }) {
 
 /* ── Main Page ───────────────────────────────────────────────────────────── */
 export default function AdminSubmissionsPage() {
+  const { t } = useTranslation();
   const [submissions, setSubmissions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState('pending');
   const [selected, setSelected] = useState(null);
   const [toast, setToast] = useState('');
+
+  const STATUS_MAP = {
+    soumis:     { label: t('admin.submissions.status.submitted'),      cls: 'badge--pending' },
+    en_attente: { label: t('admin.submissions.status.pending'),  cls: 'badge--pending' },
+    en_revue:   { label: t('admin.submissions.status.reviewing'),    cls: 'badge--warning' },
+    a_corriger: { label: t('admin.submissions.status.correcting'),  cls: 'badge--error'   },
+    brouillon:  { label: t('admin.submissions.status.draft'),   cls: ''               },
+    publie:     { label: t('admin.submissions.status.published'),   cls: 'badge--green'   },
+    valide:     { label: t('admin.submissions.status.published'),   cls: 'badge--green'   },
+    rejete:     { label: t('admin.submissions.status.rejected'),      cls: 'badge--error'   },
+  };
 
   const fetchAll = async () => {
     setIsLoading(true);
@@ -180,16 +194,16 @@ export default function AdminSubmissionsPage() {
       await updateDoc(doc(db, 'resources', id), updates);
       setSubmissions(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
       setSelected(null);
-      const msgs = { publie: '✅ Soumission validée et publiée.', rejete: '🗑️ Soumission rejetée.', a_corriger: '✏️ Correction demandée au tuteur.' };
-      showToast(msgs[newStatut] || 'Statut mis à jour.');
+      const msgs = { publie: t('admin.submissions.toast.validated'), rejete: t('admin.submissions.toast.rejected'), a_corriger: t('admin.submissions.toast.corrected') };
+      showToast(msgs[newStatut] || t('admin.submissions.toast.updated'));
     } catch (err) {
       console.error(err);
-      showToast('❌ Erreur lors de la mise à jour.');
+      showToast(t('admin.submissions.toast.error'));
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Supprimer définitivement cette soumission ?')) return;
+    if (!window.confirm(t('admin.submissions.confirm_delete'))) return;
     try {
       await deleteDoc(doc(db, 'resources', id));
       setSubmissions(prev => prev.filter(s => s.id !== id));
@@ -213,13 +227,6 @@ export default function AdminSubmissionsPage() {
     all: submissions,
   }[filter] || [];
 
-  const stats = [
-    { label: 'En attente', val: counts.pending, color: '#f59e0b' },
-    { label: 'Validées', val: counts.publie, color: 'var(--clr-green)' },
-    { label: 'À corriger', val: counts.a_corriger, color: 'var(--clr-warning)' },
-    { label: 'Rejetées', val: counts.rejete, color: 'var(--clr-error)' },
-  ];
-
   return (
     <div className="stack stack--lg animate-in">
 
@@ -233,23 +240,23 @@ export default function AdminSubmissionsPage() {
       {/* Header */}
       <div className="row row--between" style={{ alignItems: 'center' }}>
         <div>
-          <h1 className="laura-h1">Soumissions Tuteurs</h1>
+          <h1 className="laura-h1">{t('admin.submissions.title')}</h1>
           <p style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', margin: 'var(--sp-2) 0 0' }}>
-            Validez, demandez des corrections ou rejetez les documents soumis par les tuteurs.
+            {t('admin.submissions.subtitle')}
           </p>
         </div>
         <button onClick={fetchAll} className="laura-btn laura-btn-secondary" style={{ minHeight: '38px', gap: 'var(--sp-2)' }}>
-          🔄 Actualiser
+          {t('admin.submissions.refresh')}
         </button>
       </div>
 
       {/* STATS — same KPI card pattern as AdminDashboard */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--sp-5)' }}>
         {[
-          { label: 'En attente',  val: counts.pending,     iconClass: 'hourglass-low', color: 'var(--clr-warning)', badgeClass: 'warning', badge: 'Urgents' },
-          { label: 'Validées',    val: counts.publie,      iconClass: 'circle-check',  color: 'var(--clr-green)',   badgeClass: 'green',   badge: 'Publiés' },
-          { label: 'À corriger',  val: counts.a_corriger,  iconClass: 'pencil',        color: 'var(--clr-brand)',   badgeClass: 'brand',   badge: 'Retour' },
-          { label: 'Rejetées',   val: counts.rejete,      iconClass: 'circle-x',     color: 'var(--clr-error)',   badgeClass: 'error',   badge: 'Rejetés' },
+          { label: t('admin.submissions.stats.pending'),  val: counts.pending,     iconClass: 'hourglass-low', color: 'var(--clr-warning)', badgeClass: 'warning', badge: t('admin.submissions.stats.badge.urgent') },
+          { label: t('admin.submissions.stats.published'),    val: counts.publie,      iconClass: 'circle-check',  color: 'var(--clr-green)',   badgeClass: 'green',   badge: t('admin.submissions.stats.badge.published') },
+          { label: t('admin.submissions.stats.correction'),  val: counts.a_corriger,  iconClass: 'pencil',        color: 'var(--clr-brand)',   badgeClass: 'brand',   badge: t('admin.submissions.stats.badge.return') },
+          { label: t('admin.submissions.stats.rejected'),   val: counts.rejete,      iconClass: 'circle-x',     color: 'var(--clr-error)',   badgeClass: 'error',   badge: t('admin.submissions.stats.badge.rejected') },
         ].map(({ label, val, iconClass, color, badgeClass, badge }) => (
           <div key={label} className="card card--hoverable card__body"
             style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)', background: 'var(--srf-base)', boxShadow: 'var(--shd-sm)', position: 'relative', overflow: 'hidden' }}>
@@ -271,11 +278,11 @@ export default function AdminSubmissionsPage() {
       {/* Filter tabs */}
       <div className="chip-row">
         {[
-          { key: 'pending', label: `En attente (${counts.pending})` },
-          { key: 'a_corriger', label: `À corriger (${counts.a_corriger})` },
-          { key: 'publie', label: `Validées (${counts.publie})` },
-          { key: 'rejete', label: `Rejetées (${counts.rejete})` },
-          { key: 'all', label: `Toutes (${submissions.length})` },
+          { key: 'pending', label: `${t('admin.submissions.stats.pending')} (${counts.pending})` },
+          { key: 'a_corriger', label: `${t('admin.submissions.stats.correction')} (${counts.a_corriger})` },
+          { key: 'publie', label: `${t('admin.submissions.stats.published')} (${counts.publie})` },
+          { key: 'rejete', label: `${t('admin.submissions.stats.rejected')} (${counts.rejete})` },
+          { key: 'all', label: `${t('admin.submissions.stats.all')} (${submissions.length})` },
         ].map(({ key, label }) => (
           <button key={key} onClick={() => setFilter(key)} className="chip"
             style={{ background: filter === key ? 'var(--clr-brand-lt)' : '', color: filter === key ? 'var(--clr-brand)' : '', borderColor: filter === key ? 'var(--clr-brand)' : '', fontWeight: filter === key ? 'var(--fw-bold)' : '' }}>
@@ -286,11 +293,11 @@ export default function AdminSubmissionsPage() {
 
       {/* Table */}
       {isLoading ? (
-        <div className="empty-state"><span className="empty-state__icon">⏳</span><p className="empty-state__title">Chargement...</p></div>
+        <div className="empty-state"><span className="empty-state__icon">⏳</span><p className="empty-state__title">{t('admin.submissions.loading')}</p></div>
       ) : filtered.length === 0 ? (
         <div className="empty-state">
           <span className="empty-state__icon">📭</span>
-          <p className="empty-state__title">Aucune soumission dans cette catégorie</p>
+          <p className="empty-state__title">{t('admin.submissions.empty.title')}</p>
         </div>
       ) : (
         <div className="card" style={{ overflow: 'hidden' }}>
@@ -298,7 +305,7 @@ export default function AdminSubmissionsPage() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--tx-sm)' }}>
               <thead>
                 <tr style={{ background: 'var(--srf-raised)', borderBottom: '2px solid var(--brd-subtle)' }}>
-                  {['Document', 'Type', 'Matière', 'Niveau', 'Tuteur', 'Date', 'Statut', 'Actions'].map(h => (
+                  {[t('admin.submissions.table.document'), t('admin.submissions.table.type'), t('admin.submissions.table.subject'), t('admin.submissions.table.level'), t('admin.submissions.table.tutor'), t('admin.submissions.table.date'), t('admin.submissions.table.status'), t('admin.submissions.table.actions')].map(h => (
                     <th key={h} style={{ padding: 'var(--sp-4) var(--sp-4)', textAlign: 'left', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
                 </tr>
@@ -309,7 +316,7 @@ export default function AdminSubmissionsPage() {
                   return (
                     <tr key={sub.id} style={{ borderBottom: '1px solid var(--brd-subtle)', background: i % 2 === 1 ? 'var(--srf-raised)' : '' }}>
                       <td style={{ padding: 'var(--sp-4)', maxWidth: '200px' }}>
-                        <p className="truncate" style={{ margin: 0, fontWeight: 600, color: 'var(--txt-primary)' }}>{sub.titre || 'Sans titre'}</p>
+                        <p className="truncate" style={{ margin: 0, fontWeight: 600, color: 'var(--txt-primary)' }}>{sub.titre || t('admin.submissions.no_title')}</p>
                       </td>
                       <td style={{ padding: 'var(--sp-4)', whiteSpace: 'nowrap' }}><span className="badge badge--brand">{sub.type || '—'}</span></td>
                       <td style={{ padding: 'var(--sp-4)', color: 'var(--txt-secondary)', whiteSpace: 'nowrap' }}>{sub.matiere || '—'}</td>
@@ -322,7 +329,7 @@ export default function AdminSubmissionsPage() {
                       <td style={{ padding: 'var(--sp-4)', whiteSpace: 'nowrap' }}>
                         <div style={{ display: 'flex', gap: 'var(--sp-2)', alignItems: 'center' }}>
                           <button onClick={() => setSelected(sub)} className="laura-btn laura-btn-secondary" style={{ minHeight: '30px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                            Examiner
+                            {t('admin.submissions.actions.examine')}
                           </button>
                           {['soumis', 'en_attente', 'en_revue'].includes(sub.statut) && (
                             <>
@@ -342,7 +349,7 @@ export default function AdminSubmissionsPage() {
         </div>
       )}
 
-      <SubmissionDrawer sub={selected} onClose={() => setSelected(null)} onAction={handleAction} />
+      <SubmissionDrawer sub={selected} onClose={() => setSelected(null)} onAction={handleAction} t={t} />
     </div>
   );
 }

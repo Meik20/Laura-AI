@@ -33,6 +33,22 @@
     "signup": "Sign Up for Free",
     "rights_reserved": "© 2026 LAURA — All rights reserved"
   },
+  "common": {
+    "days": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    },
+    "roles": {
+      "learner": "Learner",
+      "tutor": "Tutor",
+      "admin": "Admin"
+    }
+  },
   "home": {
     "hero": {
       "announcement": "✨ Discover Version 2.0",
@@ -574,6 +590,60 @@
         "pending_resources": "{{count}} resource(s) pending validation."
       }
     },
+    "audit": {
+      "title": "Logs & Audit",
+      "subtitle": "Traceability of critical administration actions.",
+      "table": {
+        "date": "Date and Time",
+        "action": "Action",
+        "detail": "Detail",
+        "author": "Author"
+      },
+      "loading": "Loading logs...",
+      "empty": "No audit logs."
+    },
+    "tutor_apps": {
+      "title": "Tutor Applications",
+      "subtitle": "Manage and validate teacher access.",
+      "validation_message": "Congratulations, your Tutor account has been successfully validated!",
+      "validation_error": "Error during validation.",
+      "loading": "Loading applications...",
+      "empty": "No pending applications.",
+      "no_name": "No name",
+      "registered_on": "Registered on",
+      "status": {
+        "pending": "Pending",
+        "test_required": "Test Required",
+        "validated": "Validated"
+      },
+      "table": {
+        "candidate": "Candidate",
+        "discipline": "Discipline",
+        "experience": "Experience",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "open": "Open file",
+        "validate": "Validate"
+      },
+      "modal": {
+        "title": "Application File",
+        "candidate": "Candidate:",
+        "email": "Email:",
+        "phone": "Phone:",
+        "discipline": "Discipline:",
+        "school": "School:",
+        "diploma": "Diploma:",
+        "skills": "Skills:",
+        "motivation": "Motivation:",
+        "no_motivation": "No motivation provided.",
+        "close": "Close",
+        "validate_btn": "Validate this tutor",
+        "not_specified": "Not specified",
+        "level": "Level:"
+      }
+    },
     "users": {
       "title": "Users",
       "subtitle": "Global management of platform accounts.",
@@ -610,6 +680,513 @@
         "error": "Error granting contributor rights."
       }
     },
+    "community": {
+      "title": "Community Management",
+      "subtitle": "Validate class forum access requests. Only you can view the profile cards.",
+      "requests": "Access Requests",
+      "loading": "Loading...",
+      "empty": "No requests at the moment.",
+      "table": {
+        "student": "Student",
+        "forum": "Requested Forum",
+        "status": "Status",
+        "action": "Action"
+      },
+      "actions": {
+        "view_profile": "View Profile",
+        "reject": "Reject",
+        "approve": "Approve",
+        "reset_pending": "Reset Pending"
+      },
+      "modal": {
+        "title": "Profile Card",
+        "level": "Level:",
+        "serie": "Series:",
+        "exam": "Exam:",
+        "requested_forum": "Requested Forum:",
+        "check_profile": "Verify if their profile matches the requested forum.",
+        "not_specified": "Not specified"
+      },
+      "error_update": "Error during update.",
+      "status_already": "This request has already been {{status}}.",
+      "select_profile_hint": "Select a request to view the student's profile."
+    },
+    "resources": {
+      "error_save": "Error while saving the resource.",
+      "confirm_delete": "Are you sure you want to delete this resource?",
+      "error_delete": "Error while deleting the resource.",
+      "title": "Educational Resources",
+      "subtitle": "Add, edit, or delete official resources available to all learners.",
+      "add_btn": "+ New Resource",
+      "table": {
+        "title": "Title",
+        "type": "Type",
+        "target": "Target Class",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "loading": "Loading resources...",
+      "empty": "No resources registered at the moment.",
+      "no_title": "No title",
+      "status": {
+        "published": "Published",
+        "draft": "Draft"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "type": {
+        "exam": "Exam",
+        "annal": "Annal",
+        "sheet": "Revision sheet",
+        "quiz": "Quiz",
+        "book": "Book"
+      },
+      "modal": {
+        "edit_title": "Edit Resource",
+        "add_title": "Add Resource",
+        "close": "Close",
+        "title_label": "Resource Title *",
+        "type_label": "Resource Type",
+        "target_label": "Target Level / Class *",
+        "status_label": "Publication Status",
+        "file_url_label": "Resource File (PDF, Doc, Image)",
+        "upload_progress": {
+          "uploading": "Uploading...",
+          "done": "File ready!",
+          "error": "Upload error",
+          "choose": "Select a local file..."
+        },
+        "url_placeholder": "Or paste a URL manually...",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "save": "Save"
+      }
+    },
+    "access_rules": {
+      "error_save": "Error during rule validation.",
+      "confirm_delete": "Are you sure you want to delete this access rule?",
+      "error_delete": "Error during rule deletion.",
+      "title": "Access Rules",
+      "subtitle": "Define dynamic rules to limit access to resources according to learner profiles and levels.",
+      "new_rule_btn": "+ New Rule",
+      "table": {
+        "name": "Rule Name",
+        "criteria": "Access Criteria (Expression)",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "loading": "Loading access rules...",
+      "empty": "No access rules registered at the moment.",
+      "no_name": "No name",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "modal": {
+        "edit_title": "Edit Access Rule",
+        "new_title": "Create Access Rule",
+        "close": "Close",
+        "name_label": "Rule Name *",
+        "criteria_label": "Logical Criteria Expression *",
+        "status_label": "Rule Status",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "save": "Save"
+      }
+    },
+    "tutor_apps": {
+      "validation_message": "Congratulations, your tutor application on LAURA has been successfully accepted!",
+      "validation_error": "Error during validation.",
+      "status": {
+        "pending": "Pending",
+        "test_required": "Test Required",
+        "validated": "Validated"
+      },
+      "modal": {
+        "title": "Tutor Application File",
+        "close": "Close",
+        "candidate": "Candidate:",
+        "email": "Email:",
+        "phone": "Phone:",
+        "not_specified": "Not specified",
+        "discipline": "Discipline:",
+        "school": "School:",
+        "diploma": "Diploma:",
+        "skills": "Skills:",
+        "motivation": "Motivation & Experience",
+        "no_motivation": "No motivation written.",
+        "validate_btn": "✓ Validate application",
+        "level": "Level:"
+      },
+      "title": "Tutor Applications",
+      "subtitle": "Examine and validate the application files of new tutors on the platform.",
+      "table": {
+        "candidate": "Candidate",
+        "discipline": "Discipline & Level",
+        "experience": "Experience",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "loading": "Loading applications...",
+      "empty": "No tutor application pending at the moment.",
+      "no_name": "No name",
+      "registered_on": "Registered on",
+      "actions": {
+        "open": "Open file",
+        "validate": "Validate"
+      }
+    },
+    "community": {
+      "error_update": "Error during update.",
+      "title": "Community Management",
+      "subtitle": "Moderate and validate learner access to the different class forums.",
+      "requests": "Access Requests",
+      "loading": "Loading requests...",
+      "empty": "No access request at the moment.",
+      "table": {
+        "student": "Learner",
+        "forum": "Requested Forum",
+        "status": "Status",
+        "action": "Actions"
+      },
+      "actions": {
+        "view_profile": "View Profile",
+        "reject": "✕ Reject",
+        "approve": "✓ Approve",
+        "reset_pending": "Reset (Pending)"
+      },
+      "modal": {
+        "title": "Learner Details",
+        "level": "Level:",
+        "not_specified": "Not specified",
+        "serie": "Series:",
+        "exam": "Exam:",
+        "requested_forum": "Requests access to the forum",
+        "check_profile": "Please verify that the learner's profile corresponds to the level targeted by the forum before validating."
+      },
+      "status_already": "This request has already been {{status}}.",
+      "select_profile_hint": "Select a request to view the student's profile."
+    },
+    "dashboard": {
+      "hello": "Hello Admin 👋",
+      "welcome_msg": "Welcome to the LAURA control center. Here's what's happening on the platform today.",
+      "kpis": {
+        "students": "High School Students",
+        "college_students": "College Students",
+        "tutors": "Tutors",
+        "contributors": "Contributors",
+        "active": "Active"
+      },
+      "chat_activity": "Chat Activity (7 days)",
+      "action_center": {
+        "title": "Action Center",
+        "all_good": "All Good",
+        "no_action": "No action required at the moment.",
+        "process_action": "Process"
+      },
+      "alerts": {
+        "pending_tutors": "{{count}} pending tutor requests",
+        "pending_contributors": "{{count}} pending contributor requests",
+        "pending_resources": "{{count}} resources pending validation"
+      }
+    },
+    "settings": {
+      "title": "System Settings",
+      "subtitle": "Global configuration for artificial intelligence, programs, and the platform.",
+      "loading": "Loading platform settings...",
+      "save_btn": "Save changes",
+      "saving_btn": "Saving...",
+      "success": "Settings successfully saved!",
+      "error": "Error while saving settings.",
+      "tabs": {
+        "general": "General",
+        "programs": "Programs & Subjects",
+        "llm": "AI Models (LLM)",
+        "security": "Security & Anti-Spam",
+        "integrations": "Integrations"
+      },
+      "general": {
+        "info_title": "Platform Information",
+        "name_label": "Platform Name",
+        "email_label": "Technical Support Email",
+        "maintenance_title": "Maintenance & Access",
+        "maintenance_mode": "Maintenance Mode",
+        "maintenance_desc": "Disable access to the platform for learners (maintenance in progress).",
+        "maintenance_btn_active": "Disable (Active)",
+        "maintenance_btn_inactive": "Activate",
+        "registration_mode": "Open Registrations",
+        "registration_desc": "Allow the creation of new accounts on the registration page."
+      },
+      "programs": {
+        "title": "Local Program Management (Subjects, Series, Tracks)",
+        "desc": "Define the official subjects available to learners according to their level, series, and track.",
+        "name": "Subject Name *",
+        "level": "Level",
+        "serie": "Series",
+        "filiere": "Track",
+        "add_btn": "+ Add",
+        "table": {
+          "subject": "Subject",
+          "level": "Level",
+          "serie": "Series",
+          "filiere": "Track",
+          "action": "Action",
+          "delete": "Delete"
+        }
+      },
+      "llm": {
+        "title_models": "Language Model Selection (Orchestrator)",
+        "main_model": "Main Model (Learner Chat & Complex Explanations)",
+        "secondary_model": "Secondary Model (Grading & Tutor Evaluation)",
+        "fallback_model": "Fallback Model (In case of API failure)",
+        "title_sampling": "Sampling Settings",
+        "temperature": "Temperature (Creativity vs Precision)",
+        "temp_low": "0.0 (Strict / MCQ)",
+        "temp_mid": "0.7 (Balanced)",
+        "temp_high": "1.0 (Creative / Essays)",
+        "max_tokens": "Output Token Limit (Max Tokens)"
+      },
+      "security": {
+        "title_rate": "Firewall & Rate Limiting",
+        "rate_limit": "Max requests per minute (per user)",
+        "rate_desc": "Prevents DDoS attacks and overconsumption of LLM API quotas.",
+        "vpn_block": "Block VPN & Tor",
+        "vpn_desc": "Restrict access to Cameroonian residential IP addresses.",
+        "auto_mod": "Automatic AI Moderation (Prompt Injection)",
+        "auto_mod_desc": "Filter jailbreak attempts and inappropriate language before sending to the LLM."
+      },
+      "integrations": {
+        "title": "Databases & Third-Party Services",
+        "vector_db": "Vector Database (RAG / Semantic Search)",
+        "chunk_size": "RAG Chunk Size (in characters)",
+        "chunk_desc": "Chunk size for splitting Cameroonian curriculum PDFs.",
+        "api_status": "API Keys Status (Environment)",
+        "api_connected": "[OK] Connected (.env file)"
+      }
+    },
+    "submissions": {
+      "title": "Tutor Submissions",
+      "subtitle": "Validate, request corrections or reject documents submitted by tutors.",
+      "refresh": "🔄 Refresh",
+      "toast": {
+        "validated": "✅ Submission validated and published.",
+        "rejected": "🗑️ Submission rejected.",
+        "corrected": "✏️ Correction requested from the tutor.",
+        "updated": "Status updated.",
+        "error": "❌ Error during update."
+      },
+      "confirm_delete": "Permanently delete this submission?",
+      "stats": {
+        "pending": "Pending",
+        "published": "Validated",
+        "correction": "To Correct",
+        "rejected": "Rejected",
+        "all": "All",
+        "badge": {
+          "urgent": "Urgent",
+          "published": "Published",
+          "return": "Return",
+          "rejected": "Rejected"
+        }
+      },
+      "loading": "Loading...",
+      "empty": {
+        "title": "No submission in this category"
+      },
+      "table": {
+        "document": "Document",
+        "type": "Type",
+        "subject": "Subject",
+        "level": "Level",
+        "tutor": "Tutor",
+        "date": "Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "examine": "Examine"
+      },
+      "no_title": "No title",
+      "drawer": {
+        "type": "Type",
+        "subject": "Subject",
+        "level": "Level",
+        "author": "Author",
+        "date": "Submitted on",
+        "file": "File",
+        "desc_title": "Description",
+        "content_title": "Content",
+        "note_label": "Note for the tutor (optional)",
+        "note_placeholder": "Ex: Please add the answers, the grading scale is missing...",
+        "reject_btn": "✕ Reject",
+        "correct_btn": "✏️ To Correct",
+        "validate_btn": "✅ Validate and publish",
+        "processing": "Processing...",
+        "admin_note": "Admin note :"
+      },
+      "status": {
+        "submitted": "Submitted",
+        "pending": "Pending",
+        "reviewing": "Reviewing",
+        "correcting": "To Correct",
+        "draft": "Draft",
+        "published": "Validated ✓",
+        "rejected": "Rejected"
+      }
+    },
+    "contributions": {
+      "title": "Contributions",
+      "subtitle": "Validate or reject resources submitted by learners",
+      "refresh": "Refresh",
+      "feedback": {
+        "validated": "✅ Document validated and published to the catalog.",
+        "val_error": "❌ Error during validation.",
+        "rejected": "🗑️ Document rejected.",
+        "rej_error": "❌ Error during rejection."
+      },
+      "confirm_delete": "Permanently delete this contribution?",
+      "status": {
+        "pending": "Pending",
+        "validated": "Validated",
+        "rejected": "Rejected",
+        "all": "All"
+      },
+      "stats": {
+        "total": "Total",
+        "total_label": "Total {{label}}"
+      },
+      "loading": "Loading contributions...",
+      "empty": {
+        "title": "No contributions",
+        "desc": "There are no contributions in this category at the moment."
+      },
+      "table": {
+        "document": "Document",
+        "type": "Type",
+        "contributor": "Contributor",
+        "date": "Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "no_title": "No title",
+      "actions": {
+        "examine": "Examine",
+        "validate": "Validate",
+        "reject": "Reject",
+        "delete": "Delete"
+      },
+      "drawer": {
+        "close": "Close",
+        "status": "Status",
+        "type": "Type",
+        "subject": "Subject",
+        "exam": "Exam",
+        "level": "Level",
+        "contributor": "Contributor",
+        "date": "Date",
+        "file": "File",
+        "size": "Size",
+        "desc_title": "Description",
+        "preview": "Preview file",
+        "validate_btn": "Validate and publish",
+        "reject_btn": "Reject"
+      }
+    },
+    "resources": {
+      "title": "Resources Catalog",
+      "subtitle": "Manage content available on the platform.",
+      "add_btn": "+ Add Resource",
+      "loading": "Loading resources...",
+      "empty": "No resources available.",
+      "no_title": "No title",
+      "confirm_delete": "Do you really want to delete this resource?",
+      "error_delete": "Error during deletion.",
+      "error_save": "Error saving resource.",
+      "table": {
+        "title": "Title",
+        "type": "Type",
+        "target": "Access Target",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "modal": {
+        "edit_title": "Edit Resource",
+        "add_title": "Add Resource",
+        "close": "Close",
+        "title_label": "Resource Title",
+        "type_label": "Type",
+        "target_label": "Target",
+        "status_label": "Status",
+        "file_url_label": "File or URL",
+        "upload_progress": {
+          "uploading": "Uploading...",
+          "done": "[OK] File successfully uploaded",
+          "error": "[Error] — try with a URL",
+          "choose": "Choose a file (PDF, image…)"
+        },
+        "url_placeholder": "or paste a URL directly",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "save": "Save"
+      },
+      "status": {
+        "published": "Published",
+        "draft": "Draft"
+      },
+      "type": {
+        "exam": "Exam",
+        "annal": "Annal",
+        "sheet": "Course Sheet",
+        "quiz": "Quiz",
+        "book": "Book / PDF"
+      }
+    },
+    "access_rules": {
+      "title": "Access Rules",
+      "subtitle": "Configure logic for resource access.",
+      "new_rule_btn": "+ New Rule",
+      "loading": "Loading rules...",
+      "empty": "No rules defined.",
+      "no_name": "No name",
+      "confirm_delete": "Do you really want to delete this rule?",
+      "error_delete": "Error during deletion.",
+      "error_save": "Error saving rule.",
+      "table": {
+        "name": "Rule Name",
+        "criteria": "Logical Criteria",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "modal": {
+        "edit_title": "Edit Rule",
+        "new_title": "New Access Rule",
+        "close": "Close",
+        "name_label": "Rule Name",
+        "criteria_label": "Logical Criteria",
+        "status_label": "Status",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "save": "Save"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
     "nav": {
       "overview": "Overview",
       "users": "Users",
@@ -630,8 +1207,56 @@
     "role_badge": "ADMINISTRATION",
     "role_label": "Admin",
     "logout": "Log Out",
+    "audit": {
+      "title": "Audit Logs",
+      "subtitle": "History of administrative and security actions performed on the platform.",
+      "loading": "Loading audit logs...",
+      "empty": "No audit logs available.",
+      "table": {
+        "date": "Date",
+        "action": "Action",
+        "detail": "Details",
+        "author": "Author"
+      }
+    },
     "header": {
       "title": "LAURA Admin Dashboard"
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Manage learners, tutors, and contributor roles on the platform.",
+      "loading": "Loading...",
+      "empty": "No users found.",
+      "filters": {
+        "all": "All",
+        "pupils": "Pupils",
+        "students": "Students",
+        "tutors": "Tutors",
+        "suspended": "Suspended"
+      },
+      "table": {
+        "user": "User",
+        "role": "Role / Level",
+        "date": "Registration",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "manage": "Manage"
+      },
+      "modal": {
+        "title": "Manage User",
+        "name": "Name:",
+        "email": "Email:",
+        "current_role": "Current Role:",
+        "detail": "Level / Track:",
+        "status": "Status:",
+        "pending_contrib_alert": "This user is requesting to become a Contributor Tutor. Please verify their information before validating.",
+        "close": "Close",
+        "grant": "✓ Grant Contributor Rights",
+        "success": "Contributor rights successfully granted!",
+        "error": "Error while granting rights."
+      }
     }
   }
 }

@@ -4,12 +4,7 @@ import {
   collection, getDocs, doc, updateDoc, deleteDoc,
   orderBy, query, serverTimestamp, addDoc
 } from 'firebase/firestore';
-
-const STATUS_MAP = {
-  en_attente: { label: 'En attente',  cls: 'badge--pending' },
-  valide:     { label: 'Validé',      cls: 'badge--green'   },
-  rejete:     { label: 'Rejeté',      cls: 'badge--error'   },
-};
+import { useTranslation } from 'react-i18next';
 
 const TYPE_ICONS = {
   Quiz: 'device-gamepad-2',
@@ -34,8 +29,14 @@ function formatBytes(bytes) {
 }
 
 /* ─── Detail Drawer ─────────────────────────────────────────────────────── */
-function ContribDrawer({ contrib, onClose, onValidate, onReject }) {
+function ContribDrawer({ contrib, onClose, onValidate, onReject, t }) {
   if (!contrib) return null;
+
+  const STATUS_MAP = {
+    en_attente: { label: t('admin.contributions.status.pending'),  cls: 'badge--pending' },
+    valide:     { label: t('admin.contributions.status.validated'),      cls: 'badge--green'   },
+    rejete:     { label: t('admin.contributions.status.rejected'),      cls: 'badge--error'   },
+  };
 
   return (
     <div
@@ -66,23 +67,23 @@ function ContribDrawer({ contrib, onClose, onValidate, onReject }) {
         <div className="row row--between" style={{ marginBottom: 'var(--sp-6)', alignItems: 'center' }}>
           <h2 style={{ fontSize: 'var(--tx-xl)', fontWeight: 'var(--fw-bold)', margin: 0, display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
             <i className={`ti ti-${getIconClass(contrib.type)}`} style={{ color: 'var(--clr-brand)', fontSize: '1.5rem' }}></i>
-            {contrib.titre || 'Sans titre'}
+            {contrib.titre || t('admin.contributions.no_title')}
           </h2>
-          <button onClick={onClose} className="modal-close" aria-label="Fermer">✕</button>
+          <button onClick={onClose} className="modal-close" aria-label={t('admin.contributions.drawer.close')}>✕</button>
         </div>
 
         {/* Meta */}
         <div className="stack stack--sm" style={{ marginBottom: 'var(--sp-6)' }}>
           {[
-            { label: 'Statut',       value: <span className={`badge ${STATUS_MAP[contrib.statut]?.cls || ''}`}>{STATUS_MAP[contrib.statut]?.label || contrib.statut}</span> },
-            { label: 'Type',         value: contrib.type || '—' },
-            { label: 'Matière',      value: contrib.matiere || '—' },
-            { label: 'Examen',       value: contrib.examen || '—' },
-            { label: 'Niveau',       value: contrib.niveau || '—' },
-            { label: 'Contributeur', value: contrib.contributorName || contrib.contributorEmail || '—' },
-            { label: 'Date',         value: formatDate(contrib.createdAt) },
-            { label: 'Fichier',      value: contrib.fileName || '—' },
-            { label: 'Taille',       value: formatBytes(contrib.fileSize) },
+            { label: t('admin.contributions.drawer.status'),       value: <span className={`badge ${STATUS_MAP[contrib.statut]?.cls || ''}`}>{STATUS_MAP[contrib.statut]?.label || contrib.statut}</span> },
+            { label: t('admin.contributions.drawer.type'),         value: contrib.type || '—' },
+            { label: t('admin.contributions.drawer.subject'),      value: contrib.matiere || '—' },
+            { label: t('admin.contributions.drawer.exam'),       value: contrib.examen || '—' },
+            { label: t('admin.contributions.drawer.level'),       value: contrib.niveau || '—' },
+            { label: t('admin.contributions.drawer.contributor'), value: contrib.contributorName || contrib.contributorEmail || '—' },
+            { label: t('admin.contributions.drawer.date'),         value: formatDate(contrib.createdAt) },
+            { label: t('admin.contributions.drawer.file'),      value: contrib.fileName || '—' },
+            { label: t('admin.contributions.drawer.size'),       value: formatBytes(contrib.fileSize) },
           ].map(({ label, value }) => (
             <div key={label} className="row row--between" style={{ padding: 'var(--sp-3) 0', borderBottom: '1px solid var(--brd-subtle)', fontSize: 'var(--tx-sm)' }}>
               <span style={{ color: 'var(--txt-tertiary)', fontWeight: 'var(--fw-semibold)' }}>{label}</span>
@@ -95,7 +96,7 @@ function ContribDrawer({ contrib, onClose, onValidate, onReject }) {
         {contrib.description && (
           <div className="card" style={{ padding: 'var(--sp-5)', marginBottom: 'var(--sp-6)', background: 'var(--srf-raised)' }}>
             <p style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', color: 'var(--txt-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 'var(--sp-2)' }}>
-              Description
+              {t('admin.contributions.drawer.desc_title')}
             </p>
             <p style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', margin: 0, lineHeight: 'var(--lh-relaxed)' }}>
               {contrib.description}
@@ -112,7 +113,7 @@ function ContribDrawer({ contrib, onClose, onValidate, onReject }) {
             className="laura-btn laura-btn-secondary"
             style={{ width: '100%', justifyContent: 'center', marginBottom: 'var(--sp-4)', gap: 'var(--sp-2)' }}
           >
-            <i className="ti ti-paperclip" style={{ fontSize: '1.2rem' }}></i> Prévisualiser le fichier
+            <i className="ti ti-paperclip" style={{ fontSize: '1.2rem' }}></i> {t('admin.contributions.drawer.preview')}
           </a>
         )}
 
@@ -124,14 +125,14 @@ function ContribDrawer({ contrib, onClose, onValidate, onReject }) {
               className="laura-btn laura-btn-ghost"
               style={{ flex: 1, justifyContent: 'center', color: 'var(--clr-error)', minHeight: '44px', gap: 'var(--sp-2)' }}
             >
-              <i className="ti ti-circle-x" style={{ fontSize: '1.2rem' }}></i> Rejeter
+              <i className="ti ti-circle-x" style={{ fontSize: '1.2rem' }}></i> {t('admin.contributions.drawer.reject_btn')}
             </button>
             <button
               onClick={() => onValidate(contrib.id, contrib)}
               className="laura-btn laura-btn-primary"
               style={{ flex: 2, justifyContent: 'center', minHeight: '44px', gap: 'var(--sp-2)' }}
             >
-              <i className="ti ti-circle-check" style={{ fontSize: '1.2rem' }}></i> Valider et publier
+              <i className="ti ti-circle-check" style={{ fontSize: '1.2rem' }}></i> {t('admin.contributions.drawer.validate_btn')}
             </button>
           </div>
         )}
@@ -142,11 +143,18 @@ function ContribDrawer({ contrib, onClose, onValidate, onReject }) {
 
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function AdminContributionsPage() {
+  const { t } = useTranslation();
   const [contributions, setContributions] = useState([]);
   const [isLoading,     setIsLoading]     = useState(true);
   const [selected,      setSelected]      = useState(null);
   const [filter,        setFilter]        = useState('en_attente');
   const [feedback,      setFeedback]      = useState('');
+
+  const STATUS_MAP = {
+    en_attente: { label: t('admin.contributions.status.pending'),  cls: 'badge--pending' },
+    valide:     { label: t('admin.contributions.status.validated'),      cls: 'badge--green'   },
+    rejete:     { label: t('admin.contributions.status.rejected'),      cls: 'badge--error'   },
+  };
 
   useEffect(() => {
     fetchAll();
@@ -188,11 +196,11 @@ export default function AdminContributionsPage() {
 
       setContributions(prev => prev.map(c => c.id === id ? { ...c, statut: 'valide' } : c));
       setSelected(null);
-      setFeedback('✅ Document validé et publié dans le catalogue.');
+      setFeedback(t('admin.contributions.feedback.validated'));
       setTimeout(() => setFeedback(''), 4000);
     } catch (err) {
       console.error(err);
-      setFeedback('❌ Erreur lors de la validation.');
+      setFeedback(t('admin.contributions.feedback.val_error'));
     }
   };
 
@@ -204,16 +212,16 @@ export default function AdminContributionsPage() {
       });
       setContributions(prev => prev.map(c => c.id === id ? { ...c, statut: 'rejete' } : c));
       setSelected(null);
-      setFeedback('🗑️ Document rejeté.');
+      setFeedback(t('admin.contributions.feedback.rejected'));
       setTimeout(() => setFeedback(''), 4000);
     } catch (err) {
       console.error(err);
-      setFeedback('❌ Erreur lors du rejet.');
+      setFeedback(t('admin.contributions.feedback.rej_error'));
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Supprimer définitivement cette contribution ?')) return;
+    if (!window.confirm(t('admin.contributions.confirm_delete'))) return;
     try {
       await deleteDoc(doc(db, 'contributions', id));
       setContributions(prev => prev.filter(c => c.id !== id));
@@ -232,10 +240,10 @@ export default function AdminContributionsPage() {
   };
 
   const statsItems = [
-    { label: 'En attente',  value: counts.en_attente, cls: 'badge--pending', iconClass: 'hourglass-low', color: 'var(--clr-warning)' },
-    { label: 'Validés',     value: counts.valide,     cls: 'badge--green',   iconClass: 'circle-check',  color: 'var(--clr-green)' },
-    { label: 'Rejetés',     value: counts.rejete,     cls: 'badge--error',   iconClass: 'circle-x',      color: 'var(--clr-error)' },
-    { label: 'Total',       value: contributions.length, cls: '',            iconClass: 'archive',       color: 'var(--clr-brand)' },
+    { label: t('admin.contributions.status.pending'),  value: counts.en_attente, cls: 'badge--pending', iconClass: 'hourglass-low', color: 'var(--clr-warning)' },
+    { label: t('admin.contributions.status.validated'),     value: counts.valide,     cls: 'badge--green',   iconClass: 'circle-check',  color: 'var(--clr-green)' },
+    { label: t('admin.contributions.status.rejected'),     value: counts.rejete,     cls: 'badge--error',   iconClass: 'circle-x',      color: 'var(--clr-error)' },
+    { label: t('admin.contributions.stats.total'),       value: contributions.length, cls: '',            iconClass: 'archive',       color: 'var(--clr-brand)' },
   ];
 
   return (
@@ -244,13 +252,13 @@ export default function AdminContributionsPage() {
       {/* Header */}
       <div className="row row--between" style={{ alignItems: 'center' }}>
         <div>
-          <h1 className="laura-h1">Contributions</h1>
+          <h1 className="laura-h1">{t('admin.contributions.title')}</h1>
           <p style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', margin: 'var(--sp-2) 0 0' }}>
-            Validez ou rejetez les ressources soumises par les apprenants
+            {t('admin.contributions.subtitle')}
           </p>
         </div>
         <button onClick={fetchAll} className="laura-btn laura-btn-secondary" style={{ minHeight: '38px', gap: 'var(--sp-2)' }}>
-          <i className="ti ti-refresh" style={{ fontSize: '1.1rem' }}></i> Actualiser
+          <i className="ti ti-refresh" style={{ fontSize: '1.1rem' }}></i> {t('admin.contributions.refresh')}
         </button>
       </div>
 
@@ -295,7 +303,7 @@ export default function AdminContributionsPage() {
             </div>
             <div>
               <h3 style={{ fontSize: '2.4rem', fontWeight: 800, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)', letterSpacing: '-0.02em' }}>{s.value}</h3>
-              <span style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', fontWeight: 600 }}>Total {s.label.toLowerCase()}</span>
+              <span style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', fontWeight: 600 }}>{t('admin.contributions.stats.total_label', { label: s.label.toLowerCase() })}</span>
             </div>
             
             {/* Soft background glow line */}
@@ -315,10 +323,10 @@ export default function AdminContributionsPage() {
       {/* Filter tabs */}
       <div className="chip-row">
         {[
-          { key: 'en_attente', label: `En attente (${counts.en_attente})` },
-          { key: 'valide',     label: `Validés (${counts.valide})`     },
-          { key: 'rejete',     label: `Rejetés (${counts.rejete})`     },
-          { key: 'all',        label: `Tout (${contributions.length})` },
+          { key: 'en_attente', label: `${t('admin.contributions.status.pending')} (${counts.en_attente})` },
+          { key: 'valide',     label: `${t('admin.contributions.status.validated')} (${counts.valide})`     },
+          { key: 'rejete',     label: `${t('admin.contributions.status.rejected')} (${counts.rejete})`     },
+          { key: 'all',        label: `${t('admin.contributions.status.all')} (${contributions.length})` },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -340,15 +348,15 @@ export default function AdminContributionsPage() {
       {isLoading ? (
         <div className="empty-state">
           <span className="empty-state__icon">⏳</span>
-          <p className="empty-state__title">Chargement des contributions...</p>
+          <p className="empty-state__title">{t('admin.contributions.loading')}</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="stack" style={{ padding: '3.5rem var(--sp-4)', textAlign: 'center', background: 'var(--srf-base)', borderRadius: 'var(--rd-lg)', border: '1px dashed var(--brd-strong)', maxWidth: '480px', margin: '2rem auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '50%', background: 'var(--clr-brand-lt)', color: 'var(--clr-brand)', margin: '0 auto var(--sp-4) auto' }}>
             <i className="ti ti-mailbox" style={{ fontSize: '2.2rem' }}></i>
           </div>
-          <h4 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)' }}>Aucune contribution</h4>
-          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>Il n'y a aucune contribution dans cette catégorie pour le moment.</p>
+          <h4 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 var(--sp-1) 0', color: 'var(--txt-primary)' }}>{t('admin.contributions.empty.title')}</h4>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--txt-secondary)' }}>{t('admin.contributions.empty.desc')}</p>
         </div>
       ) : (
         <div className="card" style={{ overflow: 'hidden', background: 'var(--srf-base)', boxShadow: 'var(--shd-sm)' }}>
@@ -356,7 +364,7 @@ export default function AdminContributionsPage() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--tx-sm)' }}>
               <thead>
                 <tr style={{ background: 'var(--srf-raised)', borderBottom: '2px solid var(--brd-subtle)' }}>
-                  {['Document', 'Type', 'Contributeur', 'Date', 'Statut', 'Actions'].map(h => (
+                  {[t('admin.contributions.table.document'), t('admin.contributions.table.type'), t('admin.contributions.table.contributor'), t('admin.contributions.table.date'), t('admin.contributions.table.status'), t('admin.contributions.table.actions')].map(h => (
                     <th key={h} style={{ padding: 'var(--sp-4) var(--sp-5)', textAlign: 'left', fontWeight: 'var(--fw-bold)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>
                       {h}
                     </th>
@@ -382,7 +390,7 @@ export default function AdminContributionsPage() {
                           <i className={`ti ti-${getIconClass(c.type)}`} style={{ fontSize: '1.1rem' }}></i>
                         </div>
                         <div style={{ minWidth: 0 }}>
-                          <p className="truncate" style={{ fontWeight: 'var(--fw-semibold)', margin: 0, maxWidth: '200px', color: 'var(--txt-primary)' }}>{c.titre || 'Sans titre'}</p>
+                          <p className="truncate" style={{ fontWeight: 'var(--fw-semibold)', margin: 0, maxWidth: '200px', color: 'var(--txt-primary)' }}>{c.titre || t('admin.contributions.no_title')}</p>
                           {c.matiere && <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', margin: 0 }}>{c.matiere}</p>}
                         </div>
                       </div>
@@ -408,7 +416,7 @@ export default function AdminContributionsPage() {
                           className="laura-btn laura-btn-secondary"
                           style={{ minHeight: '30px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}
                         >
-                          <i className="ti ti-eye" style={{ fontSize: '0.9rem' }}></i> Examiner
+                          <i className="ti ti-eye" style={{ fontSize: '0.9rem' }}></i> {t('admin.contributions.actions.examine')}
                         </button>
                         {c.statut === 'en_attente' && (
                           <>
@@ -416,7 +424,7 @@ export default function AdminContributionsPage() {
                               onClick={() => handleValidate(c.id, c)}
                               className="laura-btn laura-btn-ghost"
                               style={{ minHeight: '30px', padding: '0 var(--sp-2)', fontSize: 'var(--tx-xs)', color: 'var(--clr-green)' }}
-                              title="Valider"
+                              title={t('admin.contributions.actions.validate')}
                             >
                               <i className="ti ti-check" style={{ fontSize: '1rem' }}></i>
                             </button>
@@ -424,7 +432,7 @@ export default function AdminContributionsPage() {
                               onClick={() => handleReject(c.id)}
                               className="laura-btn laura-btn-ghost"
                               style={{ minHeight: '30px', padding: '0 var(--sp-2)', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)' }}
-                              title="Rejeter"
+                              title={t('admin.contributions.actions.reject')}
                             >
                               <i className="ti ti-x" style={{ fontSize: '1rem' }}></i>
                             </button>
@@ -434,7 +442,7 @@ export default function AdminContributionsPage() {
                           onClick={() => handleDelete(c.id)}
                           className="laura-btn laura-btn-ghost"
                           style={{ minHeight: '30px', padding: '0 var(--sp-2)', fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}
-                          title="Supprimer"
+                          title={t('admin.contributions.actions.delete')}
                         >
                           <i className="ti ti-trash" style={{ fontSize: '1rem' }}></i>
                         </button>
@@ -454,6 +462,7 @@ export default function AdminContributionsPage() {
         onClose={() => setSelected(null)}
         onValidate={handleValidate}
         onReject={handleReject}
+        t={t}
       />
     </div>
   );

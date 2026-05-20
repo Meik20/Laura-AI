@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { db } from '../../firebase';
 import { collection, query, orderBy, onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminCommunityPage() {
+  const { t } = useTranslation();
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -36,16 +38,16 @@ export default function AdminCommunityPage() {
       setSelectedUser(null);
     } catch (e) {
       console.error("Erreur update statut:", e);
-      alert("Erreur lors de la mise à jour.");
+      alert(t('admin.community.error_update'));
     }
   };
 
   return (
     <div className="stack stack--lg">
       <div className="page-header">
-        <h1 className="laura-h1">Gestion de la Communauté</h1>
+        <h1 className="laura-h1">{t('admin.community.title')}</h1>
         <p style={{ marginTop: 'var(--sp-1)', color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)' }}>
-          Validez les demandes d'accès aux forums de classe. Vous seul pouvez voir les fiches de profil.
+          {t('admin.community.subtitle')}
         </p>
       </div>
 
@@ -53,22 +55,22 @@ export default function AdminCommunityPage() {
         {/* Liste des demandes */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="card__header" style={{ padding: 'var(--sp-4) var(--sp-5)', borderBottom: '1px solid var(--brd-subtle)' }}>
-            <h2 style={{ fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', margin: 0 }}>Demandes d'accès</h2>
+            <h2 style={{ fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', margin: 0 }}>{t('admin.community.requests')}</h2>
           </div>
           <div className="card__body" style={{ padding: 0 }}>
             {isLoading ? (
-              <div style={{ padding: 'var(--sp-6)', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Chargement...</div>
+              <div style={{ padding: 'var(--sp-6)', textAlign: 'center', color: 'var(--txt-tertiary)' }}>{t('admin.community.loading')}</div>
             ) : requests.length === 0 ? (
-              <div style={{ padding: 'var(--sp-6)', textAlign: 'center', color: 'var(--txt-tertiary)' }}>Aucune demande pour le moment.</div>
+              <div style={{ padding: 'var(--sp-6)', textAlign: 'center', color: 'var(--txt-tertiary)' }}>{t('admin.community.empty')}</div>
             ) : (
               <div style={{ overflowX: 'auto' }}>
                 <table className="laura-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ background: 'var(--srf-raised)', borderBottom: '1px solid var(--brd-subtle)' }}>
-                      <th style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'left', fontSize: 'var(--tx-xs)' }}>Apprenant</th>
-                      <th style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'left', fontSize: 'var(--tx-xs)' }}>Forum demandé</th>
-                      <th style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'left', fontSize: 'var(--tx-xs)' }}>Statut</th>
-                      <th style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'right', fontSize: 'var(--tx-xs)' }}>Action</th>
+                      <th style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'left', fontSize: 'var(--tx-xs)' }}>{t('admin.community.table.student')}</th>
+                      <th style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'left', fontSize: 'var(--tx-xs)' }}>{t('admin.community.table.forum')}</th>
+                      <th style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'left', fontSize: 'var(--tx-xs)' }}>{t('admin.community.table.status')}</th>
+                      <th style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'right', fontSize: 'var(--tx-xs)' }}>{t('admin.community.table.action')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -94,7 +96,7 @@ export default function AdminCommunityPage() {
                               className="laura-btn laura-btn-ghost"
                               style={{ minHeight: '32px', fontSize: 'var(--tx-xs)' }}
                             >
-                              Voir le profil
+                              {t('admin.community.actions.view_profile')}
                             </button>
                           </td>
                         </tr>
@@ -110,7 +112,7 @@ export default function AdminCommunityPage() {
         {/* Panneau latéral : Profil utilisateur */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="card__header" style={{ padding: 'var(--sp-4) var(--sp-5)', borderBottom: '1px solid var(--brd-subtle)' }}>
-            <h2 style={{ fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', margin: 0 }}>Fiche Profil</h2>
+            <h2 style={{ fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', margin: 0 }}>{t('admin.community.modal.title')}</h2>
           </div>
           <div className="card__body" style={{ padding: 'var(--sp-5)' }}>
             {selectedUser ? (
@@ -126,35 +128,35 @@ export default function AdminCommunityPage() {
                 </div>
 
                 <div style={{ background: 'var(--srf-raised)', padding: 'var(--sp-4)', borderRadius: 'var(--rd-md)', fontSize: 'var(--tx-sm)' }}>
-                  <div style={{ marginBottom: 'var(--sp-2)' }}><strong>Niveau :</strong> {selectedUser.userNiveau || 'Non défini'}</div>
-                  <div style={{ marginBottom: 'var(--sp-2)' }}><strong>Série :</strong> {selectedUser.userSerie || 'Non défini'}</div>
-                  <div><strong>Examen :</strong> {selectedUser.userExamen || 'Non défini'}</div>
+                  <div style={{ marginBottom: 'var(--sp-2)' }}><strong>{t('admin.community.modal.level')}</strong> {selectedUser.userNiveau || t('admin.community.modal.not_specified')}</div>
+                  <div style={{ marginBottom: 'var(--sp-2)' }}><strong>{t('admin.community.modal.serie')}</strong> {selectedUser.userSerie || t('admin.community.modal.not_specified')}</div>
+                  <div><strong>{t('admin.community.modal.exam')}</strong> {selectedUser.userExamen || t('admin.community.modal.not_specified')}</div>
                 </div>
 
                 <div style={{ padding: 'var(--sp-3)', border: '1px solid var(--brd-subtle)', borderRadius: 'var(--rd-md)' }}>
                   <p style={{ margin: '0 0 var(--sp-2)', fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)' }}>
-                    Forum demandé : <strong>{forums[selectedUser.forumId]?.nom}</strong>
+                    {t('admin.community.modal.requested_forum')} <strong>{forums[selectedUser.forumId]?.nom}</strong>
                   </p>
                   <p style={{ margin: 0, fontSize: 'var(--tx-xs)' }}>
-                    Vérifiez si son profil correspond au forum demandé.
+                    {t('admin.community.modal.check_profile')}
                   </p>
                 </div>
 
                 {selectedUser.statut === 'en_attente' && (
                   <div style={{ display: 'flex', gap: 'var(--sp-3)', marginTop: 'var(--sp-4)' }}>
                     <button onClick={() => handleAction(selectedUser.id, 'rejete')} className="laura-btn laura-btn-ghost" style={{ flex: 1, color: 'var(--clr-error)' }}>
-                      Rejeter
+                      {t('admin.community.actions.reject')}
                     </button>
                     <button onClick={() => handleAction(selectedUser.id, 'approuve')} className="laura-btn laura-btn-primary" style={{ flex: 1, background: 'var(--clr-success)', borderColor: 'var(--clr-success)' }}>
-                      Approuver
+                      {t('admin.community.actions.approve')}
                     </button>
                   </div>
                 )}
                 {selectedUser.statut !== 'en_attente' && (
                   <div style={{ textAlign: 'center', color: 'var(--txt-tertiary)', fontSize: 'var(--tx-sm)', marginTop: 'var(--sp-4)' }}>
-                    Cette demande a déjà été {selectedUser.statut}.
+                    {t('admin.community.status_already', { status: selectedUser.statut })}
                     <button onClick={() => handleAction(selectedUser.id, 'en_attente')} className="laura-btn laura-btn-ghost" style={{ marginTop: 'var(--sp-2)', width: '100%' }}>
-                      Remettre en attente
+                      {t('admin.community.actions.reset_pending')}
                     </button>
                   </div>
                 )}
@@ -162,7 +164,7 @@ export default function AdminCommunityPage() {
             ) : (
               <div style={{ textAlign: 'center', color: 'var(--txt-tertiary)', padding: 'var(--sp-8) 0' }}>
                 <span style={{ fontSize: '2rem', display: 'block', marginBottom: 'var(--sp-2)' }}>👤</span>
-                Sélectionnez une demande pour voir le profil de l'apprenant.
+                {t('admin.community.select_profile_hint')}
               </div>
             )}
           </div>
