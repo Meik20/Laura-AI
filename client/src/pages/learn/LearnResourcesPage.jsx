@@ -412,26 +412,52 @@ export default function LearnResourcesPage() {
             value={filters.search} onChange={handleFilterChange}
             style={{ flex: '2 1 220px' }}
           />
-          <select name="matiere" value={filters.matiere} onChange={handleFilterChange} style={{ flex: '1 1 160px' }}>
-            <option value="">{t('learn.resources.filters.all_subjects')}</option>
-            {matieresList.map(m => <option key={m.id} value={m.nom}>{m.nom}</option>)}
-          </select>
-          <select name="type" value={filters.type} onChange={handleFilterChange} style={{ flex: '1 1 140px' }}>
-            <option value="">{t('learn.resources.filters.all_types')}</option>
-            <option value="Épreuve">{t('contribution_modal.form.type_options.epreuve')}</option>
-            <option value="Annale">{t('contribution_modal.form.type_options.annale')}</option>
-            <option value="Fiche">{t('contribution_modal.form.type_options.fiche')}</option>
-            <option value="Quiz">{t('contribution_modal.form.type_options.quiz')}</option>
-            <option value="Livre">{t('contribution_modal.form.type_options.livre')}</option>
-          </select>
-          <select name="examen" value={filters.examen} onChange={handleFilterChange} style={{ flex: '1 1 140px' }}>
-            <option value="">{t('learn.resources.filters.all_exams')}</option>
-            <option value="BAC">BAC</option>
-            <option value="Probatoire">Probatoire</option>
-            <option value="BEPC">BEPC</option>
-            <option value="BTS">BTS</option>
-            <option value="Licence">Licence</option>
-          </select>
+          <input 
+            type="text" 
+            name="matiere" 
+            placeholder={t('learn.resources.filters.all_subjects')}
+            value={filters.matiere} 
+            onChange={handleFilterChange} 
+            list="learn-filter-matiere-suggestions"
+            style={{ flex: '1 1 160px' }}
+          />
+          <datalist id="learn-filter-matiere-suggestions">
+            {matieresList.map(m => <option key={m.id} value={m.nom} />)}
+          </datalist>
+
+          <input 
+            type="text" 
+            name="type" 
+            placeholder={t('learn.resources.filters.all_types')}
+            value={filters.type} 
+            onChange={handleFilterChange} 
+            list="learn-filter-type-suggestions"
+            style={{ flex: '1 1 140px' }}
+          />
+          <datalist id="learn-filter-type-suggestions">
+            <option value="Épreuve" />
+            <option value="Annale" />
+            <option value="Fiche" />
+            <option value="Quiz" />
+            <option value="Livre" />
+          </datalist>
+
+          <input 
+            type="text" 
+            name="examen" 
+            placeholder={t('learn.resources.filters.all_exams')}
+            value={filters.examen} 
+            onChange={handleFilterChange} 
+            list="learn-filter-exam-suggestions"
+            style={{ flex: '1 1 140px' }}
+          />
+          <datalist id="learn-filter-exam-suggestions">
+            <option value="BAC" />
+            <option value="Probatoire" />
+            <option value="BEPC" />
+            <option value="BTS" />
+            <option value="Licence" />
+          </datalist>
         </div>
       </div>
  

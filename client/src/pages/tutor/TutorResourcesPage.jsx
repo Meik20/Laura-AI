@@ -39,7 +39,7 @@ export default function TutorResourcesPage() {
   const filtered = resources.filter(r => {
     const matchesSearch = (r.titre || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
                           (r.matiere || '').toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = selectedType === 'Tous' || r.type === selectedType;
+    const matchesType = !selectedType || selectedType === 'Tous' || (r.type || '').toLowerCase().includes(selectedType.toLowerCase());
     return matchesSearch && matchesType;
   });
 
@@ -66,18 +66,22 @@ export default function TutorResourcesPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ flex: '2 1 300px' }}
           />
-          <select 
+          <input 
+            type="text"
             value={selectedType} 
             onChange={(e) => setSelectedType(e.target.value)}
+            placeholder="Filtrer par type..."
+            list="tutor-filter-type-suggestions"
             style={{ flex: '1 1 180px' }}
-          >
+          />
+          <datalist id="tutor-filter-type-suggestions">
             <option value="Tous">Tous les types</option>
-            <option value="Épreuve">Épreuve</option>
-            <option value="Annale">Annale</option>
-            <option value="Fiche">Fiche de cours</option>
-            <option value="Quiz">Quiz</option>
-            <option value="Livre">Livre</option>
-          </select>
+            <option value="Épreuve" />
+            <option value="Annale" />
+            <option value="Fiche" />
+            <option value="Quiz" />
+            <option value="Livre" />
+          </datalist>
         </div>
       </div>
 
