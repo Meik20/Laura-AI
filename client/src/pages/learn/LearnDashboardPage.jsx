@@ -80,6 +80,7 @@ const QUICK_ACTIONS = [
 export default function LearnDashboardPage() {
   const navigate = useNavigate();
   const { userProfile } = useAuth();
+  const { t } = useTranslation();
 
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [currentGoal,  setCurrentGoal]  = useState({ title: 'Aucun objectif défini', period: 'Non définie', progress: 0 });
