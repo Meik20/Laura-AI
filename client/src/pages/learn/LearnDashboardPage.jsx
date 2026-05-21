@@ -34,6 +34,54 @@ const filterMatieres = (allMatieres, userProfile) => {
   });
 };
 
+const filterResourcesByProfile = (allResources, userProfile) => {
+  if (!userProfile) return [];
+  const examen  = (userProfile?.examen  || userProfile?.examenEleve  || userProfile?.examenEtudiant  || '').toLowerCase();
+  const niveau  = (userProfile?.niveau  || userProfile?.classe       || userProfile?.niveauEtude     || '').toLowerCase();
+  const serie   = (userProfile?.serie   || '').toLowerCase();
+  const filiere = (userProfile?.filiere || userProfile?.discipline   || '').toLowerCase();
+
+  return allResources.filter(r => {
+    const cible = (r.cible || '').toLowerCase();
+    const titre = (r.titre || '').toLowerCase();
+    const rExamen = (r.examen || '').toLowerCase();
+    const rNiveau = (r.niveau || '').toLowerCase();
+
+    // Check if user is BTS/Superior
+    const isBtsOrSup = examen.includes('bts') || niveau.includes('bts') || niveau.includes('supérieur') ||
+      niveau.includes('étudiant') || niveau.includes('licence') || niveau.includes('université');
+
+    if (isBtsOrSup) {
+      const matchCible = cible.includes('bts') || cible.includes('supérieur') || (filiere && cible.includes(filiere)) || (serie && cible.includes(serie));
+      const matchExamen = rExamen.includes('bts') || rExamen.includes('licence') || (filiere && rExamen.includes(filiere));
+      const matchNiveau = rNiveau.includes('bts') || rNiveau.includes('supérieur') || rNiveau.includes('étudiant');
+      return matchCible || matchExamen || matchNiveau;
+    }
+
+    // Check if user is BEPC / Collège
+    const isCollege = examen.includes('bepc') || niveau.includes('collège') || niveau.includes('3eme') || niveau.includes('4eme') || niveau.includes('5eme') || niveau.includes('6eme');
+    if (isCollege) {
+      const matchCible = cible.includes('collège') || cible.includes('bepc') || (niveau && cible.includes(niveau));
+      const matchExamen = rExamen.includes('bepc');
+      const matchNiveau = rNiveau.includes('collège') || (niveau && rNiveau.includes(niveau));
+      return matchCible || matchExamen || matchNiveau;
+    }
+
+    // Lycée / BAC / Probatoire
+    const matchNiveau = (niveau && (cible.includes(niveau) || rNiveau.includes(niveau))) || 
+                        (niveau.includes('1ere') && (cible.includes('1ere') || rNiveau.includes('1ere'))) ||
+                        (niveau.includes('terminale') && (cible.includes('terminale') || rNiveau.includes('terminale')));
+                        
+    const matchExamen = (examen && (cible.includes(examen) || rExamen.includes(examen) || titre.includes(examen)));
+    const matchSerie = (serie && (cible.includes(serie) || r.serie?.toLowerCase().includes(serie)));
+
+    // Include resources targeted at all
+    const matchAll = cible.includes('tous') || cible.includes('toutes') || rNiveau.includes('tous') || rExamen.includes('tous') || cible === '';
+
+    return matchNiveau || matchExamen || matchSerie || matchAll;
+  });
+};
+
 const SUBJECT_COLORS = [
   'var(--clr-brand)', 'var(--clr-green)', 'var(--clr-warning)',
   'var(--clr-brand-mid)', 'var(--clr-green-dk)',
@@ -83,12 +131,7 @@ export default function LearnDashboardPage() {
       try {
         const resSnap = await getDocs(collection(db, 'resources'));
         const published = resSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => r.statut === 'publie');
-        let filtered = published.filter(r =>
-          (user.examen  && r.cible?.toLowerCase().includes(user.examen.toLowerCase())) ||
-          (user.niveau  && r.niveau?.toLowerCase().includes(user.niveau.toLowerCase())) ||
-          (user.filiere && r.filiere?.toLowerCase().includes(user.filiere.toLowerCase()))
-        );
-        if (!filtered.length) filtered = published;
+        const filtered = filterResourcesByProfile(published, userProfile);
         setRecommandations(filtered.slice(0, 4).map(r => ({
           id: r.id, url: r.url, text: r.titre || 'Sans titre',
           icon: r.type === 'Quiz' ? 'puzzle' : r.type === 'Annale' ? 'notes' : r.type === 'Épreuve' ? 'file-certificate' : 'book',
@@ -96,9 +139,13 @@ export default function LearnDashboardPage() {
       } catch { setRecommandations([]); }
     }
     fetchData();
-  }, [user.examen]);
+  }, [userProfile]);
 
-  const userMatieres = userProfile?.matieres || [];
+  const defaultMatieres = filterMatieres(adminMatieres, userProfile).map(m => m.nom);
+  const userMatieres = userProfile?.matieres && userProfile.matieres.length > 0
+    ? userProfile.matieres
+    : defaultMatieres;
+
   const matieres = userMatieres.map((mName, i) => ({
     mat: mName, val: userProfile?.matieresProgress?.[mName] || 0,
     color: SUBJECT_COLORS[i % SUBJECT_COLORS.length],
