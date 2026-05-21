@@ -86,6 +86,35 @@ export default function AdminCommunityPage() {
     }
   };
 
+  const handleApproveForum = async (forum) => {
+    try {
+      // 1. Approve the forum
+      await updateDoc(doc(db, 'forums', forum.id), { statut: 'actif' });
+      
+      // 2. Automatically approve the creator's membership
+      if (forum.createurId) {
+        const membershipsSnap = await getDocs(
+          query(
+            collection(db, 'forum_memberships'), 
+            where('forumId', '==', forum.id),
+            where('userId', '==', forum.createurId),
+            where('statut', '==', 'en_attente')
+          )
+        );
+        const batch = writeBatch(db);
+        membershipsSnap.forEach((docSnap) => {
+          batch.update(doc(db, 'forum_memberships', docSnap.id), { statut: 'approuve' });
+        });
+        await batch.commit();
+      }
+
+      toast.success('Forum approuvé et activé avec succès');
+    } catch (e) {
+      console.error('Erreur approbation forum:', e);
+      toast.error("Erreur lors de l'approbation du forum");
+    }
+  };
+
   // ── Admin Membership Actions ──
 
   const handleAction = async (reqId, newStatus) => {
@@ -165,6 +194,7 @@ export default function AdminCommunityPage() {
                   <tbody>
                     {allForums.map(f => {
                       const isSuspended = f.statut === 'suspendu';
+                      const isPending = f.statut === 'en_attente';
                       return (
                         <tr key={f.id} style={{ borderBottom: '1px solid var(--brd-subtle)', opacity: isSuspended ? 0.6 : 1 }}>
                           <td style={{ padding: 'var(--sp-3) var(--sp-4)' }}>
@@ -185,13 +215,29 @@ export default function AdminCommunityPage() {
                             </span>
                           </td>
                           <td style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'center' }}>
-                            <span className={`badge ${isSuspended ? 'badge--error' : 'badge--success'}`}>
-                              <i className={`ti ti-${isSuspended ? 'ban' : 'circle-check'}`} style={{ marginRight: '4px' }} />
-                              {isSuspended ? 'Suspendu' : 'Actif'}
-                            </span>
+                            {isPending ? (
+                              <span className="badge badge--warning">
+                                <i className="ti ti-hourglass" style={{ marginRight: '4px' }} />
+                                En attente
+                              </span>
+                            ) : (
+                              <span className={`badge ${isSuspended ? 'badge--error' : 'badge--success'}`}>
+                                <i className={`ti ti-${isSuspended ? 'ban' : 'circle-check'}`} style={{ marginRight: '4px' }} />
+                                {isSuspended ? 'Suspendu' : 'Actif'}
+                              </span>
+                            )}
                           </td>
                           <td style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'right' }}>
                             <div style={{ display: 'flex', gap: 'var(--sp-2)', justifyContent: 'flex-end' }}>
+                              {isPending && (
+                                <button
+                                  onClick={() => handleApproveForum(f)}
+                                  className="laura-btn laura-btn-ghost"
+                                  style={{ minHeight: '30px', fontSize: 'var(--tx-xs)', color: 'var(--clr-success)' }}
+                                >
+                                  <i className="ti ti-check" style={{ marginRight: '4px' }} /> Approuver
+                                </button>
+                              )}
                               {isSuspended ? (
                                 <button
                                   onClick={() => handleReactivateForum(f.id)}
@@ -200,7 +246,7 @@ export default function AdminCommunityPage() {
                                 >
                                   <i className="ti ti-lock-open" style={{ marginRight: '4px' }} /> Réactiver
                                 </button>
-                              ) : (
+                              ) : f.statut === 'actif' || !f.statut ? (
                                 <button
                                   onClick={() => handleSuspendForum(f.id)}
                                   className="laura-btn laura-btn-ghost"
@@ -208,7 +254,7 @@ export default function AdminCommunityPage() {
                                 >
                                   <i className="ti ti-player-pause" style={{ marginRight: '4px' }} /> Suspendre
                                 </button>
-                              )}
+                              ) : null}
                               <button
                                 onClick={() => handleDeleteForum(f.id)}
                                 className="laura-btn laura-btn-ghost"

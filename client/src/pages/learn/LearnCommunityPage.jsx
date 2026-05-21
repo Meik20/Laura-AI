@@ -188,6 +188,10 @@ export default function LearnCommunityPage() {
 
   // Search filter matching: Niveau série/filière format
   const filteredForums = forums.filter(f => {
+    // Only show active forums (or legacy ones without status), or pending forums created by the current user
+    const isVisible = f.statut === 'actif' || !f.statut || f.createurId === userProfile?.uid;
+    if (!isVisible) return false;
+
     if (!searchTerm.trim()) return true;
     const queryStr = searchTerm.toLowerCase();
     const matchNom = f.nom?.toLowerCase().includes(queryStr);
@@ -269,7 +273,6 @@ export default function LearnCommunityPage() {
         style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}
       >
         
-        {/* CENTER PANE: Active Messaging Zone */}
         <div 
           className="card messaging-pane" 
           style={{ 
@@ -281,7 +284,7 @@ export default function LearnCommunityPage() {
             background: 'var(--srf-base)'
           }}
         >
-          {activeForum && (userProfile?.role === 'admin' || memberships[activeForum.id] === 'approuve') ? (
+          {activeForum && activeForum.statut !== 'en_attente' && (userProfile?.role === 'admin' || memberships[activeForum.id] === 'approuve') ? (
             <>
               {/* Chat room header — with mobile back button */}
               <div
@@ -403,38 +406,55 @@ export default function LearnCommunityPage() {
               </form>
             </>
           ) : activeForum ? (
-            // A class forum is clicked but the membership is NOT approved
+            // A class forum is clicked but the membership is NOT approved OR the forum itself is pending creation
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 'var(--sp-8)', textAlign: 'center' }}>
-              <span style={{ fontSize: '3.5rem', marginBottom: 'var(--sp-4)' }}>🔒</span>
-              <h2 style={{ fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)' }}>
-                {activeForum.nom}
-              </h2>
-              {memberships[activeForum.id] === 'en_attente' ? (
+              {activeForum.statut === 'en_attente' ? (
                 <>
+                  <i className="ti ti-hourglass" style={{ fontSize: '3.5rem', marginBottom: 'var(--sp-4)', color: 'var(--clr-warning)' }} />
+                  <h2 style={{ fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)', color: 'var(--txt-primary)' }}>
+                    {activeForum.nom}
+                  </h2>
                   <p style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', maxWidth: '400px', marginBottom: 'var(--sp-5)' }}>
-                    {t('community.status.pending_desc', 'Votre demande d\'accès à ce forum est en cours de validation par un administrateur.')}
+                    {t('community.status.forum_pending_desc', "Cette classe est en cours de création. Elle sera accessible dès qu'un administrateur l'aura validée.")}
                   </p>
                   <button disabled className="laura-btn laura-btn-ghost">
-                    {t('community.sidebar.status_pending', '⏳ Attente')}
-                  </button>
-                </>
-              ) : memberships[activeForum.id] === 'rejete' ? (
-                <>
-                  <p style={{ color: 'var(--clr-error)', fontSize: 'var(--tx-sm)', maxWidth: '400px', marginBottom: 'var(--sp-5)' }}>
-                    {t('community.status.rejected_desc', 'Votre accès à ce forum de classe a été refusé par l\'équipe de modération.')}
-                  </p>
-                  <button disabled className="laura-btn laura-btn-ghost" style={{ color: 'var(--clr-error)' }}>
-                    {t('community.sidebar.status_rejected', '✕ Refusé')}
+                    {t('community.sidebar.status_pending', '⏳ En attente de validation')}
                   </button>
                 </>
               ) : (
                 <>
-                  <p style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', maxWidth: '400px', marginBottom: 'var(--sp-5)' }}>
-                    {t('community.status.unjoined_desc', 'Vous devez faire une demande pour rejoindre cette classe.')}
-                  </p>
-                  <button onClick={() => handleRequestJoin(activeForum.id)} className="laura-btn laura-btn-primary">
-                    {t('community.sidebar.status_join', 'Demander à rejoindre')}
-                  </button>
+                  <span style={{ fontSize: '3.5rem', marginBottom: 'var(--sp-4)' }}>🔒</span>
+                  <h2 style={{ fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)' }}>
+                    {activeForum.nom}
+                  </h2>
+                  {memberships[activeForum.id] === 'en_attente' ? (
+                    <>
+                      <p style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', maxWidth: '400px', marginBottom: 'var(--sp-5)' }}>
+                        {t('community.status.pending_desc', 'Votre demande d\'accès à ce forum est en cours de validation par un administrateur.')}
+                      </p>
+                      <button disabled className="laura-btn laura-btn-ghost">
+                        {t('community.sidebar.status_pending', '⏳ Attente')}
+                      </button>
+                    </>
+                  ) : memberships[activeForum.id] === 'rejete' ? (
+                    <>
+                      <p style={{ color: 'var(--clr-error)', fontSize: 'var(--tx-sm)', maxWidth: '400px', marginBottom: 'var(--sp-5)' }}>
+                        {t('community.status.rejected_desc', 'Votre accès à ce forum de classe a été refusé par l\'équipe de modération.')}
+                      </p>
+                      <button disabled className="laura-btn laura-btn-ghost" style={{ color: 'var(--clr-error)' }}>
+                        {t('community.sidebar.status_rejected', '✕ Refusé')}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', maxWidth: '400px', marginBottom: 'var(--sp-5)' }}>
+                        {t('community.status.unjoined_desc', 'Vous devez faire une demande pour rejoindre cette classe.')}
+                      </p>
+                      <button onClick={() => handleRequestJoin(activeForum.id)} className="laura-btn laura-btn-primary">
+                        {t('community.sidebar.status_join', 'Demander à rejoindre')}
+                      </button>
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -538,7 +558,11 @@ export default function LearnCommunityPage() {
                         </p>
                       </div>
                       
-                      {userProfile?.role === 'admin' ? (
+                      {f.statut === 'en_attente' ? (
+                        <span style={{ fontSize: '10px', color: 'var(--clr-warning)', fontWeight: 'var(--fw-bold)' }}>
+                          ⏳ Création
+                        </span>
+                      ) : userProfile?.role === 'admin' ? (
                         <span style={{ fontSize: '10px', color: 'var(--clr-success)', fontWeight: 'var(--fw-bold)' }}>
                           {t('community.sidebar.status_open', '✓ Ouvert')}
                         </span>

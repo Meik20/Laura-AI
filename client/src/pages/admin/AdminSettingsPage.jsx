@@ -249,9 +249,9 @@ export default function AdminSettingsPage() {
                       </button>
                     </form>
 
-                    {/* TABLEAU DES MATIÈRES */}
-                    <div style={{ background: 'var(--srf-base)', borderRadius: '0.8rem', border: '1px solid var(--brd-subtle)', overflow: 'hidden' }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', color: 'var(--txt-primary)' }}>
+                    {/* TABLEAU DES MATIÈRES — scrollable on mobile */}
+                    <div style={{ background: 'var(--srf-base)', borderRadius: '0.8rem', border: '1px solid var(--brd-subtle)', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                      <table style={{ width: '100%', minWidth: '600px', borderCollapse: 'collapse', textAlign: 'left', color: 'var(--txt-primary)' }}>
                         <thead style={{ background: 'var(--srf-raised)', borderBottom: '1px solid var(--brd-subtle)', fontSize: '0.9rem', color: 'var(--txt-secondary)' }}>
                           <tr>
                             <th style={{ padding: '1rem 1.2rem' }}>{t('admin.settings.programs.table.subject')}</th>
