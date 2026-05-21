@@ -126,10 +126,12 @@ export default function AdminCommunityPage() {
       {/* Tab Navigation */}
       <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--brd-subtle)', marginBottom: 'var(--sp-4)' }}>
         <button style={tabStyle('forums')} onClick={() => setActiveTab('forums')}>
-          🏫 Forums ({allForums.length})
+          <i className="ti ti-building-community" style={{ marginRight: 'var(--sp-2)' }} />
+          Forums ({allForums.length})
         </button>
         <button style={tabStyle('requests')} onClick={() => setActiveTab('requests')}>
-          📋 Demandes {pendingCount > 0 && <span style={{ marginLeft: '6px', background: 'var(--clr-error)', color: 'white', borderRadius: 'var(--rd-full)', padding: '1px 8px', fontSize: '11px' }}>{pendingCount}</span>}
+          <i className="ti ti-clipboard-list" style={{ marginRight: 'var(--sp-2)' }} />
+          Demandes {pendingCount > 0 && <span style={{ marginLeft: '6px', background: 'var(--clr-error)', color: 'white', borderRadius: 'var(--rd-full)', padding: '1px 8px', fontSize: '11px' }}>{pendingCount}</span>}
         </button>
       </div>
 
@@ -144,7 +146,7 @@ export default function AdminCommunityPage() {
               <div style={{ padding: 'var(--sp-6)', textAlign: 'center', color: 'var(--txt-tertiary)' }}>{t('admin.community.loading')}</div>
             ) : allForums.length === 0 ? (
               <div style={{ padding: 'var(--sp-6)', textAlign: 'center', color: 'var(--txt-tertiary)' }}>
-                <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: 'var(--sp-3)' }}>🏫</span>
+                <i className="ti ti-building-community" style={{ fontSize: '2.5rem', display: 'block', marginBottom: 'var(--sp-3)', color: 'var(--clr-brand)' }} />
                 Aucun forum de classe n'a encore été créé.
               </div>
             ) : (
@@ -184,7 +186,8 @@ export default function AdminCommunityPage() {
                           </td>
                           <td style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'center' }}>
                             <span className={`badge ${isSuspended ? 'badge--error' : 'badge--success'}`}>
-                              {isSuspended ? '⛔ Suspendu' : '✅ Actif'}
+                              <i className={`ti ti-${isSuspended ? 'ban' : 'circle-check'}`} style={{ marginRight: '4px' }} />
+                              {isSuspended ? 'Suspendu' : 'Actif'}
                             </span>
                           </td>
                           <td style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'right' }}>
@@ -195,7 +198,7 @@ export default function AdminCommunityPage() {
                                   className="laura-btn laura-btn-ghost"
                                   style={{ minHeight: '30px', fontSize: 'var(--tx-xs)', color: 'var(--clr-success)' }}
                                 >
-                                  🔓 Réactiver
+                                  <i className="ti ti-lock-open" style={{ marginRight: '4px' }} /> Réactiver
                                 </button>
                               ) : (
                                 <button
@@ -203,7 +206,7 @@ export default function AdminCommunityPage() {
                                   className="laura-btn laura-btn-ghost"
                                   style={{ minHeight: '30px', fontSize: 'var(--tx-xs)', color: 'var(--clr-warning)' }}
                                 >
-                                  ⏸ Suspendre
+                                  <i className="ti ti-player-pause" style={{ marginRight: '4px' }} /> Suspendre
                                 </button>
                               )}
                               <button
@@ -211,7 +214,7 @@ export default function AdminCommunityPage() {
                                 className="laura-btn laura-btn-ghost"
                                 style={{ minHeight: '30px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)' }}
                               >
-                                🗑 Supprimer
+                                <i className="ti ti-trash" style={{ marginRight: '4px' }} /> Supprimer
                               </button>
                             </div>
                           </td>
@@ -357,7 +360,7 @@ export default function AdminCommunityPage() {
                 </div>
               ) : (
                 <div style={{ textAlign: 'center', color: 'var(--txt-tertiary)', padding: 'var(--sp-8) 0' }}>
-                  <span style={{ fontSize: '2rem', display: 'block', marginBottom: 'var(--sp-2)' }}>👤</span>
+                  <i className="ti ti-user-circle" style={{ fontSize: '2.5rem', display: 'block', marginBottom: 'var(--sp-2)', color: 'var(--clr-brand)' }} />
                   {t('admin.community.select_profile_hint')}
                 </div>
               )}
