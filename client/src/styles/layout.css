@@ -12,9 +12,9 @@
 .l-app {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  height: 100dvh;
   background: var(--srf-page);
-  overflow-x: hidden; /* Clamp any child overflow on mobile */
+  overflow: hidden; /* Lock the shell — only .l-content scrolls */
 }
 
 /* Desktop: sidebar + main side by side */
@@ -246,9 +246,9 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
-  max-width: 100%; /* Prevent overflow from grid/flex children */
-  overflow-x: hidden;
+  height: 100dvh;        /* Fill full viewport height on desktop */
+  max-width: 100%;       /* Prevent overflow from grid/flex children */
+  overflow: hidden;      /* Clip — scroll is delegated to .l-content */
 }
 
 /* ─────────────────────────────────────────────
@@ -313,6 +313,8 @@
   width: 100%;
   max-width: var(--content-max);
   margin: 0 auto;
+  overflow-y: auto;      /* ← Only this zone scrolls */
+  overflow-x: hidden;
 }
 
 @media (min-width: 1024px) {
