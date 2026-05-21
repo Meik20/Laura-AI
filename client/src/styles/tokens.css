@@ -1,123 +1,114 @@
 /* ==========================================================================
-   LAURA AI — Design Tokens
-   The single source of truth for all design decisions.
-   Mobile-first. Brand-consistent. Scalable.
+   LAURA AI — Design Tokens (Firebase Console Theme)
+   Dark-first · Navy + Amber · Google Sans / Roboto
+   All variable NAMES unchanged — only values updated.
    ========================================================================== */
 
+/* ── Firebase Primitive Palette ───────────────────────────────────────────── */
 :root {
+  --fb-amber-300:  #FFCB2B;
+  --fb-amber-400:  #FFA611;
+  --fb-amber-500:  #F5820D;
+  --fb-amber-600:  #E07000;
+  --fb-amber-700:  #BF5C00;
 
-  /* -----------------------------------------------------------------------
-     BRAND PALETTE
-  ----------------------------------------------------------------------- */
+  --fb-navy-200:   #AABFFF;
+  --fb-navy-400:   #4D84FF;
+  --fb-navy-500:   #1967D2;
+  --fb-navy-700:   #0D47A1;
 
-  /* Core Identity */
-  --clr-brand:          #4f6ef7;   /* Primary CTA, active nav, links     */
-  --clr-brand-dk:       #3452d4;   /* Hover / pressed                     */
-  --clr-brand-lt:       #eef1fe;   /* Tinted backgrounds                  */
-  --clr-brand-mid:      #7b93fa;   /* Soft accents                        */
+  --fb-green-400:  #34A853;
+  --fb-red-400:    #EA4335;
+  --fb-yellow-400: #FBBC04;
+}
 
-  --clr-green:          #1D9E75;   /* Success, brand accent green         */
-  --clr-green-dk:       #0F6E56;   /* Hover on green                      */
-  --clr-green-lt:       #e1f5ee;   /* Green tinted backgrounds            */
+/* ── Color Tokens ─────────────────────────────────────────────────────────── */
+:root {
+  /* Brand — Amber (Firebase signature) */
+  --clr-brand:          #FFA611;
+  --clr-brand-dk:       #E07000;
+  --clr-brand-lt:       rgba(255, 166, 17, 0.15);
+  --clr-brand-mid:      rgba(255, 166, 17, 0.30);
+
+  /* Secondary / Accent — Navy blue */
+  --clr-green:          #4D84FF;
+  --clr-green-dk:       #1967D2;
+  --clr-green-lt:       rgba(77, 132, 255, 0.12);
 
   /* Semantic */
-  --clr-success:        #057642;
-  --clr-success-lt:     #d7f5e9;
-  --clr-warning:        #e7a33e;
-  --clr-warning-lt:     #fef3dc;
-  --clr-error:          #e24b4a;
-  --clr-error-lt:       #fdeaea;
-  --clr-info:           #4f6ef7;
-  --clr-info-lt:        #eef1fe;
+  --clr-success:        #34A853;
+  --clr-success-lt:     #0D2218;
+  --clr-warning:        #FBBC04;
+  --clr-warning-lt:     #2A1E00;
+  --clr-error:          #EA4335;
+  --clr-error-lt:       #2D0A07;
+  --clr-info:           #AABFFF;
+  --clr-info-lt:        rgba(170, 191, 255, 0.10);
 
-  /* -----------------------------------------------------------------------
-     SURFACE SCALE (Light Theme)
-  ----------------------------------------------------------------------- */
+  /* ── Surfaces (dark navy by elevation) ───────────────────────────────── */
+  --srf-page:           #12141A;   /* App bg                              */
+  --srf-base:           #1C1F27;   /* Cards, panels, modals               */
+  --srf-raised:         #21242E;   /* Elevated surfaces                   */
+  --srf-overlay:        rgba(255, 255, 255, 0.04);
+  --srf-sidebar:        #181B23;
+  --srf-topbar:         #1C1F27;
+  --srf-nav:            rgba(24, 27, 35, 0.97);
 
-  --srf-page:           #f0f2ff;   /* App background                     */
-  --srf-base:           #ffffff;   /* Cards, panels, modals              */
-  --srf-raised:         #f5f7ff;   /* Slightly elevated surfaces          */
-  --srf-overlay:        rgba(79,110,247,0.06); /* Hover tints            */
-  --srf-sidebar:        #ffffff;
-  --srf-topbar:         rgba(255,255,255,0.90);
-  --srf-nav:            rgba(255,255,255,0.88);
+  /* ── Text ─────────────────────────────────────────────────────────────── */
+  --txt-primary:        #E8EAED;
+  --txt-secondary:      #9AA0A6;
+  --txt-tertiary:       #5F6368;
+  --txt-disabled:       #3C4043;
+  --txt-inverse:        #12141A;
+  --txt-link:           var(--fb-navy-200);
+  --txt-accent:         var(--clr-brand);
 
-  /* -----------------------------------------------------------------------
-     TEXT SCALE
-  ----------------------------------------------------------------------- */
-
-  --txt-primary:        #1a1a2e;
-  --txt-secondary:      #4a5568;
-  --txt-tertiary:       #8896a7;
-  --txt-disabled:       #b0bec5;
-  --txt-inverse:        #ffffff;
-  --txt-link:           var(--clr-brand);
-  --txt-accent:         var(--clr-green);
-
-  /* -----------------------------------------------------------------------
-     BORDER SCALE
-  ----------------------------------------------------------------------- */
-
-  --brd-subtle:         rgba(79,110,247, 0.10);
-  --brd-default:        rgba(79,110,247, 0.18);
-  --brd-strong:         rgba(79,110,247, 0.30);
+  /* ── Borders ──────────────────────────────────────────────────────────── */
+  --brd-subtle:         rgba(255, 255, 255, 0.06);
+  --brd-default:        rgba(255, 255, 255, 0.08);
+  --brd-strong:         rgba(255, 255, 255, 0.14);
   --brd-focus:          var(--clr-brand);
-  --brd-input:          rgba(79,110,247, 0.22);
+  --brd-input:          rgba(255, 255, 255, 0.10);
 
-  /* -----------------------------------------------------------------------
-     SHADOWS
-  ----------------------------------------------------------------------- */
+  /* ── Shadows ──────────────────────────────────────────────────────────── */
+  --shd-xs:   0 1px 2px rgba(0,0,0,.40);
+  --shd-sm:   0 1px 3px rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.30);
+  --shd-md:   0 4px 12px rgba(0,0,0,.50), 0 2px 4px rgba(0,0,0,.30);
+  --shd-lg:   0 10px 30px rgba(0,0,0,.60), 0 4px 8px rgba(0,0,0,.40);
+  --shd-xl:   0 20px 48px rgba(0,0,0,.70), 0 8px 16px rgba(0,0,0,.50);
+  --shd-glow: 0 0 0 3px rgba(255,166,17,.25);
 
-  --shd-xs:   0 1px 3px rgba(79,110,247,0.06);
-  --shd-sm:   0 2px 8px rgba(79,110,247,0.08);
-  --shd-md:   0 6px 20px rgba(79,110,247,0.10);
-  --shd-lg:   0 12px 36px rgba(79,110,247,0.14);
-  --shd-xl:   0 20px 56px rgba(79,110,247,0.18);
-  --shd-glow: 0 0 0 4px rgba(79,110,247,0.16);
+  /* ── Gradients ────────────────────────────────────────────────────────── */
+  --grd-brand: linear-gradient(135deg, #FFA611 0%, #E07000 100%);
+  --grd-ai:    linear-gradient(135deg, rgba(255,166,17,.08) 0%, rgba(25,103,210,.08) 100%);
+  --grd-card:  linear-gradient(180deg, #1C1F27 0%, #21242E 100%);
+  --grd-glass: linear-gradient(135deg, rgba(28,31,39,.85) 0%, rgba(28,31,39,.60) 100%);
 
-  /* -----------------------------------------------------------------------
-     GRADIENTS
-  ----------------------------------------------------------------------- */
+  /* ── Typography ───────────────────────────────────────────────────────── */
+  --font:       'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:  'Roboto Mono', 'Fira Code', 'Courier New', monospace;
 
-  --grd-brand:  linear-gradient(135deg, var(--clr-brand) 0%, var(--clr-brand-dk) 100%);
-  --grd-ai:     linear-gradient(135deg, rgba(79,110,247,0.08) 0%, rgba(29,158,117,0.08) 100%);
-  --grd-card:   linear-gradient(180deg, #ffffff 0%, #f5f7ff 100%);
-  --grd-glass:  linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.60) 100%);
-
-  /* -----------------------------------------------------------------------
-     TYPOGRAPHY
-  ----------------------------------------------------------------------- */
-
-  --font:       'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono:  'DM Mono', 'Fira Code', 'Courier New', monospace;
-
-  /* Scale (fluid, clamp-based where applicable) */
-  --tx-xs:    0.6875rem;   /* 11px */
-  --tx-sm:    0.8125rem;   /* 13px */
-  --tx-base:  0.875rem;    /* 14px */
-  --tx-md:    1rem;        /* 16px */
-  --tx-lg:    1.125rem;    /* 18px */
-  --tx-xl:    1.25rem;     /* 20px */
-  --tx-2xl:   1.5rem;      /* 24px */
-  --tx-3xl:   1.875rem;    /* 30px */
+  --tx-xs:    0.6875rem;  /* 11px */
+  --tx-sm:    0.8125rem;  /* 13px */
+  --tx-base:  0.875rem;   /* 14px */
+  --tx-md:    1rem;       /* 16px */
+  --tx-lg:    1.125rem;   /* 18px */
+  --tx-xl:    1.25rem;    /* 20px */
+  --tx-2xl:   1.5rem;     /* 24px */
+  --tx-3xl:   1.875rem;   /* 30px */
   --tx-4xl:   clamp(1.875rem, 4vw, 2.5rem);
 
-  /* Weights */
   --fw-regular:  400;
   --fw-medium:   500;
   --fw-semibold: 600;
   --fw-bold:     700;
 
-  /* Line heights */
   --lh-tight:   1.25;
   --lh-snug:    1.4;
-  --lh-normal:  1.55;
-  --lh-relaxed: 1.7;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.65;
 
-  /* -----------------------------------------------------------------------
-     SPACING (4px grid)
-  ----------------------------------------------------------------------- */
-
+  /* ── Spacing (4px grid) ───────────────────────────────────────────────── */
   --sp-1:   4px;
   --sp-2:   8px;
   --sp-3:   12px;
@@ -130,34 +121,25 @@
   --sp-16:  64px;
   --sp-20:  80px;
 
-  /* -----------------------------------------------------------------------
-     BORDER RADIUS
-  ----------------------------------------------------------------------- */
-
-  --rd-xs:    6px;
-  --rd-sm:    10px;
-  --rd-md:    14px;
-  --rd-lg:    18px;
-  --rd-xl:    24px;
-  --rd-2xl:   32px;
+  /* ── Border Radius (Firebase: slightly more angular) ─────────────────── */
+  --rd-xs:    4px;
+  --rd-sm:    6px;
+  --rd-md:    8px;
+  --rd-lg:    12px;
+  --rd-xl:    16px;
+  --rd-2xl:   20px;
   --rd-full:  9999px;
 
-  /* -----------------------------------------------------------------------
-     MOTION
-  ----------------------------------------------------------------------- */
-
-  --dur-fast:   120ms;
-  --dur-base:   200ms;
-  --dur-slow:   300ms;
-  --ease-in:    cubic-bezier(0.4, 0, 1, 1);
-  --ease-out:   cubic-bezier(0, 0, 0.2, 1);
-  --ease-std:   cubic-bezier(0.2, 0, 0, 1);
+  /* ── Motion ───────────────────────────────────────────────────────────── */
+  --dur-fast:    100ms;
+  --dur-base:    200ms;
+  --dur-slow:    300ms;
+  --ease-in:     cubic-bezier(0.4, 0, 1, 1);
+  --ease-out:    cubic-bezier(0, 0, 0.2, 1);
+  --ease-std:    cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-  /* -----------------------------------------------------------------------
-     LAYOUT
-  ----------------------------------------------------------------------- */
-
+  /* ── Layout ───────────────────────────────────────────────────────────── */
   --sidebar-w:        240px;
   --sidebar-w-sm:     64px;
   --topbar-h:         60px;
@@ -167,23 +149,17 @@
   --safe-top:         env(safe-area-inset-top, 0px);
   --safe-bottom:      env(safe-area-inset-bottom, 0px);
 
-  /* -----------------------------------------------------------------------
-     Z-INDEX
-  ----------------------------------------------------------------------- */
+  /* ── Z-Index ──────────────────────────────────────────────────────────── */
+  --z-base:    0;
+  --z-raised:  10;
+  --z-sticky:  100;
+  --z-nav:     200;
+  --z-drawer:  300;
+  --z-modal:   400;
+  --z-toast:   500;
+  --z-tooltip: 600;
 
-  --z-base:       0;
-  --z-raised:     10;
-  --z-sticky:     100;
-  --z-nav:        200;
-  --z-drawer:     300;
-  --z-modal:      400;
-  --z-toast:      500;
-  --z-tooltip:    600;
-
-  /* -----------------------------------------------------------------------
-     LEGACY BRIDGES — ensures older JSX refs still work
-  ----------------------------------------------------------------------- */
-
+  /* ── Legacy Bridges (JSX compatibility) ───────────────────────────────── */
   --laura-primary:          var(--clr-brand);
   --laura-primary-hover:    var(--clr-brand-dk);
   --laura-accent:           var(--clr-green);
@@ -234,7 +210,7 @@
 
   --laura-gradient:         var(--grd-brand);
   --laura-ai-bg:            var(--grd-ai);
-  --laura-overlay:          rgba(26,26,46,0.55);
+  --laura-overlay:          rgba(0,0,0,.55);
   --laura-hover:            var(--srf-overlay);
 
   --laura-green:            var(--clr-green);
@@ -253,38 +229,80 @@
   --font-display:           var(--font);
   --laura-font:             var(--font);
 
-  --laura-space-1:  var(--sp-1); --laura-space-2:  var(--sp-2);
-  --laura-space-3:  var(--sp-3); --laura-space-4:  var(--sp-4);
-  --laura-space-5:  var(--sp-5); --laura-space-6:  var(--sp-6);
-  --laura-space-8:  var(--sp-8); --laura-space-10: var(--sp-10);
+  --laura-space-1:  var(--sp-1);  --laura-space-2:  var(--sp-2);
+  --laura-space-3:  var(--sp-3);  --laura-space-4:  var(--sp-4);
+  --laura-space-5:  var(--sp-5);  --laura-space-6:  var(--sp-6);
+  --laura-space-8:  var(--sp-8);  --laura-space-10: var(--sp-10);
   --laura-space-12: var(--sp-12);
 
-  --sp-16: var(--sp-16);
-
-  --laura-radius-sm:  var(--rd-sm);
-  --laura-radius-md:  var(--rd-md);
-  --laura-radius-lg:  var(--rd-lg);
-  --laura-radius-xl:  var(--rd-xl);
+  --laura-radius-sm:   var(--rd-sm);
+  --laura-radius-md:   var(--rd-md);
+  --laura-radius-lg:   var(--rd-lg);
+  --laura-radius-xl:   var(--rd-xl);
   --laura-radius-pill: var(--rd-full);
 
-  --r-xs: var(--rd-xs); --r-sm: var(--rd-sm);
-  --r-md: var(--rd-md); --r-lg: var(--rd-lg);
-  --r-xl: var(--rd-xl); --r-2xl: var(--rd-2xl);
+  --r-xs:   var(--rd-xs);  --r-sm:   var(--rd-sm);
+  --r-md:   var(--rd-md);  --r-lg:   var(--rd-lg);
+  --r-xl:   var(--rd-xl);  --r-2xl:  var(--rd-2xl);
   --r-full: var(--rd-full);
 
-  --fs-xs:   var(--tx-xs); --fs-sm:   var(--tx-sm);
-  --fs-md:   var(--tx-base); --fs-lg:   var(--tx-md);
+  --fs-xs: var(--tx-xs);   --fs-sm: var(--tx-sm);
+  --fs-md: var(--tx-base); --fs-lg: var(--tx-md);
 
-  --dur-fast: var(--dur-fast);
-  --dur-med:  var(--dur-base);
-  --dur-slow: var(--dur-slow);
+  --dur-med:       var(--dur-base);
   --ease-standard: var(--ease-std);
 
   --rail-w:         var(--sidebar-w);
   --rail-w-compact: var(--sidebar-w-sm);
-  --topbar-h:       var(--topbar-h);
-  --content-max:    var(--content-max);
 
-  --shadow-xs: var(--shd-xs); --shadow-sm: var(--shd-sm);
-  --shadow-md: var(--shd-md); --shadow-lg: var(--shd-lg);
+  --shadow-xs: var(--shd-xs);  --shadow-sm: var(--shd-sm);
+  --shadow-md: var(--shd-md);  --shadow-lg: var(--shd-lg);
+}
+
+/* ── Light Theme (Firebase Console Light Mode) ───────────────────────────── */
+body.light-theme,
+[data-theme="light"] {
+  /* Surfaces */
+  --srf-page:    #F1F3F4;
+  --srf-base:    #FFFFFF;
+  --srf-raised:  #F8F9FA;
+  --srf-overlay: rgba(32, 33, 36, 0.06);
+  --srf-sidebar: #FFFFFF;
+  --srf-topbar:  rgba(255, 255, 255, 0.92);
+  --srf-nav:     rgba(255, 255, 255, 0.95);
+
+  /* Text */
+  --txt-primary:   #202124;
+  --txt-secondary: #5F6368;
+  --txt-tertiary:  #80868B;
+  --txt-disabled:  #BDC1C6;
+  --txt-inverse:   #FFFFFF;
+  --txt-link:      #1967D2;
+  --txt-accent:    var(--clr-brand);
+
+  /* Borders */
+  --brd-subtle:  rgba(0, 0, 0, 0.06);
+  --brd-default: rgba(0, 0, 0, 0.10);
+  --brd-strong:  rgba(0, 0, 0, 0.18);
+  --brd-focus:   var(--clr-brand);
+  --brd-input:   rgba(0, 0, 0, 0.14);
+
+  /* Shadows — subtle on light */
+  --shd-xs:  0 1px 2px rgba(0,0,0,.06);
+  --shd-sm:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shd-md:  0 4px 12px rgba(0,0,0,.10), 0 2px 4px rgba(0,0,0,.06);
+  --shd-lg:  0 10px 30px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+  --shd-xl:  0 20px 48px rgba(0,0,0,.14), 0 8px 16px rgba(0,0,0,.06);
+  --shd-glow: 0 0 0 3px rgba(255, 166, 17, 0.18);
+
+  /* Gradients */
+  --grd-card:  linear-gradient(180deg, #FFFFFF 0%, #F8F9FA 100%);
+  --grd-glass: linear-gradient(135deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.60) 100%);
+  --grd-ai:    linear-gradient(135deg, rgba(255,166,17,.06) 0%, rgba(25,103,210,.06) 100%);
+
+  /* Semantic status — lighter backgrounds */
+  --clr-success-lt: #E6F4EA;
+  --clr-warning-lt: #FEF7E0;
+  --clr-error-lt:   #FCE8E6;
+  --clr-info-lt:    #E8F0FE;
 }

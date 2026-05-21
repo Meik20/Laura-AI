@@ -5,24 +5,24 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const NAV_ITEMS = [
-  { to: '/learn/dashboard', labelKey: 'learn.nav.dashboard', icon: '⊞' },
-  { to: '/learn/chat',      labelKey: 'learn.nav.chat',       icon: '◎' },
-  { to: '/learn/revision',  labelKey: 'learn.nav.revision',   icon: '✎' },
-  { to: '/learn/exams',     labelKey: 'learn.nav.exams',      icon: '✦' },
-  { to: '/learn/resources', labelKey: 'learn.nav.resources',  icon: '⊕' },
-  { to: '/learn/community', labelKey: 'learn.nav.community',  icon: '🏫' },
-  { to: '/learn/progress',  labelKey: 'learn.nav.progress',   icon: '▲' },
-  { to: '/learn/history',   labelKey: 'learn.nav.history',    icon: '↺' },
-  { to: '/learn/profile',   labelKey: 'learn.nav.profile',    icon: '◉' },
-  { to: '/learn/settings',  labelKey: 'learn.nav.settings',   icon: '⊛' },
+  { to: '/learn/dashboard', labelKey: 'learn.nav.dashboard', icon: 'layout-dashboard' },
+  { to: '/learn/chat',      labelKey: 'learn.nav.chat',       icon: 'message' },
+  { to: '/learn/revision',  labelKey: 'learn.nav.revision',   icon: 'book' },
+  { to: '/learn/exams',     labelKey: 'learn.nav.exams',      icon: 'file-certificate' },
+  { to: '/learn/resources', labelKey: 'learn.nav.resources',  icon: 'folders' },
+  { to: '/learn/community', labelKey: 'learn.nav.community',  icon: 'school' },
+  { to: '/learn/progress',  labelKey: 'learn.nav.progress',   icon: 'chart-bar' },
+  { to: '/learn/history',   labelKey: 'learn.nav.history',    icon: 'history' },
+  { to: '/learn/profile',   labelKey: 'learn.nav.profile',    icon: 'user-circle' },
+  { to: '/learn/settings',  labelKey: 'learn.nav.settings',   icon: 'settings' },
 ];
 
 const BOTTOM_NAV = [
-  { to: '/learn/dashboard', labelKey: 'learn.nav.home',       icon: '⊞' },
-  { to: '/learn/chat',      labelKey: 'learn.nav.chat_ia',    icon: '◎' },
-  { to: '/learn/revision',  labelKey: 'learn.nav.courses',    icon: '✎' },
-  { to: '/learn/progress',  labelKey: 'learn.nav.stats',      icon: '▲' },
-  { to: '/learn/profile',   labelKey: 'learn.nav.profile_short', icon: '◉' },
+  { to: '/learn/dashboard', labelKey: 'learn.nav.home',          icon: 'home' },
+  { to: '/learn/chat',      labelKey: 'learn.nav.chat_ia',       icon: 'message' },
+  { to: '/learn/revision',  labelKey: 'learn.nav.courses',       icon: 'book' },
+  { to: '/learn/progress',  labelKey: 'learn.nav.stats',         icon: 'chart-bar' },
+  { to: '/learn/profile',   labelKey: 'learn.nav.profile_short', icon: 'user-circle' },
 ];
 
 function getRoleLabel(profile, t) {
@@ -140,9 +140,16 @@ export default function LearnLayout() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { currentUser, logout, userProfile } = useContext(AuthContext);
-  const [drawerOpen,    setDrawerOpen]    = useState(false);
-  const [collapsed,     setCollapsed]     = useState(false);
-  const [profileOpen,   setProfileOpen]   = useState(false);
+  const [drawerOpen,  setDrawerOpen]  = useState(false);
+  const [collapsed,   setCollapsed]   = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [theme,       setTheme]       = useState(() => localStorage.getItem('laura-theme') || 'dark');
+
+  useEffect(() => {
+    document.body.classList.remove('light-theme', 'dark-theme');
+    document.body.classList.add(`${theme}-theme`);
+    localStorage.setItem('laura-theme', theme);
+  }, [theme]);
 
   if (!currentUser) {
     return <Navigate to="/" replace />;
@@ -173,9 +180,9 @@ export default function LearnLayout() {
             <span className="l-sidebar__name">laura ai</span>
           </NavLink>
           <button className="l-sidebar__toggle desktop-only" onClick={() => setCollapsed(c => !c)} title={collapsed ? t('common.actions.expand') : t('common.actions.collapse')} aria-label="Toggle sidebar">
-            {collapsed ? '›' : '‹'}
+            <i className={`ti ti-${collapsed ? 'chevron-right' : 'chevron-left'}`} />
           </button>
-          <button className="l-sidebar__toggle mobile-only" onClick={closeDrawer} aria-label={t('common.actions.close')}>✕</button>
+          <button className="l-sidebar__toggle mobile-only" onClick={closeDrawer} aria-label={t('common.actions.close')}><i className="ti ti-x" /></button>
         </div>
 
         <nav className="l-sidebar__nav no-scrollbar" aria-label="Navigation principale">
@@ -184,7 +191,7 @@ export default function LearnLayout() {
               className={({ isActive }) => `l-nav-item${isActive ? ' active' : ''}`}
               title={collapsed ? t(labelKey) : undefined}
             >
-              <span className="l-nav-item__icon" aria-hidden="true">{icon}</span>
+              <span className="l-nav-item__icon" aria-hidden="true"><i className={`ti ti-${icon}`} /></span>
               <span className="l-nav-item__label">{t(labelKey)}</span>
             </NavLink>
           ))}
@@ -218,7 +225,7 @@ export default function LearnLayout() {
         {/* Topbar */}
         <header className="l-topbar">
           <div className="l-topbar__left">
-            <button className="l-topbar__menu-btn mobile-only" onClick={() => setDrawerOpen(true)} aria-label={t('common.actions.open_menu')}>☰</button>
+            <button className="l-topbar__menu-btn mobile-only" onClick={() => setDrawerOpen(true)} aria-label={t('common.actions.open_menu')}><i className="ti ti-menu-2" /></button>
 
             <NavLink to="/learn/dashboard" className="mobile-only"
               style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', textDecoration: 'none' }}>
@@ -234,6 +241,14 @@ export default function LearnLayout() {
           </div>
 
           <div className="l-topbar__right" style={{ gap: '16px', alignItems: 'center' }}>
+            <button
+              onClick={() => setTheme(th => th === 'dark' ? 'light' : 'dark')}
+              aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+              title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--txt-secondary)', fontSize: '18px', display: 'flex', alignItems: 'center', padding: 'var(--sp-1)', borderRadius: 'var(--rd-sm)', transition: 'color var(--dur-fast)', minHeight: 'auto' }}
+            >
+              <i className={`ti ti-${theme === 'dark' ? 'sun' : 'moon'}`} />
+            </button>
             <LanguageSwitcher />
             <span className="desktop-only" style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>
               {roleLabel}
@@ -277,7 +292,7 @@ export default function LearnLayout() {
         {BOTTOM_NAV.map(({ to, labelKey, icon }) => (
           <NavLink key={to} to={to}
             className={({ isActive }) => `l-bottom-nav__item${isActive ? ' active' : ''}`}>
-            <span className="l-bottom-nav__icon" aria-hidden="true">{icon}</span>
+            <span className="l-bottom-nav__icon" aria-hidden="true"><i className={`ti ti-${icon}`} /></span>
             <span>{t(labelKey)}</span>
           </NavLink>
         ))}

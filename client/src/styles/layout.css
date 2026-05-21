@@ -97,7 +97,7 @@
 .l-sidebar__name {
   font-size: var(--tx-md);
   font-weight: var(--fw-bold);
-  color: var(--clr-brand);
+  color: var(--txt-primary);
   letter-spacing: -0.3px;
   white-space: nowrap;
   overflow: hidden;
