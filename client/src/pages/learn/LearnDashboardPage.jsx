@@ -132,10 +132,17 @@ export default function LearnDashboardPage() {
         const resSnap = await getDocs(collection(db, 'resources'));
         const published = resSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => r.statut === 'publie');
         const filtered = filterResourcesByProfile(published, userProfile);
-        setRecommandations(filtered.slice(0, 4).map(r => ({
-          id: r.id, url: r.url, text: r.titre || 'Sans titre',
-          icon: r.type === 'Quiz' ? 'puzzle' : r.type === 'Annale' ? 'notes' : r.type === 'Épreuve' ? 'file-certificate' : 'book',
-        })));
+        setRecommandations(filtered.slice(0, 4).map(r => {
+          const typeMap = {
+            'Quiz':    { icon: 'puzzle',           color: 'var(--clr-brand)',   bg: 'var(--clr-brand-lt)'   },
+            'Annale':  { icon: 'notes',             color: 'var(--clr-green)',   bg: 'var(--clr-green-lt)'   },
+            'Épreuve': { icon: 'file-certificate', color: 'var(--clr-warning)', bg: 'var(--clr-warning-lt)' },
+            'Cours':   { icon: 'book-2',            color: 'var(--clr-brand)',   bg: 'var(--clr-brand-lt)'   },
+            'Vidéo':   { icon: 'video',             color: 'var(--clr-brand)',   bg: 'var(--clr-brand-lt)'   },
+          };
+          const t = typeMap[r.type] || { icon: 'link', color: 'var(--clr-brand)', bg: 'var(--clr-brand-lt)' };
+          return { id: r.id, url: r.url, text: r.titre || 'Sans titre', icon: t.icon, iconColor: t.color, iconBg: t.bg };
+        }));
       } catch { setRecommandations([]); }
     }
     fetchData();
@@ -278,14 +285,31 @@ export default function LearnDashboardPage() {
                   <button
                     key={r.id}
                     onClick={() => r.url ? window.open(r.url, '_blank') : navigate('/learn/chat')}
-                    className="list-item"
-                    style={{ width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', background: 'none' }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 'var(--sp-3)',
+                      width: '100%', minWidth: 0, textAlign: 'left',
+                      border: 'none', cursor: 'pointer', background: 'none',
+                      padding: 'var(--sp-2) 0', borderRadius: 'var(--rd-md)',
+                      transition: 'opacity var(--dur-fast)'
+                    }}
                   >
-                    <span className="list-item__icon"><i className={`ti ti-${r.icon}`} style={{ fontSize: '1.1rem' }} /></span>
-                    <div className="list-item__body">
-                      <p className="list-item__title truncate">{r.text}</p>
-                    </div>
-                    <span style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-xs)' }}><i className="ti ti-chevron-right" /></span>
+                    <span style={{
+                      width: '36px', height: '36px', flexShrink: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      background: r.iconBg, borderRadius: 'var(--rd-md)',
+                      color: r.iconColor, fontSize: '1rem'
+                    }}>
+                      <i className={`ti ti-${r.icon}`} />
+                    </span>
+                    <span style={{
+                      flex: 1, minWidth: 0,
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                      fontSize: 'var(--tx-sm)', fontWeight: 'var(--fw-semibold)',
+                      color: 'var(--txt-primary)'
+                    }}>
+                      {r.text}
+                    </span>
+                    <i className="ti ti-chevron-right" style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-sm)', flexShrink: 0 }} />
                   </button>
                 ))}
               </div>
