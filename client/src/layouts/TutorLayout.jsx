@@ -1,25 +1,25 @@
 import { Outlet, NavLink, useNavigate, Navigate } from 'react-router-dom';
-import { useContext, useState, useCallback } from 'react';
+import { useContext, useState, useCallback, useEffect } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const NAV_ITEMS = [
-  { to: '/tutor/dashboard',   labelKey: 'tutor.nav.dashboard',     icon: '⊞' },
-  { to: '/tutor/chat',        labelKey: 'tutor.nav.chat',        icon: '◎' },
-  { to: '/tutor/resources',   labelKey: 'tutor.nav.resources',     icon: '⊕' },
-  { to: '/tutor/submissions', labelKey: 'tutor.nav.submissions',    icon: '▣' },
-  { to: '/tutor/history',     labelKey: 'tutor.nav.history',     icon: '↺' },
-  { to: '/tutor/profile',     labelKey: 'tutor.nav.profile',icon: '◉' },
-  { to: '/tutor/settings',    labelKey: 'tutor.nav.settings',       icon: '⊛' },
+  { to: '/tutor/dashboard',   labelKey: 'tutor.nav.dashboard',    icon: 'layout-dashboard' },
+  { to: '/tutor/chat',        labelKey: 'tutor.nav.chat',         icon: 'message' },
+  { to: '/tutor/resources',   labelKey: 'tutor.nav.resources',    icon: 'folders' },
+  { to: '/tutor/submissions', labelKey: 'tutor.nav.submissions',  icon: 'clipboard-list' },
+  { to: '/tutor/history',     labelKey: 'tutor.nav.history',      icon: 'history' },
+  { to: '/tutor/profile',     labelKey: 'tutor.nav.profile',      icon: 'user-circle' },
+  { to: '/tutor/settings',    labelKey: 'tutor.nav.settings',     icon: 'settings' },
 ];
 
 const BOTTOM_NAV = [
-  { to: '/tutor/dashboard',   labelKey: 'tutor.nav.overview_short',   icon: '⊞' },
-  { to: '/tutor/chat',        labelKey: 'tutor.nav.chat',   icon: '◎' },
-  { to: '/tutor/resources',   labelKey: 'tutor.nav.catalogue', icon: '⊕' },
-  { to: '/tutor/submissions', labelKey: 'tutor.nav.activity',  icon: '▣' },
-  { to: '/tutor/profile',     labelKey: 'tutor.nav.profile_short',    icon: '◉' },
+  { to: '/tutor/dashboard',   labelKey: 'tutor.nav.overview_short',  icon: 'home' },
+  { to: '/tutor/chat',        labelKey: 'tutor.nav.chat',            icon: 'message' },
+  { to: '/tutor/resources',   labelKey: 'tutor.nav.catalogue',       icon: 'folders' },
+  { to: '/tutor/submissions', labelKey: 'tutor.nav.activity',        icon: 'clipboard-list' },
+  { to: '/tutor/profile',     labelKey: 'tutor.nav.profile_short',   icon: 'user-circle' },
 ];
 
 function getInitials(p) {
@@ -34,6 +34,13 @@ export default function TutorLayout() {
   const { currentUser, logout, userProfile } = useContext(AuthContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [collapsed, setCollapsed]   = useState(false);
+  const [theme, setTheme]           = useState(() => localStorage.getItem('laura-theme') || 'dark');
+
+  useEffect(() => {
+    document.body.classList.remove('light-theme', 'dark-theme');
+    document.body.classList.add(`${theme}-theme`);
+    localStorage.setItem('laura-theme', theme);
+  }, [theme]);
 
   if (!currentUser) {
     return <Navigate to="/" replace />;
@@ -63,9 +70,11 @@ export default function TutorLayout() {
             <span className="l-sidebar__name">laura ai</span>
           </NavLink>
           <button className="l-sidebar__toggle desktop-only" onClick={() => setCollapsed(c => !c)} aria-label={t('common.actions.toggle_sidebar')}>
-            {collapsed ? '›' : '‹'}
+            <i className={`ti ti-${collapsed ? 'chevron-right' : 'chevron-left'}`} />
           </button>
-          <button className="l-sidebar__toggle mobile-only" onClick={closeDrawer} aria-label={t('common.actions.close')}>✕</button>
+          <button className="l-sidebar__toggle mobile-only" onClick={closeDrawer} aria-label={t('common.actions.close')}>
+            <i className="ti ti-x" />
+          </button>
         </div>
 
         <nav className="l-sidebar__nav no-scrollbar" aria-label="Navigation tuteur">
@@ -74,7 +83,7 @@ export default function TutorLayout() {
               className={({ isActive }) => `l-nav-item${isActive ? ' active' : ''}`}
               title={collapsed ? t(labelKey) : undefined}
             >
-              <span className="l-nav-item__icon" aria-hidden="true">{icon}</span>
+              <span className="l-nav-item__icon" aria-hidden="true"><i className={`ti ti-${icon}`} /></span>
               <span className="l-nav-item__label">{t(labelKey)}</span>
             </NavLink>
           ))}
@@ -92,7 +101,10 @@ export default function TutorLayout() {
           </div>
           <button onClick={handleLogout} className="laura-btn laura-btn-ghost"
             style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)', justifyContent: 'center' }}>
-            {collapsed ? '⏻' : `⏻ ${t('common.actions.logout')}`}
+            {collapsed
+              ? <i className="ti ti-logout" />
+              : <><i className="ti ti-logout" /> {t('common.actions.logout')}</>
+            }
           </button>
         </div>
       </aside>
@@ -101,7 +113,9 @@ export default function TutorLayout() {
       <div className="l-main">
         <header className="l-topbar">
           <div className="l-topbar__left">
-            <button className="l-topbar__menu-btn mobile-only" onClick={() => setDrawerOpen(true)} aria-label={t('common.actions.open_menu')}>☰</button>
+            <button className="l-topbar__menu-btn mobile-only" onClick={() => setDrawerOpen(true)} aria-label={t('common.actions.open_menu')}>
+              <i className="ti ti-menu-2" />
+            </button>
             <NavLink to="/tutor/dashboard" className="mobile-only" style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', textDecoration: 'none' }}>
               <img src="/logo.png" alt="LAURA" style={{ height: '30px' }} />
               <span style={{ fontSize: 'var(--tx-xs)', fontWeight: 800, background: 'var(--clr-green-lt)', color: 'var(--clr-green)', padding: '2px var(--sp-2)', borderRadius: 'var(--rd-full)' }}>
@@ -113,6 +127,14 @@ export default function TutorLayout() {
             </p>
           </div>
           <div className="l-topbar__right" style={{ gap: '16px', alignItems: 'center' }}>
+            <button
+              onClick={() => setTheme(th => th === 'dark' ? 'light' : 'dark')}
+              aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+              title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--txt-secondary)', fontSize: '18px', display: 'flex', alignItems: 'center', padding: 'var(--sp-1)', borderRadius: 'var(--rd-sm)', transition: 'color var(--dur-fast)', minHeight: 'auto' }}
+            >
+              <i className={`ti ti-${theme === 'dark' ? 'sun' : 'moon'}`} />
+            </button>
             <LanguageSwitcher />
             <span className="desktop-only" style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>
               {roleLabel} · <strong style={{ color: 'var(--txt-primary)' }}>{displayName}</strong>
@@ -131,7 +153,7 @@ export default function TutorLayout() {
         {BOTTOM_NAV.map(({ to, labelKey, icon }) => (
           <NavLink key={to} to={to}
             className={({ isActive }) => `l-bottom-nav__item${isActive ? ' active' : ''}`}>
-            <span className="l-bottom-nav__icon" aria-hidden="true">{icon}</span>
+            <span className="l-bottom-nav__icon" aria-hidden="true"><i className={`ti ti-${icon}`} /></span>
             <span>{t(labelKey)}</span>
           </NavLink>
         ))}
