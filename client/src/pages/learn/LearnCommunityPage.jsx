@@ -18,6 +18,7 @@ export default function LearnCommunityPage() {
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const messagesEndRef = useRef(null);
+  const [mobilePane, setMobilePane] = useState('list'); // 'list' | 'chat'
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newForumLevel, setNewForumLevel] = useState('');
@@ -120,12 +121,12 @@ export default function LearnCommunityPage() {
     e.preventDefault();
     if (!userProfile?.uid || !newForumLevel.trim()) return;
 
-    const generatedName = newForumSerie.trim() 
+    const generatedName = newForumSerie.trim()
       ? `${newForumLevel.trim()} ${newForumSerie.trim()}`
       : newForumLevel.trim();
 
-    // Check if forum with same level + serie already exists
     try {
+      // Check if forum with same level + serie already exists (approved or pending)
       const qCheck = query(collection(db, 'forums'), where('niveau', '==', newForumLevel.trim()), where('serie', '==', newForumSerie.trim()));
       const snap = await getDocs(qCheck);
       if (!snap.empty) {
@@ -134,16 +135,17 @@ export default function LearnCommunityPage() {
         return;
       }
 
-      // Create
+      // Create forum with pending status — admin must approve
       const docRef = await addDoc(collection(db, 'forums'), {
         nom: generatedName,
         niveau: newForumLevel.trim(),
         serie: newForumSerie.trim(),
         createurId: userProfile.uid,
+        statut: 'en_attente',
         createdAt: serverTimestamp()
       });
 
-      // Auto-join as approved
+      // Creator membership also pending — admin approves everything at once
       await addDoc(collection(db, 'forum_memberships'), {
         forumId: docRef.id,
         userId: userProfile.uid,
@@ -152,13 +154,14 @@ export default function LearnCommunityPage() {
         userNiveau: userProfile.niveau || '',
         userSerie: userProfile.serie || '',
         userExamen: userProfile.examen || '',
-        statut: 'approuve',
+        statut: 'en_attente',
         createdAt: serverTimestamp()
       });
 
       setShowCreateModal(false);
       setNewForumLevel('');
       setNewForumSerie('');
+      alert(t('community.alerts.create_pending', "Votre demande de création de classe a été soumise. Un administrateur la validera bientôt."));
     } catch (err) {
       console.error(err);
       alert(t('community.alerts.create_error', "Erreur lors de la création."));
@@ -248,17 +251,22 @@ export default function LearnCommunityPage() {
         </p>
       </div>
 
-      {/* Core Split Screen Layout */}
-      <div 
-        className="community-container" 
-        style={{ 
-          display: 'grid', 
-          gridTemplateColumns: '1fr 340px', 
-          gap: 'var(--sp-5)', 
-          flex: 1, 
-          minHeight: 0, 
-          overflow: 'hidden' 
-        }}
+      {/* Core Split Screen Layout — responsive */}
+      <style>{`
+        .community-container { display: grid; grid-template-columns: 1fr; gap: var(--sp-5); flex: 1; min-height: 0; overflow: hidden; }
+        @media (min-width: 1024px) { .community-container { grid-template-columns: 1fr 340px; } }
+        .community-container .messaging-pane { display: none; }
+        .community-container .sidebar-pane { display: flex; }
+        .community-container.show-chat .messaging-pane { display: flex; }
+        .community-container.show-chat .sidebar-pane { display: none; }
+        @media (min-width: 1024px) {
+          .community-container .messaging-pane { display: flex !important; }
+          .community-container .sidebar-pane { display: flex !important; }
+        }
+      `}</style>
+      <div
+        className={`community-container${mobilePane === 'chat' ? ' show-chat' : ''}`}
+        style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}
       >
         
         {/* CENTER PANE: Active Messaging Zone */}
@@ -275,24 +283,34 @@ export default function LearnCommunityPage() {
         >
           {activeForum && (userProfile?.role === 'admin' || memberships[activeForum.id] === 'approuve') ? (
             <>
-              {/* Chat room header */}
-              <div 
-                style={{ 
-                  padding: 'var(--sp-4) var(--sp-5)', 
-                  borderBottom: '1px solid var(--brd-subtle)', 
+              {/* Chat room header — with mobile back button */}
+              <div
+                style={{
+                  padding: 'var(--sp-4) var(--sp-5)',
+                  borderBottom: '1px solid var(--brd-subtle)',
                   background: 'var(--srf-raised)',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center'
                 }}
               >
-                <div>
-                  <h2 style={{ fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', margin: 0, color: 'var(--txt-primary)' }}>
-                    {activeForum.nom}
-                  </h2>
-                  <p style={{ margin: 0, fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)' }}>
-                    {t('admin.community.modal.level', 'Niveau')} : {activeForum.niveau} {activeForum.serie && `· ${activeForum.serie}`}
-                  </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
+                  <button
+                    className="mobile-only laura-btn laura-btn-ghost"
+                    onClick={() => setMobilePane('list')}
+                    style={{ minHeight: '32px', padding: '0 var(--sp-2)', fontSize: 'var(--tx-base)', color: 'var(--txt-secondary)' }}
+                    aria-label="Retour"
+                  >
+                    <i className="ti ti-arrow-left" />
+                  </button>
+                  <div>
+                    <h2 style={{ fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', margin: 0, color: 'var(--txt-primary)' }}>
+                      {activeForum.nom}
+                    </h2>
+                    <p style={{ margin: 0, fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)' }}>
+                      {t('admin.community.modal.level', 'Niveau')} : {activeForum.niveau} {activeForum.serie && `· ${activeForum.serie}`}
+                    </p>
+                  </div>
                 </div>
                 <div style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ width: '8px', height: '8px', borderRadius: 'var(--rd-full)', background: 'var(--clr-success)' }} />
@@ -423,12 +441,12 @@ export default function LearnCommunityPage() {
           ) : (
             // Empty placeholder state before selecting a forum
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 'var(--sp-8)', textAlign: 'center' }}>
-              <span style={{ fontSize: '4.5rem', marginBottom: 'var(--sp-4)' }}>🏫</span>
+              <i className="ti ti-building-community" style={{ fontSize: '4rem', marginBottom: 'var(--sp-4)', color: 'var(--clr-brand)' }} />
               <h2 style={{ fontSize: 'var(--tx-lg)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)', color: 'var(--txt-primary)' }}>
                 {t('community.placeholder.title', 'Rejoignez votre classe')}
               </h2>
               <p style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', maxWidth: '420px', lineHeight: 'var(--lh-relaxed)' }}>
-                {t('community.placeholder.desc', 'Sélectionnez ou recherchez un forum de classe dans la liste à droite pour commencer à échanger avec les autres apprenants.')}
+                {t('community.placeholder.desc', 'Sélectionnez ou recherchez un forum de classe dans la liste pour commencer à échanger avec les autres apprenants.')}
               </p>
             </div>
           )}
@@ -486,7 +504,10 @@ export default function LearnCommunityPage() {
                 return (
                   <div
                     key={f.id}
-                    onClick={() => setActiveForum(f)}
+                    onClick={() => {
+              setActiveForum(f);
+              setMobilePane('chat');
+            }}
                     style={{
                       padding: 'var(--sp-3) var(--sp-4)',
                       cursor: 'pointer',

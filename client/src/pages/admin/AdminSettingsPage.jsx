@@ -224,25 +224,27 @@ export default function AdminSettingsPage() {
                       {t('admin.settings.programs.desc')}
                     </p>
 
-                    {/* FORMULAIRE D'AJOUT */}
-                    <form onSubmit={handleAddMatiere} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '1rem', alignItems: 'end', background: 'var(--srf-base)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid var(--brd-subtle)', marginBottom: '2rem' }}>
-                      <div>
-                        <label style={labelStyle}>{t('admin.settings.programs.name')}</label>
-                        <input type="text" placeholder="ex: Mathématiques" value={newMatiere.nom} onChange={e => setNewMatiere({...newMatiere, nom: e.target.value})} style={inputStyle} required />
+                    {/* FORMULAIRE D'AJOUT — responsive */}
+                    <form onSubmit={handleAddMatiere} style={{ background: 'var(--srf-base)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid var(--brd-subtle)', marginBottom: '2rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                        <div style={{ gridColumn: '1 / -1' }}>
+                          <label style={labelStyle}>{t('admin.settings.programs.name')}</label>
+                          <input type="text" placeholder="ex: Mathématiques" value={newMatiere.nom} onChange={e => setNewMatiere({...newMatiere, nom: e.target.value})} style={inputStyle} required />
+                        </div>
+                        <div>
+                          <label style={labelStyle}>{t('admin.settings.programs.level')}</label>
+                          <input type="text" placeholder="ex: Lycée" value={newMatiere.niveau} onChange={e => setNewMatiere({...newMatiere, niveau: e.target.value})} style={inputStyle} />
+                        </div>
+                        <div>
+                          <label style={labelStyle}>{t('admin.settings.programs.serie')}</label>
+                          <input type="text" placeholder="ex: C, D, TI, Toutes" value={newMatiere.serie} onChange={e => setNewMatiere({...newMatiere, serie: e.target.value})} style={inputStyle} />
+                        </div>
+                        <div>
+                          <label style={labelStyle}>{t('admin.settings.programs.filiere')}</label>
+                          <input type="text" placeholder="ex: Général" value={newMatiere.filiere} onChange={e => setNewMatiere({...newMatiere, filiere: e.target.value})} style={inputStyle} />
+                        </div>
                       </div>
-                      <div>
-                        <label style={labelStyle}>{t('admin.settings.programs.level')}</label>
-                        <input type="text" placeholder="ex: Lycée" value={newMatiere.niveau} onChange={e => setNewMatiere({...newMatiere, niveau: e.target.value})} style={inputStyle} />
-                      </div>
-                      <div>
-                        <label style={labelStyle}>{t('admin.settings.programs.serie')}</label>
-                        <input type="text" placeholder="ex: C, D, TI, Toutes" value={newMatiere.serie} onChange={e => setNewMatiere({...newMatiere, serie: e.target.value})} style={inputStyle} />
-                      </div>
-                      <div>
-                        <label style={labelStyle}>{t('admin.settings.programs.filiere')}</label>
-                        <input type="text" placeholder="ex: Général" value={newMatiere.filiere} onChange={e => setNewMatiere({...newMatiere, filiere: e.target.value})} style={inputStyle} />
-                      </div>
-                      <button type="submit" style={{ padding: '0.8rem 1.5rem', background: '#10B981', color: 'white', border: 'none', borderRadius: '0.5rem', fontWeight: 700, cursor: 'pointer', height: '42px' }}>
+                      <button type="submit" style={{ width: '100%', padding: '0.8rem 1.5rem', background: '#10B981', color: 'white', border: 'none', borderRadius: '0.5rem', fontWeight: 700, cursor: 'pointer' }}>
                         {t('admin.settings.programs.add_btn')}
                       </button>
                     </form>
