@@ -258,7 +258,7 @@ export default function LearnLayout() {
 
             <NavLink to="/learn/dashboard" className="mobile-only"
               style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', textDecoration: 'none' }}>
-              <img src="/icon.png" alt="LAURA" style={{ height: '28px' }} />
+              <img src="/logo.png" alt="LAURA" style={{ height: '30px' }} />
               <span style={{ fontSize: 'var(--tx-xs)', fontWeight: 800, background: 'var(--clr-brand-lt)', color: 'var(--clr-brand)', padding: '2px var(--sp-2)', borderRadius: 'var(--rd-full)' }}>
                 {roleLabel.toUpperCase()}
               </span>

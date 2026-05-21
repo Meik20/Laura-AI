@@ -99,6 +99,26 @@ export default function TutorLayout() {
               </div>
             )}
           </div>
+
+          {/* Mobile-only theme & language switcher */}
+          <div className="mobile-only" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--sp-2)', width: '100%', marginTop: 'var(--sp-2)', borderTop: '1px solid var(--brd-subtle)', paddingTop: 'var(--sp-3)' }}>
+            <button
+              onClick={() => setTheme(th => th === 'dark' ? 'light' : 'dark')}
+              aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+              title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+              style={{
+                background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)',
+                cursor: 'pointer', color: 'var(--txt-secondary)', fontSize: '18px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '36px', height: '36px', borderRadius: '50%',
+                transition: 'all var(--dur-fast)', minHeight: 'auto', padding: 0
+              }}
+            >
+              <i className={`ti ti-${theme === 'dark' ? 'sun' : 'moon'}`} />
+            </button>
+            <LanguageSwitcher />
+          </div>
+
           <button onClick={handleLogout} className="laura-btn laura-btn-ghost"
             style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)', justifyContent: 'center' }}>
             {collapsed
@@ -131,11 +151,14 @@ export default function TutorLayout() {
               onClick={() => setTheme(th => th === 'dark' ? 'light' : 'dark')}
               aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
               title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--txt-secondary)', fontSize: '18px', display: 'flex', alignItems: 'center', padding: 'var(--sp-1)', borderRadius: 'var(--rd-sm)', transition: 'color var(--dur-fast)', minHeight: 'auto' }}
+              className="flex-desktop-only"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--txt-secondary)', fontSize: '18px', alignItems: 'center', padding: 'var(--sp-1)', borderRadius: 'var(--rd-sm)', transition: 'color var(--dur-fast)', minHeight: 'auto' }}
             >
               <i className={`ti ti-${theme === 'dark' ? 'sun' : 'moon'}`} />
             </button>
-            <LanguageSwitcher />
+            <div className="desktop-only">
+              <LanguageSwitcher />
+            </div>
             <span className="desktop-only" style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>
               {roleLabel} · <strong style={{ color: 'var(--txt-primary)' }}>{displayName}</strong>
             </span>

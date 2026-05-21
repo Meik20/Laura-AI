@@ -99,6 +99,25 @@ export default function AdminLayout() {
         </nav>
 
         <div className="l-sidebar__footer">
+          {/* Mobile-only theme & language switcher */}
+          <div className="mobile-only" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--sp-2)', width: '100%', marginBottom: 'var(--sp-2)', borderBottom: '1px solid var(--brd-subtle)', paddingBottom: 'var(--sp-3)' }}>
+            <button
+              onClick={() => setTheme(th => th === 'dark' ? 'light' : 'dark')}
+              aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+              title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+              style={{
+                background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)',
+                cursor: 'pointer', color: 'var(--txt-secondary)', fontSize: '18px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '36px', height: '36px', borderRadius: '50%',
+                transition: 'all var(--dur-fast)', minHeight: 'auto', padding: 0
+              }}
+            >
+              <i className={`ti ti-${theme === 'dark' ? 'sun' : 'moon'}`} />
+            </button>
+            <LanguageSwitcher />
+          </div>
+
           <button onClick={handleLogout} className="laura-btn laura-btn-ghost"
             style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)', justifyContent: 'center' }}>
             {collapsed
@@ -118,9 +137,9 @@ export default function AdminLayout() {
             </button>
             <NavLink to="/admin/dashboard" className="mobile-only"
               style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', textDecoration: 'none' }}>
-              <img src="/logo.png" alt="LAURA" style={{ height: '30px' }} />
+              <img src="/icon.png" alt="LAURA" style={{ height: '28px' }} />
               <span style={{ fontSize: 'var(--tx-xs)', fontWeight: 800, background: 'var(--clr-error-lt)', color: 'var(--clr-error)', padding: '2px var(--sp-2)', borderRadius: 'var(--rd-full)' }}>
-                {t('admin.role_badge')}
+                ADMIN
               </span>
             </NavLink>
             <p className="desktop-only" style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', margin: 0 }}>
@@ -132,11 +151,14 @@ export default function AdminLayout() {
               onClick={() => setTheme(th => th === 'dark' ? 'light' : 'dark')}
               aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
               title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--txt-secondary)', fontSize: '18px', display: 'flex', alignItems: 'center', padding: 'var(--sp-1)', borderRadius: 'var(--rd-sm)', transition: 'color var(--dur-fast)', minHeight: 'auto' }}
+              className="flex-desktop-only"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--txt-secondary)', fontSize: '18px', alignItems: 'center', padding: 'var(--sp-1)', borderRadius: 'var(--rd-sm)', transition: 'color var(--dur-fast)', minHeight: 'auto' }}
             >
               <i className={`ti ti-${theme === 'dark' ? 'sun' : 'moon'}`} />
             </button>
-            <LanguageSwitcher />
+            <div className="desktop-only">
+              <LanguageSwitcher />
+            </div>
             <span className="desktop-only"
               style={{ fontSize: 'var(--tx-xs)', background: 'var(--clr-error-lt)', color: 'var(--clr-error)', padding: '3px 10px', borderRadius: 'var(--rd-full)', fontWeight: 'var(--fw-bold)' }}>
               <i className="ti ti-shield" /> {t('admin.role_label')}
