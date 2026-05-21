@@ -258,18 +258,90 @@ export default function LearnCommunityPage() {
       {/* Core Split Screen Layout — responsive */}
       <style>{`
         .community-container { display: grid; grid-template-columns: 1fr; gap: var(--sp-5); flex: 1; min-height: 0; overflow: hidden; }
-        @media (min-width: 1024px) { .community-container { grid-template-columns: 1fr 340px; } }
-        .community-container .messaging-pane { display: none; }
-        .community-container .sidebar-pane { display: flex; }
-        .community-container.show-chat .messaging-pane { display: flex; }
-        .community-container.show-chat .sidebar-pane { display: none; }
+        @media (min-width: 1024px) { 
+          .community-container { grid-template-columns: 1fr 340px; } 
+        }
+        
+        .mobile-only { display: flex !important; }
+        @media (min-width: 1024px) {
+          .mobile-only { display: none !important; }
+        }
+        
+        @media (max-width: 1023px) {
+          .community-container .messaging-pane { display: none !important; }
+          .community-container .sidebar-pane { display: none !important; }
+          .community-container.show-chat .messaging-pane { display: flex !important; }
+          .community-container.show-list .sidebar-pane { display: flex !important; }
+        }
         @media (min-width: 1024px) {
           .community-container .messaging-pane { display: flex !important; }
           .community-container .sidebar-pane { display: flex !important; }
         }
       `}</style>
+
+      {/* Mobile Tabs Bar */}
+      <div 
+        className="mobile-only"
+        style={{ 
+          display: 'flex', 
+          borderBottom: '1px solid var(--brd-subtle)', 
+          background: 'var(--srf-raised)',
+          borderRadius: 'var(--rd-md)',
+          padding: '2px',
+          marginBottom: 'var(--sp-4)',
+          gap: '2px'
+        }}
+      >
+        <button 
+          onClick={() => setMobilePane('chat')}
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 'var(--sp-2)',
+            padding: 'var(--sp-3)',
+            fontSize: 'var(--tx-sm)',
+            fontWeight: 'var(--fw-semibold)',
+            border: 'none',
+            borderRadius: 'var(--rd-sm)',
+            background: mobilePane === 'chat' ? 'var(--srf-base)' : 'transparent',
+            color: mobilePane === 'chat' ? 'var(--clr-brand)' : 'var(--txt-secondary)',
+            boxShadow: mobilePane === 'chat' ? 'var(--shd-sm)' : 'none',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+        >
+          <i className="ti ti-message" />
+          {t('community.tabs.chat', 'Chat')} {activeForum ? `(${activeForum.nom})` : ''}
+        </button>
+        <button 
+          onClick={() => setMobilePane('list')}
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 'var(--sp-2)',
+            padding: 'var(--sp-3)',
+            fontSize: 'var(--tx-sm)',
+            fontWeight: 'var(--fw-semibold)',
+            border: 'none',
+            borderRadius: 'var(--rd-sm)',
+            background: mobilePane === 'list' ? 'var(--srf-base)' : 'transparent',
+            color: mobilePane === 'list' ? 'var(--clr-brand)' : 'var(--txt-secondary)',
+            boxShadow: mobilePane === 'list' ? 'var(--shd-sm)' : 'none',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+        >
+          <i className="ti ti-list" />
+          {t('community.tabs.classes', 'Classes')}
+        </button>
+      </div>
+
       <div
-        className={`community-container${mobilePane === 'chat' ? ' show-chat' : ''}`}
+        className={`community-container${mobilePane === 'chat' ? ' show-chat' : ' show-list'}`}
         style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}
       >
         
