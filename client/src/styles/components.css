@@ -471,12 +471,9 @@
 .chip-row {
   display: flex;
   gap: var(--sp-2);
-  overflow-x: auto;
+  flex-wrap: wrap;               /* chips wrap on mobile, no horizontal scroll */
   padding-bottom: var(--sp-1);
-  scrollbar-width: none;
 }
-
-.chip-row::-webkit-scrollbar { display: none; }
 
 .chip {
   display: inline-flex;
@@ -484,7 +481,7 @@
   gap: var(--sp-2);
   padding: var(--sp-2) var(--sp-4);
   border-radius: var(--rd-full);
-  font-size: var(--tx-sm);
+  font-size: var(--tx-xs);
   font-weight: var(--fw-semibold);
   white-space: nowrap;
   cursor: pointer;
@@ -493,12 +490,14 @@
   color: var(--txt-secondary);
   transition: all var(--dur-fast) var(--ease-std);
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 .chip:hover, .chip:active {
   background: var(--clr-brand-lt);
   color: var(--clr-brand);
   border-color: var(--brd-strong);
+  transform: translateY(-1px);
 }
 
 /* ─────────────────────────────────────────────
@@ -689,38 +688,5 @@
 
 :root {
   --z-popover: 500;
-}
-
-/* ─────────────────────────────────────────────
-   CHIP ROW (quick actions)
-───────────────────────────────────────────── */
-
-.chip-row {
-  display: flex;
-  gap: var(--sp-2);
-  flex-wrap: wrap;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-2) var(--sp-4);
-  border-radius: var(--rd-full);
-  border: 1px solid var(--brd-default);
-  background: var(--srf-base);
-  color: var(--txt-secondary);
-  font-size: var(--tx-xs);
-  font-weight: var(--fw-semibold);
-  cursor: pointer;
-  transition: all var(--dur-fast) var(--ease-std);
-  white-space: nowrap;
-}
-
-.chip:hover {
-  background: var(--clr-brand-lt);
-  color: var(--clr-brand);
-  border-color: var(--brd-strong);
-  transform: translateY(-1px);
 }
 

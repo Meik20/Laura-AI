@@ -28,6 +28,12 @@
   h2, .laura-h2 { font-size: var(--tx-3xl); }
 }
 
+/* Prevent long titles from overflowing on small screens */
+h1, h2, h3, .laura-h1, .laura-h2, .laura-h3 {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
 /* ─────────────────────────────────────────────
    LAYOUT GRID RESPONSIVE
 ───────────────────────────────────────────── */
@@ -54,9 +60,9 @@
   }
 }
 
-/* Move aside before main on mobile (priority content above) */
+/* On mobile: natural DOM order — main content first, aside second */
 .l-page-aside {
-  order: -1;
+  order: 0;
 }
 
 @media (min-width: 1024px) {

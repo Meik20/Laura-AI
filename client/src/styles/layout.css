@@ -14,6 +14,7 @@
   flex-direction: column;
   min-height: 100dvh;
   background: var(--srf-page);
+  overflow-x: hidden; /* Clamp any child overflow on mobile */
 }
 
 /* Desktop: sidebar + main side by side */
@@ -246,6 +247,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  max-width: 100%; /* Prevent overflow from grid/flex children */
+  overflow-x: hidden;
 }
 
 /* ─────────────────────────────────────────────
