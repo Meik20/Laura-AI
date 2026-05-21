@@ -228,9 +228,12 @@ export default function AdminCommunityPage() {
 
       {/* ═══════════ TAB: MEMBERSHIP REQUESTS ═══════════ */}
       {activeTab === 'requests' && (
-        <div className="card-grid" style={{ gridTemplateColumns: '1fr 320px' }}>
-          {/* Liste des demandes */}
-          <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className="l-page-grid">
+          {/* Liste des demandes — hidden on mobile when a user is selected */}
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', ...(selectedUser ? { display: 'none' } : {}) }}
+               data-panel="list">
+            {/* Force display on desktop even when user selected */}
+            <style>{`@media (min-width: 1024px) { [data-panel="list"] { display: flex !important; } }`}</style>
             <div className="card__header" style={{ padding: 'var(--sp-4) var(--sp-5)', borderBottom: '1px solid var(--brd-subtle)' }}>
               <h2 style={{ fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', margin: 0 }}>{t('admin.community.requests')}</h2>
             </div>
@@ -254,7 +257,8 @@ export default function AdminCommunityPage() {
                       {requests.map(req => {
                         const forum = forums[req.forumId];
                         return (
-                          <tr key={req.id} style={{ borderBottom: '1px solid var(--brd-subtle)' }}>
+                          <tr key={req.id} style={{ borderBottom: '1px solid var(--brd-subtle)', cursor: 'pointer' }}
+                              onClick={() => setSelectedUser(req)}>
                             <td style={{ padding: 'var(--sp-3) var(--sp-4)' }}>
                               <div style={{ fontWeight: 'var(--fw-medium)', fontSize: 'var(--tx-sm)' }}>{req.userName}</div>
                               <div style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>{req.userEmail}</div>
@@ -269,7 +273,7 @@ export default function AdminCommunityPage() {
                             </td>
                             <td style={{ padding: 'var(--sp-3) var(--sp-4)', textAlign: 'right' }}>
                               <button
-                                onClick={() => setSelectedUser(req)}
+                                onClick={e => { e.stopPropagation(); setSelectedUser(req); }}
                                 className="laura-btn laura-btn-ghost"
                                 style={{ minHeight: '32px', fontSize: 'var(--tx-xs)' }}
                               >
@@ -286,9 +290,22 @@ export default function AdminCommunityPage() {
             </div>
           </div>
 
-          {/* Panneau latéral : Profil utilisateur */}
-          <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
-            <div className="card__header" style={{ padding: 'var(--sp-4) var(--sp-5)', borderBottom: '1px solid var(--brd-subtle)' }}>
+          {/* Panneau détail — always visible on desktop, only when selectedUser on mobile */}
+          <div className="card" style={{ display: selectedUser ? 'flex' : 'none', flexDirection: 'column' }}
+               data-panel="detail">
+            <style>{`@media (min-width: 1024px) { [data-panel="detail"] { display: flex !important; } }`}</style>
+            <div className="card__header" style={{ padding: 'var(--sp-4) var(--sp-5)', borderBottom: '1px solid var(--brd-subtle)', display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
+              {/* Back button — mobile only */}
+              {selectedUser && (
+                <button
+                  onClick={() => setSelectedUser(null)}
+                  className="laura-btn laura-btn-ghost mobile-only"
+                  style={{ minHeight: '32px', padding: '0 var(--sp-2)', fontSize: 'var(--tx-base)', color: 'var(--txt-secondary)' }}
+                  aria-label="Retour"
+                >
+                  <i className="ti ti-arrow-left" />
+                </button>
+              )}
               <h2 style={{ fontSize: 'var(--tx-base)', fontWeight: 'var(--fw-bold)', margin: 0 }}>{t('admin.community.modal.title')}</h2>
             </div>
             <div className="card__body" style={{ padding: 'var(--sp-5)' }}>
