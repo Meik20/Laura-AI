@@ -40,11 +40,11 @@ const SUBJECT_COLORS = [
 ];
 
 const QUICK_ACTIONS = [
-  { labelKey: 'learn.dashboard.quick_actions.chat',     icon: '◎', to: '/learn/chat' },
-  { labelKey: 'learn.dashboard.quick_actions.revision', icon: '✎', to: '/learn/revision' },
-  { labelKey: 'learn.dashboard.quick_actions.quiz',     icon: '▣', to: '/learn/revision' },
-  { labelKey: 'learn.dashboard.quick_actions.exams',    icon: '✦', to: '/learn/exams' },
-  { labelKey: 'learn.dashboard.quick_actions.resources',icon: '⊕', to: '/learn/resources' },
+  { labelKey: 'learn.dashboard.quick_actions.chat',      icon: 'message',          to: '/learn/chat' },
+  { labelKey: 'learn.dashboard.quick_actions.revision',  icon: 'book',             to: '/learn/revision' },
+  { labelKey: 'learn.dashboard.quick_actions.quiz',      icon: 'puzzle',           to: '/learn/revision' },
+  { labelKey: 'learn.dashboard.quick_actions.exams',     icon: 'file-certificate', to: '/learn/exams' },
+  { labelKey: 'learn.dashboard.quick_actions.resources', icon: 'folders',          to: '/learn/resources' },
 ];
 
 /* ─── Component ────────────────────────────────────────────────────────────── */
@@ -91,7 +91,7 @@ export default function LearnDashboardPage() {
         if (!filtered.length) filtered = published;
         setRecommandations(filtered.slice(0, 4).map(r => ({
           id: r.id, url: r.url, text: r.titre || 'Sans titre',
-          icon: r.type === 'Quiz' ? '🎲' : r.type === 'Annale' ? '📝' : r.type === 'Épreuve' ? '📜' : '📚',
+          icon: r.type === 'Quiz' ? 'puzzle' : r.type === 'Annale' ? 'notes' : r.type === 'Épreuve' ? 'file-certificate' : 'book',
         })));
       } catch { setRecommandations([]); }
     }
@@ -133,7 +133,7 @@ export default function LearnDashboardPage() {
       <div className="chip-row">
         {QUICK_ACTIONS.map(({ labelKey, icon, to }) => (
           <button key={labelKey} onClick={() => navigate(to)} className="chip">
-            <span aria-hidden="true">{icon}</span> {t(labelKey)}
+            <i className={`ti ti-${icon}`} aria-hidden="true" /> {t(labelKey)}
           </button>
         ))}
       </div>
@@ -147,7 +147,7 @@ export default function LearnDashboardPage() {
           {/* ── GOAL CARD (hero gradient) ── */}
           <div className="hero-panel">
             <div className="hero-panel__body">
-              <div className="row row--between" style={{ marginBottom: 'var(--sp-5)' }}>
+              <div className="row row--between" style={{ marginBottom: 'var(--sp-5)', gap: 'var(--sp-3)', flexWrap: 'wrap' }}>
                 <span style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.75 }}>
                   {t('learn.dashboard.goal_card.title')}
                 </span>
@@ -184,13 +184,13 @@ export default function LearnDashboardPage() {
             <div className="section-header">
               <h3>{t('learn.dashboard.subjects.title')}</h3>
               <Link to="/learn/progress" className="laura-btn laura-btn-ghost" style={{ minHeight: '32px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                {t('learn.dashboard.subjects.see_all')} →
+                {t('learn.dashboard.subjects.see_all')} <i className="ti ti-chevron-right" />
               </Link>
             </div>
 
             {matieres.length === 0 ? (
               <div className="empty-state" style={{ padding: 'var(--sp-8)' }}>
-                <span className="empty-state__icon">📚</span>
+                <span className="empty-state__icon"><i className="ti ti-book" style={{ fontSize: '2rem' }} /></span>
                 <p className="empty-state__title">{t('learn.dashboard.subjects.empty')}</p>
               </div>
             ) : (
@@ -222,7 +222,7 @@ export default function LearnDashboardPage() {
 
             {recommandations.length === 0 ? (
               <div className="empty-state" style={{ padding: 'var(--sp-6)', border: 'none', background: 'var(--srf-raised)' }}>
-                <span className="empty-state__icon">🔍</span>
+                <span className="empty-state__icon"><i className="ti ti-search" style={{ fontSize: '1.5rem' }} /></span>
                 <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>{t('learn.dashboard.recommendations.empty')}</p>
               </div>
             ) : (
@@ -234,11 +234,11 @@ export default function LearnDashboardPage() {
                     className="list-item"
                     style={{ width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', background: 'none' }}
                   >
-                    <span className="list-item__icon">{r.icon}</span>
+                    <span className="list-item__icon"><i className={`ti ti-${r.icon}`} style={{ fontSize: '1.1rem' }} /></span>
                     <div className="list-item__body">
                       <p className="list-item__title truncate">{r.text}</p>
                     </div>
-                    <span style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-xs)' }}>→</span>
+                    <span style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-xs)' }}><i className="ti ti-chevron-right" /></span>
                   </button>
                 ))}
               </div>
@@ -247,7 +247,7 @@ export default function LearnDashboardPage() {
 
           {/* ── CHAT CTA ── */}
           <div className="card" style={{ padding: 'var(--sp-5)', background: 'var(--grd-ai)', border: '1px solid var(--brd-subtle)', textAlign: 'center' }}>
-            <p style={{ fontSize: '2rem', marginBottom: 'var(--sp-2)' }}>✨</p>
+            <p style={{ fontSize: '2rem', marginBottom: 'var(--sp-2)' }}><i className="ti ti-sparkles" style={{ color: 'var(--clr-brand)' }} /></p>
             <h3 style={{ fontSize: 'var(--tx-md)', marginBottom: 'var(--sp-2)' }}>{t('learn.dashboard.chat_cta.title')}</h3>
             <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', marginBottom: 'var(--sp-4)' }}>
               {t('learn.dashboard.chat_cta.desc')}

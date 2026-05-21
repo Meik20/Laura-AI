@@ -60,10 +60,10 @@ export default function TutorDashboardPage() {
   const [activeTab, setActiveTab] = useState('overview');
 
   const tabs = [
-    { id: 'overview', labelKey: 'tutor.dashboard.tabs.overview', icon: '👤' },
-    { id: 'tools', labelKey: 'tutor.dashboard.tabs.tools', icon: '🛠️' },
-    { id: 'messages', labelKey: 'tutor.dashboard.tabs.messages', icon: '✉️' },
-    { id: 'submissions', labelKey: 'tutor.dashboard.tabs.submissions', icon: '📤' }
+    { id: 'overview',    labelKey: 'tutor.dashboard.tabs.overview',    icon: 'user-circle' },
+    { id: 'tools',       labelKey: 'tutor.dashboard.tabs.tools',       icon: 'tool' },
+    { id: 'messages',    labelKey: 'tutor.dashboard.tabs.messages',    icon: 'mail' },
+    { id: 'submissions', labelKey: 'tutor.dashboard.tabs.submissions', icon: 'upload' }
   ];
 
   return (
@@ -77,9 +77,9 @@ export default function TutorDashboardPage() {
             {t('tutor.dashboard.subtitle')} · <strong style={{ color: 'var(--txt-primary)' }}>{tutorData.discipline}</strong>
           </p>
         </div>
-        <Link to="/tutor/chat" className="laura-btn laura-btn-primary" style={{ minHeight: '42px', padding: '0 var(--sp-6)' }}>
-          💬 {t('tutor.dashboard.buttons.pedagogical_chat')}
-        </Link>
+          <Link to="/tutor/chat" className="laura-btn laura-btn-primary" style={{ minHeight: '42px', padding: '0 var(--sp-6)' }}>
+            <i className="ti ti-message" /> {t('tutor.dashboard.buttons.pedagogical_chat')}
+          </Link>
       </div>
 
       {/* TABS NAVBAR */}
@@ -107,7 +107,7 @@ export default function TutorDashboardPage() {
                 marginBottom: '-1px'
               }}
             >
-              <span style={{ fontSize: 'var(--tx-md)' }}>{tab.icon}</span>
+              <i className={`ti ti-${tab.icon}`} style={{ fontSize: 'var(--tx-md)' }} />
               {t(tab.labelKey)}
             </button>
           );
@@ -180,12 +180,12 @@ export default function TutorDashboardPage() {
               
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--sp-5)' }}>
                 <Link to="/tutor/chat" className="card card--hoverable" style={{ padding: 'var(--sp-6)', textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
-                  <span style={{ fontSize: '2.2rem', marginBottom: 'var(--sp-2)' }}>📝</span>
+                  <i className="ti ti-notes" style={{ fontSize: '2.2rem', marginBottom: 'var(--sp-2)', color: 'var(--clr-brand)' }} />
                   <strong className="laura-h3" style={{ color: 'var(--txt-primary)' }}>{t('tutor.dashboard.tools.generate_plan')}</strong>
                   <span style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-snug)' }}>{t('tutor.dashboard.tools.generate_plan_desc')}</span>
                 </Link>
                 <Link to="/tutor/submissions" className="card card--hoverable" style={{ padding: 'var(--sp-6)', textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
-                  <span style={{ fontSize: '2.2rem', marginBottom: 'var(--sp-2)' }}>📤</span>
+                  <i className="ti ti-upload" style={{ fontSize: '2.2rem', marginBottom: 'var(--sp-2)', color: 'var(--clr-green)' }} />
                   <strong className="laura-h3" style={{ color: 'var(--txt-primary)' }}>{t('tutor.dashboard.tools.submit_content')}</strong>
                   <span style={{ color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-snug)' }}>{t('tutor.dashboard.tools.submit_content_desc')}</span>
                 </Link>
@@ -210,7 +210,7 @@ export default function TutorDashboardPage() {
                 </div>
               ) : (
                 <div className="empty-state">
-                  <span className="empty-state__icon">✉️</span>
+                  <span className="empty-state__icon"><i className="ti ti-mail" style={{ fontSize: '2rem' }} /></span>
                   <p className="empty-state__title">{t('tutor.dashboard.messages.empty_title')}</p>
                   <p style={{ color: 'var(--txt-tertiary)', fontSize: 'var(--tx-xs)' }}>{t('tutor.dashboard.messages.empty_desc')}</p>
                 </div>
@@ -234,7 +234,7 @@ export default function TutorDashboardPage() {
               <div className="stack stack--md">
                 <div className="row row--between" style={{ paddingBottom: 'var(--sp-4)', borderBottom: '1px solid var(--brd-subtle)', alignItems: 'center' }}>
                   <div className="row" style={{ alignItems: 'center', gap: 'var(--sp-3)' }}>
-                    <span style={{ fontSize: '1.5rem' }}>📝</span>
+                    <i className="ti ti-notes" style={{ fontSize: '1.5rem', color: 'var(--txt-secondary)' }} />
                     <div>
                       <span style={{ fontWeight: 'var(--fw-semibold)', display: 'block', color: 'var(--txt-primary)', fontSize: 'var(--tx-sm)' }}>{t('tutor.dashboard.submissions.drafts_title')}</span>
                       <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>{t('tutor.dashboard.submissions.drafts_desc')}</span>
@@ -245,7 +245,7 @@ export default function TutorDashboardPage() {
                
                 <div className="row row--between" style={{ paddingBottom: 'var(--sp-4)', borderBottom: '1px solid var(--brd-subtle)', alignItems: 'center' }}>
                   <div className="row" style={{ alignItems: 'center', gap: 'var(--sp-3)' }}>
-                    <span style={{ fontSize: '1.5rem' }}>⏳</span>
+                    <i className="ti ti-clock" style={{ fontSize: '1.5rem', color: 'var(--clr-warning)' }} />
                     <div>
                       <span style={{ fontWeight: 'var(--fw-semibold)', display: 'block', color: 'var(--txt-primary)', fontSize: 'var(--tx-sm)' }}>{t('tutor.dashboard.submissions.review_title')}</span>
                       <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>{t('tutor.dashboard.submissions.review_desc')}</span>
@@ -256,7 +256,7 @@ export default function TutorDashboardPage() {
                
                 <div className="row row--between" style={{ paddingBottom: 'var(--sp-4)', alignItems: 'center' }}>
                   <div className="row" style={{ alignItems: 'center', gap: 'var(--sp-3)' }}>
-                    <span style={{ fontSize: '1.5rem' }}>✅</span>
+                    <i className="ti ti-circle-check" style={{ fontSize: '1.5rem', color: 'var(--clr-success)' }} />
                     <div>
                       <span style={{ fontWeight: 'var(--fw-semibold)', display: 'block', color: 'var(--txt-primary)', fontSize: 'var(--tx-sm)' }}>{t('tutor.dashboard.submissions.published_title')}</span>
                       <span style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>{t('tutor.dashboard.submissions.published_desc')}</span>
