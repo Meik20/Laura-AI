@@ -314,20 +314,24 @@
       "subtitle": "Objectif actuel :",
       "tools": {
         "library": {
-          "title": "📚 Bibliothèque d'Annales",
-          "desc": "Accéder aux sujets officiels d'examens des années précédentes"
+          "title": "Bibliothèque d'Annales",
+          "desc": "Accéder aux sujets officiels d'examens des années précédentes",
+          "icon": "notes"
         },
         "frequent": {
-          "title": "🎯 Sujets fréquents",
-          "desc": "Consulter les thématiques qui tombent le plus souvent à l'examen"
+          "title": "Sujets fréquents",
+          "desc": "Consulter les thématiques qui tombent le plus souvent à l'examen",
+          "icon": "target"
         },
         "answers": {
-          "title": "✅ Corrigés types",
-          "desc": "Analyser les corrigés et critères de correction officiels"
+          "title": "Corrigés types",
+          "desc": "Analyser les corrigés et critères de correction officiels",
+          "icon": "circle-check"
         },
         "simulation": {
-          "title": "⏱️ Simulation chronométrée",
-          "desc": "S'entraîner en temps réel avec des conditions d'examen réelles"
+          "title": "Simulation chronométrée",
+          "desc": "S'entraîner en temps réel avec des conditions d'examen réelles",
+          "icon": "clock"
         }
       },
       "recommended": {
@@ -338,16 +342,19 @@
       "guided": {
         "title": "Préparation Guidée",
         "plan": {
-          "title": "🤖 Plan personnalisé",
-          "desc": "Demander un plan de préparation sur mesure à LAURA"
+          "title": "Plan personnalisé",
+          "desc": "Demander un plan de préparation sur mesure à LAURA",
+          "icon": "sparkles"
         },
         "frequent": {
-          "title": "🔍 Sujets fréquents",
-          "desc": "Réviser les sujets récurrents dans votre série"
+          "title": "Sujets fréquents",
+          "desc": "Réviser les sujets récurrents dans votre série",
+          "icon": "search"
         },
         "simulation": {
-          "title": "✍️ Simulation d'examen",
-          "desc": "Lancer une simulation complète en situation réelle"
+          "title": "Simulation d'examen",
+          "desc": "Lancer une simulation complète en situation réelle",
+          "icon": "pencil"
         }
       }
     },
@@ -1216,6 +1223,7 @@
       "overview": "Vue Globale",
       "users": "Utilisateurs",
       "applications": "Candidatures",
+      "tutors": "Codes Tuteurs",
       "catalogue": "Catalogue",
       "contributions": "Contributions",
       "submissions": "Soumissions",
@@ -1229,6 +1237,67 @@
       "submissions_short": "Soumissions",
       "resources": "Ressources",
       "settings_short": "Réglages"
+    },
+    "tutors": {
+      "title": "Codes d'Invitation Tuteurs",
+      "subtitle": "Créez et gérez les codes d'invitation pour les nouveaux tuteurs de la plateforme.",
+      "create_btn": "Créer un Code",
+      "loading": "Chargement des codes...",
+      "empty": "Aucun code d'invitation pour le moment.",
+      "error_loading": "Erreur lors du chargement des codes.",
+      "error_empty_fields": "Veuillez remplir au moins un champ.",
+      "error_invalid_count": "Veuillez entrer un nombre valide.",
+      "error_creating": "Erreur lors de la création du code.",
+      "error_deleting": "Erreur lors de la suppression du code.",
+      "confirm_delete": "Êtes-vous sûr de vouloir supprimer ce code d'invitation ?",
+      "success_created": "Code {{code}} créé avec succès !",
+      "success_bulk_created": "{{count}} codes créés avec succès !",
+      "success_deleted": "Code supprimé avec succès !",
+      "stats": {
+        "total": "Total des Codes",
+        "active": "Actifs",
+        "used": "Utilisés",
+        "expired": "Expirés"
+      },
+      "filters": {
+        "all": "Tous",
+        "active": "Actifs",
+        "used": "Utilisés",
+        "expired": "Expirés"
+      },
+      "table": {
+        "code": "Code",
+        "email": "Email",
+        "status": "Statut",
+        "created": "Créé",
+        "expires": "Expire",
+        "actions": "Actions"
+      },
+      "actions": {
+        "delete": "Supprimer"
+      },
+      "status": {
+        "active": "Actif",
+        "used": "Utilisé",
+        "expired": "Expiré"
+      },
+      "modal": {
+        "title": "Créer un Code d'Invitation",
+        "single": "Code Unique",
+        "bulk": "Création en Masse",
+        "code_label": "Code d'Invitation",
+        "code_placeholder": "Laissez vide pour générer automatiquement",
+        "code_help": "Format: LAURA-XXXX-XXXX (généré automatiquement si vide)",
+        "email_label": "Adresse Email (Optionnel)",
+        "email_placeholder": "email@example.com",
+        "notes_label": "Notes (Optionnel)",
+        "notes_placeholder": "Ex: Pour le programme de formation pédagogique",
+        "expires_label": "Date d'Expiration (Optionnel)",
+        "count_label": "Nombre de Codes",
+        "create_btn": "Créer le Code",
+        "create_bulk_btn": "Créer {{count}} Codes",
+        "saving": "Création en cours..."
+      }
     },
     "role_badge": "ADMINISTRATION",
     "role_label": "Admin",

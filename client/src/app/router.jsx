@@ -36,6 +36,7 @@ import TutorResourcesPage from '../pages/tutor/TutorResourcesPage';
 // Admin Pages
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
 import AdminUsersPage from '../pages/admin/AdminUsersPage';
+import AdminTutorsPage from '../pages/admin/AdminTutorsPage';
 import AdminTutorApplicationsPage from '../pages/admin/AdminTutorApplicationsPage';
 import AdminResourcesPage from '../pages/admin/AdminResourcesPage';
 import AdminContributionsPage from '../pages/admin/AdminContributionsPage';
@@ -100,6 +101,7 @@ export const router = createBrowserRouter([
       { path: 'dashboard', element: <AdminDashboardPage /> },
       { path: 'users', element: <AdminUsersPage /> },
       { path: 'tutor-applications', element: <AdminTutorApplicationsPage /> },
+      { path: 'tutors', element: <AdminTutorsPage /> },
       { path: 'resources', element: <AdminResourcesPage /> },
       { path: 'contributions', element: <AdminContributionsPage /> },
       { path: 'submissions', element: <AdminSubmissionsPage /> },

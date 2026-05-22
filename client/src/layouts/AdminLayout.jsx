@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { to: '/admin/dashboard',          labelKey: 'admin.nav.overview',       icon: 'layout-dashboard' },
   { to: '/admin/users',              labelKey: 'admin.nav.users',          icon: 'user-circle' },
   { to: '/admin/tutor-applications', labelKey: 'admin.nav.applications',   icon: 'clipboard-list' },
+  { to: '/admin/tutors',             labelKey: 'admin.nav.tutors',         icon: 'key' },
   { to: '/admin/resources',          labelKey: 'admin.nav.catalogue',      icon: 'folders' },
   { to: '/admin/contributions',      labelKey: 'admin.nav.contributions',  icon: 'upload' },
   { to: '/admin/submissions',        labelKey: 'admin.nav.submissions',    icon: 'file-upload' },

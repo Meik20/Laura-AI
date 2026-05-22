@@ -1,25 +1,35 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { validateInvitationCode } from '../../services/adminService';
 
 export default function BecomeTutorPage() {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [inviteCode, setInviteCode] = useState('');
   const [error, setError] = useState('');
+  const [isValidating, setIsValidating] = useState(false);
 
-  const handleValidateCode = (e) => {
+  const handleValidateCode = async (e) => {
     e.preventDefault();
     setError('');
+    setIsValidating(true);
+    
     const cleanCode = inviteCode.trim().toUpperCase();
     
-    // Codes d'invitation valides
-    const validCodes = ['LAURA2026', 'LAURA-TUTOR', 'CAMEROON-EDU', 'MEIK20'];
-    
-    if (validCodes.includes(cleanCode)) {
-      setShowModal(false);
-      navigate(`/tutor/apply?code=${cleanCode}`);
-    } else {
-      setError("Code d'invitation invalide ou expiré.");
+    try {
+      const result = await validateInvitationCode(cleanCode);
+      
+      if (result.valid) {
+        setShowModal(false);
+        navigate(`/tutor/apply?code=${cleanCode}`);
+      } else {
+        setError(result.message || "Code d'invitation invalide ou expiré.");
+      }
+    } catch (err) {
+      console.error('Error validating code:', err);
+      setError("Une erreur est survenue lors de la validation du code. Veuillez réessayer.");
+    } finally {
+      setIsValidating(false);
     }
   };
 
@@ -63,8 +73,9 @@ export default function BecomeTutorPage() {
                   type="submit" 
                   className="laura-btn laura-btn-primary"
                   style={{ flex: 2 }}
+                  disabled={isValidating}
                 >
-                  Valider
+                  {isValidating ? 'Vérification...' : 'Valider'}
                 </button>
               </div>
             </form>

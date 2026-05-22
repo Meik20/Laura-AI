@@ -4,6 +4,7 @@ import { db } from '../../firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../hooks/useAuth';
 import { uploadFile } from '../../utils/storage';
+import { markCodeAsUsed, validateInvitationCode } from '../../services/adminService';
 
 export default function TutorApplyPage() {
   const navigate = useNavigate();
@@ -75,7 +76,9 @@ export default function TutorApplyPage() {
         role: inviteCode ? 'teacher' : 'student'
       };
 
+      let userId;
       if (userProfile?.uid) {
+        userId = userProfile.uid;
         await setDoc(doc(db, 'users', userProfile.uid), {
           ...profileData,
           createdAt: userProfile.createdAt || new Date().toISOString()
@@ -86,7 +89,20 @@ export default function TutorApplyPage() {
           setIsLoading(false);
           return;
         }
-        await signup(formData.email, formData.password, profileData);
+        userId = await signup(formData.email, formData.password, profileData);
+      }
+
+      // Mark invitation code as used if provided
+      if (inviteCode && userId) {
+        try {
+          const codeValidation = await validateInvitationCode(inviteCode);
+          if (codeValidation.valid) {
+            await markCodeAsUsed(codeValidation.id, userId, formData.email);
+          }
+        } catch (err) {
+          console.error('Error marking code as used:', err);
+          // Don't fail the whole process if marking code fails
+        }
       }
 
       navigate('/tutor/status');
