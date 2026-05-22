@@ -44,9 +44,9 @@ export default function LearnExamsPage() {
       {/* HEADER */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>{t('learn.exams.title')}</h1>
-          <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
-            {t('learn.exams.subtitle')} <strong style={{ color: '#1A1A1A' }}>{profileContext.examen} {profileContext.serie ? `(${profileContext.serie})` : ''}</strong>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: 'var(--txt-primary)' }}>{t('learn.exams.title')}</h1>
+          <p style={{ margin: 0, color: 'var(--txt-secondary)', fontSize: '1.1rem' }}>
+            {t('learn.exams.subtitle')} <strong style={{ color: 'var(--txt-primary)' }}>{profileContext.examen} {profileContext.serie ? `(${profileContext.serie})` : ''}</strong>
           </p>
         </div>
       </div>
