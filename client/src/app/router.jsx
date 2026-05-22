@@ -44,6 +44,7 @@ import AdminAccessRulesPage from '../pages/admin/AdminAccessRulesPage';
 import AdminAuditPage from '../pages/admin/AdminAuditPage';
 import AdminSettingsPage from '../pages/admin/AdminSettingsPage';
 import AdminCommunityPage from '../pages/admin/AdminCommunityPage';
+import AdminSupportPage from '../pages/admin/AdminSupportPage';
 import LearnCommunityPage from '../pages/learn/LearnCommunityPage';
 
 export const router = createBrowserRouter([
@@ -106,6 +107,7 @@ export const router = createBrowserRouter([
       { path: 'audit', element: <AdminAuditPage /> },
       { path: 'settings', element: <AdminSettingsPage /> },
       { path: 'community', element: <AdminCommunityPage /> },
+      { path: 'support', element: <AdminSupportPage /> },
     ],
   },
   {

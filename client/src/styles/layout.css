@@ -429,6 +429,20 @@
 .laura-page-main  {}
 .laura-page-aside {}
 
+.l-page-aside,
+.laura-page-aside {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .l-page-aside,
+  .laura-page-aside {
+    position: sticky;
+    top: var(--sp-6);
+    align-self: start;
+  }
+}
+
 .laura-app  { display: contents; }
 .laura-shell { display: contents; }
 .laura-main { display: contents; }

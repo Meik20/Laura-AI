@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { to: '/admin/access-rules',       labelKey: 'admin.nav.access',         icon: 'shield' },
   { to: '/admin/audit',              labelKey: 'admin.nav.logs',           icon: 'history' },
   { to: '/admin/community',          labelKey: 'admin.nav.community',      icon: 'school' },
+  { to: '/admin/support',            labelKey: 'admin.nav.support',        icon: 'headset' },
   { to: '/admin/settings',           labelKey: 'admin.nav.settings',       icon: 'settings' },
 ];
 

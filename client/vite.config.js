@@ -20,6 +20,9 @@ export default defineConfig({
       filename: 'sw.js',
       registerType: 'autoUpdate',
       includeAssets: ['icon.png', 'logo.png'],
+      injectManifest: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024
+      },
       manifest: {
         name: 'LAURA - Learning AI & Unified Resource Assistant',
         short_name: 'LAURA',

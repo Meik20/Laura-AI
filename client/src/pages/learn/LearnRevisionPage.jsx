@@ -2,227 +2,423 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { collection, getDocs, addDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, addDoc, getDoc } from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
 
-const filterMatieres = (allMatieres, userProfile) => {
-  const examen = (userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || '').toLowerCase();
-  const niveau = (userProfile?.niveau || userProfile?.classe || userProfile?.niveauEtude || '').toLowerCase();
-  const serie = (userProfile?.serie || '').toLowerCase();
-  const filiere = (userProfile?.filiere || userProfile?.discipline || '').toLowerCase();
+/* ── Filter resources relevant to the current learner profile ── */
+const filterResourcesByProfile = (allResources, userProfile) => {
+  if (!userProfile) return allResources;
+  const examen  = (userProfile?.examen  || userProfile?.examenEleve  || userProfile?.examenEtudiant  || '').toLowerCase();
+  const niveau  = (userProfile?.niveau  || userProfile?.classe       || userProfile?.niveauEtude     || '').toLowerCase();
+  const serie   = (userProfile?.serie   || '').toLowerCase();
+  const filiere = (userProfile?.filiere || userProfile?.discipline   || '').toLowerCase();
 
-  // If user is BTS or Superior Level
-  const isBtsOrSup = examen.includes('bts') || niveau.includes('bts') || niveau.includes('supérieur') || niveau.includes('étudiant') || niveau.includes('licence') || niveau.includes('université');
-
-  if (!allMatieres || allMatieres.length === 0) return [];
-
-  return allMatieres.filter(m => {
-    const mNiveau = (m.niveau || '').toLowerCase();
-    const mSerie = (m.serie || '').toLowerCase();
-    const mFiliere = (m.filiere || '').toLowerCase();
-
-    if (isBtsOrSup) {
-      return mNiveau.includes('bts') || mNiveau.includes('supérieur') || mNiveau.includes('étudiant') || 
-             (filiere && mFiliere.includes(filiere)) || (serie && mSerie.includes(serie));
-    } else if (examen.includes('bepc') || niveau.includes('collège') || niveau.includes('3eme') || niveau.includes('4eme') || niveau.includes('5eme') || niveau.includes('6eme')) {
-      return mNiveau.includes('collège') || mNiveau.includes('bepc');
-    } else {
-      return mNiveau.includes('lycée') || mNiveau.includes('bac') || mSerie.includes('toutes') || 
-             (serie && mSerie.includes(serie));
-    }
+  return allResources.filter(r => {
+    const cible  = (r.cible  || '').toLowerCase();
+    const titre  = (r.titre  || '').toLowerCase();
+    const rExamen= (r.examen || '').toLowerCase();
+    const rNiveau= (r.niveau || '').toLowerCase();
+    const isBts  = examen.includes('bts') || niveau.includes('bts') || niveau.includes('supérieur');
+    const isCol  = examen.includes('bepc') || niveau.includes('collège');
+    if (isBts)  return cible.includes('bts') || rExamen.includes('bts') || (filiere && rExamen.includes(filiere));
+    if (isCol)  return cible.includes('collège') || cible.includes('bepc') || rExamen.includes('bepc');
+    const matchCible  = niveau && cible.includes(niveau);
+    const matchExamen = examen && (cible.includes(examen) || rExamen.includes(examen) || titre.includes(examen));
+    const matchSerie  = serie  && (cible.includes(serie)  || r.serie?.toLowerCase().includes(serie));
+    const matchAll    = cible === '' || cible.includes('tous');
+    return matchCible || matchExamen || matchSerie || matchAll;
   });
 };
+
+const TYPE_ICONS = { Quiz: '🎲', Annale: '📝', Épreuve: '📜', Fiche: '📋', Livre: '📖' };
+const getIcon = (type) => TYPE_ICONS[type] || '📚';
 
 export default function LearnRevisionPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { userProfile } = useAuth();
-  const [sessionConfig, setSessionConfig] = useState({
-    matiere: '', chapitre: '', type: 'Resume', duree: '30'
-  });
+
+  const [sessionType, setSessionType]       = useState('Resume');
+  const [duration, setDuration]             = useState('30');
+  const [isLoading, setIsLoading]           = useState(false);
+  const [resources, setResources]           = useState([]);
   const [recentSessions, setRecentSessions] = useState([]);
-  const [matieresList, setMatieresList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching]         = useState(true);
+  const [selectedResource, setSelectedResource] = useState(null);
+  const [search, setSearch]                 = useState('');
+  const [typeFilter, setTypeFilter]         = useState('');
 
   useEffect(() => {
-    async function fetchInitialData() {
-      const userMatieres = userProfile?.matieres || [];
-      setMatieresList(userMatieres.map(mName => ({ id: mName, nom: mName })));
-
-      // Fetch recent sessions
-      if (!userProfile?.uid) return;
+    async function fetchData() {
+      setIsFetching(true);
       try {
-        const sessionsSnap = await getDocs(collection(db, 'users', userProfile.uid, 'sessions'));
-        const docs = sessionsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        setRecentSessions(docs.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 3));
+        // Load published resources
+        const snap = await getDocs(collection(db, 'resources'));
+        const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const published = docs.filter(r => r.statut === 'publie');
+        setResources(filterResourcesByProfile(published, userProfile));
       } catch (err) {
-        console.error("Erreur de récupération des sessions de révision :", err);
+        console.error('Error fetching resources:', err);
       }
-    }
-    fetchInitialData();
-  }, [userProfile]);
 
-  const handleChange = (e) => setSessionConfig({ ...sessionConfig, [e.target.name]: e.target.value });
+      // Load recent sessions
+      if (userProfile?.uid) {
+        try {
+          const sessionsSnap = await getDocs(collection(db, 'users', userProfile.uid, 'sessions'));
+          const ses = sessionsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          setRecentSessions(ses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 4));
+        } catch (err) {
+          console.error('Error fetching sessions:', err);
+        }
+      }
+      setIsFetching(false);
+    }
+    fetchData();
+  }, [userProfile]);
 
   const handleStartSession = async (e) => {
     e.preventDefault();
-    if (!sessionConfig.matiere || !sessionConfig.chapitre) {
-      alert(t('learn.revision.new_session.alert_missing', "Veuillez renseigner la matière et le chapitre à réviser."));
-      return;
-    }
+    if (!selectedResource) return;
 
     setIsLoading(true);
+
     const sessionObj = {
-      ...sessionConfig,
-      status: 'En cours',
-      createdAt: new Date().toISOString()
+      resourceId:   selectedResource.id,
+      resourceTitle: selectedResource.titre,
+      resourceType:  selectedResource.type,
+      resourceUrl:   selectedResource.url || null,
+      matiere:       selectedResource.matiere || selectedResource.cible || '',
+      chapitre:      selectedResource.titre,
+      type:          sessionType,
+      duree:         duration,
+      status:        'En cours',
+      createdAt:     new Date().toISOString()
     };
 
     if (userProfile?.uid) {
       try {
         const docRef = await addDoc(collection(db, 'users', userProfile.uid, 'sessions'), sessionObj);
-        navigate(`/learn/chat?sessionId=${docRef.id}&matiere=${encodeURIComponent(sessionConfig.matiere)}&chapitre=${encodeURIComponent(sessionConfig.chapitre)}&type=${encodeURIComponent(sessionConfig.type)}`);
+        const params = new URLSearchParams({
+          sessionId:    docRef.id,
+          resourceId:   selectedResource.id,
+          resourceTitle: selectedResource.titre,
+          matiere:      selectedResource.matiere || selectedResource.cible || '',
+          chapitre:     selectedResource.titre,
+          type:         sessionType
+        });
+        navigate(`/learn/chat?${params.toString()}`);
       } catch (err) {
-        console.error("Erreur lors de la création de la session :", err);
-        alert(t('learn.revision.new_session.alert_error', "Erreur de création de la session."));
+        console.error('Session creation error:', err);
+        alert(t('learn.revision.new_session.alert_error', 'Erreur de création de la session.'));
       } finally {
         setIsLoading(false);
       }
     } else {
-      navigate(`/learn/chat?matiere=${encodeURIComponent(sessionConfig.matiere)}&chapitre=${encodeURIComponent(sessionConfig.chapitre)}`);
+      const params = new URLSearchParams({
+        resourceId:   selectedResource.id,
+        resourceTitle: selectedResource.titre,
+        matiere:      selectedResource.matiere || selectedResource.cible || '',
+        chapitre:     selectedResource.titre,
+        type:         sessionType
+      });
+      navigate(`/learn/chat?${params.toString()}`);
     }
   };
 
+  // Filter displayed resources
+  const displayedResources = resources.filter(r => {
+    const matchSearch = !search || r.titre?.toLowerCase().includes(search.toLowerCase()) || r.matiere?.toLowerCase().includes(search.toLowerCase());
+    const matchType   = !typeFilter || r.type === typeFilter;
+    return matchSearch && matchType;
+  });
+
+  const SESSION_TYPES = [
+    { value: 'Resume',   label: 'Résumé de cours',         icon: '📖' },
+    { value: 'Quiz',     label: 'Quiz interactif',          icon: '🎲' },
+    { value: 'Exercice', label: "Exercices corrigés",       icon: '✍️' },
+    { value: 'Examen',   label: "Simulation d'examen",     icon: '🎯' },
+  ];
+
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      
-      {/* HEADER */}
-      <div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#1A1A1A' }}>{t('learn.revision.title', 'Révision Guidée')}</h1>
-        <p style={{ margin: 0, color: '#6E6E6B', fontSize: '1.1rem' }}>
-          {t('learn.revision.subtitle', 'Configurez votre session de révision avec LAURA selon le programme officiel.')}
-        </p>
+    <div className="stack stack--lg animate-in">
+
+      {/* Header */}
+      <div className="page-header">
+        <div>
+          <h1 className="laura-h1">{t('learn.revision.title', 'Révision Guidée')}</h1>
+          <p style={{ margin: 'var(--sp-1) 0 0', color: 'var(--txt-secondary)', fontSize: 'var(--tx-sm)' }}>
+            {t('learn.revision.subtitle', 'Sélectionnez un cours ou une épreuve réelle pour lancer votre session avec LAURA.')}
+          </p>
+        </div>
       </div>
 
-      <div className="asymmetrical-grid">
-        
-        {/* CONFIGURATION DE LA SESSION */}
-        <div className="learn-card">
-          <h2 style={{ fontSize: '1.5rem', margin: '0 0 2rem 0', fontWeight: 800 }}>{t('learn.revision.new_session.title', 'Nouvelle session')}</h2>
-          
-          <form onSubmit={handleStartSession} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div className="form-grid">
-              <div>
-                <label>{t('learn.revision.new_session.subject', 'Matière (Programme Officiel) *')}</label>
-                <input
-                  type="text"
-                  name="matiere"
-                  required
-                  value={sessionConfig.matiere}
-                  onChange={handleChange}
-                  list="revision-matiere-suggestions"
-                  placeholder={t('learn.revision.new_session.subject_placeholder', 'Sélectionner ou saisir une matière')}
-                  style={{ width: '100%' }}
-                />
-                <datalist id="revision-matiere-suggestions">
-                  {matieresList.map(m => (
-                    <option key={m.id} value={m.nom} />
-                  ))}
-                </datalist>
-              </div>
-              <div>
-                <label>{t('learn.revision.new_session.chapter', 'Chapitre *')}</label>
-                <input type="text" name="chapitre" required placeholder={t('learn.revision.new_session.chapter_placeholder', 'ex: Nombres complexes')} value={sessionConfig.chapitre} onChange={handleChange} style={{ width: '100%' }} />
-              </div>
-            </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 'var(--sp-6)', alignItems: 'start' }}>
 
-            <div className="form-grid">
-              <div>
-                <label>{t('learn.revision.new_session.type', 'Type de session')}</label>
-                <input
-                  type="text"
-                  name="type"
-                  value={sessionConfig.type}
-                  onChange={handleChange}
-                  list="revision-type-suggestions"
-                  placeholder={t('learn.revision.new_session.type_summary', 'Résumé de cours')}
-                  style={{ width: '100%' }}
-                />
-                <datalist id="revision-type-suggestions">
-                  <option value="Resume">{t('learn.revision.new_session.type_summary', 'Résumé de cours')}</option>
-                  <option value="Quiz">{t('learn.revision.new_session.type_quiz', 'Générer un Quiz')}</option>
-                  <option value="Exercice">{t('learn.revision.new_session.type_exercise', "Résolution d'exercice")}</option>
-                  <option value="Examen">{t('learn.revision.new_session.type_exam', 'Préparation Examen')}</option>
-                </datalist>
-              </div>
-              <div>
-                <label>{t('learn.revision.new_session.duration', 'Durée souhaitée (minutes)')}</label>
-                <input
-                  type="text"
-                  name="duree"
-                  value={sessionConfig.duree}
-                  onChange={handleChange}
-                  list="revision-duree-suggestions"
-                  placeholder={t('learn.revision.new_session.duration_30', '30 min (Standard)')}
-                  style={{ width: '100%' }}
-                />
-                <datalist id="revision-duree-suggestions">
-                  <option value="15">{t('learn.revision.new_session.duration_15', '15 min (Rapide)')}</option>
-                  <option value="30">{t('learn.revision.new_session.duration_30', '30 min (Standard)')}</option>
-                  <option value="60">{t('learn.revision.new_session.duration_60', '1h (Approfondi)')}</option>
-                  <option value="90">90 min</option>
-                  <option value="120">2h</option>
-                </datalist>
-              </div>
-            </div>
+        {/* ── Left: Resource Picker ── */}
+        <div className="card" style={{ padding: 'var(--sp-6)' }}>
+          <h2 className="laura-h3" style={{ margin: '0 0 var(--sp-1)' }}>
+            📚 {t('learn.revision.pick_resource', 'Choisissez un document de base')}
+          </h2>
+          <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', margin: '0 0 var(--sp-4)' }}>
+            La session sera contextualisée sur ce document. LAURA basera toutes ses réponses sur son contenu réel.
+          </p>
 
-            <button type="submit" disabled={isLoading} className="primary" style={{ width: '100%', height: '36px', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {isLoading ? t('learn.revision.new_session.start_loading', 'Démarrage en cours...') : t('learn.revision.new_session.start_btn', 'Démarrer la session')}
-            </button>
-          </form>
+          {/* Search + type filter */}
+          <div style={{ display: 'flex', gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)', flexWrap: 'wrap' }}>
+            <input
+              type="text"
+              placeholder="Rechercher par titre ou matière..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ flex: '2 1 180px' }}
+            />
+            <select
+              value={typeFilter}
+              onChange={e => setTypeFilter(e.target.value)}
+              style={{ flex: '1 1 130px' }}
+            >
+              <option value="">Tous les types</option>
+              <option value="Épreuve">📜 Épreuve</option>
+              <option value="Annale">📝 Annale</option>
+              <option value="Fiche">📋 Fiche de cours</option>
+              <option value="Quiz">🎲 Quiz</option>
+              <option value="Livre">📖 Livre</option>
+            </select>
+          </div>
+
+          {/* Resource list */}
+          {isFetching ? (
+            <div className="empty-state">
+              <span className="empty-state__icon">⏳</span>
+              <p className="empty-state__title">Chargement des ressources...</p>
+            </div>
+          ) : displayedResources.length === 0 ? (
+            <div className="empty-state">
+              <span className="empty-state__icon">🔍</span>
+              <p className="empty-state__title">Aucune ressource trouvée</p>
+              <p style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-tertiary)' }}>
+                Essayez de changer les filtres ou explorez la{' '}
+                <button
+                  onClick={() => navigate('/learn/resources')}
+                  style={{ background: 'none', border: 'none', color: 'var(--clr-brand)', cursor: 'pointer', padding: 0, fontWeight: 'bold', fontSize: 'inherit' }}
+                >
+                  bibliothèque de ressources
+                </button>
+                .
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)', maxHeight: '420px', overflowY: 'auto' }} className="no-scrollbar">
+              {displayedResources.map(res => {
+                const isSelected = selectedResource?.id === res.id;
+                return (
+                  <div
+                    key={res.id}
+                    onClick={() => setSelectedResource(isSelected ? null : res)}
+                    style={{
+                      padding: 'var(--sp-4)',
+                      borderRadius: 'var(--rd-lg)',
+                      border: `2px solid ${isSelected ? 'var(--clr-brand)' : 'var(--brd-subtle)'}`,
+                      background: isSelected ? 'var(--clr-brand-lt, rgba(79,110,247,0.08))' : 'var(--srf-raised)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      gap: 'var(--sp-4)',
+                      alignItems: 'center',
+                      transition: 'all var(--dur-fast)'
+                    }}
+                  >
+                    <span style={{ fontSize: '1.8rem', flexShrink: 0 }}>{getIcon(res.type)}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)', color: 'var(--txt-primary)', marginBottom: 'var(--sp-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {res.titre || 'Sans titre'}
+                      </div>
+                      <div style={{ display: 'flex', gap: 'var(--sp-2)', flexWrap: 'wrap' }}>
+                        {res.type   && <span className="badge">{res.type}</span>}
+                        {res.cible  && <span className="badge badge--brand">{res.cible}</span>}
+                        {res.matiere && <span className="badge badge--green">{res.matiere}</span>}
+                      </div>
+                    </div>
+                    <div style={{
+                      width: '22px', height: '22px', borderRadius: '50%', flexShrink: 0,
+                      border: `2px solid ${isSelected ? 'var(--clr-brand)' : 'var(--brd-default)'}`,
+                      background: isSelected ? 'var(--clr-brand)' : 'transparent',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      transition: 'all var(--dur-fast)'
+                    }}>
+                      {isSelected && <span style={{ color: 'white', fontSize: '12px', lineHeight: 1 }}>✓</span>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* SESSIONS RÉCENTES & ACTIONS */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          
-          <div className="learn-card" style={{ background: '#1A1A1A', color: 'white' }}>
-            <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '14px', fontWeight: 500, color: 'white' }}>{t('learn.revision.help.title', "Besoin d'aide ?")}</h3>
-            <p style={{ color: '#94A3B8', fontSize: '12px', lineHeight: 1.5, marginBottom: '1rem' }}>
-              {t('learn.revision.help.desc', "Vous ne savez pas par quoi commencer ? Demandez à LAURA de créer un programme de révision sur mesure.")}
-            </p>
-            <button onClick={() => navigate('/learn/chat?prompt=programme_revision')} style={{ width: '100%', height: '32px', background: 'white', color: '#1A1A1A', border: 'none', borderRadius: '6px', fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
-              {t('learn.revision.help.btn', 'Demander à LAURA')}
-            </button>
-          </div>
- 
-          <div className="learn-card" style={{ padding: 0, overflow: 'hidden' }}>
-            <div style={{ padding: '1rem 1rem 0.5rem 1rem' }}>
-              <h3 style={{ margin: 0, fontSize: '13px', fontWeight: 500, color: 'var(--color-text-primary)' }}>{t('learn.revision.resume.title', 'Reprendre une session')}</h3>
-            </div>
-            <div className="divider" />
-            {recentSessions.length === 0 ? (
-              <div style={{ fontSize: '12px', color: '#6E6E6B', padding: '1rem' }}>{t('learn.revision.resume.empty', 'Aucune session récente inachevée.')}</div>
+        {/* ── Right: Session Config + Recent Sessions ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+
+          {/* Session config form */}
+          <div className="card" style={{ padding: 'var(--sp-6)' }}>
+            <h2 className="laura-h3" style={{ margin: '0 0 var(--sp-4)' }}>⚙️ Configurer la session</h2>
+
+            {/* Selected resource badge */}
+            {selectedResource ? (
+              <div style={{
+                padding: 'var(--sp-3) var(--sp-4)',
+                borderRadius: 'var(--rd-md)',
+                background: 'var(--clr-brand-lt, rgba(79,110,247,0.08))',
+                border: '1px solid var(--clr-brand)',
+                marginBottom: 'var(--sp-4)',
+                display: 'flex',
+                gap: 'var(--sp-3)',
+                alignItems: 'center'
+              }}>
+                <span style={{ fontSize: '1.3rem' }}>{getIcon(selectedResource.type)}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ margin: 0, fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', color: 'var(--clr-brand)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {selectedResource.titre}
+                  </p>
+                  <p style={{ margin: 0, fontSize: '10px', color: 'var(--txt-tertiary)' }}>
+                    {selectedResource.type} · {selectedResource.cible || 'Tous niveaux'}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSelectedResource(null)}
+                  style={{ background: 'none', border: 'none', color: 'var(--txt-tertiary)', cursor: 'pointer', fontSize: '16px', flexShrink: 0, padding: 0 }}
+                  aria-label="Désélectionner"
+                >
+                  ✕
+                </button>
+              </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {recentSessions.map(session => (
-                  <div 
-                    key={session.id} 
-                    className="minimal-list-item" 
-                    onClick={() => navigate(`/learn/chat?sessionId=${session.id}&matiere=${encodeURIComponent(session.matiere)}&chapitre=${encodeURIComponent(session.chapitre)}`)}
-                  >
-                    <div className="minimal-list-item-content">
-                      <div className="minimal-list-item-title">{session.type} : {session.chapitre}</div>
-                      <div className="minimal-list-item-subtitle">{session.matiere} · {session.duree} min</div>
-                    </div>
-                    <span className="chevron-action">→</span>
-                  </div>
-                ))}
+              <div style={{
+                padding: 'var(--sp-3)',
+                borderRadius: 'var(--rd-md)',
+                background: 'var(--srf-raised)',
+                border: '1px dashed var(--brd-default)',
+                marginBottom: 'var(--sp-4)',
+                textAlign: 'center',
+                fontSize: 'var(--tx-xs)',
+                color: 'var(--txt-tertiary)'
+              }}>
+                ← Sélectionnez un document à gauche
               </div>
             )}
+
+            <form onSubmit={handleStartSession} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              {/* Session type */}
+              <div className="form-group">
+                <label style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-semibold)', marginBottom: 'var(--sp-2)', display: 'block' }}>
+                  Type de session
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-2)' }}>
+                  {SESSION_TYPES.map(st => (
+                    <button
+                      key={st.value}
+                      type="button"
+                      onClick={() => setSessionType(st.value)}
+                      style={{
+                        padding: 'var(--sp-2) var(--sp-3)',
+                        borderRadius: 'var(--rd-md)',
+                        border: `1.5px solid ${sessionType === st.value ? 'var(--clr-brand)' : 'var(--brd-subtle)'}`,
+                        background: sessionType === st.value ? 'var(--clr-brand-lt, rgba(79,110,247,0.1))' : 'var(--srf-raised)',
+                        color: sessionType === st.value ? 'var(--clr-brand)' : 'var(--txt-secondary)',
+                        cursor: 'pointer',
+                        fontSize: '11px',
+                        fontWeight: sessionType === st.value ? 'var(--fw-bold)' : 'normal',
+                        textAlign: 'center',
+                        transition: 'all var(--dur-fast)'
+                      }}
+                    >
+                      {st.icon} {st.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Duration */}
+              <div className="form-group">
+                <label style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-semibold)', marginBottom: 'var(--sp-2)', display: 'block' }}>
+                  Durée souhaitée
+                </label>
+                <select value={duration} onChange={e => setDuration(e.target.value)} style={{ width: '100%' }}>
+                  <option value="15">⚡ 15 min (Rapide)</option>
+                  <option value="30">📖 30 min (Standard)</option>
+                  <option value="60">🎓 1h (Approfondi)</option>
+                  <option value="90">🏆 1h30</option>
+                  <option value="120">🏅 2h (Examen complet)</option>
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading || !selectedResource}
+                className="laura-btn laura-btn-primary"
+                style={{ width: '100%', justifyContent: 'center', minHeight: '44px', fontSize: 'var(--tx-sm)', marginTop: 'var(--sp-2)', opacity: !selectedResource ? 0.5 : 1 }}
+              >
+                {isLoading
+                  ? '⏳ Démarrage...'
+                  : selectedResource
+                    ? `🚀 Démarrer la session`
+                    : '← Sélectionnez d\'abord un document'
+                }
+              </button>
+
+              {!selectedResource && (
+                <p style={{ fontSize: '10px', textAlign: 'center', color: 'var(--txt-tertiary)', margin: 0 }}>
+                  Une session ne peut être lancée que sur la base d'un cours ou d'une épreuve réelle.
+                </p>
+              )}
+            </form>
           </div>
 
-        </div>
+          {/* Recent sessions */}
+          {recentSessions.length > 0 && (
+            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+              <div style={{ padding: 'var(--sp-4)', borderBottom: '1px solid var(--brd-subtle)' }}>
+                <h3 className="laura-h3" style={{ margin: 0, fontSize: 'var(--tx-sm)' }}>🕘 Sessions récentes</h3>
+              </div>
+              {recentSessions.map(session => (
+                <div
+                  key={session.id}
+                  onClick={() => {
+                    const params = new URLSearchParams({ sessionId: session.id, matiere: session.matiere || '', chapitre: session.chapitre || '' });
+                    if (session.resourceId) params.set('resourceId', session.resourceId);
+                    navigate(`/learn/chat?${params.toString()}`);
+                  }}
+                  style={{
+                    padding: 'var(--sp-3) var(--sp-4)',
+                    borderBottom: '1px solid var(--brd-subtle)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--sp-3)',
+                    transition: 'background var(--dur-fast)'
+                  }}
+                  className="hoverable-row"
+                >
+                  <span style={{ fontSize: '1.2rem' }}>{getIcon(session.resourceType || session.type)}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ margin: 0, fontSize: '12px', fontWeight: 'var(--fw-semibold)', color: 'var(--txt-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {session.resourceTitle || session.chapitre}
+                    </p>
+                    <p style={{ margin: 0, fontSize: '10px', color: 'var(--txt-tertiary)' }}>
+                      {session.type} · {session.duree} min
+                    </p>
+                  </div>
+                  <span style={{ color: 'var(--txt-tertiary)', fontSize: '14px' }}>→</span>
+                </div>
+              ))}
+            </div>
+          )}
 
+          {/* Tip card */}
+          <div style={{ padding: 'var(--sp-4)', borderRadius: 'var(--rd-lg)', background: 'var(--srf-sidebar)', border: '1px solid var(--brd-subtle)' }}>
+            <p style={{ margin: 0, fontSize: '11px', color: 'var(--txt-secondary)', lineHeight: '1.5' }}>
+              💡 <strong>Astuce :</strong> Pour de meilleures révisions, LAURA analyse le contenu réel de l'épreuve ou du cours sélectionné et adapte ses explications en conséquence.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

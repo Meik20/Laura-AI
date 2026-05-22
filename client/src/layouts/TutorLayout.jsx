@@ -3,6 +3,7 @@ import { useContext, useState, useCallback, useEffect } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import SupportWidget from '../components/SupportWidget';
 
 const NAV_ITEMS = [
   { to: '/tutor/dashboard',   labelKey: 'tutor.nav.dashboard',    icon: 'layout-dashboard' },
@@ -181,6 +182,9 @@ export default function TutorLayout() {
           </NavLink>
         ))}
       </nav>
+
+      {/* Support widget */}
+      <SupportWidget />
     </div>
   );
 }

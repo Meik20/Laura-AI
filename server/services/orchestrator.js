@@ -90,9 +90,26 @@ class Orchestrator {
   /**
    * Build the structured system prompt for LAURA with user context and conversation history
    */
-  buildSystemPrompt(mode, userName, profileString, attachedFileName, ragContext, query, historyText, userLang = 'fr', userNiveau = '', userSerie = '', userExamen = '') {
+  buildSystemPrompt(mode, userName, profileString, attachedFileName, ragContext, query, historyText, userLang = 'fr', userNiveau = '', userSerie = '', userExamen = '', documentContext = null) {
     const isDevoir = mode === 'devoir';
     const isEnglish = (userLang || '').toLowerCase().startsWith('en');
+
+    // ── Build document context block (injected just before the query) ──────
+    let docBlock = '';
+    if (documentContext) {
+      const docTitle   = documentContext.titre   || 'Document';
+      const docType    = documentContext.type    || (isEnglish ? 'Course/Exam' : 'Cours / Épreuve');
+      const docMatiere = documentContext.matiere || (isEnglish ? 'General' : 'Générale');
+      const docText    = documentContext.extractedText
+        ? documentContext.extractedText.slice(0, 8000)
+        : null;
+
+      if (isEnglish) {
+        docBlock = `\nDOCUMENT-BASED SESSION (MANDATORY RULES):\nThis revision session is STRICTLY based on the following real document. ALL your responses, explanations, quizzes, exercises and summaries MUST be drawn EXCLUSIVELY from this document. Do NOT invent content not found in this document.\n- Document Title: ${docTitle}\n- Type: ${docType}\n- Subject: ${docMatiere}\n${docText ? `\n--- FULL DOCUMENT CONTENT (use this as your PRIMARY knowledge source) ---\n${docText}\n--- END OF DOCUMENT CONTENT ---` : '- (Full text not available — rely on the document title and subject to contextualize all responses.)'}\n`;
+      } else {
+        docBlock = `\nCONTEXTE DOCUMENTAIRE DE LA SESSION (RÈGLES ABSOLUES) :\nCette session de révision est STRICTEMENT basée sur le document réel suivant. TOUTES tes réponses, explications, quiz, exercices et résumés DOIVENT être tirés EXCLUSIVEMENT du contenu de ce document. N'invente AUCUN contenu absent de ce document.\n- Titre : ${docTitle}\n- Type : ${docType}\n- Matière : ${docMatiere}\n${docText ? `\n--- CONTENU COMPLET DU DOCUMENT (utilise ceci comme SOURCE PRIMAIRE de connaissance) ---\n${docText}\n--- FIN DU CONTENU DU DOCUMENT ---` : '- (Texte complet non disponible — base toutes tes réponses sur le titre et la matière du document.)'}\n`;
+      }
+    }
 
     if (isEnglish) {
       return `You are LAURA, the caring, rigorous, and highly effective AI tutor tailored for the Cameroonian educational curriculum.
@@ -146,7 +163,7 @@ ${historyText || '(No previous exchanges)'}
 
 COURSE CONTEXT (RAG):
 ${ragContext}
-
+${docBlock}
 ${isDevoir ? `LEARNER'S REQUEST: ${query}` : `LEARNER'S QUESTION: ${query}`}`;
     }
 
@@ -202,14 +219,14 @@ ${historyText || '(Aucun échange préalable)'}
 
 CONTEXTE DE COURS (RAG) :
 ${ragContext}
-
+${docBlock}
 ${isDevoir ? `REQUÊTE DE L'ÉLÈVE : ${query}` : `QUESTION DE L'ÉLÈVE : ${query}`}`;
   }
 
   /**
    * Main chat handling logic with Advanced Strategies
    */
-  async handleChat(query, userContext = {}, mode = 'revision', history = []) {
+  async handleChat(query, userContext = {}, mode = 'revision', history = [], documentContext = null) {
     const userName = userContext?.prenom || "l'élève";
     const userNiveau = userContext?.niveau && userContext.niveau !== 'Non défini' ? userContext.niveau : "";
     const userExamen = userContext?.examen && userContext.examen !== 'Non défini' ? userContext.examen : "";
@@ -217,13 +234,16 @@ ${isDevoir ? `REQUÊTE DE L'ÉLÈVE : ${query}` : `QUESTION DE L'ÉLÈVE : ${que
 
     const userLang = userContext?.lang || 'fr';
     const isEnglish = userLang.toLowerCase().startsWith('en');
-    const cacheKey = `${mode}:${userNiveau}:${userSerie}:${userLang}:${query.toLowerCase()}`;
+    // Skip cache when session is tied to a specific document (for accuracy)
+    const cacheKey = documentContext ? null : `${mode}:${userNiveau}:${userSerie}:${userLang}:${query.toLowerCase()}`;
 
-    // 0. Cache Check
-    try {
-      const cached = await cacheService.get(cacheKey);
-      if (cached) return JSON.parse(cached);
-    } catch (e) {}
+    // 0. Cache Check (skipped if documentContext is present)
+    if (cacheKey) {
+      try {
+        const cached = await cacheService.get(cacheKey);
+        if (cached) return JSON.parse(cached);
+      } catch (e) {}
+    }
 
     const { model: targetModels, strategy } = this.classifyQuery(query);
     const searchResults = await ragService.search(query);
@@ -253,7 +273,7 @@ ${isDevoir ? `REQUÊTE DE L'ÉLÈVE : ${query}` : `QUESTION DE L'ÉLÈVE : ${que
         .join('\n');
     }
 
-    let basePrompt = this.buildSystemPrompt(mode, userName, profileString, attachedFileName, ragContext, query, historyText, userLang, userNiveau, userSerie, userExamen);
+    let basePrompt = this.buildSystemPrompt(mode, userName, profileString, attachedFileName, ragContext, query, historyText, userLang, userNiveau, userSerie, userExamen, documentContext);
 
     let responseText = "";
     let finalModelUsed = "";

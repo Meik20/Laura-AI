@@ -159,10 +159,10 @@ app.post('/api/analyze-base64', async (req, res) => {
 
 // AI Orchestration Route
 app.post('/api/chat', async (req, res) => {
-  const { message, mode, userContext, history } = req.body;
+  const { message, mode, userContext, history, documentContext } = req.body;
   
   try {
-    const result = await orchestrator.handleChat(message, userContext, mode, history);
+    const result = await orchestrator.handleChat(message, userContext, mode, history, documentContext);
     res.json(result);
   } catch (error) {
     console.error('Orchestration error:', error);

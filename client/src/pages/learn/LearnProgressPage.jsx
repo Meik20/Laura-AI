@@ -133,7 +133,7 @@ export default function LearnProgressPage() {
         </div>
       </div>
 
-      <div className="two-column-grid">
+      <div className="l-page-grid">
         
         {/* PAR MATIÈRE */}
         <div className="learn-card">
@@ -153,7 +153,7 @@ export default function LearnProgressPage() {
         </div>
  
         {/* OBJECTIFS EN COURS */}
-        <div className="learn-card">
+        <div className="learn-card l-page-aside">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>{t('learn.progress.goals.title', 'Objectifs en cours')}</h2>
             <button onClick={() => setIsGoalModalOpen(true)} style={{ background: '#F5F4EF', border: 'none', padding: '0.4rem 1rem', borderRadius: '2rem', cursor: 'pointer', fontWeight: 600, transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#E5E5E2'} onMouseLeave={e => e.currentTarget.style.background = '#F5F4EF'}>{t('learn.progress.goals.new_btn', '+ Nouveau')}</button>
