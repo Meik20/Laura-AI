@@ -181,7 +181,7 @@ export default function TutorChatPage() {
     <div className="chat-wrapper">
       
       {/* HEADER */}
-      <div className="row row--between desktop-only" style={{ marginBottom: 'var(--sp-4)', flexShrink: 0 }}>
+      <div className="row row--between" style={{ marginBottom: 'var(--sp-4)', flexShrink: 0 }}>
         <div>
           <h1 className="laura-h2" style={{ margin: 0 }}>{t('tutor.chat.title', 'Chat Pédagogique')}</h1>
           <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', margin: 0 }}>
@@ -201,9 +201,9 @@ export default function TutorChatPage() {
             }
           }} 
           className="laura-btn laura-btn-ghost"
-          style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)' }}
+          style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
         >
-          {t('tutor.chat.new_chat', '🗑️ Nouveau Chat')}
+          <i className="ti ti-trash"></i> {t('tutor.chat.new_chat', 'Nouveau Chat')}
         </button>
       </div>
 
@@ -216,7 +216,7 @@ export default function TutorChatPage() {
           <div className="chat-messages no-scrollbar" style={{ padding: 'var(--sp-5)' }}>
             {isInitializing ? (
               <div className="empty-state" style={{ margin: 'auto' }}>
-                <span className="empty-state__icon">⏳</span>
+                <span className="empty-state__icon"><i className="ti ti-loader-2" style={{ fontSize: '2.5rem', color: 'var(--clr-brand)' }}></i></span>
                 <p className="empty-state__title">{t('tutor.chat.loading_session', 'Chargement de la session...')}</p>
               </div>
             ) : (
@@ -265,7 +265,7 @@ export default function TutorChatPage() {
                     <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>{t('tutor.chat.attached_doc', '📎 Document :')}</span>
                     <span className="badge badge--brand">{attachedFile.name}</span>
                   </div>
-                  <button onClick={() => setAttachedFile(null)} className="laura-btn laura-btn-ghost" style={{ padding: 0, minHeight: 'auto', minWidth: 'auto', color: 'var(--clr-error)' }}>✕</button>
+                  <button onClick={() => setAttachedFile(null)} className="laura-btn laura-btn-ghost" style={{ padding: 0, minHeight: 'auto', minWidth: 'auto', color: 'var(--clr-error)' }}><i className="ti ti-x"></i></button>
                 </div>
                 <div className="row" style={{ gap: 'var(--sp-2)', flexWrap: 'wrap' }}>
                   <button 
@@ -284,8 +284,8 @@ export default function TutorChatPage() {
             )}
 
             <div className="row" style={{ gap: 'var(--sp-2)', marginBottom: 'var(--sp-3)', alignItems: 'center' }}>
-              <label className="chip" style={{ cursor: 'pointer', margin: 0, background: 'var(--srf-base)' }}>
-                <span>📎</span> {t('tutor.chat.attach_file', 'Joindre un fichier / cours')}
+            <label className="chip" style={{ cursor: 'pointer', margin: 0, background: 'var(--srf-base)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                <i className="ti ti-paperclip"></i> {t('tutor.chat.attach_file', 'Joindre un fichier / cours')}
                 <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
               </label>
             </div>
@@ -310,7 +310,7 @@ export default function TutorChatPage() {
                 className="laura-btn laura-btn-primary"
                 style={{ position: 'absolute', right: '12px', bottom: '12px', minHeight: '38px', minWidth: '38px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                {isLoading ? '...' : '→'}
+                {isLoading ? <i className="ti ti-loader-2"></i> : <i className="ti ti-send"></i>}
               </button>
             </div>
           </div>

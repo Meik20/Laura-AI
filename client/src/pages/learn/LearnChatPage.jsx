@@ -140,7 +140,8 @@ export default function LearnChatPage() {
   const [activeSessionId, setActiveSessionId] = useState(null);
   const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
   const [secondsElapsed, setSecondsElapsed] = useState(0);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Sidebar is open by default on desktop when a session document is present
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
   const [checkedMilestones, setCheckedMilestones] = useState({
     start: true,
     theory: false,
@@ -533,7 +534,7 @@ export default function LearnChatPage() {
             border: '1px solid color-mix(in srgb, var(--clr-brand) 25%, transparent)',
             marginBottom: 'var(--sp-3)'
           }}>
-            <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>📄</span>
+            <i className="ti ti-file-text" style={{ fontSize: '1.3rem', flexShrink: 0, color: 'var(--clr-brand)' }}></i>
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{ margin: 0, fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', color: 'var(--clr-brand)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {sessionDocument.titre}
@@ -558,7 +559,7 @@ export default function LearnChatPage() {
                 border: '1px solid var(--brd-subtle)',
                 fontWeight: 600
               }}>
-                ⏱️ {formatTime(secondsElapsed)}
+                <i className="ti ti-clock" style={{ color: 'var(--clr-brand)', flexShrink: 0 }}></i> {formatTime(secondsElapsed)}
               </div>
 
               {/* Sidebar assimilation panel toggle */}
@@ -596,10 +597,13 @@ export default function LearnChatPage() {
                     color: 'white',
                     border: 'none',
                     boxShadow: '0 2px 8px rgba(34,197,94,0.3)',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px'
                   }}
                 >
-                  🎯 <span className="desktop-only">Terminer & Valider</span><span className="mobile-only">Valider</span>
+                  <i className="ti ti-circle-check"></i> <span className="desktop-only">Terminer & Valider</span><span className="mobile-only">Valider</span>
                 </button>
               )}
             </div>
@@ -623,9 +627,9 @@ export default function LearnChatPage() {
                 }
               }}
               className="laura-btn laura-btn-ghost"
-              style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)' }}
+              style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             >
-              🗑️ {t('learn.chat.header.clear_history')}
+              <i className="ti ti-trash"></i> {t('learn.chat.header.clear_history')}
             </button>
           </div>
         )}
@@ -644,12 +648,12 @@ export default function LearnChatPage() {
             <div className="chat-messages no-scrollbar" style={{ padding: 'var(--sp-5)' }}>
               {isInitializing ? (
                 <div className="empty-state" style={{ margin: 'auto' }}>
-                  <span className="empty-state__icon">⏳</span>
+                  <span className="empty-state__icon"><i className="ti ti-loader-2" style={{ fontSize: '2.5rem', color: 'var(--clr-brand)' }}></i></span>
                   <p className="empty-state__title">{t('learn.chat.loading_session')}</p>
                 </div>
               ) : messages.length === 0 ? (
                 <div className="empty-state" style={{ margin: 'auto', maxWidth: '360px' }}>
-                  <span className="empty-state__icon">✨</span>
+                  <span className="empty-state__icon"><i className="ti ti-sparkles" style={{ fontSize: '2.5rem', color: 'var(--clr-brand)' }}></i></span>
                   <p className="empty-state__title">{t('learn.chat.welcome.title')}</p>
                   <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', textAlign: 'center', marginTop: 'var(--sp-2)' }}>
                     {t('learn.chat.welcome.desc')}
@@ -685,8 +689,8 @@ export default function LearnChatPage() {
                         {!isUser && (
                           <div className="row" style={{ flexWrap: 'wrap', gap: 'var(--sp-2)', paddingLeft: '2px' }}>
                             <button onClick={() => handleSend("suite")}
-                              className="laura-btn laura-btn-primary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                              ▶ {t('learn.chat.actions.continue')}
+                              className="laura-btn laura-btn-primary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <i className="ti ti-player-play"></i> {t('learn.chat.actions.continue')}
                             </button>
                             <button onClick={() => handleSend("Explique cette réponse de manière plus simple.")}
                               className="laura-btn laura-btn-ghost" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
@@ -697,8 +701,8 @@ export default function LearnChatPage() {
                               {t('learn.chat.actions.deepen')}
                             </button>
                             <button onClick={() => handleSaveMessage(m.text)}
-                              className="laura-btn laura-btn-secondary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                              💾 {t('learn.chat.actions.save')}
+                              className="laura-btn laura-btn-secondary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <i className="ti ti-device-floppy"></i> {t('learn.chat.actions.save')}
                             </button>
                           </div>
                         )}
@@ -747,12 +751,12 @@ export default function LearnChatPage() {
                 }}>
                   <div className="row row--between">
                     <div className="row" style={{ minWidth: 0, gap: 'var(--sp-3)' }}>
-                      <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>
-                        {attachedFile.status === 'analyzing' ? '⏳' :
-                          attachedFile.status === 'ready' ? '✅' :
-                            attachedFile.status === 'no-text' ? '⚠️' :
-                              attachedFile.status === 'error' ? '❌' : '📎'}
-                      </span>
+                      <i className="ti ti-paperclip" style={{ fontSize: '1.4rem', flexShrink: 0, color:
+                        attachedFile.status === 'analyzing' ? 'var(--clr-brand)' :
+                        attachedFile.status === 'ready'     ? 'var(--clr-green)' :
+                        attachedFile.status === 'no-text'   ? 'var(--clr-warning)' :
+                        attachedFile.status === 'error'     ? 'var(--clr-error)' : 'var(--txt-secondary)'
+                      }}></i>
                       <div style={{ minWidth: 0 }}>
                         <p className="truncate" style={{ fontSize: 'var(--tx-sm)', fontWeight: 'var(--fw-semibold)', margin: 0, color: 'var(--clr-brand)' }}>
                           {attachedFile.name}
@@ -772,7 +776,7 @@ export default function LearnChatPage() {
                       style={{ minHeight: '28px', width: '28px', padding: 0, borderRadius: 'var(--rd-full)', color: 'var(--txt-secondary)' }}
                       aria-label={t('learn.chat.file.remove')}
                     >
-                      ✕
+                      <i className="ti ti-x"></i>
                     </button>
                   </div>
 
@@ -785,9 +789,9 @@ export default function LearnChatPage() {
                           handleSend(prompt);
                         }}
                         className="laura-btn laura-btn-primary"
-                        style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
+                        style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
                       >
-                        ✨ {t('learn.chat.doc_actions.quiz')}
+                        <i className="ti ti-list-check"></i> {t('learn.chat.doc_actions.quiz')}
                       </button>
                       <button
                         onClick={() => {
@@ -796,9 +800,9 @@ export default function LearnChatPage() {
                           handleSend(prompt);
                         }}
                         className="laura-btn laura-btn-secondary"
-                        style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
+                        style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
                       >
-                        📝 {t('learn.chat.doc_actions.summarize')}
+                        <i className="ti ti-notes"></i> {t('learn.chat.doc_actions.summarize')}
                       </button>
                       <button
                         onClick={() => {
@@ -807,9 +811,9 @@ export default function LearnChatPage() {
                           handleSend(prompt);
                         }}
                         className="laura-btn laura-btn-secondary"
-                        style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
+                        style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
                       >
-                        ✏️ {t('learn.chat.doc_actions.correct')}
+                        <i className="ti ti-pencil"></i> {t('learn.chat.doc_actions.correct')}
                       </button>
                     </div>
                   )}
@@ -832,7 +836,7 @@ export default function LearnChatPage() {
                   onMouseEnter={e => e.currentTarget.style.background = 'var(--srf-raised)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'var(--srf-base)'}
                 >
-                  📎 <span>{t('learn.chat.input.attach_file')}</span>
+                  <i className="ti ti-paperclip"></i> <span>{t('learn.chat.input.attach_file')}</span>
                   <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
                 </label>
 
@@ -911,7 +915,7 @@ export default function LearnChatPage() {
                   }}
                   aria-label={t('learn.chat.input.send')}
                 >
-                  {isLoading ? '...' : '→'}
+                  {isLoading ? <i className="ti ti-loader-2"></i> : <i className="ti ti-send"></i>}
                 </button>
               </div>
 
@@ -932,7 +936,7 @@ export default function LearnChatPage() {
               {/* Header */}
               <div className="row row--between" style={{ borderBottom: '1px solid var(--brd-subtle)', paddingBottom: 'var(--sp-3)', flexShrink: 0 }}>
                 <div className="row" style={{ gap: 'var(--sp-2)' }}>
-                  <span style={{ fontSize: '1.2rem' }}>🎯</span>
+                  <i className="ti ti-target" style={{ fontSize: '1.2rem', color: 'var(--clr-brand)' }}></i>
                   <h3 className="laura-h3" style={{ margin: 0, fontSize: 'var(--tx-sm)', fontWeight: 700 }}>
                     Suivi d'Assimilation
                   </h3>
@@ -942,7 +946,7 @@ export default function LearnChatPage() {
                   className="laura-btn laura-btn-ghost mobile-only"
                   style={{ minHeight: '24px', width: '24px', padding: 0 }}
                 >
-                  ✕
+                  <i className="ti ti-x"></i>
                 </button>
               </div>
 
@@ -955,9 +959,9 @@ export default function LearnChatPage() {
                   {sessionDocument.titre}
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)' }}>
-                  <span>📚 Matière : <strong>{sessionDocument.matiere || 'Général'}</strong></span>
-                  <span>⚙️ Type : <strong>{sessionDocument.type}</strong></span>
-                  <span>⏱️ Temps écoulé : <strong style={{ color: 'var(--clr-brand)' }}>{formatTime(secondsElapsed)}</strong></span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><i className="ti ti-book" style={{ color: 'var(--clr-brand)' }}></i> Matière : <strong>{sessionDocument.matiere || 'Général'}</strong></span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><i className="ti ti-category" style={{ color: 'var(--txt-tertiary)' }}></i> Type : <strong>{sessionDocument.type}</strong></span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><i className="ti ti-clock" style={{ color: 'var(--clr-brand)' }}></i> Temps écoulé : <strong style={{ color: 'var(--clr-brand)' }}>{formatTime(secondsElapsed)}</strong></span>
                 </div>
               </div>
 
@@ -998,7 +1002,7 @@ export default function LearnChatPage() {
                       style={{ cursor: item.key === 'start' ? 'default' : 'pointer' }}
                     >
                       <div className="milestone-checkbox">
-                        {isChecked && '✓'}
+                        {isChecked && <i className="ti ti-check" style={{ fontSize: '0.8rem' }}></i>}
                       </div>
                       <div style={{ minWidth: 0 }}>
                         <p style={{ margin: 0, fontSize: 'var(--tx-xs)', fontWeight: 600, color: isChecked ? 'var(--clr-green)' : 'var(--txt-primary)' }}>
@@ -1031,8 +1035,24 @@ export default function LearnChatPage() {
                       cursor: 'pointer',
                       fontSize: 'var(--tx-sm)'
                     }}
-                  >
-                    🎯 Valider l'Assimilation
+                  style={{
+                    width: '100%',
+                    minHeight: '40px',
+                    background: 'var(--clr-green)',
+                    color: 'white',
+                    fontWeight: 700,
+                    borderRadius: 'var(--rd-lg)',
+                    border: 'none',
+                    boxShadow: '0 4px 12px rgba(34,197,94,0.3)',
+                    cursor: 'pointer',
+                    fontSize: 'var(--tx-sm)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
+                >
+                    <i className="ti ti-circle-check"></i> Valider l'Assimilation
                   </button>
                 )}
                 <button
@@ -1043,8 +1063,9 @@ export default function LearnChatPage() {
                   }}
                   className="laura-btn laura-btn-ghost"
                   style={{ width: '100%', minHeight: '36px', fontSize: 'var(--tx-xs)' }}
+                  style={{ width: '100%', minHeight: '36px', fontSize: 'var(--tx-xs)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}
                 >
-                  Changer de cours
+                  <i className="ti ti-refresh"></i> Changer de cours
                 </button>
               </div>
             </aside>
@@ -1078,7 +1099,7 @@ export default function LearnChatPage() {
             textAlign: 'center',
             animation: 'scaleIn var(--dur-base) var(--ease-spring)'
           }}>
-            <span style={{ fontSize: '3rem', display: 'block', marginBottom: 'var(--sp-4)' }}>🎓</span>
+            <i className="ti ti-award" style={{ fontSize: '3rem', display: 'block', marginBottom: 'var(--sp-4)', color: 'var(--clr-green)' }}></i>
             <h2 className="laura-h2" style={{ margin: '0 0 var(--sp-2)' }}>
               Bravo pour tes efforts !
             </h2>
@@ -1088,9 +1109,9 @@ export default function LearnChatPage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)', marginBottom: 'var(--sp-6)' }}>
               {[
-                { label: '🌟 Excellent ! (+10% de progression)', score: 10, variant: 'primary', color: 'var(--clr-green)' },
-                { label: '👍 Assez bien compris (+5% de progression)', score: 5, variant: 'secondary', color: 'var(--clr-brand)' },
-                { label: '⏳ Encore besoin de réviser (+2% de progression)', score: 2, variant: 'ghost', color: 'var(--txt-secondary)' }
+                { icon: 'ti ti-star', label: 'Excellent ! (+10% de progression)', score: 10, variant: 'primary', color: 'var(--clr-green)' },
+                { icon: 'ti ti-thumb-up', label: 'Assez bien compris (+5% de progression)', score: 5, variant: 'secondary', color: 'var(--clr-brand)' },
+                { icon: 'ti ti-clock', label: 'Encore besoin de réviser (+2% de progression)', score: 2, variant: 'ghost', color: 'var(--txt-secondary)' }
               ].map(opt => (
                 <button
                   key={opt.score}
@@ -1111,8 +1132,27 @@ export default function LearnChatPage() {
                   }}
                   onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.02)'; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = 'none'; }}
+                  style={{
+                    width: '100%',
+                    justifyContent: 'flex-start',
+                    minHeight: '44px',
+                    fontSize: 'var(--tx-sm)',
+                    borderRadius: 'var(--rd-lg)',
+                    fontWeight: 600,
+                    border: '1px solid var(--brd-default)',
+                    background: opt.variant === 'primary' ? 'var(--clr-green)' : opt.variant === 'secondary' ? 'var(--clr-brand-lt)' : 'transparent',
+                    color: opt.variant === 'primary' ? 'white' : opt.variant === 'secondary' ? 'var(--clr-brand)' : 'var(--txt-primary)',
+                    cursor: 'pointer',
+                    transition: 'all var(--dur-fast)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '0 var(--sp-4)'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.02)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'none'; }}
                 >
-                  {opt.label}
+                  <i className={opt.icon}></i> {opt.label}
                 </button>
               ))}
             </div>
