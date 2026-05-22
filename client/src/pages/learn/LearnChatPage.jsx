@@ -158,10 +158,38 @@ export default function LearnChatPage() {
   useEffect(() => {
     if (isInitializing) return;
 
-    const promptKey = searchParams.get('prompt');
+    // ── Session lancée depuis LearnRevisionPage ─────────────────────────
+    const matiere   = searchParams.get('matiere');
+    const chapitre  = searchParams.get('chapitre');
+    const type      = searchParams.get('type') || 'Resume';
+
+    if (matiere && chapitre) {
+      // Nettoyer l'URL pour éviter le re-déclenchement
+      const next = new URLSearchParams(searchParams);
+      next.delete('matiere');
+      next.delete('chapitre');
+      next.delete('type');
+      next.delete('sessionId');
+      setSearchParams(next);
+
+      const typeLabels = {
+        Resume:   'un résumé de cours structuré',
+        Quiz:     'un quiz interactif de 5 questions',
+        Exercice: "des exercices de révision corrigés étape par étape",
+        Examen:   "une préparation intensive à l'examen",
+      };
+      const typeLabel = typeLabels[type] || `une session de type "${type}"`;
+
+      const prompt = `Je souhaite faire ${typeLabel} sur le chapitre **"${chapitre}"** en **${matiere}**. Lance la session de révision maintenant.`;
+      setTimeout(() => handleSend(prompt), 100);
+      return;
+    }
+
+    // ── Raccourcis prompt prédéfinis ────────────────────────────────────
+    const promptKey     = searchParams.get('prompt');
     const resourceTitle = searchParams.get('resourceTitle');
     if (promptKey || resourceTitle) {
-      let promptText = '';
+      let promptText = ''
       const defaultExam = userProfile?.examen && userProfile.examen !== 'Non défini' ? userProfile.examen : 'mon examen';
       const fullExam = defaultExam + (userProfile?.serie && userProfile.serie !== 'Général' && userProfile.serie !== 'Non défini' ? ' ' + userProfile.serie : '');
       
@@ -190,6 +218,7 @@ export default function LearnChatPage() {
       }
     }
   }, [searchParams, isInitializing]);
+
 
   const handleFileAttachment = async (e) => {
     const file = e.target.files[0];
