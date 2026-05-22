@@ -262,7 +262,8 @@ export default function TutorChatPage() {
               <div className="card card--glass" style={{ padding: 'var(--sp-3)', marginBottom: 'var(--sp-3)', display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
                 <div className="row row--between" style={{ alignItems: 'center' }}>
                   <div className="row" style={{ alignItems: 'center', gap: 'var(--sp-2)', fontSize: 'var(--tx-xs)' }}>
-                    <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>{t('tutor.chat.attached_doc', '📎 Document :')}</span>
+                    <i className="ti ti-paperclip" style={{ color: 'var(--clr-green)' }} />
+                    <span style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-bold)' }}>{t('tutor.chat.attached_doc', 'Document :')}</span>
                     <span className="badge badge--brand">{attachedFile.name}</span>
                   </div>
                   <button onClick={() => setAttachedFile(null)} className="laura-btn laura-btn-ghost" style={{ padding: 0, minHeight: 'auto', minWidth: 'auto', color: 'var(--clr-error)' }}><i className="ti ti-x"></i></button>

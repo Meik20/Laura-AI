@@ -266,7 +266,7 @@ export default function LearnLayout() {
             </NavLink>
 
             <p className="desktop-only" style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-secondary)', margin: 0 }}>
-              {t('learn.header.hello')} <strong style={{ color: 'var(--txt-primary)' }}>{displayName}</strong> 👋
+              {t('learn.header.hello')} <strong style={{ color: 'var(--txt-primary)' }}>{displayName}</strong> <i className="ti ti-hand-ok" style={{ marginLeft: '4px' }} />
             </p>
           </div>
 

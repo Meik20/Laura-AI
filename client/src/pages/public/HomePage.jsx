@@ -4,22 +4,22 @@ import { useTranslation } from 'react-i18next';
 
 const FEATURES = [
   {
-    icon: '◎', color: 'var(--clr-brand)',
+    icon: 'message-circle', color: 'var(--clr-brand)',
     titleKey: 'home.features.chat.title',
     descKey: 'home.features.chat.desc',
   },
   {
-    icon: '▲', color: 'var(--clr-green)',
+    icon: 'target', color: 'var(--clr-green)',
     titleKey: 'home.features.goals.title',
     descKey: 'home.features.goals.desc',
   },
   {
-    icon: '✦', color: 'var(--clr-warning)',
+    icon: 'certificate', color: 'var(--clr-warning)',
     titleKey: 'home.features.exams.title',
     descKey: 'home.features.exams.desc',
   },
   {
-    icon: '⊕', color: 'var(--clr-error)',
+    icon: 'folders', color: 'var(--clr-error)',
     titleKey: 'home.features.resources.title',
     descKey: 'home.features.resources.desc',
   },
@@ -27,12 +27,12 @@ const FEATURES = [
 
 const AUDIENCES = [
   {
-    icon: '🎒',
+    icon: 'book-2',
     titleKey: 'home.audiences.student.title',
     descKey: 'home.audiences.student.desc',
   },
   {
-    icon: '🎓',
+    icon: 'book-3',
     titleKey: 'home.audiences.college.title',
     descKey: 'home.audiences.college.desc',
   },
@@ -106,7 +106,7 @@ export default function HomePage() {
           <div className="card-grid">
             {AUDIENCES.map(({ icon, titleKey, descKey }) => (
               <div key={titleKey} className="card card--hoverable" style={{ padding: 'var(--sp-8)' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: 'var(--sp-5)' }}>{icon}</div>
+                <div style={{ fontSize: '2.5rem', marginBottom: 'var(--sp-5)' }}><i className={`ti ti-${icon}`} /></div>
                 <h3 style={{ marginBottom: 'var(--sp-3)', fontSize: 'var(--tx-lg)' }}>{t(titleKey)}</h3>
                 <p style={{ fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>{t(descKey)}</p>
               </div>
@@ -132,7 +132,7 @@ export default function HomePage() {
                   alignItems: 'center', justifyContent: 'center',
                   fontSize: '1.4rem', marginBottom: 'var(--sp-4)'
                 }}>
-                  {icon}
+                  <i className={`ti ti-${icon}`} />
                 </div>
                 <h3 style={{ fontSize: 'var(--tx-md)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-2)', color }}>{t(titleKey)}</h3>
                 <p style={{ fontSize: 'var(--tx-sm)', lineHeight: 'var(--lh-relaxed)' }}>{t(descKey)}</p>
@@ -161,7 +161,7 @@ export default function HomePage() {
                   t('home.pwa.features.offline')
                 ].map(f => (
                   <div key={f} className="row" style={{ color: 'var(--clr-green)', fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)' }}>
-                    <span>✓</span> {f}
+                    <i className="ti ti-check" style={{ marginRight: 'var(--sp-2)' }} /> {f}
                   </div>
                 ))}
               </div>

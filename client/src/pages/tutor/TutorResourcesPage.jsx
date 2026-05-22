@@ -5,9 +5,9 @@ import { collection, getDocs } from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
 
 const TYPE_ICONS = {
-  Quiz: '🎲', Annale: '📝', Épreuve: '📜', Fiche: '📋', Livre: '📖'
+  Quiz: 'ti ti-dice', Annale: 'ti ti-notes', Épreuve: 'ti ti-file-description', Fiche: 'ti ti-clipboard-list', Livre: 'ti ti-book-2'
 };
-const getIcon = (type) => TYPE_ICONS[type] || '📚';
+const getIcon = (type) => TYPE_ICONS[type] || 'ti ti-books';
 
 export default function TutorResourcesPage() {
   const { t } = useTranslation();

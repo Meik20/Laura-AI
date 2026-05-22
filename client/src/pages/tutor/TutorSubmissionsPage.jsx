@@ -127,12 +127,12 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2 style={{ margin: 0, fontSize: 'var(--tx-lg)', fontWeight: 700 }}>📤 {t('tutor.submissions.modal_new.title', 'Nouvelle Contribution')}</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', color: 'var(--txt-tertiary)', lineHeight: 1 }}>✕</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', color: 'var(--txt-tertiary)', lineHeight: 1 }}><i className="ti ti-x" /></button>
         </div>
 
         {/* File upload zone */}
         <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--sp-2)', padding: 'var(--sp-5)', border: `2px dashed ${fileStatus === 'ready' ? 'var(--clr-green)' : fileStatus === 'error' ? 'var(--clr-error)' : 'var(--brd-input)'}`, borderRadius: 'var(--rd-lg)', background: fileStatus === 'ready' ? 'color-mix(in srgb, var(--clr-green) 6%, var(--srf-base))' : 'var(--srf-raised)', cursor: 'pointer', transition: 'all 0.2s' }}>
-          <span style={{ fontSize: '2rem' }}>{fileStatus === 'ready' ? '✅' : '📎'}</span>
+          <span style={{ fontSize: '2rem' }}>{fileStatus === 'ready' ? <i className="ti ti-check-circle" style={{ color: 'var(--clr-green)' }} /> : <i className="ti ti-paperclip" />}</span>
           <span style={{ fontSize: 'var(--tx-sm)', fontWeight: 600, color: 'var(--txt-primary)' }}>
             {fileStatus === 'ready' ? `${t('tutor.submissions.modal_detail.file_tab', 'Fichier joint')} : ${file?.name}` : t('contribution_modal.upload.click_to_select', 'Cliquez pour sélectionner un fichier')}
           </span>
@@ -201,16 +201,16 @@ function SubmitModal({ onClose, onSuccess, uid, userProfile }) {
           </div>
         </div>
 
-        {error && <p style={{ color: 'var(--clr-error)', fontSize: 'var(--tx-xs)', margin: 0 }}>⚠️ {error}</p>}
+        {error && <p style={{ color: 'var(--clr-error)', fontSize: 'var(--tx-xs)', margin: 0 }}><i className="ti ti-alert-circle" style={{ marginRight: '4px' }} />{error}</p>}
 
         {/* Actions */}
         <div style={{ display: 'flex', gap: 'var(--sp-3)', justifyContent: 'flex-end', borderTop: '1px solid var(--brd-subtle)', paddingTop: 'var(--sp-4)' }}>
           <button onClick={onClose} className="laura-btn laura-btn-ghost" style={{ minHeight: '40px', padding: '0 var(--sp-5)' }}>{t('tutor.submissions.modal_detail.close', 'Fermer')}</button>
           <button onClick={() => handleSubmit('brouillon')} disabled={isSaving} className="laura-btn laura-btn-secondary" style={{ minHeight: '40px', padding: '0 var(--sp-5)' }}>
-            💾 {t('tutor.submissions.modal_new.save_draft', 'Enregistrer en brouillon')}
+            <i className="ti ti-download" style={{ marginRight: '4px' }} /> {t('tutor.submissions.modal_new.save_draft', 'Enregistrer en brouillon')}
           </button>
           <button onClick={() => handleSubmit('soumis')} disabled={isSaving || fileStatus === 'analyzing'} className="laura-btn laura-btn-primary" style={{ minHeight: '40px', padding: '0 var(--sp-5)' }}>
-            {isSaving ? t('tutor.submissions.modal_new.saving', 'Enregistrement...') : `📤 ${t('tutor.submissions.modal_new.submit_for_review', 'Soumettre pour relecture')}`}
+            {isSaving ? t('tutor.submissions.modal_new.saving', 'Enregistrement...') : <><i className="ti ti-upload" style={{ marginRight: '4px' }} />{t('tutor.submissions.modal_new.submit_for_review', 'Soumettre pour relecture')}</>}
           </button>
         </div>
       </div>
@@ -241,7 +241,7 @@ function DetailModal({ sub, onClose }) {
             <h2 style={{ margin: '0 0 4px', fontSize: 'var(--tx-lg)', fontWeight: 700 }}>{sub.titre || t('tutor.resources.untitled', 'Sans titre')}</h2>
             <span style={{ fontSize: 'var(--tx-xs)', fontWeight: 700, color: st.color }}>● {st.label}</span>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', color: 'var(--txt-tertiary)' }}>✕</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', color: 'var(--txt-tertiary)' }}><i className="ti ti-x" /></button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-2)', fontSize: 'var(--tx-sm)' }}>
           {[[t('tutor.submissions.table.type', 'Type'), sub.type], [t('tutor.submissions.table.subject', 'Matière'), sub.matiere], [t('tutor.submissions.table.level', 'Niveau'), sub.cible || sub.niveau], [t('tutor.submissions.modal_detail.created_at', 'Créée le'), sub.createdAt ? new Date(sub.createdAt).toLocaleDateString(locale) : 'N/A']].map(([k, v]) => (

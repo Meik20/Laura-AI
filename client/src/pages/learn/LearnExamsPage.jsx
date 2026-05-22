@@ -103,7 +103,7 @@ export default function LearnExamsPage() {
                   onClick={() => annale.url ? window.open(annale.url, '_blank') : navigate(`/learn/chat?resourceTitle=${encodeURIComponent(annale.titre)}`)}
                 >
                   <div className="minimal-list-item-content">
-                    <div className="minimal-list-item-title">📝 {annale.titre}</div>
+                    <div className="minimal-list-item-title"><i className="ti ti-notes" style={{ marginRight: '6px' }} />{annale.titre}</div>
                     <div className="minimal-list-item-subtitle">{annale.cible} · {annale.type}</div>
                   </div>
                   <span className="chevron-action">→</span>

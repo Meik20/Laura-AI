@@ -86,8 +86,8 @@ const filterResourcesByProfile = (allResources, userProfile) => {
   });
 };
 
-const TYPE_ICONS = { Quiz: '🎲', Annale: '📝', Épreuve: '📜', Fiche: '📋', Livre: '📖' };
-const getIcon = (type) => TYPE_ICONS[type] || '📚';
+const TYPE_ICONS = { Quiz: 'ti ti-dice', Annale: 'ti ti-notes', Épreuve: 'ti ti-file-description', Fiche: 'ti ti-clipboard-list', Livre: 'ti ti-book-2' };
+const getIcon = (type) => TYPE_ICONS[type] || 'ti ti-books';
 
 /* ─── Contribution Modal ─────────────────────────────────────────────────── */
 function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
@@ -304,7 +304,7 @@ function ContributionModal({ isOpen, onClose, userProfile, matieresList }) {
 
                 {file ? (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--sp-2)' }}>
-                    <span style={{ fontSize: '2rem' }}>📎</span>
+                    <span style={{ fontSize: '2rem' }}><i className="ti ti-paperclip" /></span>
                     <p style={{ fontSize: 'var(--tx-sm)', fontWeight: 'var(--fw-semibold)', color: 'var(--clr-brand)', margin: 0 }}>
                       {file.name}
                     </p>
@@ -573,7 +573,7 @@ export default function LearnResourcesPage() {
                     style={{ minHeight: '34px', width: '34px', padding: 0, color: isBookmarked ? 'var(--clr-warning)' : 'var(--txt-tertiary)', background: isBookmarked ? 'var(--clr-warning-lt)' : '' }}
                     aria-label={isBookmarked ? t('learn.resources.card.remove_bookmark') : t('learn.resources.card.add_bookmark')}
                   >
-                    {isBookmarked ? '★' : '☆'}
+                    <i className={isBookmarked ? 'ti ti-star-filled' : 'ti ti-star'} />
                   </button>
                 </div>
               </div>

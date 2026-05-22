@@ -65,7 +65,7 @@ export default function PublicLayout() {
             aria-label="Menu"
             aria-expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? '✕' : '☰'}
+            {mobileMenuOpen ? <i className="ti ti-x" /> : <i className="ti ti-menu-2" />}
           </button>
         </div>
 

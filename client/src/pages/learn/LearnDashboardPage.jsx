@@ -172,7 +172,7 @@ export default function LearnDashboardPage() {
       {/* ── PAGE HEADER ─────────────────────────────────────────────────── */}
       <div className="page-header">
         <div className="page-header__title">
-          <h1 className="laura-h1">{t('learn.header.hello')} {user.prenom} 👋</h1>
+          <h1 className="laura-h1">{t('learn.header.hello')} {user.prenom} <i className="ti ti-hand-ok" style={{ marginLeft: '4px' }} /></h1>
           <p style={{ marginTop: 'var(--sp-2)', color: 'var(--txt-secondary)', margin: 'var(--sp-2) 0 0' }}>
             {t('learn.dashboard.level_info', { level: user.niveau })}
             {' · '}{t('learn.dashboard.exam_info', { exam: user.examen })}
