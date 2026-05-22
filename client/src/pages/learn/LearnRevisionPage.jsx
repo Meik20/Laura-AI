@@ -30,8 +30,8 @@ const filterResourcesByProfile = (allResources, userProfile) => {
   });
 };
 
-const TYPE_ICONS = { Quiz: '🎲', Annale: '📝', Épreuve: '📜', Fiche: '📋', Livre: '📖' };
-const getIcon = (type) => TYPE_ICONS[type] || '📚';
+const TYPE_ICONS = { Quiz: 'ti ti-dice', Annale: 'ti ti-notes', 'Épreuve': 'ti ti-file-description', Fiche: 'ti ti-clipboard-list', Livre: 'ti ti-book' };
+const getIcon = (type) => TYPE_ICONS[type] || 'ti ti-books';
 
 export default function LearnRevisionPage() {
   const { t } = useTranslation();
@@ -242,10 +242,10 @@ export default function LearnRevisionPage() {
   });
 
   const SESSION_TYPES = [
-    { value: 'Resume',   label: 'Résumé de cours',         icon: '📖' },
-    { value: 'Quiz',     label: 'Quiz interactif',          icon: '🎲' },
-    { value: 'Exercice', label: "Exercices corrigés",       icon: '✍️' },
-    { value: 'Examen',   label: "Simulation d'examen",     icon: '🎯' },
+    { value: 'Resume',   label: 'Résumé de cours',     icon: 'ti ti-book-2' },
+    { value: 'Quiz',     label: 'Quiz interactif',      icon: 'ti ti-dice' },
+    { value: 'Exercice', label: 'Exercices corrigés',   icon: 'ti ti-pencil' },
+    { value: 'Examen',   label: "Simulation d'examen", icon: 'ti ti-target' },
   ];
 
   return (
@@ -268,7 +268,10 @@ export default function LearnRevisionPage() {
 
           {/* Tab bar */}
           <div style={{ display: 'flex', borderBottom: '1px solid var(--brd-subtle)', marginBottom: 'var(--sp-5)', gap: 0 }}>
-            {[{ key: 'catalog', label: '📚 Bibliothèque', desc: 'Cours & épreuves LAURA' }, { key: 'personal', label: '📂 Mes Documents', desc: `${personalDocs.length} document${personalDocs.length !== 1 ? 's' : ''}` }].map(tab => (
+            {[
+              { key: 'catalog',  icon: 'ti ti-books',  label: 'Bibliothèque',  desc: 'Cours & épreuves LAURA' },
+              { key: 'personal', icon: 'ti ti-folder', label: 'Mes Documents', desc: `${personalDocs.length} document${personalDocs.length !== 1 ? 's' : ''}` }
+            ].map(tab => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
@@ -282,11 +285,15 @@ export default function LearnRevisionPage() {
                   fontSize: 'var(--tx-xs)',
                   cursor: 'pointer',
                   transition: 'all var(--dur-fast)',
-                  textAlign: 'left'
+                  textAlign: 'left',
+                  display: 'flex', flexDirection: 'column', gap: '2px'
                 }}
               >
-                {tab.label}
-                <span style={{ display: 'block', fontSize: '10px', color: 'var(--txt-tertiary)', fontWeight: 'normal', marginTop: '1px' }}>{tab.desc}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+                  <i className={tab.icon} />
+                  {tab.label}
+                </span>
+                <span style={{ fontSize: '10px', color: 'var(--txt-tertiary)', fontWeight: 'normal' }}>{tab.desc}</span>
               </button>
             ))}
           </div>
@@ -323,7 +330,7 @@ export default function LearnRevisionPage() {
                   style={{ display: 'none' }}
                   onChange={e => { if (e.target.files[0]) handleFilePick(e.target.files[0]); e.target.value = ''; }}
                 />
-                <span style={{ fontSize: '2.2rem', display: 'block', marginBottom: 'var(--sp-2)' }}>☁️</span>
+                <i className="ti ti-cloud-upload" style={{ fontSize: '2.4rem', display: 'block', marginBottom: 'var(--sp-2)', color: 'var(--clr-brand)' }} />
                 <p style={{ margin: 0, fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)', color: 'var(--txt-primary)' }}>
                   Glissez un fichier ou cliquez pour charger
                 </p>
@@ -335,7 +342,7 @@ export default function LearnRevisionPage() {
               {/* Personal docs list */}
               {personalDocs.length === 0 ? (
                 <div className="empty-state" style={{ padding: 'var(--sp-4) 0' }}>
-                  <span className="empty-state__icon">📂</span>
+                  <i className="ti ti-folder empty-state__icon" />
                   <p className="empty-state__title" style={{ fontSize: 'var(--tx-sm)' }}>Aucun document chargé</p>
                   <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)' }}>Vos cours, fiches et épreuves apparaîtront ici.</p>
                 </div>
@@ -359,7 +366,7 @@ export default function LearnRevisionPage() {
                           transition: 'all var(--dur-fast)'
                         }}
                       >
-                        <span style={{ fontSize: '1.8rem', flexShrink: 0 }}>{getIcon(res.type)}</span>
+                        <i className={getIcon(res.type)} style={{ fontSize: '1.5rem', flexShrink: 0, color: 'var(--txt-secondary)', width: '28px', textAlign: 'center' }} />
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)', color: 'var(--txt-primary)', marginBottom: 'var(--sp-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {res.titre || res.fileName}
@@ -367,16 +374,16 @@ export default function LearnRevisionPage() {
                           <div style={{ display: 'flex', gap: 'var(--sp-2)', flexWrap: 'wrap' }}>
                             {res.type    && <span className="badge">{res.type}</span>}
                             {res.matiere && <span className="badge badge--green">{res.matiere}</span>}
-                            <span className="badge" style={{ background: 'var(--srf-elevated)', color: 'var(--txt-tertiary)' }}>📂 Personnel</span>
+                            <span className="badge" style={{ background: 'var(--srf-elevated)', color: 'var(--txt-tertiary)' }}><i className="ti ti-folder" style={{ marginRight: '3px' }} />Personnel</span>
                           </div>
                         </div>
                         <button
                           onClick={e => handleDeletePersonalDoc(res.id, e)}
                           title="Supprimer"
                           style={{ background: 'none', border: 'none', color: 'var(--clr-error)', cursor: 'pointer', fontSize: '14px', flexShrink: 0, padding: '2px', opacity: 0.7 }}
-                        >🗑️</button>
+                        ><i className="ti ti-trash" /></button>
                         <div style={{ width: '22px', height: '22px', borderRadius: '50%', flexShrink: 0, border: `2px solid ${isSelected ? 'var(--clr-brand)' : 'var(--brd-default)'}`, background: isSelected ? 'var(--clr-brand)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all var(--dur-fast)' }}>
-                          {isSelected && <span style={{ color: 'white', fontSize: '12px', lineHeight: 1 }}>✓</span>}
+                          {isSelected && <i className="ti ti-check" style={{ color: 'white', fontSize: '12px' }} />}
                         </div>
                       </div>
                     );
@@ -388,8 +395,9 @@ export default function LearnRevisionPage() {
 
           {/* ── TAB: BIBLIOTHÈQUE ── */}
           {activeTab === 'catalog' && (<>
-          <h2 className="laura-h3" style={{ margin: '0 0 var(--sp-1)' }}>
-            📚 {t('learn.revision.pick_resource', 'Choisissez un document de base')}
+          <h2 className="laura-h3" style={{ margin: '0 0 var(--sp-1)', display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+            <i className="ti ti-books" style={{ color: 'var(--clr-brand)' }} />
+            {t('learn.revision.pick_resource', 'Choisissez un document de base')}
           </h2>
           <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', margin: '0 0 var(--sp-4)' }}>
             La session sera contextualisée sur ce document. LAURA basera toutes ses réponses sur son contenu réel.
@@ -410,23 +418,23 @@ export default function LearnRevisionPage() {
               style={{ flex: '1 1 130px' }}
             >
               <option value="">Tous les types</option>
-              <option value="Épreuve">📜 Épreuve</option>
-              <option value="Annale">📝 Annale</option>
-              <option value="Fiche">📋 Fiche de cours</option>
-              <option value="Quiz">🎲 Quiz</option>
-              <option value="Livre">📖 Livre</option>
+              <option value="Épreuve">Épreuve</option>
+              <option value="Annale">Annale</option>
+              <option value="Fiche">Fiche de cours</option>
+              <option value="Quiz">Quiz</option>
+              <option value="Livre">Livre</option>
             </select>
           </div>
 
           {/* Resource list */}
           {isFetching ? (
             <div className="empty-state">
-              <span className="empty-state__icon">⏳</span>
+              <i className="ti ti-loader-2 empty-state__icon" />
               <p className="empty-state__title">Chargement des ressources...</p>
             </div>
           ) : displayedResources.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-state__icon">🔍</span>
+              <i className="ti ti-zoom-question empty-state__icon" />
               <p className="empty-state__title">Aucune ressource trouvée</p>
               <p style={{ fontSize: 'var(--tx-sm)', color: 'var(--txt-tertiary)' }}>
                 Essayez de changer les filtres ou explorez la{' '}
@@ -459,7 +467,7 @@ export default function LearnRevisionPage() {
                       transition: 'all var(--dur-fast)'
                     }}
                   >
-                    <span style={{ fontSize: '1.8rem', flexShrink: 0 }}>{getIcon(res.type)}</span>
+                    <i className={getIcon(res.type)} style={{ fontSize: '1.5rem', flexShrink: 0, color: 'var(--txt-secondary)', width: '28px', textAlign: 'center' }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)', color: 'var(--txt-primary)', marginBottom: 'var(--sp-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {res.titre || 'Sans titre'}
@@ -477,7 +485,7 @@ export default function LearnRevisionPage() {
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       transition: 'all var(--dur-fast)'
                     }}>
-                      {isSelected && <span style={{ color: 'white', fontSize: '12px', lineHeight: 1 }}>✓</span>}
+                      {isSelected && <i className="ti ti-check" style={{ color: 'white', fontSize: '12px' }} />}
                     </div>
                   </div>
                 );
@@ -492,7 +500,7 @@ export default function LearnRevisionPage() {
 
           {/* Session config form */}
           <div className="card" style={{ padding: 'var(--sp-6)' }}>
-            <h2 className="laura-h3" style={{ margin: '0 0 var(--sp-4)' }}>⚙️ Configurer la session</h2>
+            <h2 className="laura-h3" style={{ margin: '0 0 var(--sp-4)', display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}><i className="ti ti-settings" style={{ color: 'var(--clr-brand)' }} /> Configurer la session</h2>
 
             {/* Selected resource badge */}
             {selectedResource ? (
@@ -506,7 +514,7 @@ export default function LearnRevisionPage() {
                 gap: 'var(--sp-3)',
                 alignItems: 'center'
               }}>
-                <span style={{ fontSize: '1.3rem' }}>{getIcon(selectedResource.type)}</span>
+                <i className={getIcon(selectedResource.type)} style={{ fontSize: '1.2rem', color: 'var(--clr-brand)' }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ margin: 0, fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', color: 'var(--clr-brand)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {selectedResource.titre}
@@ -520,7 +528,7 @@ export default function LearnRevisionPage() {
                   style={{ background: 'none', border: 'none', color: 'var(--txt-tertiary)', cursor: 'pointer', fontSize: '16px', flexShrink: 0, padding: 0 }}
                   aria-label="Désélectionner"
                 >
-                  ✕
+                  <i className="ti ti-x" />
                 </button>
               </div>
             ) : (
@@ -534,7 +542,7 @@ export default function LearnRevisionPage() {
                 fontSize: 'var(--tx-xs)',
                 color: 'var(--txt-tertiary)'
               }}>
-                ← Sélectionnez un document à gauche
+                <i className="ti ti-arrow-left" style={{ marginRight: '4px' }} /> Sélectionnez un document à gauche
               </div>
             )}
 
@@ -563,7 +571,7 @@ export default function LearnRevisionPage() {
                         transition: 'all var(--dur-fast)'
                       }}
                     >
-                      {st.icon} {st.label}
+                      <i className={st.icon} style={{ marginRight: '4px' }} />{st.label}
                     </button>
                   ))}
                 </div>
@@ -575,11 +583,11 @@ export default function LearnRevisionPage() {
                   Durée souhaitée
                 </label>
                 <select value={duration} onChange={e => setDuration(e.target.value)} style={{ width: '100%' }}>
-                  <option value="15">⚡ 15 min (Rapide)</option>
-                  <option value="30">📖 30 min (Standard)</option>
-                  <option value="60">🎓 1h (Approfondi)</option>
-                  <option value="90">🏆 1h30</option>
-                  <option value="120">🏅 2h (Examen complet)</option>
+                  <option value="15">15 min — Rapide</option>
+                  <option value="30">30 min — Standard</option>
+                  <option value="60">1h — Approfondi</option>
+                  <option value="90">1h30</option>
+                  <option value="120">2h — Examen complet</option>
                 </select>
               </div>
 
@@ -590,10 +598,10 @@ export default function LearnRevisionPage() {
                 style={{ width: '100%', justifyContent: 'center', minHeight: '44px', fontSize: 'var(--tx-sm)', marginTop: 'var(--sp-2)', opacity: !selectedResource ? 0.5 : 1 }}
               >
                 {isLoading
-                  ? '⏳ Démarrage...'
+                  ? <><i className="ti ti-loader-2" style={{ marginRight: '6px' }} />Démarrage...</>
                   : selectedResource
-                    ? `🚀 Démarrer la session`
-                    : '← Sélectionnez d\'abord un document'
+                    ? <><i className="ti ti-player-play" style={{ marginRight: '6px' }} />Démarrer la session</>
+                    : <><i className="ti ti-arrow-left" style={{ marginRight: '4px' }} />Sélectionnez d'abord un document</>
                 }
               </button>
 
@@ -609,7 +617,7 @@ export default function LearnRevisionPage() {
           {recentSessions.length > 0 && (
             <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
               <div style={{ padding: 'var(--sp-4)', borderBottom: '1px solid var(--brd-subtle)' }}>
-                <h3 className="laura-h3" style={{ margin: 0, fontSize: 'var(--tx-sm)' }}>🕘 Sessions récentes</h3>
+                <h3 className="laura-h3" style={{ margin: 0, fontSize: 'var(--tx-sm)', display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}><i className="ti ti-history" style={{ color: 'var(--clr-brand)' }} /> Sessions récentes</h3>
               </div>
               {recentSessions.map(session => (
                 <div
@@ -630,7 +638,7 @@ export default function LearnRevisionPage() {
                   }}
                   className="hoverable-row"
                 >
-                  <span style={{ fontSize: '1.2rem' }}>{getIcon(session.resourceType || session.type)}</span>
+                  <i className={getIcon(session.resourceType || session.type)} style={{ fontSize: '1.2rem', color: 'var(--txt-secondary)' }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ margin: 0, fontSize: '12px', fontWeight: 'var(--fw-semibold)', color: 'var(--txt-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {session.resourceTitle || session.chapitre}
@@ -639,7 +647,7 @@ export default function LearnRevisionPage() {
                       {session.type} · {session.duree} min
                     </p>
                   </div>
-                  <span style={{ color: 'var(--txt-tertiary)', fontSize: '14px' }}>→</span>
+                  <i className="ti ti-chevron-right" style={{ color: 'var(--txt-tertiary)', fontSize: '14px' }} />
                 </div>
               ))}
             </div>
@@ -648,7 +656,7 @@ export default function LearnRevisionPage() {
           {/* Tip card */}
           <div style={{ padding: 'var(--sp-4)', borderRadius: 'var(--rd-lg)', background: 'var(--srf-sidebar)', border: '1px solid var(--brd-subtle)' }}>
             <p style={{ margin: 0, fontSize: '11px', color: 'var(--txt-secondary)', lineHeight: '1.5' }}>
-              💡 <strong>Astuce :</strong> Pour de meilleures révisions, LAURA analyse le contenu réel de l'épreuve ou du cours sélectionné et adapte ses explications en conséquence.
+              <i className="ti ti-bulb" style={{ color: 'var(--clr-brand)', marginRight: '4px' }} /><strong>Astuce :</strong> Pour de meilleures révisions, LAURA analyse le contenu réel de l'épreuve ou du cours sélectionné et adapte ses explications en conséquence.
             </p>
           </div>
         </div>
@@ -667,8 +675,8 @@ export default function LearnRevisionPage() {
             boxShadow: 'var(--shd-2xl)', padding: 'var(--sp-6)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-4)' }}>
-              <h2 className="laura-h3" style={{ margin: 0 }}>📁 Ajouter un document</h2>
-              <button onClick={() => { setUploadModal(false); setPendingFile(null); }} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: 'var(--txt-tertiary)' }}>✕</button>
+              <h2 className="laura-h3" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}><i className="ti ti-folder-open" style={{ color: 'var(--clr-brand)' }} /> Ajouter un document</h2>
+              <button onClick={() => { setUploadModal(false); setPendingFile(null); }} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: 'var(--txt-tertiary)' }}><i className="ti ti-x" /></button>
             </div>
 
             {/* File preview */}
@@ -678,9 +686,7 @@ export default function LearnRevisionPage() {
               display: 'flex', alignItems: 'center', gap: 'var(--sp-3)',
               border: '1px solid var(--brd-subtle)'
             }}>
-              <span style={{ fontSize: '1.8rem' }}>
-                {pendingFile.isPdf ? '📄' : pendingFile.isImage ? '🖼️' : '📝'}
-              </span>
+              <i className={pendingFile.isPdf ? 'ti ti-file-type-pdf' : pendingFile.isImage ? 'ti ti-photo' : 'ti ti-notes'} style={{ fontSize: '1.8rem', color: pendingFile.isPdf ? 'var(--clr-error)' : pendingFile.isImage ? 'var(--clr-green)' : 'var(--clr-brand)' }} />
               <div style={{ minWidth: 0 }}>
                 <p style={{ margin: 0, fontWeight: 'var(--fw-semibold)', fontSize: 'var(--tx-sm)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pendingFile.name}</p>
                 <p style={{ margin: 0, fontSize: '10px', color: 'var(--txt-tertiary)' }}>
@@ -716,11 +722,11 @@ export default function LearnRevisionPage() {
                 <div className="form-group">
                   <label style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-semibold)', display: 'block', marginBottom: 'var(--sp-1)' }}>Type</label>
                   <select className="form-input" value={docMeta.type} onChange={e => setDocMeta(m => ({ ...m, type: e.target.value }))}>
-                    <option value="Fiche">📋 Fiche de cours</option>
-                    <option value="Épreuve">📜 Épreuve</option>
-                    <option value="Annale">📝 Annale</option>
-                    <option value="Quiz">🎲 Quiz</option>
-                    <option value="Livre">📖 Livre</option>
+                    <option value="Fiche">Fiche de cours</option>
+                    <option value="Épreuve">Épreuve</option>
+                    <option value="Annale">Annale</option>
+                    <option value="Quiz">Quiz</option>
+                    <option value="Livre">Livre</option>
                   </select>
                 </div>
               </div>
@@ -738,7 +744,7 @@ export default function LearnRevisionPage() {
                   className="laura-btn laura-btn-primary"
                   style={{ flex: 2, justifyContent: 'center' }}
                 >
-                  {uploadingDoc ? '⏳ Enregistrement...' : '✅ Ajouter & Sélectionner'}
+                  {uploadingDoc ? <><i className="ti ti-loader-2" style={{ marginRight: '6px' }} />Enregistrement...</> : <><i className="ti ti-circle-check" style={{ marginRight: '6px' }} />Ajouter &amp; Sélectionner</>}
                 </button>
               </div>
             </form>
