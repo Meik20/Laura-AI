@@ -139,6 +139,34 @@ export default function LearnChatPage() {
   const [sessionDocument, setSessionDocument] = useState(null);
   const [activeSessionId, setActiveSessionId] = useState(null);
   const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
+  const [secondsElapsed, setSecondsElapsed] = useState(0);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [checkedMilestones, setCheckedMilestones] = useState({
+    start: true,
+    theory: false,
+    practice: false,
+    summary: false
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSecondsElapsed(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (totalSeconds) => {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const toggleMilestone = (key) => {
+    setCheckedMilestones(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
 
   // Auto-scroll helper
   const scrollToBottom = () => {
@@ -176,9 +204,10 @@ export default function LearnChatPage() {
 
   // ── Load resource document when session has a resourceId ──────────────
   useEffect(() => {
-    const resourceId    = searchParams.get('resourceId');
+    const resourceId = searchParams.get('resourceId');
     const resourceTitle = searchParams.get('resourceTitle');
-    const sessionId     = searchParams.get('sessionId');
+    const sessionId = searchParams.get('sessionId');
+    const isPersonal = searchParams.get('isPersonal') === 'true';
 
     if (sessionId) {
       setActiveSessionId(sessionId);
@@ -188,17 +217,32 @@ export default function LearnChatPage() {
 
     async function loadResourceDoc() {
       try {
-        const snap = await getDoc(doc(db, 'resources', resourceId));
-        if (snap.exists()) {
+        let snap = null;
+        if (isPersonal && userProfile?.uid) {
+          snap = await getDoc(doc(db, 'users', userProfile.uid, 'personalDocs', resourceId));
+        } else if (!isPersonal) {
+          snap = await getDoc(doc(db, 'resources', resourceId));
+        }
+
+        if (snap && snap.exists()) {
           const data = snap.data();
           setSessionDocument({
-            id:            resourceId,
-            titre:         data.titre  || resourceTitle || 'Document',
-            type:          data.type   || '',
-            matiere:       data.matiere || data.cible || '',
-            url:           data.url    || null,
-            // extractedText will be populated later if URL is available
+            id: resourceId,
+            titre: data.titre || resourceTitle || 'Document',
+            type: data.type || '',
+            matiere: data.matiere || data.cible || '',
+            url: data.url || null,
             extractedText: data.extractedText || null
+          });
+        } else if (isPersonal) {
+          // Fallback if snap is not yet loaded or userProfile is still loading
+          setSessionDocument({
+            id: resourceId,
+            titre: resourceTitle || 'Document personnel',
+            type: 'Fiche',
+            matiere: searchParams.get('matiere') || '',
+            url: null,
+            extractedText: searchParams.get('extractedText') || null
           });
         }
       } catch (err) {
@@ -206,16 +250,15 @@ export default function LearnChatPage() {
       }
     }
     loadResourceDoc();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userProfile?.uid, searchParams]);
 
   useEffect(() => {
     if (isInitializing) return;
 
     // ── Session lancée depuis LearnRevisionPage ─────────────────────────
-    const matiere      = searchParams.get('matiere');
-    const chapitre     = searchParams.get('chapitre');
-    const type         = searchParams.get('type') || 'Resume';
+    const matiere = searchParams.get('matiere');
+    const chapitre = searchParams.get('chapitre');
+    const type = searchParams.get('type') || 'Resume';
     const resourceTitle = searchParams.get('resourceTitle');
 
     if (matiere && chapitre) {
@@ -230,10 +273,10 @@ export default function LearnChatPage() {
       setSearchParams(next);
 
       const typeLabels = {
-        Resume:   'un résumé de cours structuré',
-        Quiz:     'un quiz interactif de 5 questions',
+        Resume: 'un résumé de cours structuré',
+        Quiz: 'un quiz interactif de 5 questions',
         Exercice: "des exercices de révision corrigés étape par étape",
-        Examen:   "une préparation intensive à l'examen",
+        Examen: "une préparation intensive à l'examen",
       };
       const typeLabel = typeLabels[type] || `une session de type "${type}"`;
 
@@ -245,12 +288,12 @@ export default function LearnChatPage() {
     }
 
     // ── Raccourcis prompt prédéfinis ────────────────────────────────────
-    const promptKey     = searchParams.get('prompt');
+    const promptKey = searchParams.get('prompt');
     if (promptKey || resourceTitle) {
       let promptText = ''
       const defaultExam = userProfile?.examen && userProfile.examen !== 'Non défini' ? userProfile.examen : 'mon examen';
       const fullExam = defaultExam + (userProfile?.serie && userProfile.serie !== 'Général' && userProfile.serie !== 'Non défini' ? ' ' + userProfile.serie : '');
-      
+
       if (promptKey === 'sujets_frequents') {
         promptText = t('learn.chat.prompts.frequent_subjects', { exam: fullExam });
       } else if (promptKey === 'corriges_types') {
@@ -329,10 +372,10 @@ export default function LearnChatPage() {
 
       // Build documentContext from the session-linked resource (if any)
       const documentContext = sessionDocument ? {
-        id:            sessionDocument.id,
-        titre:         sessionDocument.titre,
-        type:          sessionDocument.type,
-        matiere:       sessionDocument.matiere,
+        id: sessionDocument.id,
+        titre: sessionDocument.titre,
+        type: sessionDocument.type,
+        matiere: sessionDocument.matiere,
         extractedText: sessionDocument.extractedText || null
       } : null;
 
@@ -340,10 +383,10 @@ export default function LearnChatPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message:         fullUserText,
-          mode:            'simple',
-          userContext:     profileContext,
-          history:         messages,
+          message: fullUserText,
+          mode: 'simple',
+          userContext: profileContext,
+          history: messages,
           documentContext: documentContext
         })
       });
@@ -477,35 +520,68 @@ export default function LearnChatPage() {
   return (
     <div className="chat-wrapper">
 
-      {/* ── HEADER (Compact & Desktop only to save space on mobile) ── */}
-      <div className="desktop-only" style={{ marginBottom: 'var(--sp-4)', flexShrink: 0 }}>
+      {/* ── HEADER (Visible on both mobile & desktop) ── */}
+      <div style={{ marginBottom: 'var(--sp-3)', flexShrink: 0 }}>
 
         {/* Session Document Context Banner */}
         {sessionDocument && (
           <div style={{
             display: 'flex', alignItems: 'center', gap: 'var(--sp-3)',
-            padding: 'var(--sp-3) var(--sp-4)',
+            padding: 'var(--sp-2) var(--sp-4)',
             borderRadius: 'var(--rd-lg)',
             background: 'color-mix(in srgb, var(--clr-brand) 8%, var(--srf-base))',
             border: '1px solid color-mix(in srgb, var(--clr-brand) 25%, transparent)',
-            marginBottom: 'var(--sp-4)'
+            marginBottom: 'var(--sp-3)'
           }}>
-            <span style={{ fontSize: '1.4rem', flexShrink: 0 }}>📄</span>
+            <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>📄</span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{ margin: 0, fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', color: 'var(--clr-brand)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                Session basée sur : {sessionDocument.titre}
+                {sessionDocument.titre}
               </p>
-              <p style={{ margin: 0, fontSize: '10px', color: 'var(--txt-tertiary)' }}>
-                {sessionDocument.type} · {sessionDocument.matiere || 'Toutes matières'} · LAURA répondra en s'appuyant sur ce document
+              <p style={{ margin: 0, fontSize: '9px', color: 'var(--txt-tertiary)' }}>
+                {sessionDocument.type} · {sessionDocument.matiere || 'Toutes matières'}
               </p>
             </div>
+
+            {/* Control indicators in header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+              {/* Elapsed timer indicator */}
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: 'var(--tx-xs)',
+                color: 'var(--txt-secondary)',
+                background: 'var(--srf-raised)',
+                padding: '3px 8px',
+                borderRadius: 'var(--rd-full)',
+                border: '1px solid var(--brd-subtle)',
+                fontWeight: 600
+              }}>
+                ⏱️ {formatTime(secondsElapsed)}
+              </div>
+
+              {/* Sidebar assimilation panel toggle */}
               <button
-                onClick={() => navigate('/learn/revision')}
-                style={{ background: 'none', border: 'none', color: 'var(--txt-tertiary)', cursor: 'pointer', fontSize: 'var(--tx-xs)', whiteSpace: 'nowrap' }}
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="laura-btn laura-btn-ghost"
+                style={{
+                  minHeight: '28px',
+                  padding: '0 8px',
+                  borderRadius: 'var(--rd-full)',
+                  fontSize: 'var(--tx-xs)',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: isSidebarOpen ? 'var(--clr-brand-lt)' : 'none',
+                  color: isSidebarOpen ? 'var(--clr-brand)' : 'var(--txt-primary)'
+                }}
               >
-                Changer ↗
+                <i className="ti ti-target" style={{ fontSize: '1.1rem' }}></i>
+                <span className="desktop-only">Assimilation</span>
               </button>
+
               {activeSessionId && (
                 <button
                   onClick={() => setIsCompletionModalOpen(true)}
@@ -523,314 +599,458 @@ export default function LearnChatPage() {
                     cursor: 'pointer'
                   }}
                 >
-                  🎯 Terminer & Valider
+                  🎯 <span className="desktop-only">Terminer & Valider</span><span className="mobile-only">Valider</span>
                 </button>
               )}
             </div>
           </div>
         )}
 
-        <div className="row row--between">
-          <div>
-            <h1 className="laura-h2" style={{ margin: 0 }}>{t('learn.chat.header.prep_exam', { exam: profileContext.examen })}</h1>
-            <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', margin: 0 }}>
-              {t('learn.chat.header.subtitle')}
-            </p>
-          </div>
-          <button
-            onClick={async () => {
-              setMessages([]);
-              if (userProfile?.uid) {
-                await setDoc(doc(doc(db, 'chats', userProfile.uid)), { messages: [] });
-              }
-            }}
-            className="laura-btn laura-btn-ghost"
-            style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)' }}
-          >
-            🗑️ {t('learn.chat.header.clear_history')}
-          </button>
-        </div>
-      </div>
-
-      {/* ── CHAT MAIN CONTAINER ── */}
-      <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
-
-        {/* ── Messages List ── */}
-        <div className="chat-messages no-scrollbar" style={{ padding: 'var(--sp-5)' }}>
-          {isInitializing ? (
-            <div className="empty-state" style={{ margin: 'auto' }}>
-              <span className="empty-state__icon">⏳</span>
-              <p className="empty-state__title">{t('learn.chat.loading_session')}</p>
-            </div>
-          ) : messages.length === 0 ? (
-            <div className="empty-state" style={{ margin: 'auto', maxWidth: '360px' }}>
-              <span className="empty-state__icon">✨</span>
-              <p className="empty-state__title">{t('learn.chat.welcome.title')}</p>
-              <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', textAlign: 'center', marginTop: 'var(--sp-2)' }}>
-                {t('learn.chat.welcome.desc')}
+        {/* Regular Header Row (visible if no sessionDocument) */}
+        {!sessionDocument && (
+          <div className="row row--between">
+            <div>
+              <h1 className="laura-h2" style={{ margin: 0 }}>{t('learn.chat.header.prep_exam', { exam: profileContext.examen })}</h1>
+              <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', margin: 0 }}>
+                {t('learn.chat.header.subtitle')}
               </p>
             </div>
-          ) : (
-            messages.map((m, i) => {
-              const isUser = m.role === 'user';
-              return (
-                <div key={i} className={`chat-msg ${isUser ? 'chat-msg--user' : 'chat-msg--ai'}`}>
-                  <div className="chat-msg__avatar">
-                    {isUser ? initials : 'L'}
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-1)', maxWidth: '100%' }}>
-                    <div className="chat-msg__bubble">
-                      {isUser ? m.text : <RenderMessage text={m.text} />}
-                    </div>
+            <button
+              onClick={async () => {
+                setMessages([]);
+                if (userProfile?.uid) {
+                  await setDoc(doc(db, 'chats', userProfile.uid), { messages: [] });
+                }
+              }}
+              className="laura-btn laura-btn-ghost"
+              style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)' }}
+            >
+              🗑️ {t('learn.chat.header.clear_history')}
+            </button>
+          </div>
+        )}
+      </div>
 
-                    {m.timestamp && (
-                      <span style={{
-                        fontSize: '9px',
-                        color: 'var(--txt-tertiary)',
-                        alignSelf: isUser ? 'flex-end' : 'flex-start',
-                        padding: '0 var(--sp-1)',
-                        marginTop: '2px',
-                        opacity: 0.8
-                      }}>
-                        {formatMessageTime(m.timestamp)}
-                      </span>
-                    )}
+      {/* ── MAIN CONTENT WORKSPACE ── */}
+      <div className="revision-layout">
 
-                    {/* AI action shortcuts — shown below each AI message */}
-                    {!isUser && (
-                      <div className="row" style={{ flexWrap: 'wrap', gap: 'var(--sp-2)', paddingLeft: '2px' }}>
-                        <button onClick={() => handleSend("suite")}
-                          className="laura-btn laura-btn-primary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                          ▶ {t('learn.chat.actions.continue')}
-                        </button>
-                        <button onClick={() => handleSend("Explique cette réponse de manière plus simple.")}
-                          className="laura-btn laura-btn-ghost" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                          {t('learn.chat.actions.simplify')}
-                        </button>
-                        <button onClick={() => handleSend("Peux-tu approfondir ce concept ?")}
-                          className="laura-btn laura-btn-ghost" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                          {t('learn.chat.actions.deepen')}
-                        </button>
-                        <button onClick={() => handleSaveMessage(m.text)}
-                          className="laura-btn laura-btn-secondary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
-                          💾 {t('learn.chat.actions.save')}
-                        </button>
+        {/* Left: Chat Container */}
+        <div className="chat-container-main">
+
+          {/* ── CHAT MAIN CONTAINER ── */}
+          <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
+
+            {/* ── Messages List ── */}
+            <div className="chat-messages no-scrollbar" style={{ padding: 'var(--sp-5)' }}>
+              {isInitializing ? (
+                <div className="empty-state" style={{ margin: 'auto' }}>
+                  <span className="empty-state__icon">⏳</span>
+                  <p className="empty-state__title">{t('learn.chat.loading_session')}</p>
+                </div>
+              ) : messages.length === 0 ? (
+                <div className="empty-state" style={{ margin: 'auto', maxWidth: '360px' }}>
+                  <span className="empty-state__icon">✨</span>
+                  <p className="empty-state__title">{t('learn.chat.welcome.title')}</p>
+                  <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', textAlign: 'center', marginTop: 'var(--sp-2)' }}>
+                    {t('learn.chat.welcome.desc')}
+                  </p>
+                </div>
+              ) : (
+                messages.map((m, i) => {
+                  const isUser = m.role === 'user';
+                  return (
+                    <div key={i} className={`chat-msg ${isUser ? 'chat-msg--user' : 'chat-msg--ai'}`}>
+                      <div className="chat-msg__avatar">
+                        {isUser ? initials : 'L'}
                       </div>
-                    )}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-1)', maxWidth: '100%' }}>
+                        <div className="chat-msg__bubble">
+                          {isUser ? m.text : <RenderMessage text={m.text} />}
+                        </div>
+
+                        {m.timestamp && (
+                          <span style={{
+                            fontSize: '9px',
+                            color: 'var(--txt-tertiary)',
+                            alignSelf: isUser ? 'flex-end' : 'flex-start',
+                            padding: '0 var(--sp-1)',
+                            marginTop: '2px',
+                            opacity: 0.8
+                          }}>
+                            {formatMessageTime(m.timestamp)}
+                          </span>
+                        )}
+
+                        {/* AI action shortcuts — shown below each AI message */}
+                        {!isUser && (
+                          <div className="row" style={{ flexWrap: 'wrap', gap: 'var(--sp-2)', paddingLeft: '2px' }}>
+                            <button onClick={() => handleSend("suite")}
+                              className="laura-btn laura-btn-primary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
+                              ▶ {t('learn.chat.actions.continue')}
+                            </button>
+                            <button onClick={() => handleSend("Explique cette réponse de manière plus simple.")}
+                              className="laura-btn laura-btn-ghost" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
+                              {t('learn.chat.actions.simplify')}
+                            </button>
+                            <button onClick={() => handleSend("Peux-tu approfondir ce concept ?")}
+                              className="laura-btn laura-btn-ghost" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
+                              {t('learn.chat.actions.deepen')}
+                            </button>
+                            <button onClick={() => handleSaveMessage(m.text)}
+                              className="laura-btn laura-btn-secondary" style={{ minHeight: '26px', padding: '0 var(--sp-3)', fontSize: 'var(--tx-xs)' }}>
+                              💾 {t('learn.chat.actions.save')}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+
+              {/* Typing Indicator */}
+              {isLoading && (
+                <div className="chat-msg chat-msg--ai">
+                  <div className="chat-msg__avatar">L</div>
+                  <div className="chat-typing">
+                    <span />
+                    <span />
+                    <span />
                   </div>
                 </div>
-              );
-            })
-          )}
+              )}
 
-          {/* Typing Indicator */}
-          {isLoading && (
-            <div className="chat-msg chat-msg--ai">
-              <div className="chat-msg__avatar">L</div>
-              <div className="chat-typing">
-                <span />
-                <span />
-                <span />
-              </div>
+              <div ref={messagesEndRef} />
             </div>
-          )}
 
-          <div ref={messagesEndRef} />
+            {/* ── Input bar and attachment controls ── */}
+            <div style={{
+              padding: 'var(--sp-4)',
+              borderTop: '1px solid var(--brd-subtle)',
+              background: 'var(--srf-raised)',
+              flexShrink: 0
+            }}>
+
+              {/* File Preview Card */}
+              {attachedFile && (
+                <div className="card" style={{
+                  padding: 'var(--sp-4)',
+                  background: attachedFile.status === 'ready'
+                    ? 'color-mix(in srgb, var(--clr-green) 8%, var(--srf-base))'
+                    : attachedFile.status === 'no-text' || attachedFile.status === 'error'
+                      ? 'color-mix(in srgb, var(--clr-warning) 8%, var(--srf-base))'
+                      : 'var(--clr-brand-lt)',
+                  border: `1px solid ${attachedFile.status === 'ready' ? 'rgba(34,197,94,0.25)' : attachedFile.status === 'no-text' || attachedFile.status === 'error' ? 'rgba(234,179,8,0.25)' : 'rgba(79,110,247,0.2)'}`,
+                  borderRadius: 'var(--rd-lg)',
+                  marginBottom: 'var(--sp-3)',
+                  animation: 'slideIn var(--dur-base) var(--ease-out)'
+                }}>
+                  <div className="row row--between">
+                    <div className="row" style={{ minWidth: 0, gap: 'var(--sp-3)' }}>
+                      <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>
+                        {attachedFile.status === 'analyzing' ? '⏳' :
+                          attachedFile.status === 'ready' ? '✅' :
+                            attachedFile.status === 'no-text' ? '⚠️' :
+                              attachedFile.status === 'error' ? '❌' : '📎'}
+                      </span>
+                      <div style={{ minWidth: 0 }}>
+                        <p className="truncate" style={{ fontSize: 'var(--tx-sm)', fontWeight: 'var(--fw-semibold)', margin: 0, color: 'var(--clr-brand)' }}>
+                          {attachedFile.name}
+                        </p>
+                        <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', margin: 0 }}>
+                          {attachedFile.status === 'analyzing' && t('learn.chat.file.extracting')}
+                          {attachedFile.status === 'ready' && t('learn.chat.file.extracted', { count: attachedFile.pages })}
+                          {attachedFile.status === 'no-text' && (attachedFile.note || t('learn.chat.file.no_text'))}
+                          {attachedFile.status === 'error' && t('learn.chat.file.error')}
+                          {!attachedFile.status && t('learn.chat.file.ready')}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setAttachedFile(null)}
+                      className="laura-btn laura-btn-ghost"
+                      style={{ minHeight: '28px', width: '28px', padding: 0, borderRadius: 'var(--rd-full)', color: 'var(--txt-secondary)' }}
+                      aria-label={t('learn.chat.file.remove')}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {attachedFile.status === 'ready' && (
+                    <div style={{ display: 'flex', gap: 'var(--sp-3)', marginTop: 'var(--sp-4)' }}>
+                      <button
+                        onClick={() => {
+                          const prompt = `Analyse ce document et crée un quiz complet de 5 questions pour tester mes connaissances.`;
+                          setAttachedFile(prev => prev);
+                          handleSend(prompt);
+                        }}
+                        className="laura-btn laura-btn-primary"
+                        style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
+                      >
+                        ✨ {t('learn.chat.doc_actions.quiz')}
+                      </button>
+                      <button
+                        onClick={() => {
+                          const prompt = `Fais-moi un résumé clair et synthétique de ce document.`;
+                          setAttachedFile(prev => prev);
+                          handleSend(prompt);
+                        }}
+                        className="laura-btn laura-btn-secondary"
+                        style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
+                      >
+                        📝 {t('learn.chat.doc_actions.summarize')}
+                      </button>
+                      <button
+                        onClick={() => {
+                          const prompt = `Corrige et explique en détail tous les exercices présents dans ce document.`;
+                          setAttachedFile(prev => prev);
+                          handleSend(prompt);
+                        }}
+                        className="laura-btn laura-btn-secondary"
+                        style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
+                      >
+                        ✏️ {t('learn.chat.doc_actions.correct')}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ── Toolbar : file attach + quick actions (compact, single row) ── */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', marginBottom: 'var(--sp-2)', flexWrap: 'wrap' }}>
+
+                {/* 📎 Attach file — always first */}
+                <label style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '5px',
+                  padding: '0 var(--sp-3)', minHeight: '32px',
+                  fontSize: 'var(--tx-xs)', borderRadius: 'var(--rd-full)',
+                  cursor: 'pointer', border: '1px solid var(--brd-input)',
+                  background: 'var(--srf-base)', color: 'var(--txt-primary)',
+                  fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0,
+                  transition: 'background var(--dur-fast)'
+                }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--srf-raised)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'var(--srf-base)'}
+                >
+                  📎 <span>{t('learn.chat.input.attach_file')}</span>
+                  <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
+                </label>
+
+                {/* Divider */}
+                <span style={{ height: '20px', width: '1px', background: 'var(--brd-subtle)', flexShrink: 0 }} />
+
+                {/* Quick action chips */}
+                {[
+                  { labelKey: 'learn.chat.input.explain', prompt: "Peux-tu m'expliquer en détail le concept suivant : " },
+                  { labelKey: 'learn.chat.input.revise', prompt: "Je souhaite faire une session de révision complète sur : " },
+                  { labelKey: 'learn.chat.input.correct', prompt: "Voici mon exercice, peux-tu le corriger étape par étape : " },
+                  { labelKey: 'learn.chat.input.quiz', prompt: "Génère un quiz de 5 questions sur : " },
+                  { labelKey: 'learn.chat.input.resolve', prompt: "Voici une épreuve complète, analyse-la et traite tous les exercices un par un : " },
+                ].map(({ labelKey, prompt }) => (
+                  <button
+                    key={labelKey}
+                    onClick={() => handleActionPrompt(prompt)}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center',
+                      padding: '0 var(--sp-3)', minHeight: '32px',
+                      fontSize: 'var(--tx-xs)', borderRadius: 'var(--rd-full)',
+                      border: '1px solid var(--brd-subtle)',
+                      background: 'transparent', color: 'var(--txt-secondary)',
+                      cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+                      transition: 'all var(--dur-fast)'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--clr-brand-lt)'; e.currentTarget.style.color = 'var(--clr-brand)'; e.currentTarget.style.borderColor = 'var(--clr-brand)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--txt-secondary)'; e.currentTarget.style.borderColor = 'var(--brd-subtle)'; }}
+                  >
+                    {t(labelKey)}
+                  </button>
+                ))}
+              </div>
+
+              {/* Text Input Row */}
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <textarea
+                  id="chat-textarea"
+                  rows="2"
+                  placeholder={t('learn.chat.input.placeholder')}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSend();
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: 'var(--sp-3) 60px var(--sp-3) var(--sp-4)',
+                    borderRadius: 'var(--rd-lg)',
+                    border: '1px solid var(--brd-input)',
+                    fontSize: 'var(--tx-base)',
+                    outline: 'none',
+                    resize: 'none',
+                    boxSizing: 'border-box',
+                    fontFamily: 'var(--font)',
+                    background: 'var(--srf-base)',
+                    color: 'var(--txt-primary)'
+                  }}
+                />
+                <button
+                  onClick={() => handleSend()}
+                  disabled={isLoading}
+                  className="chat-send-btn"
+                  style={{
+                    position: 'absolute',
+                    right: '8px',
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: 'none'
+                  }}
+                  aria-label={t('learn.chat.input.send')}
+                >
+                  {isLoading ? '...' : '→'}
+                </button>
+              </div>
+
+            </div>
+
+          </div>
         </div>
 
-        {/* ── Input bar and attachment controls ── */}
-        <div style={{
-          padding: 'var(--sp-4)',
-          borderTop: '1px solid var(--brd-subtle)',
-          background: 'var(--srf-raised)',
-          flexShrink: 0
-        }}>
+        {/* Right: Revision Control Panel (Aside Sidebar / Overlay Drawer) */}
+        {sessionDocument && (
+          <>
+            {/* Backdrop on mobile */}
+            {isSidebarOpen && (
+              <div className="panel-backdrop mobile-only" onClick={() => setIsSidebarOpen(false)} style={{ display: 'block' }} />
+            )}
 
-          {/* File Preview Card */}
-          {attachedFile && (
-            <div className="card" style={{
-              padding: 'var(--sp-4)',
-              background: attachedFile.status === 'ready'
-                ? 'color-mix(in srgb, var(--clr-green) 8%, var(--srf-base))'
-                : attachedFile.status === 'no-text' || attachedFile.status === 'error'
-                  ? 'color-mix(in srgb, var(--clr-warning) 8%, var(--srf-base))'
-                  : 'var(--clr-brand-lt)',
-              border: `1px solid ${attachedFile.status === 'ready' ? 'rgba(34,197,94,0.25)' : attachedFile.status === 'no-text' || attachedFile.status === 'error' ? 'rgba(234,179,8,0.25)' : 'rgba(79,110,247,0.2)'}`,
-              borderRadius: 'var(--rd-lg)',
-              marginBottom: 'var(--sp-3)',
-              animation: 'slideIn var(--dur-base) var(--ease-out)'
-            }}>
-              <div className="row row--between">
-                <div className="row" style={{ minWidth: 0, gap: 'var(--sp-3)' }}>
-                  <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>
-                    {attachedFile.status === 'analyzing' ? '⏳' :
-                     attachedFile.status === 'ready'     ? '✅' :
-                     attachedFile.status === 'no-text'   ? '⚠️' :
-                     attachedFile.status === 'error'     ? '❌' : '📎'}
-                  </span>
-                  <div style={{ minWidth: 0 }}>
-                    <p className="truncate" style={{ fontSize: 'var(--tx-sm)', fontWeight: 'var(--fw-semibold)', margin: 0, color: 'var(--clr-brand)' }}>
-                      {attachedFile.name}
-                    </p>
-                    <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', margin: 0 }}>
-                      {attachedFile.status === 'analyzing' && t('learn.chat.file.extracting')}
-                      {attachedFile.status === 'ready' && t('learn.chat.file.extracted', { count: attachedFile.pages })}
-                      {attachedFile.status === 'no-text' && (attachedFile.note || t('learn.chat.file.no_text'))}
-                      {attachedFile.status === 'error' && t('learn.chat.file.error')}
-                      {!attachedFile.status && t('learn.chat.file.ready')}
-                    </p>
-                  </div>
+            <aside className={`control-panel-aside ${isSidebarOpen ? 'open' : ''}`}>
+              {/* Header */}
+              <div className="row row--between" style={{ borderBottom: '1px solid var(--brd-subtle)', paddingBottom: 'var(--sp-3)', flexShrink: 0 }}>
+                <div className="row" style={{ gap: 'var(--sp-2)' }}>
+                  <span style={{ fontSize: '1.2rem' }}>🎯</span>
+                  <h3 className="laura-h3" style={{ margin: 0, fontSize: 'var(--tx-sm)', fontWeight: 700 }}>
+                    Suivi d'Assimilation
+                  </h3>
                 </div>
                 <button
-                  onClick={() => setAttachedFile(null)}
-                  className="laura-btn laura-btn-ghost"
-                  style={{ minHeight: '28px', width: '28px', padding: 0, borderRadius: 'var(--rd-full)', color: 'var(--txt-secondary)' }}
-                  aria-label={t('learn.chat.file.remove')}
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="laura-btn laura-btn-ghost mobile-only"
+                  style={{ minHeight: '24px', width: '24px', padding: 0 }}
                 >
                   ✕
                 </button>
               </div>
 
-              {attachedFile.status === 'ready' && (
-                <div style={{ display: 'flex', gap: 'var(--sp-3)', marginTop: 'var(--sp-4)' }}>
-                  <button
-                    onClick={() => {
-                      const prompt = `Analyse ce document et crée un quiz complet de 5 questions pour tester mes connaissances.`;
-                      setAttachedFile(prev => prev);
-                      handleSend(prompt);
-                    }}
-                    className="laura-btn laura-btn-primary"
-                    style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
-                  >
-                    ✨ {t('learn.chat.doc_actions.quiz')}
-                  </button>
-                  <button
-                    onClick={() => {
-                      const prompt = `Fais-moi un résumé clair et synthétique de ce document.`;
-                      setAttachedFile(prev => prev);
-                      handleSend(prompt);
-                    }}
-                    className="laura-btn laura-btn-secondary"
-                    style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
-                  >
-                    📝 {t('learn.chat.doc_actions.summarize')}
-                  </button>
-                  <button
-                    onClick={() => {
-                      const prompt = `Corrige et explique en détail tous les exercices présents dans ce document.`;
-                      setAttachedFile(prev => prev);
-                      handleSend(prompt);
-                    }}
-                    className="laura-btn laura-btn-secondary"
-                    style={{ fontSize: 'var(--tx-xs)', minHeight: '32px', padding: '0 var(--sp-4)' }}
-                  >
-                    ✏️ {t('learn.chat.doc_actions.correct')}
-                  </button>
+              {/* Session Meta */}
+              <div className="card" style={{ padding: 'var(--sp-3)', background: 'var(--srf-raised)', border: '1px solid var(--brd-subtle)', display: 'block' }}>
+                <p style={{ margin: '0 0 var(--sp-1)', fontSize: '10px', textTransform: 'uppercase', color: 'var(--clr-brand)', fontWeight: 700 }}>
+                  Thème de la session
+                </p>
+                <h4 style={{ margin: '0 0 var(--sp-2)', fontSize: 'var(--tx-sm)', fontWeight: 600, color: 'var(--txt-primary)' }}>
+                  {sessionDocument.titre}
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)' }}>
+                  <span>📚 Matière : <strong>{sessionDocument.matiere || 'Général'}</strong></span>
+                  <span>⚙️ Type : <strong>{sessionDocument.type}</strong></span>
+                  <span>⏱️ Temps écoulé : <strong style={{ color: 'var(--clr-brand)' }}>{formatTime(secondsElapsed)}</strong></span>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
 
-          {/* ── Toolbar : file attach + quick actions (compact, single row) ── */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', marginBottom: 'var(--sp-2)', flexWrap: 'wrap' }}>
+              {/* Progress & Goal Card */}
+              <div style={{ textAlign: 'center', padding: 'var(--sp-4) 0', borderBottom: '1px solid var(--brd-subtle)' }}>
+                <p style={{ margin: '0 0 var(--sp-1)', fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)' }}>
+                  Progression visée
+                </p>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--clr-green)', margin: 'var(--sp-1) 0' }}>
+                  +10%
+                </div>
+                <div className="progress-bar-bg" style={{ width: '100%', height: '8px', background: 'var(--brd-subtle)', borderRadius: 'var(--rd-full)', overflow: 'hidden', margin: 'var(--sp-2) 0' }}>
+                  <div style={{ width: '40%', height: '100%', background: 'var(--clr-green)', borderRadius: 'var(--rd-full)' }} />
+                </div>
+                <p style={{ margin: 0, fontSize: '10px', color: 'var(--txt-tertiary)', lineHeight: 1.4 }}>
+                  Validez la session pour enregistrer vos points dans votre profil académique.
+                </p>
+              </div>
 
-            {/* 📎 Attach file — always first */}
-            <label style={{
-              display: 'inline-flex', alignItems: 'center', gap: '5px',
-              padding: '0 var(--sp-3)', minHeight: '32px',
-              fontSize: 'var(--tx-xs)', borderRadius: 'var(--rd-full)',
-              cursor: 'pointer', border: '1px solid var(--brd-input)',
-              background: 'var(--srf-base)', color: 'var(--txt-primary)',
-              fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0,
-              transition: 'background var(--dur-fast)'
-            }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--srf-raised)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'var(--srf-base)'}
-            >
-              📎 <span>{t('learn.chat.input.attach_file')}</span>
-              <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
-            </label>
+              {/* Assimilation Checklist */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+                <p style={{ margin: 0, fontSize: 'var(--tx-xs)', fontWeight: 600, color: 'var(--txt-secondary)' }}>
+                  Étapes de validation :
+                </p>
 
-            {/* Divider */}
-            <span style={{ height: '20px', width: '1px', background: 'var(--brd-subtle)', flexShrink: 0 }} />
+                {[
+                  { key: 'start', label: '1. Lancement de la session', desc: 'Démarrage de la discussion' },
+                  { key: 'theory', label: '2. Lecture & Compréhension', desc: 'Comprendre les notions clés du cours' },
+                  { key: 'practice', label: '3. Application / Exercices', desc: 'Faire des exercices ou un quiz' },
+                  { key: 'summary', label: '4. Synthèse et Rétention', desc: 'Valider et mémoriser la session' }
+                ].map(item => {
+                  const isChecked = checkedMilestones[item.key];
+                  return (
+                    <div
+                      key={item.key}
+                      onClick={() => item.key !== 'start' && toggleMilestone(item.key)}
+                      className={`milestone-item ${isChecked ? 'checked' : ''}`}
+                      style={{ cursor: item.key === 'start' ? 'default' : 'pointer' }}
+                    >
+                      <div className="milestone-checkbox">
+                        {isChecked && '✓'}
+                      </div>
+                      <div style={{ minWidth: 0 }}>
+                        <p style={{ margin: 0, fontSize: 'var(--tx-xs)', fontWeight: 600, color: isChecked ? 'var(--clr-green)' : 'var(--txt-primary)' }}>
+                          {item.label}
+                        </p>
+                        <p style={{ margin: 0, fontSize: '10px', color: 'var(--txt-tertiary)' }}>
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
 
-            {/* Quick action chips */}
-            {[
-              { labelKey: 'learn.chat.input.explain',  prompt: "Peux-tu m'expliquer en détail le concept suivant : " },
-              { labelKey: 'learn.chat.input.revise',    prompt: "Je souhaite faire une session de révision complète sur : " },
-              { labelKey: 'learn.chat.input.correct',   prompt: "Voici mon exercice, peux-tu le corriger étape par étape : " },
-              { labelKey: 'learn.chat.input.quiz',       prompt: "Génère un quiz de 5 questions sur : " },
-              { labelKey: 'learn.chat.input.resolve',   prompt: "Voici une épreuve complète, analyse-la et traite tous les exercices un par un : " },
-            ].map(({ labelKey, prompt }) => (
-              <button
-                key={labelKey}
-                onClick={() => handleActionPrompt(prompt)}
-                style={{
-                  display: 'inline-flex', alignItems: 'center',
-                  padding: '0 var(--sp-3)', minHeight: '32px',
-                  fontSize: 'var(--tx-xs)', borderRadius: 'var(--rd-full)',
-                  border: '1px solid var(--brd-subtle)',
-                  background: 'transparent', color: 'var(--txt-secondary)',
-                  cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
-                  transition: 'all var(--dur-fast)'
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'var(--clr-brand-lt)'; e.currentTarget.style.color = 'var(--clr-brand)'; e.currentTarget.style.borderColor = 'var(--clr-brand)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--txt-secondary)'; e.currentTarget.style.borderColor = 'var(--brd-subtle)'; }}
-              >
-                {t(labelKey)}
-              </button>
-            ))}
-          </div>
+              {/* Action Buttons inside Sidebar */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)', flexShrink: 0 }}>
+                {activeSessionId && (
+                  <button
+                    onClick={() => setIsCompletionModalOpen(true)}
+                    className="laura-btn"
+                    style={{
+                      width: '100%',
+                      minHeight: '40px',
+                      background: 'var(--clr-green)',
+                      color: 'white',
+                      fontWeight: 700,
+                      borderRadius: 'var(--rd-lg)',
+                      border: 'none',
+                      boxShadow: '0 4px 12px rgba(34,197,94,0.3)',
+                      cursor: 'pointer',
+                      fontSize: 'var(--tx-sm)'
+                    }}
+                  >
+                    🎯 Valider l'Assimilation
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    if (window.confirm("Voulez-vous vraiment changer de document ? Votre session en cours sera abandonnée.")) {
+                      navigate('/learn/revision');
+                    }
+                  }}
+                  className="laura-btn laura-btn-ghost"
+                  style={{ width: '100%', minHeight: '36px', fontSize: 'var(--tx-xs)' }}
+                >
+                  Changer de cours
+                </button>
+              </div>
+            </aside>
+          </>
+        )}
 
-          {/* Text Input Row */}
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-            <textarea
-              id="chat-textarea"
-              rows="2"
-              placeholder={t('learn.chat.input.placeholder')}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
-              style={{
-                width: '100%',
-                padding: 'var(--sp-3) 60px var(--sp-3) var(--sp-4)',
-                borderRadius: 'var(--rd-lg)',
-                border: '1px solid var(--brd-input)',
-                fontSize: 'var(--tx-base)',
-                outline: 'none',
-                resize: 'none',
-                boxSizing: 'border-box',
-                fontFamily: 'var(--font)',
-                background: 'var(--srf-base)',
-                color: 'var(--txt-primary)'
-              }}
-            />
-            <button
-              onClick={() => handleSend()}
-              disabled={isLoading}
-              className="chat-send-btn"
-              style={{
-                position: 'absolute',
-                right: '8px',
-                width: '40px',
-                height: '40px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: 'none'
-              }}
-              aria-label={t('learn.chat.input.send')}
-            >
-              {isLoading ? '...' : '→'}
-            </button>
-          </div>
-
-        </div>
       </div>
 
       {/* ── COMPLETION VALIDATION MODAL ── */}

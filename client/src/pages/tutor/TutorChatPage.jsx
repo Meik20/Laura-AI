@@ -29,7 +29,9 @@ export default function TutorChatPage() {
   const profileContext = {
     prenom: userProfile?.prenom || userProfile?.nom || t('common.roles.tutor'),
     discipline: userProfile?.discipline || userProfile?.filiere || 'Général',
-    etablissement: userProfile?.etablissement || 'Non défini'
+    etablissement: userProfile?.etablissement || 'Non défini',
+    role: 'tutor',
+    serie: userProfile?.discipline || userProfile?.filiere || 'Général'
   };
 
   const [isLoading, setIsLoading] = useState(false);

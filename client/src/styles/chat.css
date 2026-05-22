@@ -192,3 +192,105 @@
   color: var(--clr-brand);
   border-color: var(--brd-strong);
 }
+
+/* ==========================================================================
+   REVISION CONTROL PANEL & RESPONSIVE LAYOUT
+   ========================================================================== */
+
+.revision-layout {
+  display: flex;
+  gap: var(--sp-4);
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.chat-container-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.control-panel-aside {
+  width: 320px;
+  background: var(--srf-base);
+  border: 1px solid var(--brd-default);
+  border-radius: var(--rd-2xl);
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-5);
+  gap: var(--sp-5);
+  overflow-y: auto;
+  flex-shrink: 0;
+  transition: all var(--dur-base) var(--ease-out);
+}
+
+@media (max-width: 1023px) {
+  .control-panel-aside {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 290px;
+    z-index: 999;
+    border-radius: var(--rd-2xl) 0 0 var(--rd-2xl);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+    transform: translateX(100%);
+  }
+  
+  .control-panel-aside.open {
+    transform: translateX(0);
+  }
+}
+
+.panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+  animation: fadeIn var(--dur-fast) ease-out;
+}
+
+.milestone-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  border-radius: var(--rd-xl);
+  border: 1px solid var(--brd-subtle);
+  background: var(--srf-raised);
+  cursor: pointer;
+  transition: all var(--dur-fast) ease;
+}
+
+.milestone-item:hover {
+  border-color: var(--clr-brand);
+  background: color-mix(in srgb, var(--clr-brand) 4%, var(--srf-base));
+}
+
+.milestone-item.checked {
+  border-color: var(--clr-green);
+  background: color-mix(in srgb, var(--clr-green) 4%, var(--srf-base));
+}
+
+.milestone-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--rd-xs);
+  border: 2px solid var(--brd-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: white;
+  transition: all var(--dur-fast) ease;
+}
+
+.milestone-item.checked .milestone-checkbox {
+  background: var(--clr-green);
+  border-color: var(--clr-green);
+}
+
