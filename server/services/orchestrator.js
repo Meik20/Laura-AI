@@ -495,10 +495,12 @@ ${isDevoir ? `DEVOIR DE L'ÉLÈVE : ${query}` : `QUESTION DE L'ÉLÈVE : ${query
       version: "1.3.0"
     };
 
-    // Store in Cache (1 hour)
-    try {
-      await cacheService.set(cacheKey, JSON.stringify(result));
-    } catch (e) {}
+    // Store in Cache (1 hour) only if successful
+    if (finalModelUsed) {
+      try {
+        await cacheService.set(cacheKey, JSON.stringify(result));
+      } catch (e) {}
+    }
 
     return result;
   }

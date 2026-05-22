@@ -261,7 +261,7 @@ export default function LearnRevisionPage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 'var(--sp-6)', alignItems: 'start' }}>
+      <div className="revision-grid">
 
         {/* ── Left: Resource Picker ── */}
         <div className="card" style={{ padding: 'var(--sp-6)' }}>
@@ -514,7 +514,7 @@ export default function LearnRevisionPage() {
                 gap: 'var(--sp-3)',
                 alignItems: 'center'
               }}>
-                <i className={getIcon(selectedResource.type)} style={{ fontSize: '1.2rem', color: 'var(--clr-brand)' }} />
+                <i className={getIcon(selectedResource.type)} style={{ fontSize: '1.2rem', color: 'var(--clr-brand)', flexShrink: 0 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ margin: 0, fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-bold)', color: 'var(--clr-brand)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {selectedResource.titre}
@@ -533,16 +533,20 @@ export default function LearnRevisionPage() {
               </div>
             ) : (
               <div style={{
-                padding: 'var(--sp-3)',
+                padding: 'var(--sp-2) var(--sp-3)',
                 borderRadius: 'var(--rd-md)',
-                background: 'var(--srf-raised)',
-                border: '1px dashed var(--brd-default)',
+                background: 'var(--srf-subtle)',
+                border: '1px solid var(--brd-subtle)',
                 marginBottom: 'var(--sp-4)',
                 textAlign: 'center',
-                fontSize: 'var(--tx-xs)',
-                color: 'var(--txt-tertiary)'
+                fontSize: '12px',
+                color: 'var(--txt-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px'
               }}>
-                <i className="ti ti-arrow-left" style={{ marginRight: '4px' }} /> Sélectionnez un document à gauche
+                <i className="ti ti-arrow-left" /> Sélectionner un document
               </div>
             )}
 
@@ -552,26 +556,34 @@ export default function LearnRevisionPage() {
                 <label style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-semibold)', marginBottom: 'var(--sp-2)', display: 'block' }}>
                   Type de session
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-2)' }}>
+                <div className="session-types-grid">
                   {SESSION_TYPES.map(st => (
                     <button
                       key={st.value}
                       type="button"
                       onClick={() => setSessionType(st.value)}
                       style={{
-                        padding: 'var(--sp-2) var(--sp-3)',
+                        padding: 'var(--sp-3)',
                         borderRadius: 'var(--rd-md)',
                         border: `1.5px solid ${sessionType === st.value ? 'var(--clr-brand)' : 'var(--brd-subtle)'}`,
                         background: sessionType === st.value ? 'var(--clr-brand-lt, rgba(79,110,247,0.1))' : 'var(--srf-raised)',
                         color: sessionType === st.value ? 'var(--clr-brand)' : 'var(--txt-secondary)',
                         cursor: 'pointer',
-                        fontSize: '11px',
+                        fontSize: '12px',
                         fontWeight: sessionType === st.value ? 'var(--fw-bold)' : 'normal',
                         textAlign: 'center',
-                        transition: 'all var(--dur-fast)'
+                        transition: 'all var(--dur-fast)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px',
+                        lineHeight: '1.2',
+                        wordBreak: 'break-word'
                       }}
                     >
-                      <i className={st.icon} style={{ marginRight: '4px' }} />{st.label}
+                      <i className={st.icon} style={{ fontSize: '1.2rem' }} />
+                      <span>{st.label}</span>
                     </button>
                   ))}
                 </div>
@@ -708,7 +720,7 @@ export default function LearnRevisionPage() {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-3)' }}>
+              <div className="grid-cols-2-resp">
                 <div className="form-group">
                   <label style={{ fontSize: 'var(--tx-xs)', fontWeight: 'var(--fw-semibold)', display: 'block', marginBottom: 'var(--sp-1)' }}>Matière</label>
                   <input
