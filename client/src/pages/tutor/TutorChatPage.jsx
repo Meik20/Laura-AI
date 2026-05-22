@@ -5,6 +5,17 @@ import { db } from '../../firebase';
 import { doc, getDoc, setDoc, arrayUnion, collection, addDoc } from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
 
+function formatMessageTime(timestampString) {
+  if (!timestampString) return '';
+  try {
+    const d = new Date(timestampString);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch {
+    return '';
+  }
+}
+
 export default function TutorChatPage() {
   const { t } = useTranslation();
   const [input, setInput] = useState('');
@@ -221,6 +232,19 @@ export default function TutorChatPage() {
                       <div className="chat-msg__bubble" style={{ background: isUser ? 'var(--grd-brand)' : 'var(--srf-raised)', color: isUser ? 'white' : 'var(--txt-primary)' }}>
                         {m.text}
                       </div>
+
+                      {m.timestamp && (
+                        <span style={{
+                          fontSize: '9px',
+                          color: isUser ? 'var(--txt-secondary)' : 'var(--txt-tertiary)',
+                          alignSelf: isUser ? 'flex-end' : 'flex-start',
+                          padding: '0 var(--sp-1)',
+                          marginTop: '2px',
+                          opacity: 0.8
+                        }}>
+                          {formatMessageTime(m.timestamp)}
+                        </span>
+                      )}
                     </div>
                   </div>
                 );

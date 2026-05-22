@@ -4,6 +4,17 @@ import { db } from '../../firebase';
 import { collection, query, orderBy, onSnapshot, doc, addDoc, getDocs, where, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
 
+function formatMessageTime(createdAt) {
+  if (!createdAt) return '';
+  try {
+    const d = createdAt.toDate ? createdAt.createdAt?.toDate() || createdAt.toDate() : new Date(createdAt);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch {
+    return '';
+  }
+}
+
 export default function LearnCommunityPage() {
   const { t } = useTranslation();
   const { userProfile } = useAuth();
@@ -440,6 +451,20 @@ export default function LearnCommunityPage() {
                           >
                             {m.text}
                           </div>
+
+                          {m.createdAt && (
+                            <span style={{
+                              fontSize: '9px',
+                              color: 'var(--txt-tertiary)',
+                              display: 'block',
+                              textAlign: isMe ? 'right' : 'left',
+                              marginTop: '2px',
+                              padding: '0 var(--sp-1)',
+                              opacity: 0.8
+                            }}>
+                              {formatMessageTime(m.createdAt)}
+                            </span>
+                          )}
                         </div>
                       </div>
                     );

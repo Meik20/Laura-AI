@@ -14,6 +14,17 @@ function getInitials(profile) {
   return 'A';
 }
 
+function formatMessageTime(timestampString) {
+  if (!timestampString) return '';
+  try {
+    const d = new Date(timestampString);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch {
+    return '';
+  }
+}
+
 /**
  * Renders a LAURA markdown response into structured JSX.
  * Supports: ## headers, **bold**, - lists, --- separators, plain text.
@@ -567,10 +578,23 @@ export default function LearnChatPage() {
                   <div className="chat-msg__avatar">
                     {isUser ? initials : 'L'}
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)', maxWidth: '100%' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-1)', maxWidth: '100%' }}>
                     <div className="chat-msg__bubble">
                       {isUser ? m.text : <RenderMessage text={m.text} />}
                     </div>
+
+                    {m.timestamp && (
+                      <span style={{
+                        fontSize: '9px',
+                        color: 'var(--txt-tertiary)',
+                        alignSelf: isUser ? 'flex-end' : 'flex-start',
+                        padding: '0 var(--sp-1)',
+                        marginTop: '2px',
+                        opacity: 0.8
+                      }}>
+                        {formatMessageTime(m.timestamp)}
+                      </span>
+                    )}
 
                     {/* AI action shortcuts — shown below each AI message */}
                     {!isUser && (
