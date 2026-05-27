@@ -100,9 +100,17 @@ export default function LearnProgressPage() {
 
   const handleSaveGoal = async (newGoal) => {
     const goalObj = {
+      id: Date.now().toString(),
       title: newGoal.title,
+      matiere: newGoal.matiere,
+      type: newGoal.type,
+      cible: newGoal.cible,
+      targetValue: parseInt(newGoal.targetValue) || 10,
+      currentValue: 0,
       progress: 0,
-      date: `${newGoal.dateDebut} au ${newGoal.dateFin}`
+      date: `${newGoal.dateDebut} au ${newGoal.dateFin}`,
+      dateDebut: newGoal.dateDebut,
+      dateFin: newGoal.dateFin
     };
     const updatedGoals = [goalObj, ...currentGoals];
     setCurrentGoals(updatedGoals);
@@ -170,7 +178,9 @@ export default function LearnProgressPage() {
                     <div style={{ flex: 1, height: '8px', background: '#E5E5E2', borderRadius: '4px', overflow: 'hidden' }}>
                       <div style={{ width: `${goal.progress || 0}%`, height: '100%', background: '#1A1A1A', borderRadius: '4px' }}></div>
                     </div>
-                    <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{goal.progress || 0}%</span>
+                    <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>
+                      {goal.targetValue ? `${goal.currentValue || 0} / ${goal.targetValue}` : `${goal.progress || 0}%`}
+                    </span>
                   </div>
                 </div>
               ))

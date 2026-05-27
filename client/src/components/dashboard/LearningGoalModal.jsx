@@ -4,8 +4,8 @@ import { useAuth } from '../../hooks/useAuth';
 export default function LearningGoalModal({ isOpen, onClose, onSave }) {
   const { userProfile } = useAuth();
   const [formData, setFormData] = useState({
-    title: '', matiere: '', type: 'Revision', 
-    dateDebut: '', dateFin: '', cible: 'Chapitres', notes: ''
+    title: '', matiere: '', type: 'Exercices', 
+    dateDebut: '', dateFin: '', cible: 'Exercices', targetValue: 10, notes: ''
   });
 
   const [matieresList, setMatieresList] = useState([]);
@@ -89,22 +89,36 @@ export default function LearningGoalModal({ isOpen, onClose, onSave }) {
             <div><label style={labelStyle}>Date de fin</label><input type="date" name="dateFin" required value={formData.dateFin} onChange={handleChange} style={inputStyle} /></div>
           </div>
 
-          <div>
-            <label style={labelStyle}>Cible (Optionnel)</label>
-            <input
-              type="text"
-              name="cible"
-              value={formData.cible}
-              onChange={handleChange}
-              list="goal-cible-suggestions"
-              placeholder="Nombre de chapitres"
-              style={inputStyle}
-            />
-            <datalist id="goal-cible-suggestions">
-              <option value="Chapitres">Nombre de chapitres</option>
-              <option value="Exercices">Nombre d'exercices</option>
-              <option value="Quiz">Nombre de quiz</option>
-            </datalist>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label style={labelStyle}>Cible (Type)</label>
+              <input
+                type="text"
+                name="cible"
+                value={formData.cible}
+                onChange={handleChange}
+                list="goal-cible-suggestions"
+                placeholder="Ex: Exercices, Chapitres"
+                style={inputStyle}
+              />
+              <datalist id="goal-cible-suggestions">
+                <option value="Chapitres">Chapitres</option>
+                <option value="Exercices">Exercices</option>
+                <option value="Quiz">Quiz</option>
+              </datalist>
+            </div>
+            <div>
+              <label style={labelStyle}>Quantité cible (Nombre)</label>
+              <input
+                type="number"
+                name="targetValue"
+                value={formData.targetValue}
+                onChange={handleChange}
+                min="1"
+                style={inputStyle}
+                required
+              />
+            </div>
           </div>
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>

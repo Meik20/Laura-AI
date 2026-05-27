@@ -482,12 +482,22 @@ export default function LearnChatPage() {
 
       let goalsUpdate = null;
       if (Array.isArray(userProfile?.goals) && userProfile.goals.length > 0) {
-        goalsUpdate = userProfile.goals.map((g, idx) => {
-          if (idx === 0) { // Update the most recent active goal
-            return {
-              ...g,
-              progress: Math.min(100, (g.progress || 0) + score)
-            };
+        goalsUpdate = userProfile.goals.map((g) => {
+          // Check if this goal matches the current session
+          const isMatchingSubject = !g.matiere || g.matiere === matiere;
+          const isMatchingType = !g.type || g.type.toLowerCase().includes('révision') || g.type.toLowerCase().includes('revision');
+          
+          if (isMatchingSubject && isMatchingType && (g.progress || 0) < 100) {
+            // If it's a new format goal with targetValue
+            if (g.targetValue) {
+              const increment = 1; // 1 session completed
+              const newCurrentValue = (g.currentValue || 0) + increment;
+              const newProgress = Math.min(100, Math.round((newCurrentValue / g.targetValue) * 100));
+              return { ...g, currentValue: newCurrentValue, progress: newProgress };
+            } else {
+              // Legacy fallback
+              return { ...g, progress: Math.min(100, (g.progress || 0) + score) };
+            }
           }
           return g;
         });
