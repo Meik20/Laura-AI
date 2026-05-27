@@ -32,13 +32,23 @@ service cloud.firestore {
       );
     }
 
-    // ── USERS COLLECTION ──────────────────────────────────────────────────────
+    // Helper to check document author/owner
+    function resourceOwner() {
+       return request.auth.uid == resource.data.auteurId;
+    }
+
+    // ── USERS & SUBCOLLECTIONS ────────────────────────────────────────────────
     match /users/{userId} {
       allow read: if isAuthenticated();
       // Allow sign-up (creation) for any auth user; updates/deletions only by owner or admin
       allow create: if isAuthenticated() && request.auth.uid == userId;
       allow update: if isOwner(userId) || isAdmin();
       allow delete: if isAdmin();
+
+      // Allow users to read/write all their subcollections (sessions, personalDocs, etc.)
+      match /{allSubcollections=**} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
     }
 
     // ── CHATS COLLECTION (AI Session History) ──────────────────────────────────
@@ -58,9 +68,30 @@ service cloud.firestore {
       allow write: if isAuthenticated();
     }
 
-    // Helper helper to check document author/owner
-    function resourceOwner() {
-       return request.auth.uid == resource.data.auteurId;
+    // ── ADMIN SETTINGS ────────────────────────────────────────────────────────
+    match /adminSettings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ── SUBMISSIONS COLLECTION ────────────────────────────────────────────────
+    match /submissions/{submissionId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ── TUTOR APPLICATIONS ────────────────────────────────────────────────────
+    match /tutorApplications/{applicationId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ── SUPPORT TICKETS ───────────────────────────────────────────────────────
+    match /support/{ticketId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ── COMMUNITY POSTS ───────────────────────────────────────────────────────
+    match /community/{postId} {
+      allow read, write: if isAuthenticated();
     }
   }
 }
