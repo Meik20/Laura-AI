@@ -466,6 +466,7 @@ ${isDevoir ? `DEVOIR DE L'ÉLÈVE : ${query}` : `QUESTION DE L'ÉLÈVE : ${query
         }
       }
       else {
+        let errors = [];
         for (const m of modelsToTry) {
           try {
             const res = await this.callModel(m, basePrompt);
@@ -474,11 +475,16 @@ ${isDevoir ? `DEVOIR DE L'ÉLÈVE : ${query}` : `QUESTION DE L'ÉLÈVE : ${query
             break;
           } catch (e) {
             console.warn(`[LAURA] Fallback triggered from ${m}:`, e.message);
+            errors.push(`${m}: ${e.message}`);
           }
+        }
+        if (!responseText) {
+          responseText = `DEBUG: All models failed. Errors:\n` + errors.join('\n');
         }
       }
     } catch (err) {
       console.error("[ORCHESTRATOR ERROR]", err);
+      responseText = `DEBUG ERROR: ${err.message}\n\nModels tried: ${modelsToTry.join(', ')}`;
     }
 
     if (!responseText) {
