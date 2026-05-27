@@ -307,13 +307,15 @@ export default function LearnChatPage() {
         promptText = t('learn.chat.prompts.revision_program', { level: profileContext.niveau, exam: fullExam });
       } else if (resourceTitle) {
         promptText = t('learn.chat.prompts.revise_resource', { title: resourceTitle });
+      } else if (promptKey) {
+        promptText = promptKey;
       }
-
+ 
       if (promptText) {
         searchParams.delete('prompt');
         searchParams.delete('resourceTitle');
         setSearchParams(searchParams);
-
+ 
         setTimeout(() => {
           handleSend(promptText);
         }, 100);
