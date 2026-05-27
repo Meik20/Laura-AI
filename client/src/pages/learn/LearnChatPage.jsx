@@ -470,11 +470,13 @@ export default function LearnChatPage() {
       const titre = sessionDocument?.titre || activeGoalTitle || 'Session';
 
       // 1. Update session status to "Terminé"
-      await setDoc(doc(db, 'users', userProfile.uid, 'sessions', activeSessionId), {
-        status: 'Terminé',
-        completedAt: new Date().toISOString(),
-        scoreEarned: score
-      }, { merge: true });
+      if (activeSessionId) {
+        await setDoc(doc(db, 'users', userProfile.uid, 'sessions', activeSessionId), {
+          status: 'Terminé',
+          completedAt: new Date().toISOString(),
+          scoreEarned: score
+        }, { merge: true });
+      }
 
       // 2. Increment Subject progress
       const currentSubProgress = userProfile?.matieresProgress?.[matiere] || 0;
