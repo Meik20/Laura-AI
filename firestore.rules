@@ -84,9 +84,13 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
-    // ── SUPPORT TICKETS ───────────────────────────────────────────────────────
+    // ── SUPPORT TICKETS / CHATS ───────────────────────────────────────────────
     match /support/{ticketId} {
       allow read, write: if isAuthenticated();
+    }
+
+    match /support_chats/{chatId} {
+      allow read, write: if isAuthenticated() && (request.auth.uid == chatId || isAdmin());
     }
 
     // ── COMMUNITY / FORUMS COLLECTION ──────────────────────────────────────────
