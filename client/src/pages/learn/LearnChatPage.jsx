@@ -506,12 +506,14 @@ export default function LearnChatPage() {
           const isSubjectMatch = isMatchingSubject && isMatchingType;
 
           if ((isExactMatch || (!activeGoalId && isSubjectMatch)) && (g.progress || 0) < 100) {
-            const newProgress = Math.min(100, (g.progress || 0) + score);
             if (g.targetValue) {
-              const newCurrentValue = Math.round((newProgress / 100) * g.targetValue);
+              // Integer goals: +1 session completed, % derived from currentValue/targetValue
+              const newCurrentValue = Math.min(g.targetValue, (g.currentValue || 0) + 1);
+              const newProgress = Math.round((newCurrentValue / g.targetValue) * 100);
               return { ...g, currentValue: newCurrentValue, progress: newProgress };
             } else {
-              return { ...g, progress: newProgress };
+              // Percentage goals: apply score directly
+              return { ...g, progress: Math.min(100, (g.progress || 0) + score) };
             }
           }
           return g;
@@ -527,16 +529,18 @@ export default function LearnChatPage() {
       await setDoc(doc(db, 'users', userProfile.uid), userUpdateObj, { merge: true });
 
       // 4. Record Activity in activities subcollection
+      const goalLabel = goalsUpdate?.find(g => g.currentValue > 0) 
+        ? `Session validée` : `Terminé (+${score}%)`;
       await addDoc(collection(db, 'users', userProfile.uid, 'activities'), {
         action: `Révision : ${titre}`,
         type: 'Révision',
         matiere: matiere,
-        result: `Terminé (+${score}%)`,
+        result: goalLabel,
         createdAt: new Date().toISOString()
       });
 
       // 5. Navigate to progress page with satisfaction message
-      alert(`Félicitations ! Ta progression a été mise à jour : +${score}% en ${matiere} !`);
+      alert(`Félicitations ! Session validée. Ta progression sur l'objectif a été mise à jour !`);
       navigate('/learn/progress');
 
     } catch (err) {
