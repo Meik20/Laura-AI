@@ -498,20 +498,20 @@ export default function LearnChatPage() {
 
       let goalsUpdate = null;
       if (Array.isArray(userProfile?.goals) && userProfile.goals.length > 0) {
-        goalsUpdate = userProfile.goals.map((g) => {
-          // Prefer exact goalId match (from URL param); fallback to subject+type match
-          const isExactMatch = activeGoalId && (g.id === activeGoalId);
+        goalsUpdate = userProfile.goals.map((g, index) => {
+          // Match exactly by id, or by array index if the goal has no id (legacy)
+          const isExactMatch = activeGoalId && (g.id === activeGoalId || (!g.id && index.toString() === activeGoalId));
           const isMatchingSubject = !g.matiere || g.matiere === matiere;
           const isMatchingType = !g.type || g.type.toLowerCase().includes('révision') || g.type.toLowerCase().includes('revision') || g.type.toLowerCase().includes('exercice') || g.type.toLowerCase().includes('quiz');
           const isSubjectMatch = isMatchingSubject && isMatchingType;
 
           if ((isExactMatch || (!activeGoalId && isSubjectMatch)) && (g.progress || 0) < 100) {
+            const newProgress = Math.min(100, (g.progress || 0) + score);
             if (g.targetValue) {
-              const newCurrentValue = (g.currentValue || 0) + 1;
-              const newProgress = Math.min(100, Math.round((newCurrentValue / g.targetValue) * 100));
+              const newCurrentValue = Math.round((newProgress / 100) * g.targetValue);
               return { ...g, currentValue: newCurrentValue, progress: newProgress };
             } else {
-              return { ...g, progress: Math.min(100, (g.progress || 0) + score) };
+              return { ...g, progress: newProgress };
             }
           }
           return g;
