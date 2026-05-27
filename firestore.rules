@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'admin' || 
+        getUserRole() == 'admin'
+      );
+    }
+
+    function isTeacherOrTutor() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'teacher' || 
+        request.auth.token.role == 'tutor' ||
+        getUserRole() == 'teacher' || 
+        getUserRole() == 'tutor' ||
+        isAdmin()
+      );
+    }
+
+    // ── USERS COLLECTION ──────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      // Allow sign-up (creation) for any auth user; updates/deletions only by owner or admin
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ── CHATS COLLECTION (AI Session History) ──────────────────────────────────
+    match /chats/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // ── RESOURCES COLLECTION (Academic Resources) ──────────────────────────────
+    match /resources/{resourceId} {
+      allow read: if true; // Publicly accessible to students/tutors
+      allow write: if isTeacherOrTutor();
+    }
+
+    // ── CONTRIBUTIONS COLLECTION ──────────────────────────────────────────────
+    match /contributions/{contributionId} {
+      allow read: if isAuthenticated() && (resourceOwner() || isAdmin());
+      allow write: if isAuthenticated();
+    }
+
+    // Helper helper to check document author/owner
+    function resourceOwner() {
+       return request.auth.uid == resource.data.auteurId;
+    }
+  }
+}

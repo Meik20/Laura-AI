@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { db } from '../../firebase';
+import { db, auth } from '../../firebase';
 import { doc, getDoc, setDoc, arrayUnion, collection, addDoc } from 'firebase/firestore';
 import { extractFileContent } from '../../utils/fileExtractor';
 import { useTranslation } from 'react-i18next';
@@ -380,9 +380,15 @@ export default function LearnChatPage() {
         extractedText: sessionDocument.extractedText || null
       } : null;
 
+      const headers = { 'Content-Type': 'application/json' };
+      if (auth.currentUser) {
+        const token = await auth.currentUser.getIdToken();
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${API_BASE}/api/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           message: fullUserText,
           mode: 'simple',

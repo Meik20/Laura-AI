@@ -11,6 +11,8 @@ const PORT = process.env.PORT || 5000;
 const orchestrator = require('./services/orchestrator');
 const ussdService = require('./services/ussd');
 const fileParser = require('./services/fileParser');
+const checkAuth = require('./middleware/auth');
+const rateLimiter = require('./middleware/rateLimiter');
 
 // Multer — in-memory storage for file upload analysis
 const multer = require('multer');
@@ -88,9 +90,22 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'healthy', project: 'LAURA', version: '1.2.0' });
 });
 
+// Rate Limiter instances for serverless security
+const chatLimiter = rateLimiter({ windowMs: 60 * 1000, max: 10, message: "Trop de messages envoyés. Veuillez attendre une minute." });
+const ocrLimiter = rateLimiter({ windowMs: 60 * 1000, max: 5, message: "Trop de fichiers analysés. Veuillez attendre une minute." });
+const ussdLimiter = rateLimiter({ windowMs: 60 * 1000, max: 30, message: "Limitation USSD dépassée. Réessayez plus tard." });
+
 // USSD Gateway Route (Africa's Talking / Maviance Standard)
-app.post('/api/ussd', async (req, res) => {
+app.post('/api/ussd', ussdLimiter, async (req, res) => {
   const { phoneNumber, text, sessionId } = req.body;
+  
+  // Verify USSD incoming signature token to prevent spoofing
+  const ussdToken = req.query.token || req.headers['x-ussd-token'];
+  const expectedToken = process.env.USSD_SECRET;
+  if (expectedToken && ussdToken !== expectedToken) {
+    console.warn(`[SECURITY WARNING] Blocked unauthorized USSD callback request.`);
+    return res.status(401).send("END Accès non autorisé.");
+  }
   
   try {
     const response = await ussdService.handleRequest(phoneNumber, text, sessionId);
@@ -102,7 +117,7 @@ app.post('/api/ussd', async (req, res) => {
 });
 
 // File Analysis Route — extract text from PDF/image
-app.post('/api/analyze-file', upload.single('file'), async (req, res) => {
+app.post('/api/analyze-file', checkAuth, ocrLimiter, upload.single('file'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'Aucun fichier reçu.' });
   }
@@ -137,7 +152,7 @@ app.post('/api/analyze-file', upload.single('file'), async (req, res) => {
 });
 
 // Base64 OCR Route — for client-side rendered PDF pages
-app.post('/api/analyze-base64', async (req, res) => {
+app.post('/api/analyze-base64', checkAuth, ocrLimiter, async (req, res) => {
   const { inlineDataArray } = req.body;
   if (!inlineDataArray || !Array.isArray(inlineDataArray)) {
     return res.status(400).json({ error: 'Données invalides.' });
@@ -158,7 +173,7 @@ app.post('/api/analyze-base64', async (req, res) => {
 });
 
 // AI Orchestration Route
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat', checkAuth, chatLimiter, async (req, res) => {
   const { message, mode, userContext, history, documentContext } = req.body;
   
   try {
@@ -197,6 +212,10 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 LAURA Server running on port ${PORT}`);
-});
+if (!process.env.VERCEL && !process.env.NOW_REGION) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 LAURA Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;

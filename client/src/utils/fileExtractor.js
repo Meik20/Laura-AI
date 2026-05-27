@@ -7,6 +7,7 @@
  */
 
 import * as pdfjsLib from 'pdfjs-dist';
+import { auth } from '../firebase';
 
 // Point to the PDF.js worker bundled with the package
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
@@ -33,9 +34,17 @@ async function renderPdfPageToBase64(page) {
 
 async function extractViaBackendBase64(inlineDataArray, apiBase = '') {
   try {
+    const headers = { 'Content-Type': 'application/json' };
+    
+    // Inject Firebase ID Token for security checks
+    if (auth.currentUser) {
+      const token = await auth.currentUser.getIdToken();
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${apiBase}/api/analyze-base64`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ inlineDataArray })
     });
 

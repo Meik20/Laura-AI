@@ -48,6 +48,8 @@ import AdminCommunityPage from '../pages/admin/AdminCommunityPage';
 import AdminSupportPage from '../pages/admin/AdminSupportPage';
 import LearnCommunityPage from '../pages/learn/LearnCommunityPage';
 
+import { RoleGuard } from './guards';
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -64,7 +66,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/learn',
-    element: <LearnLayout />,
+    element: <RoleGuard allowedRoles={['student', 'teacher', 'tutor', 'admin']}><LearnLayout /></RoleGuard>,
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <LearnDashboardPage /> },
@@ -81,7 +83,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/tutor',
-    element: <TutorLayout />,
+    element: <RoleGuard allowedRoles={['teacher', 'tutor', 'admin']}><TutorLayout /></RoleGuard>,
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <TutorDashboardPage /> },
@@ -95,7 +97,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/admin',
-    element: <AdminLayout />,
+    element: <RoleGuard allowedRoles={['admin']}><AdminLayout /></RoleGuard>,
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <AdminDashboardPage /> },

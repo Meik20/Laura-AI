@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { db } from '../../firebase';
+import { db, auth } from '../../firebase';
 import { doc, getDoc, setDoc, arrayUnion, collection, addDoc } from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
 
@@ -113,9 +113,15 @@ export default function TutorChatPage() {
 
     try {
       const API_BASE = import.meta.env.VITE_BACKEND_URL || '';
+      const headers = { 'Content-Type': 'application/json' };
+      if (auth.currentUser) {
+        const token = await auth.currentUser.getIdToken();
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${API_BASE}/api/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ message: fullUserText, mode: 'simple', userContext: profileContext, history: messages })
       });
       

@@ -8,6 +8,9 @@
   },
   "scripts": {
     "start": "node server/index.js",
+    "dev": "cd client && npm run dev",
+    "dev:web": "cd client && npm run dev",
+    "dev:server": "node server/index.js",
     "build": "cd client && npm install && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,6 +21,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.96.0",
     "@google/generative-ai": "^0.24.1",
+    "africastalking": "^0.8.0",
     "axios": "^1.16.1",
     "chromadb": "^3.4.3",
     "cors": "^2.8.6",

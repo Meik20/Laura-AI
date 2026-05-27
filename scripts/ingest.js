@@ -52,12 +52,8 @@ async function ingestPDF(filePath) {
   }
 }
 
-const fs = require('fs');
-const path = require('path');
-const pdf = require('pdf-parse');
 const Tesseract = require('tesseract.js');
-const ragService = require('../server/services/rag');
-const rag = new ragService();
+const rag = require('../server/services/rag');
 
 async function ingestImage(filePath) {
   console.log(`[OCR] Processing image: ${filePath}`);
