@@ -1,5 +1,4 @@
 {
-  "version": 2,
   "builds": [
     {
       "src": "client/package.json",
@@ -12,18 +11,14 @@
       "config": { "maxDuration": 60 }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js",
-      "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+      "source": "/api/(.*)",
+      "destination": "/api"
     },
     {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
