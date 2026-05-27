@@ -4,6 +4,7 @@ import { db } from '../../firebase';
 import { collection, getDocs, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import LearningGoalModal from '../../components/dashboard/LearningGoalModal';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const filterMatieres = (allMatieres, userProfile) => {
   const examen = (userProfile?.examen || userProfile?.examenEleve || userProfile?.examenEtudiant || '').toLowerCase();
@@ -36,6 +37,7 @@ const filterMatieres = (allMatieres, userProfile) => {
 export default function LearnProgressPage() {
   const { t } = useTranslation();
   const { userProfile } = useAuth();
+  const navigate = useNavigate();
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [currentGoals, setCurrentGoals] = useState([]);
   const [recentActivities, setRecentActivities] = useState([]);
@@ -171,17 +173,73 @@ export default function LearnProgressPage() {
               <div style={{ color: '#6E6E6B', fontSize: '0.95rem', padding: '1rem 0' }}>{t('learn.progress.goals.empty', 'Aucun objectif en cours. Cliquez sur "+ Nouveau" pour en créer un.')}</div>
             ) : (
               currentGoals.map((goal, i) => (
-                <div key={i} style={{ background: '#F9F9F8', padding: '1.5rem', borderRadius: '1rem', border: '1px solid #E5E5E2' }}>
-                  <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem' }}>{goal.title || goal.title}</h3>
-                  <p style={{ margin: '0 0 1rem 0', fontSize: '0.85rem', color: '#6E6E6B' }}>{goal.date || goal.period}</p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ flex: 1, height: '8px', background: '#E5E5E2', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${goal.progress || 0}%`, height: '100%', background: '#1A1A1A', borderRadius: '4px' }}></div>
+                <div key={i} style={{ background: '#F9F9F8', padding: '1.5rem', borderRadius: '1rem', border: '1px solid #E5E5E2', position: 'relative' }}>
+                  
+                  {/* Status badge */}
+                  {goal.progress >= 100 && (
+                    <span style={{ position: 'absolute', top: '1rem', right: '1rem', background: '#D1FAE5', color: '#065F46', fontSize: '0.75rem', fontWeight: 700, padding: '0.2rem 0.6rem', borderRadius: '2rem' }}>✅ Terminé</span>
+                  )}
+
+                  <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1rem', fontWeight: 700, paddingRight: goal.progress >= 100 ? '5rem' : '0' }}>{goal.title}</h3>
+                  
+                  {/* Meta: matiere + type */}
+                  {(goal.matiere || goal.cible) && (
+                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                      {goal.matiere && <span style={{ background: '#EEF2FF', color: '#4338CA', fontSize: '0.75rem', fontWeight: 600, padding: '0.15rem 0.6rem', borderRadius: '2rem' }}>{goal.matiere}</span>}
+                      {goal.cible && <span style={{ background: '#FFF7ED', color: '#C2410C', fontSize: '0.75rem', fontWeight: 600, padding: '0.15rem 0.6rem', borderRadius: '2rem' }}>{goal.cible}</span>}
                     </div>
-                    <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>
+                  )}
+
+                  <p style={{ margin: '0 0 1rem 0', fontSize: '0.8rem', color: '#6E6E6B' }}>{goal.date || goal.period}</p>
+                  
+                  {/* Progress bar */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                    <div style={{ flex: 1, height: '8px', background: '#E5E5E2', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ width: `${goal.progress || 0}%`, height: '100%', background: goal.progress >= 100 ? '#10B981' : '#1A1A1A', borderRadius: '4px', transition: 'width 0.4s ease' }}></div>
+                    </div>
+                    <span style={{ fontWeight: 700, fontSize: '0.9rem', minWidth: '3rem', textAlign: 'right' }}>
                       {goal.targetValue ? `${goal.currentValue || 0} / ${goal.targetValue}` : `${goal.progress || 0}%`}
                     </span>
                   </div>
+
+                  {/* Launch button */}
+                  {goal.progress < 100 && (
+                    <button
+                      onClick={() => {
+                        // Navigate to LearnChat with goal context as query params
+                        const params = new URLSearchParams({
+                          goalId: goal.id || i.toString(),
+                          goalTitle: goal.title || '',
+                          matiere: goal.matiere || '',
+                          type: goal.type || 'Exercices',
+                          prompt: goal.matiere
+                            ? `Génère-moi des ${goal.cible || 'exercices'} en ${goal.matiere} pour atteindre mon objectif : "${goal.title}"`
+                            : `Aide-moi à atteindre mon objectif : "${goal.title}"`
+                        });
+                        navigate(`/learn/chat?${params.toString()}`);
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '0.65rem',
+                        background: '#1A1A1A',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '0.6rem',
+                        fontWeight: 700,
+                        fontSize: '0.9rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.4rem',
+                        transition: 'background 0.2s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#333'}
+                      onMouseLeave={e => e.currentTarget.style.background = '#1A1A1A'}
+                    >
+                      ▶ Lancer la session
+                    </button>
+                  )}
                 </div>
               ))
             )}
