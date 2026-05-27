@@ -5,9 +5,17 @@ const path = require('path');
 class RAGService {
   constructor() {
     this.chromaUrl = process.env.CHROMADB_URL || 'http://localhost:8000';
-    this.client = new ChromaClient({ path: this.chromaUrl });
+    // Lazy-init: don't connect at construction time (breaks serverless)
+    this.client = null;
     this.collectionName = "laura_official_corpus";
     this.knowledgePath = path.join(__dirname, '../../data/knowledge.json');
+  }
+
+  _getClient() {
+    if (!this.client) {
+      this.client = new ChromaClient({ path: this.chromaUrl });
+    }
+    return this.client;
   }
 
   /**
@@ -16,8 +24,14 @@ class RAGService {
   async search(query, limit = 5) {
     console.log(`[LAURA RAG] Searching for: ${query}`);
     
+    // On serverless (Vercel), skip ChromaDB entirely and fall back to JSON
+    if (process.env.VERCEL || process.env.NOW_REGION || !process.env.CHROMADB_URL) {
+      console.warn('[LAURA RAG] Serverless env detected or CHROMADB_URL not set — using JSON fallback.');
+      return this.fallbackSearch(query, limit);
+    }
+
     try {
-      const collection = await this.client.getCollection({ name: this.collectionName });
+      const collection = await this._getClient().getCollection({ name: this.collectionName });
       const results = await collection.query({
         queryTexts: [query],
         nResults: limit,
@@ -44,11 +58,15 @@ class RAGService {
    */
   async fallbackSearch(query, limit) {
     if (fs.existsSync(this.knowledgePath)) {
-      const data = JSON.parse(fs.readFileSync(this.knowledgePath, 'utf8'));
-      const keywords = query.toLowerCase().split(' ');
-      return data.filter(item => 
-        keywords.some(word => word.length > 3 && item.content.toLowerCase().includes(word))
-      ).slice(0, limit);
+      try {
+        const data = JSON.parse(fs.readFileSync(this.knowledgePath, 'utf8'));
+        const keywords = query.toLowerCase().split(' ');
+        return data.filter(item => 
+          keywords.some(word => word.length > 3 && item.content.toLowerCase().includes(word))
+        ).slice(0, limit);
+      } catch (e) {
+        console.warn('[LAURA RAG] JSON fallback read failed:', e.message);
+      }
     }
     return [];
   }
@@ -57,13 +75,16 @@ class RAGService {
    * Add new documents to ChromaDB with full metadata schema
    */
   async addDocuments(documents) {
+    if (process.env.VERCEL || process.env.NOW_REGION) {
+      console.warn('[LAURA RAG] addDocuments skipped on serverless.');
+      return;
+    }
     try {
-      const collection = await this.client.getOrCreateCollection({ name: this.collectionName });
+      const collection = await this._getClient().getOrCreateCollection({ name: this.collectionName });
       
       const ids = documents.map(d => d.id);
       const docs = documents.map(d => d.content);
       const metadatas = documents.map(d => {
-        // Create a copy of all fields except content and id for metadata
         const { content, id, ...meta } = d;
         return meta;
       });
