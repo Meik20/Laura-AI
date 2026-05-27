@@ -855,7 +855,7 @@ export default function LearnChatPage() {
                   onMouseLeave={e => e.currentTarget.style.background = 'var(--srf-base)'}
                 >
                   <i className="ti ti-paperclip"></i> <span>{t('learn.chat.input.attach_file')}</span>
-                  <input type="file" onChange={handleFileAttachment} style={{ display: 'none' }} />
+                  <input type="file" accept="image/*,application/pdf,text/*" onChange={handleFileAttachment} style={{ display: 'none' }} />
                 </label>
 
                 {/* Divider */}
