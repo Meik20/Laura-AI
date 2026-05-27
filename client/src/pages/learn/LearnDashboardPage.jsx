@@ -103,6 +103,7 @@ export default function LearnDashboardPage() {
 
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [currentGoal,  setCurrentGoal]  = useState({ title: 'Aucun objectif défini', period: 'Non définie', progress: 0 });
+  const [activeGoals, setActiveGoals] = useState([]);
   const [recommandations, setRecommandations] = useState([]);
   const [adminMatieres,   setAdminMatieres]   = useState([]);
 
@@ -115,9 +116,16 @@ export default function LearnDashboardPage() {
     filiere:   userProfile?.filiere || userProfile?.discipline || null,
   };
 
-  /* ── Load user goal ── */
+  /* ── Load user goal + active goals ── */
   useEffect(() => {
     if (userProfile?.currentGoal) setCurrentGoal(userProfile.currentGoal);
+    // Load goals array (from LearnProgressPage new format)
+    if (userProfile?.goals && Array.isArray(userProfile.goals)) {
+      const inProgress = userProfile.goals.filter(g => (g.progress || 0) < 100);
+      setActiveGoals(inProgress);
+    } else {
+      setActiveGoals([]);
+    }
   }, [userProfile]);
 
   /* ── Load subjects + recommendations ── */
@@ -267,6 +275,85 @@ export default function LearnDashboardPage() {
 
         {/* ASIDE COL */}
         <div className="stack stack--lg l-page-aside">
+
+          {/* ── ACTIVE GOALS (Tâches en cours) ── */}
+          <div className="card" style={{ padding: 'var(--sp-5)' }}>
+            <div className="section-header" style={{ marginBottom: 'var(--sp-4)' }}>
+              <h3 style={{ fontSize: 'var(--tx-md)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <i className="ti ti-target" style={{ color: 'var(--clr-brand)' }} />
+                Tâches en cours
+              </h3>
+              <button
+                onClick={() => navigate('/learn/progress')}
+                style={{ fontSize: 'var(--tx-xs)', color: 'var(--clr-brand)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+              >
+                Tout voir
+              </button>
+            </div>
+
+            {activeGoals.length === 0 ? (
+              <div style={{ padding: 'var(--sp-4)', background: 'var(--srf-raised)', borderRadius: 'var(--rd-lg)', textAlign: 'center' }}>
+                <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-tertiary)', margin: 0 }}>Aucune tâche en cours. Créez un objectif dans la page Progression.</p>
+              </div>
+            ) : (
+              <div className="stack stack--sm">
+                {activeGoals.slice(0, 3).map((goal, i) => {
+                  const pct = goal.progress || 0;
+                  return (
+                    <div key={goal.id || i} style={{
+                      padding: 'var(--sp-3)',
+                      background: 'var(--srf-raised)',
+                      borderRadius: 'var(--rd-lg)',
+                      border: '1px solid var(--brd-subtle)'
+                    }}>
+                      <p style={{ margin: '0 0 4px', fontSize: 'var(--tx-sm)', fontWeight: 700, color: 'var(--txt-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {goal.title}
+                      </p>
+                      {goal.matiere && (
+                        <span style={{ fontSize: '10px', background: 'var(--clr-brand-lt)', color: 'var(--clr-brand)', padding: '1px 7px', borderRadius: '99px', fontWeight: 600, display: 'inline-block', marginBottom: '8px' }}>
+                          {goal.matiere}
+                        </span>
+                      )}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ flex: 1, height: '6px', background: 'var(--brd-default)', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div style={{ width: `${pct}%`, height: '100%', background: pct >= 100 ? 'var(--clr-green)' : 'var(--clr-brand)', borderRadius: '3px', transition: 'width 0.4s' }} />
+                        </div>
+                        <span style={{ fontSize: 'var(--tx-xs)', fontWeight: 700, color: 'var(--txt-secondary)', minWidth: '52px', textAlign: 'right' }}>
+                          {goal.targetValue ? `${goal.currentValue || 0}/${goal.targetValue}` : `${pct}%`}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          const params = new URLSearchParams({
+                            goalId: goal.id || i.toString(),
+                            goalTitle: goal.title || '',
+                            matiere: goal.matiere || '',
+                            type: goal.type || 'Exercices',
+                            prompt: goal.matiere
+                              ? `Génère-moi des ${goal.cible || 'exercices'} en ${goal.matiere} pour atteindre mon objectif : "${goal.title}"`
+                              : `Aide-moi à atteindre mon objectif : "${goal.title}"`
+                          });
+                          navigate(`/learn/chat?${params.toString()}`);
+                        }}
+                        style={{
+                          marginTop: '10px', width: '100%',
+                          padding: '6px 0',
+                          background: 'var(--clr-brand)',
+                          color: 'white', border: 'none',
+                          borderRadius: 'var(--rd-md)',
+                          fontSize: 'var(--tx-xs)', fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'
+                        }}
+                      >
+                        <i className="ti ti-player-play" style={{ fontSize: '0.9rem' }} /> Lancer
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           {/* ── RECOMMENDATIONS ── */}
           <div className="card" style={{ padding: 'var(--sp-5)' }}>

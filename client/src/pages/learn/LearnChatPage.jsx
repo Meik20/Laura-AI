@@ -138,6 +138,9 @@ export default function LearnChatPage() {
   // is linked to a real resource (course or exam from the catalog).
   const [sessionDocument, setSessionDocument] = useState(null);
   const [activeSessionId, setActiveSessionId] = useState(null);
+  const [activeGoalId, setActiveGoalId] = useState(null);
+  const [activeGoalTitle, setActiveGoalTitle] = useState(null);
+  const [activeGoalMatiere, setActiveGoalMatiere] = useState(null);
   const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
   const [secondsElapsed, setSecondsElapsed] = useState(0);
   // Sidebar is open by default on desktop when a session document is present
@@ -210,8 +213,16 @@ export default function LearnChatPage() {
     const sessionId = searchParams.get('sessionId');
     const isPersonal = searchParams.get('isPersonal') === 'true';
 
-    if (sessionId) {
-      setActiveSessionId(sessionId);
+    if (sessionId) setActiveSessionId(sessionId);
+
+    // ── Session lancée depuis LearnProgressPage (objectif) ─────────────────
+    const goalId = searchParams.get('goalId');
+    const goalTitle = searchParams.get('goalTitle');
+    const goalMatiere = searchParams.get('matiere');
+    if (goalId) {
+      setActiveGoalId(goalId);
+      setActiveGoalTitle(goalTitle || null);
+      setActiveGoalMatiere(goalMatiere || null);
     }
 
     if (!resourceId) return;
@@ -448,14 +459,15 @@ export default function LearnChatPage() {
   };
 
   const handleCompleteSession = async (score) => {
-    if (!userProfile?.uid || !activeSessionId) return;
+    if (!userProfile?.uid) return;
+    // Allow completion from goal-based sessions (no sessionDocument needed)
 
     try {
       setIsLoading(true);
       setIsCompletionModalOpen(false);
 
-      const matiere = sessionDocument?.matiere || 'Général';
-      const titre = sessionDocument?.titre || 'Cours';
+      const matiere = sessionDocument?.matiere || activeGoalMatiere || 'Général';
+      const titre = sessionDocument?.titre || activeGoalTitle || 'Session';
 
       // 1. Update session status to "Terminé"
       await setDoc(doc(db, 'users', userProfile.uid, 'sessions', activeSessionId), {
@@ -485,19 +497,18 @@ export default function LearnChatPage() {
       let goalsUpdate = null;
       if (Array.isArray(userProfile?.goals) && userProfile.goals.length > 0) {
         goalsUpdate = userProfile.goals.map((g) => {
-          // Check if this goal matches the current session
+          // Prefer exact goalId match (from URL param); fallback to subject+type match
+          const isExactMatch = activeGoalId && (g.id === activeGoalId);
           const isMatchingSubject = !g.matiere || g.matiere === matiere;
-          const isMatchingType = !g.type || g.type.toLowerCase().includes('révision') || g.type.toLowerCase().includes('revision');
-          
-          if (isMatchingSubject && isMatchingType && (g.progress || 0) < 100) {
-            // If it's a new format goal with targetValue
+          const isMatchingType = !g.type || g.type.toLowerCase().includes('révision') || g.type.toLowerCase().includes('revision') || g.type.toLowerCase().includes('exercice') || g.type.toLowerCase().includes('quiz');
+          const isSubjectMatch = isMatchingSubject && isMatchingType;
+
+          if ((isExactMatch || (!activeGoalId && isSubjectMatch)) && (g.progress || 0) < 100) {
             if (g.targetValue) {
-              const increment = 1; // 1 session completed
-              const newCurrentValue = (g.currentValue || 0) + increment;
+              const newCurrentValue = (g.currentValue || 0) + 1;
               const newProgress = Math.min(100, Math.round((newCurrentValue / g.targetValue) * 100));
               return { ...g, currentValue: newCurrentValue, progress: newProgress };
             } else {
-              // Legacy fallback
               return { ...g, progress: Math.min(100, (g.progress || 0) + score) };
             }
           }
@@ -601,7 +612,7 @@ export default function LearnChatPage() {
                 <span className="desktop-only">Assimilation</span>
               </button>
 
-              {activeSessionId && (
+              {(activeSessionId || activeGoalId) && (
                 <button
                   onClick={() => setIsCompletionModalOpen(true)}
                   className="laura-btn"
@@ -632,10 +643,25 @@ export default function LearnChatPage() {
         {!sessionDocument && (
           <div className="row row--between">
             <div>
-              <h1 className="laura-h2" style={{ margin: 0 }}>{t('learn.chat.header.prep_exam', { exam: profileContext.examen })}</h1>
-              <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', margin: 0 }}>
-                {t('learn.chat.header.subtitle')}
-              </p>
+              {activeGoalId ? (
+                <>
+                  <h1 className="laura-h2" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <i className="ti ti-target" style={{ color: 'var(--clr-brand)', fontSize: '1.2rem' }} />
+                    {activeGoalTitle || 'Session d\'objectif'}
+                  </h1>
+                  <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', margin: '4px 0 0' }}>
+                    {activeGoalMatiere && <span style={{ background: 'var(--clr-brand-lt)', color: 'var(--clr-brand)', padding: '1px 8px', borderRadius: '99px', fontWeight: 600, marginRight: '6px' }}>{activeGoalMatiere}</span>}
+                    Validez la session pour enregistrer votre progression
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h1 className="laura-h2" style={{ margin: 0 }}>{t('learn.chat.header.prep_exam', { exam: profileContext.examen })}</h1>
+                  <p style={{ fontSize: 'var(--tx-xs)', color: 'var(--txt-secondary)', margin: 0 }}>
+                    {t('learn.chat.header.subtitle')}
+                  </p>
+                </>
+              )}
             </div>
             <button
               onClick={async () => {
