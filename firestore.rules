@@ -89,6 +89,18 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
+    // ── COMMUNITY / FORUMS COLLECTION ──────────────────────────────────────────
+    match /forums/{forumId} {
+      allow read, write: if isAuthenticated();
+      match /{allSubcollections=**} {
+        allow read, write: if isAuthenticated();
+      }
+    }
+
+    match /forum_memberships/{membershipId} {
+      allow read, write: if isAuthenticated();
+    }
+
     // ── COMMUNITY POSTS ───────────────────────────────────────────────────────
     match /community/{postId} {
       allow read, write: if isAuthenticated();
