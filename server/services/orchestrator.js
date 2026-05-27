@@ -154,7 +154,7 @@ class Orchestrator {
         return { text: msg.content[0].text, model: 'claude' };
       } 
       else if (model === 'gemini' && this.genAI) {
-        const geminiModel = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const geminiModel = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
         const result = await geminiModel.generateContent(prompt);
         return { text: result.response.text(), model: 'gemini' };
       }
@@ -479,18 +479,17 @@ ${isDevoir ? `DEVOIR DE L'ÉLÈVE : ${query}` : `QUESTION DE L'ÉLÈVE : ${query
           }
         }
         if (!responseText) {
-          responseText = `DEBUG: All models failed. Errors:\n` + errors.join('\n');
+          console.error('[LAURA] All models failed:', errors.join(' | '));
         }
       }
     } catch (err) {
       console.error("[ORCHESTRATOR ERROR]", err);
-      responseText = `DEBUG ERROR: ${err.message}\n\nModels tried: ${modelsToTry.join(', ')}`;
     }
 
     if (!responseText) {
       responseText = isEnglish
-        ? "Sorry, I am experiencing extreme technical difficulties."
-        : "Désolée, je rencontre une difficulté technique extrême.";
+        ? "I'm sorry, I'm currently unavailable due to a technical issue. Please try again in a few moments."
+        : "Désolée, je suis momentanément indisponible suite à un problème technique. Réessaie dans quelques instants.";
     }
 
     const result = {
