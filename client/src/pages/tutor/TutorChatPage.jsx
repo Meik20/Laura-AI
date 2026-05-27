@@ -112,7 +112,7 @@ export default function TutorChatPage() {
     }
 
     try {
-      const API_BASE = import.meta.env.VITE_BACKEND_URL || '';
+      const API_BASE = ''; // Serverless: always relative path on same domain
       const headers = { 'Content-Type': 'application/json' };
       if (auth.currentUser) {
         const token = await auth.currentUser.getIdToken();

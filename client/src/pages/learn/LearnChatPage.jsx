@@ -329,7 +329,7 @@ export default function LearnChatPage() {
     // Show immediate preview while analyzing
     setAttachedFile({ name: file.name, type: file.type, status: 'analyzing', text: null });
 
-    const API_BASE = import.meta.env.VITE_BACKEND_URL || '';
+    const API_BASE = ''; // Serverless: always relative path on same domain
     const result = await extractFileContent(file, API_BASE);
 
     setAttachedFile({
@@ -369,7 +369,7 @@ export default function LearnChatPage() {
     }
 
     try {
-      const API_BASE = import.meta.env.VITE_BACKEND_URL || '';
+      const API_BASE = ''; // Serverless: always relative path on same domain
 
       // Build documentContext from the session-linked resource (if any)
       const documentContext = sessionDocument ? {

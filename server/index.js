@@ -40,7 +40,6 @@ app.use(helmet({
       imgSrc: ["'self'", "data:", "https:"],
       connectSrc: [
         "'self'",
-        "https://laura-ai-production.up.railway.app",
         "https://laura-ai-lake.vercel.app",
         "https://firebaseapp.com",
         "https://*.googleapis.com",
@@ -87,7 +86,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Routes Placeholder
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'healthy', project: 'LAURA', version: '1.2.0' });
+  res.json({ status: 'healthy', project: 'LAURA', version: '2.0.0', architecture: 'serverless' });
 });
 
 // Rate Limiter instances for serverless security
