@@ -663,18 +663,44 @@ export default function LearnChatPage() {
                 </>
               )}
             </div>
-            <button
-              onClick={async () => {
-                setMessages([]);
-                if (userProfile?.uid) {
-                  await setDoc(doc(db, 'chats', userProfile.uid), { messages: [] });
-                }
-              }}
-              className="laura-btn laura-btn-ghost"
-              style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-            >
-              <i className="ti ti-trash"></i> {t('learn.chat.header.clear_history')}
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', flexShrink: 0 }}>
+              {activeGoalId && messages.length > 0 && (
+                <button
+                  onClick={() => setIsCompletionModalOpen(true)}
+                  className="laura-btn"
+                  style={{
+                    minHeight: '36px',
+                    padding: '0 var(--sp-4)',
+                    borderRadius: 'var(--rd-full)',
+                    fontWeight: 700,
+                    background: 'var(--clr-green)',
+                    color: 'white',
+                    border: 'none',
+                    boxShadow: '0 2px 8px rgba(34,197,94,0.3)',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: 'var(--tx-sm)'
+                  }}
+                >
+                  <i className="ti ti-circle-check"></i>
+                  <span>Terminer & Valider</span>
+                </button>
+              )}
+              <button
+                onClick={async () => {
+                  setMessages([]);
+                  if (userProfile?.uid) {
+                    await setDoc(doc(db, 'chats', userProfile.uid), { messages: [] });
+                  }
+                }}
+                className="laura-btn laura-btn-ghost"
+                style={{ minHeight: '36px', fontSize: 'var(--tx-xs)', color: 'var(--clr-error)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+              >
+                <i className="ti ti-trash"></i> {t('learn.chat.header.clear_history')}
+              </button>
+            </div>
           </div>
         )}
       </div>
